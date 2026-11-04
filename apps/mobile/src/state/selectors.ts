@@ -1,5 +1,7 @@
 import {
   addDays,
+  buildItinerary,
+  type Itinerary,
   computeReadiness,
   computeViabilityCalendar,
   firstDayOf,
@@ -12,7 +14,7 @@ import {
   type YearMonth,
 } from '@rumar/core';
 
-import { catalog, findDestination, requirementsFor } from '@/data/catalog';
+import { catalog, findDestination, placesFor, requirementsFor } from '@/data/catalog';
 import type { AppState, PassportStatus, TravelerProfile } from '@/state/types';
 
 /** "Não sei" é tratado como "não tenho": é o cenário mais seguro para os prazos. */
@@ -97,4 +99,16 @@ export function computeTripView(state: AppState, today = todayIso()): TripView |
     goalTarget: money(goal.targetMinor),
   });
   return { destination, readiness, dates, saved };
+}
+
+/** Roteiro da viagem atual pelo jeito de viajar. `null` sem meta ou sem perfil de viagem. */
+export function computeItinerary(state: AppState): { destination: Destination; itinerary: Itinerary } | null {
+  const { profile, goal, persona } = state;
+  if (!profile || !goal || !persona || persona.interests.length === 0) return null;
+  const destination = findDestination(goal.destinationId);
+  if (!destination) return null;
+  return {
+    destination,
+    itinerary: buildItinerary({ places: placesFor(destination), persona, nights: profile.nights, style: profile.style }),
+  };
 }

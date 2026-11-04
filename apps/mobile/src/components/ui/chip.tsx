@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { MinTouchTarget, Radius, Spacing } from '@/constants/theme';
+import { FontFamily, MinTouchTarget, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { tapFeedback } from '@/lib/haptics';
 
 type Props = { label: string; selected: boolean; onPress: () => void };
 
@@ -12,28 +13,29 @@ export function Chip({ label, selected, onPress }: Props) {
     <Pressable
       accessibilityRole="radio"
       accessibilityState={{ selected }}
-      onPress={onPress}
+      onPress={() => {
+        tapFeedback();
+        onPress();
+      }}
       style={[
         styles.chip,
         {
-          backgroundColor: selected ? theme.primary : theme.surface,
+          backgroundColor: selected ? theme.primary : 'transparent',
           borderColor: selected ? theme.primary : theme.border,
         },
       ]}>
-      <AppText variant="bodyStrong" style={{ color: selected ? theme.onPrimary : theme.text }}>
-        {label}
-      </AppText>
+      <AppText style={[styles.label, { color: selected ? theme.onPrimary : theme.text }]}>{label}</AppText>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   chip: {
-    minHeight: MinTouchTarget,
-    borderRadius: Radius.pill,
+    minHeight: MinTouchTarget - 4,
     borderWidth: 1,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  label: { fontFamily: FontFamily.display, fontSize: 12, lineHeight: 16, letterSpacing: 0.4 },
 });

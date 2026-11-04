@@ -7,8 +7,8 @@ export default function TabsLayout() {
   return (
     <NativeTabs
       backgroundColor={theme.background}
-      indicatorColor={theme.primarySoft}
-      labelStyle={{ selected: { color: theme.primary } }}>
+      indicatorColor={theme.highlight}
+      labelStyle={{ selected: { color: theme.onHighlight } }}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Minha viagem</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon src={require('@/assets/images/tabIcons/home.png')} renderingMode="template" />

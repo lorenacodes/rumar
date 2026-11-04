@@ -26,7 +26,8 @@ export const localRepository: StateRepository = {
       const raw = await AsyncStorage.getItem(KEY);
       if (!raw) return INITIAL_STATE;
       const parsed: unknown = JSON.parse(raw);
-      return isAppState(parsed) ? parsed : INITIAL_STATE;
+      // Campos novos ganham valor padrão ao carregar estados salvos por versões anteriores.
+      return isAppState(parsed) ? { ...INITIAL_STATE, ...parsed } : INITIAL_STATE;
     } catch (error) {
       // Estado corrompido ou armazenamento indisponível: recomeça sem travar o app.
       console.warn('[rumar] Falha ao carregar o estado local', error);

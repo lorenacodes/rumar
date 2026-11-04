@@ -1,3 +1,5 @@
+import type { TravelPersona } from '@rumar/core';
+
 import { INITIAL_STATE, type AppState, type Contribution, type Goal, type TravelerProfile } from '@/state/types';
 
 export type Action =
@@ -7,6 +9,7 @@ export type Action =
   | { type: 'addContribution'; contribution: Contribution }
   | { type: 'removeContribution'; id: string }
   | { type: 'toggleTask'; taskId: string }
+  | { type: 'setPersona'; persona: TravelPersona | null }
   | { type: 'reset' };
 
 export function reducer(state: AppState, action: Action): AppState {
@@ -32,6 +35,8 @@ export function reducer(state: AppState, action: Action): AppState {
           : [...state.completedTaskIds, action.taskId],
       };
     }
+    case 'setPersona':
+      return { ...state, persona: action.persona };
     case 'reset':
       return INITIAL_STATE;
   }

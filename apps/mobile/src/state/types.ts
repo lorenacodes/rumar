@@ -1,4 +1,4 @@
-import type { TravelStyle, YearMonth } from '@rumar/core';
+import type { TravelPersona, TravelStyle, YearMonth } from '@rumar/core';
 
 export type PassportStatus = 'valid' | 'none' | 'unknown';
 
@@ -37,6 +37,12 @@ export interface AppState {
   readonly goal: Goal | null;
   readonly contributions: readonly Contribution[];
   readonly completedTaskIds: readonly string[];
+  /**
+   * Jeito de viajar (interesses, ritmo, necessidades). Pode incluir interesses que
+   * revelam dado sensível (ex.: cena LGBTQIA+): por isso fica só no aparelho e
+   * nunca é enviado a servidores sem consentimento específico (LGPD, art. 11).
+   */
+  readonly persona: TravelPersona | null;
 }
 
 export const INITIAL_STATE: AppState = {
@@ -45,4 +51,5 @@ export const INITIAL_STATE: AppState = {
   goal: null,
   contributions: [],
   completedTaskIds: [],
+  persona: null,
 };

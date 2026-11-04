@@ -52,6 +52,33 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Consequência:** enquanto não houver banco nem curadoria, o catálogo de
   destinos, preços e regras é **simulado** e o app mostra isso de forma explícita.
 
+## D-010 — Identidade visual: DNA da Buovai traduzido para viagem
+- **Data:** 04/11/2026
+- **Status:** ✅ Aprovada (pedido da fundadora; detalhes podem evoluir)
+- **Decisão:** o Rumar herda da Buovai o papel creme (#FFFCEB), a tinta quase preta
+  (#0E0F0B), o lima (#DEFA9A), os verdes, a tipografia Lexend Exa + Open Sans, os
+  cantos retos, os rótulos "//01" e os gradientes acetinados. A tradução para viagem
+  vem do **painel de embarque** (preto + amarelo de sinalização #FFD23F), do
+  **cartão de embarque** e dos **cartões-postais** com paleta própria por destino.
+- **Pendência:** fotos reais dos destinos (exigem licença de uso) e ícone/logo próprios.
+
+## D-011 — Roteiro pelo jeito de viajar, sem perguntar identidade
+- **Data:** 04/11/2026
+- **Status:** ✅ Aprovada
+- **Decisão:** o roteiro é montado a partir de **interesses, ritmo e necessidades**
+  escolhidos pela pessoa (ex.: vida noturna, conhecer gente, cena LGBTQIA+, ritmo
+  tranquilo, pouca caminhada). O app **não pergunta** idade, gênero ou orientação
+  sexual e não deduz interesses a partir disso.
+- **Motivo:** evitar estereótipos ("idoso quer sossego") e tratar com cuidado dado
+  pessoal sensível (LGPD, art. 5º, II e art. 11): o interesse pela cena LGBTQIA+ pode
+  revelar orientação sexual.
+- **Regras:** o perfil de viagem fica **só no aparelho**; qualquer envio a servidor
+  exigirá consentimento específico e destacado. O algoritmo é determinístico,
+  explica cada sugestão e nunca inventa lugares (sem opção → "tempo livre").
+- **Pendência importante:** para quem marcar a cena LGBTQIA+, o app deve mostrar
+  informações de **segurança e legislação local** do destino, a partir de fontes
+  confiáveis e com data (curadoria).
+
 ## Decisões pendentes
 | ID | Decisão | Recomendação |
 |---|---|---|

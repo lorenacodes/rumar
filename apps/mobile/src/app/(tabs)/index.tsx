@@ -1,17 +1,21 @@
-import { formatYearMonthPt, money, requiredMonthly, type ReadinessTask } from '@rumar/core';
+import { money, requiredMonthly, type ReadinessTask } from '@rumar/core';
 import { Redirect, router } from 'expo-router';
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 
+import { BoardingPass } from '@/components/boarding-pass';
+import { ItineraryDayView } from '@/components/itinerary-day';
 import { SimulatedBanner } from '@/components/simulated-banner';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ProgressBar } from '@/components/ui/progress-bar';
 import { Screen } from '@/components/ui/screen';
-import { MinTouchTarget, Radius, Spacing } from '@/constants/theme';
+import { Section } from '@/components/ui/section';
+import { MinTouchTarget, Spacing } from '@/constants/theme';
+import { catalog } from '@/data/catalog';
 import { useTheme } from '@/hooks/use-theme';
-import { formatBrlShort, formatDatePt, formatPercent } from '@/lib/format';
-import { computeTripView, currentYearMonth } from '@/state/selectors';
+import { formatBrlShort, formatDatePt } from '@/lib/format';
+import { successFeedback, tapFeedback } from '@/lib/haptics';
+import { computeItinerary, computeTripView, currentYearMonth } from '@/state/selectors';
 import { useStore } from '@/state/store';
 
 export default function MinhaViagem() {
@@ -22,13 +26,16 @@ export default function MinhaViagem() {
   const view = computeTripView(state);
   if (!state.goal || !view) {
     return (
-      <Screen>
-        <AppText variant="title">Sua viagem começa aqui</AppText>
-        <AppText color="textSecondary">
-          Escolha um destino e um mês para criar sua meta. A gente acompanha quanto falta e o que você precisa
-          providenciar.
+      <Screen inTabs>
+        <AppText variant="eyebrow" color="accent">
+          {'//minha viagem'}
         </AppText>
-        <Button label="Descobrir para onde dá para ir" onPress={() => router.push('/descobrir')} />
+        <AppText variant="display">Sua próxima viagem começa com uma escolha.</AppText>
+        <AppText color="textSecondary">
+          Escolha um destino e um mês. A gente acompanha quanto falta, o que providenciar e avisa a hora certa de cada
+          passo.
+        </AppText>
+        <Button label="Ver para onde dá pra ir" arrow onPress={() => router.push('/descobrir')} />
       </Screen>
     );
   }
@@ -38,6 +45,10 @@ export default function MinhaViagem() {
   const remaining = Math.max(0, goal.targetMinor - saved);
   const needed = requiredMonthly(money(saved), money(goal.targetMinor), currentYearMonth(), goal.departureMonth);
   const behind = needed !== null && needed.minor > profile.monthlyMinor;
+  const origin = catalog.origins.find((o) => o.iata === profile.originIata);
+  const pending = readiness.tasks.filter((t) => t.status !== 'done').length;
+  const itinerary = computeItinerary(state)?.itinerary;
+  const previewDay = itinerary?.days.find((d) => d.kind === 'full') ?? itinerary?.days[0];
 
   const reset = () => {
     const run = () => dispatch({ type: 'reset' });
@@ -52,79 +63,113 @@ export default function MinhaViagem() {
   };
 
   return (
-    <Screen>
-      <View>
-        <AppText variant="caption" color="textSecondary">
-          Minha viagem
-        </AppText>
-        <AppText variant="title">
-          {destination.city} · {formatYearMonthPt(goal.departureMonth)}
-        </AppText>
-        <AppText color="textSecondary">
-          {readiness.daysToDeparture > 0 ? `Faltam ${readiness.daysToDeparture} dias` : 'Chegou a hora!'} (data
-          aproximada: início do mês)
-        </AppText>
-      </View>
+    <Screen inTabs>
+      <AppText variant="eyebrow" color="accent">
+        {'//minha viagem'}
+      </AppText>
+      <AppText variant="display">
+        {readiness.scores.overall >= 1 ? 'Tudo pronto. Boa viagem!' : `Rumo a ${destination.city}.`}
+      </AppText>
+
+      <BoardingPass
+        destination={destination}
+        originIata={profile.originIata}
+        originLabel={origin?.label ?? profile.originIata}
+        departureMonth={goal.departureMonth}
+        daysToDeparture={readiness.daysToDeparture}
+        scores={readiness.scores}
+        moneyDetail={`${formatBrlShort(saved)} de ${formatBrlShort(goal.targetMinor)}${remaining > 0 ? ` · faltam ${formatBrlShort(remaining)}` : ''}`}
+      />
+      <AppText variant="caption" color="textSecondary">
+        Data aproximada: início do mês. Os prazos são calculados a partir dela.
+      </AppText>
+
+      {behind && needed ? (
+        <Card tone="muted">
+          <AppText variant="eyebrow" color="warning">
+            Atenção ao ritmo
+          </AppText>
+          <AppText>
+            Para chegar a tempo, guarde {formatBrlShort(needed)} por mês. Hoje o plano é {formatBrlShort(profile.monthlyMinor)}.
+          </AppText>
+        </Card>
+      ) : null}
+      <Button label="Registrar quanto guardei" variant="outline" onPress={() => router.push('/aporte')} />
+
       <SimulatedBanner />
 
-      <Card>
-        <AppText variant="heading">Sua viagem está {formatPercent(readiness.scores.overall)} pronta</AppText>
-        <ProgressBar
-          label="💰 Dinheiro"
-          ratio={readiness.scores.money}
-          color="accent"
-          detail={`${formatBrlShort(saved)} de ${formatBrlShort(goal.targetMinor)}${remaining > 0 ? ` · faltam ${formatBrlShort(remaining)}` : ''}`}
-        />
-        <ProgressBar label="📄 Documentos" ratio={readiness.scores.documents} color="primary" />
-        <ProgressBar label="✈️ Reservas e preparação" ratio={readiness.scores.plan} color="success" />
-        {behind && needed ? (
-          <AppText color="warning">
-            Para chegar a tempo, guarde {formatBrlShort(needed)} por mês (hoje você planeja{' '}
-            {formatBrlShort(profile.monthlyMinor)}).
-          </AppText>
-        ) : null}
-        <Button label="Registrar quanto guardei" variant="secondary" onPress={() => router.push('/aporte')} />
-      </Card>
-
       {readiness.nextAction ? (
-        <NextAction task={readiness.nextAction} onDone={() => dispatch({ type: 'toggleTask', taskId: readiness.nextAction!.id })} />
-      ) : (
-        <Card>
-          <AppText variant="heading">Tudo pronto. Boa viagem! ✈️</AppText>
-        </Card>
-      )}
+        <NextAction
+          task={readiness.nextAction}
+          onDone={() => {
+            successFeedback();
+            dispatch({ type: 'toggleTask', taskId: readiness.nextAction!.id });
+          }}
+        />
+      ) : null}
 
-      <AppText variant="heading">Seu plano até o embarque</AppText>
-      {readiness.tasks.map((t) => (
-        <TaskRow key={t.id} task={t} onToggle={() => dispatch({ type: 'toggleTask', taskId: t.id })} />
-      ))}
+      <Section index="02" eyebrow={`plano até o embarque · ${pending} pendentes`} title="O que falta fazer">
+        <View>
+          {readiness.tasks.map((t, i) => (
+            <TaskRow
+              key={t.id}
+              index={i + 1}
+              task={t}
+              onToggle={() => {
+                tapFeedback();
+                dispatch({ type: 'toggleTask', taskId: t.id });
+              }}
+            />
+          ))}
+        </View>
+      </Section>
 
-      <Button label="Trocar destino ou mês" variant="ghost" onPress={() => router.push('/descobrir')} />
-      <Button label="Apagar meus dados deste aparelho" variant="ghost" onPress={reset} />
+      <Section index="03" eyebrow="seu roteiro" title={itinerary ? 'Um gostinho do seu roteiro' : 'Um roteiro com a sua cara'}>
+        {itinerary && previewDay ? (
+          <>
+            <ItineraryDayView day={previewDay} compact />
+            <Button label="Ver roteiro completo" arrow onPress={() => router.push('/roteiro')} />
+          </>
+        ) : (
+          <>
+            <AppText color="textSecondary">
+              Gosta de agito ou de sossego? Museus, natureza, vida noturna, cena LGBTQIA+? Conte o seu jeito e a gente
+              monta os dias da viagem pra você.
+            </AppText>
+            <Button label="Contar meu jeito de viajar" arrow onPress={() => router.push('/jeito-de-viajar')} />
+          </>
+        )}
+      </Section>
+
+      <View style={styles.links}>
+        <Button label="Trocar destino ou mês" variant="ghost" onPress={() => router.push('/descobrir')} />
+        <Button label="Apagar meus dados deste aparelho" variant="ghost" onPress={reset} />
+      </View>
     </Screen>
   );
 }
 
 function NextAction({ task, onDone }: { task: ReadinessTask; onDone: () => void }) {
-  const theme = useTheme();
   return (
-    <Card style={{ backgroundColor: theme.primarySoft, borderColor: theme.primary }}>
-      <AppText variant="caption" color="primary" style={styles.bold}>
-        PRÓXIMO PASSO
+    <Card tone="highlight">
+      <AppText variant="eyebrow" color="onHighlight">
+        {'//01 · próximo passo'}
       </AppText>
-      <AppText variant="heading">{task.title}</AppText>
-      <AppText color="textSecondary">{task.description}</AppText>
-      <AppText variant="bodyStrong" color={task.status === 'overdue' ? 'danger' : 'text'}>
-        {task.status === 'overdue' ? 'Atrasado: era até ' : 'Até '}
+      <AppText variant="title" color="onHighlight">
+        {task.title}
+      </AppText>
+      <AppText color="onHighlight">{task.description}</AppText>
+      <AppText variant="board" color={task.status === 'overdue' ? 'danger' : 'onHighlight'}>
+        {task.status === 'overdue' ? 'Atrasado · era até ' : 'Até '}
         {formatDatePt(task.dueDate)}
-        {task.isRecommendation ? ' (sugestão)' : ''}
+        {task.isRecommendation ? ' · sugestão' : ''}
       </AppText>
-      <Button label="Marcar como feito" onPress={onDone} />
+      <Button label="Marcar como feito" onPress={onDone} style={styles.doneButton} />
     </Card>
   );
 }
 
-function TaskRow({ task, onToggle }: { task: ReadinessTask; onToggle: () => void }) {
+function TaskRow({ task, index, onToggle }: { task: ReadinessTask; index: number; onToggle: () => void }) {
   const theme = useTheme();
   const done = task.status === 'done';
   const statusColor = task.status === 'overdue' ? 'danger' : task.status === 'due_soon' ? 'warning' : 'textSecondary';
@@ -134,16 +179,12 @@ function TaskRow({ task, onToggle }: { task: ReadinessTask; onToggle: () => void
       accessibilityState={{ checked: done }}
       accessibilityLabel={`${task.title}, até ${formatDatePt(task.dueDate)}`}
       onPress={onToggle}
-      style={[styles.task, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-      <View
-        style={[
-          styles.check,
-          { borderColor: done ? theme.success : theme.border, backgroundColor: done ? theme.success : 'transparent' },
-        ]}>
-        {done ? <AppText style={{ color: theme.onPrimary }}>✓</AppText> : null}
-      </View>
+      style={[styles.task, { borderTopColor: theme.border }]}>
+      <AppText variant="eyebrow" color="accent" style={styles.taskIndex}>
+        {String(index).padStart(2, '0')}
+      </AppText>
       <View style={styles.flex}>
-        <AppText variant="bodyStrong" style={done ? styles.doneText : undefined}>
+        <AppText variant="bodyStrong" color={done ? 'textSecondary' : 'text'} style={done ? styles.doneText : undefined}>
           {task.title}
         </AppText>
         <AppText variant="caption" color={done ? 'textSecondary' : statusColor}>
@@ -157,30 +198,30 @@ function TaskRow({ task, onToggle }: { task: ReadinessTask; onToggle: () => void
           </AppText>
         ) : null}
       </View>
+      <View
+        style={[
+          styles.check,
+          { borderColor: done ? theme.text : theme.border, backgroundColor: done ? theme.text : 'transparent' },
+        ]}>
+        {done ? <AppText style={{ color: theme.background, fontSize: 14 }}>✓</AppText> : null}
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  bold: { fontWeight: '700', letterSpacing: 0.5 },
   task: {
     flexDirection: 'row',
     gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: Radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: Spacing.md,
+    borderTopWidth: 1,
     minHeight: MinTouchTarget,
     alignItems: 'flex-start',
   },
-  check: {
-    width: 26,
-    height: 26,
-    borderRadius: Radius.sm,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 2,
-  },
+  taskIndex: { width: 22, marginTop: 4 },
+  check: { width: 26, height: 26, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   flex: { flex: 1, gap: Spacing.xxs },
   doneText: { textDecorationLine: 'line-through' },
+  doneButton: { marginTop: Spacing.sm },
+  links: { gap: Spacing.xs, marginTop: Spacing.lg },
 });

@@ -7,6 +7,7 @@
  */
 import { fromMajor } from "../money";
 import { sourced } from "../provenance";
+import type { Place } from "../itinerary";
 import type { EntryRequirement } from "../readiness";
 import type { Destination, FlightReference, MarketParameters, StyleCostProfile } from "../types";
 
@@ -141,4 +142,29 @@ export const SIM_REQUIREMENTS: readonly EntryRequirement[] = [
     sourceUrl: "https://example.org/simulado",
     verifiedAt: AS_OF,
   },
+];
+
+// ---------------------------------------------------------------------------
+// Lugares simulados (nomes fictícios) para testar o roteiro personalizado.
+// ---------------------------------------------------------------------------
+
+function place(p: Omit<Place, "provenance" | "sourceName" | "verifiedAt">): Place {
+  return { ...p, provenance: "simulated", sourceName: SRC, verifiedAt: AS_OF };
+}
+
+export const SIM_PLACES: readonly Place[] = [
+  place({ id: "a-centro-historico", destinationId: "sim-a", name: "Centro Histórico (simulado)", description: "Praças, igrejas e casarões para caminhar sem pressa.", area: "Centro", tags: ["history_culture", "photography"], slots: ["morning", "afternoon"], energy: 2, walking: "high", stepFree: false, costLevel: 0 }),
+  place({ id: "a-museu", destinationId: "sim-a", name: "Museu da Cidade (simulado)", description: "Arte e história local em um prédio antigo.", area: "Centro", tags: ["museums_art", "history_culture"], slots: ["morning", "afternoon"], energy: 1, walking: "low", stepFree: true, costLevel: 1 }),
+  place({ id: "a-mercado", destinationId: "sim-a", name: "Mercado Municipal (simulado)", description: "Barracas de comida, frutas e artesanato.", area: "Centro", tags: ["local_markets", "food_drink"], slots: ["morning", "afternoon"], energy: 2, walking: "medium", stepFree: true, costLevel: 1 }),
+  place({ id: "a-parque", destinationId: "sim-a", name: "Parque à Beira do Rio (simulado)", description: "Gramado, bancos à sombra e pôr do sol.", area: "Orla", tags: ["nature_outdoors", "wellness", "photography"], slots: ["morning", "afternoon", "evening"], energy: 1, walking: "medium", stepFree: true, costLevel: 0 }),
+  place({ id: "a-mirante", destinationId: "sim-a", name: "Mirante do Morro (simulado)", description: "Subida íngreme com vista da cidade inteira.", area: "Morro", tags: ["adventure", "photography", "nature_outdoors"], slots: ["morning", "evening"], energy: 3, walking: "high", stepFree: false, costLevel: 0 }),
+  place({ id: "a-bairro-boemio", destinationId: "sim-a", name: "Bairro Boêmio (simulado)", description: "Bares, música ao vivo e ruas cheias à noite.", area: "Boêmio", tags: ["nightlife", "meet_people", "food_drink"], slots: ["evening", "night"], energy: 3, walking: "medium", stepFree: null, costLevel: 2 }),
+  place({ id: "a-rua-diversa", destinationId: "sim-a", name: "Rua da Diversidade (simulado)", description: "Bares e cafés conhecidos por acolher a comunidade LGBTQIA+.", area: "Boêmio", tags: ["lgbtqia", "nightlife", "meet_people"], slots: ["evening", "night"], energy: 3, walking: "low", stepFree: true, costLevel: 2 }),
+  place({ id: "a-hostel-bar", destinationId: "sim-a", name: "Encontro de Viajantes (simulado)", description: "Noite de jogos e conversa com gente do mundo todo.", area: "Boêmio", tags: ["meet_people"], slots: ["night"], energy: 2, walking: "low", stepFree: true, costLevel: 1 }),
+  place({ id: "a-cafe-jardim", destinationId: "sim-a", name: "Café do Jardim (simulado)", description: "Café tranquilo com mesas ao ar livre.", area: "Orla", tags: ["food_drink", "wellness"], slots: ["morning", "afternoon"], energy: 1, walking: "low", stepFree: true, costLevel: 1 }),
+  place({ id: "a-feira-design", destinationId: "sim-a", name: "Feira de Design (simulado)", description: "Peças de artistas locais aos fins de semana.", area: "Orla", tags: ["shopping", "local_markets"], slots: ["afternoon"], energy: 2, walking: "medium", stepFree: true, costLevel: 2 }),
+  place({ id: "a-restaurante", destinationId: "sim-a", name: "Restaurante Típico (simulado)", description: "Pratos tradicionais em um salão antigo.", area: "Centro", tags: ["food_drink", "history_culture"], slots: ["evening"], energy: 1, walking: "low", stepFree: true, costLevel: 3 }),
+  place({ id: "b-catedral", destinationId: "sim-b", name: "Catedral Antiga (simulado)", description: "Vitrais e uma torre com vista.", area: "Cidade Velha", tags: ["history_culture", "photography"], slots: ["morning", "afternoon"], energy: 1, walking: "medium", stepFree: false, costLevel: 1 }),
+  place({ id: "b-galeria", destinationId: "sim-b", name: "Galeria Nacional (simulado)", description: "Grande acervo de pintura.", area: "Cidade Velha", tags: ["museums_art"], slots: ["morning", "afternoon"], energy: 1, walking: "low", stepFree: true, costLevel: 2 }),
+  place({ id: "b-clube", destinationId: "sim-b", name: "Distrito da Música (simulado)", description: "Casas de show e festas até tarde.", area: "Porto", tags: ["nightlife", "meet_people", "lgbtqia"], slots: ["night"], energy: 3, walking: "medium", stepFree: null, costLevel: 2 }),
 ];

@@ -1,23 +1,25 @@
 import {
   formatYearMonthPt,
+  money,
   requiredMonthly,
   TRAVEL_STYLE_LABEL_PT,
   type DestinationViability,
   type TravelStyle,
 } from '@rumar/core';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { DepartureBoard } from '@/components/departure-board';
+import { Postcard } from '@/components/postcard';
 import { SimulatedBanner } from '@/components/simulated-banner';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
 import { ProvenanceBadge } from '@/components/ui/provenance-badge';
 import { Screen } from '@/components/ui/screen';
-import { VIABILITY_UI } from '@/components/viability-label';
-import { Radius, Spacing } from '@/constants/theme';
+import { Section } from '@/components/ui/section';
+import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatBrlShort } from '@/lib/format';
 import { computeDiscovery, currentYearMonth, savedMinor } from '@/state/selectors';
@@ -41,115 +43,124 @@ export default function Descobrir() {
 
   if (!profile) {
     return (
-      <Screen>
-        <AppText variant="title">Para onde dá para ir?</AppText>
-        <AppText color="textSecondary">Responda 3 perguntas rápidas para ver destinos possíveis.</AppText>
-        <Button label="Começar" onPress={() => router.push('/onboarding')} />
+      <Screen inTabs>
+        <AppText variant="eyebrow" color="accent">
+          {'//descobrir'}
+        </AppText>
+        <AppText variant="display">Para onde dá pra ir?</AppText>
+        <AppText color="textSecondary">Responda 3 perguntas rápidas e veja destinos possíveis para o seu bolso.</AppText>
+        <Button label="Começar" arrow onPress={() => router.push('/onboarding')} />
       </Screen>
     );
   }
 
+  const viableCount = results.filter((r) => r.firstViable).length;
+
   return (
-    <Screen>
-      <AppText variant="title">Para onde e quando dá para ir</AppText>
+    <Screen inTabs>
+      <AppText variant="eyebrow" color="accent">
+        {'//descobrir'}
+      </AppText>
+      <AppText variant="display">
+        {viableCount > 0 ? `${viableCount} ${viableCount === 1 ? 'viagem cabe' : 'viagens cabem'} no seu plano.` : 'Vamos achar o seu caminho.'}
+      </AppText>
       <AppText color="textSecondary">
-        Guardando {formatBrlShort(profile.monthlyMinor)} por mês
-        {saved > 0 ? `, com ${formatBrlShort(saved)} já guardados` : ''} · {profile.travelers}{' '}
-        {profile.travelers === 1 ? 'pessoa' : 'pessoas'} · {profile.nights} noites
+        Guardando {formatBrlShort(profile.monthlyMinor)}/mês
+        {saved > 0 ? ` · ${formatBrlShort(saved)} já guardados` : ''} · {profile.travelers}{' '}
+        {profile.travelers === 1 ? 'pessoa' : 'pessoas'}
       </AppText>
       <SimulatedBanner />
 
-      <View style={styles.wrap} accessibilityRole="radiogroup" accessibilityLabel="Estilo de viagem">
-        {STYLES.map((s) => (
-          <Chip
-            key={s}
-            label={TRAVEL_STYLE_LABEL_PT[s]}
-            selected={profile.style === s}
-            onPress={() => dispatch({ type: 'setProfile', profile: { ...profile, style: s } })}
-          />
-        ))}
-      </View>
-      <View style={styles.wrap} accessibilityRole="radiogroup" accessibilityLabel="Número de noites">
-        {NIGHTS.map((n) => (
-          <Chip
-            key={n}
-            label={`${n} noites`}
-            selected={profile.nights === n}
-            onPress={() => dispatch({ type: 'setProfile', profile: { ...profile, nights: n } })}
-          />
-        ))}
-      </View>
+      <DepartureBoard results={results} originIata={profile.originIata} />
 
+      <Section index="01" eyebrow="ajuste a viagem">
+        <View style={styles.wrap} accessibilityRole="radiogroup" accessibilityLabel="Estilo de viagem">
+          {STYLES.map((s) => (
+            <Chip
+              key={s}
+              label={TRAVEL_STYLE_LABEL_PT[s]}
+              selected={profile.style === s}
+              onPress={() => dispatch({ type: 'setProfile', profile: { ...profile, style: s } })}
+            />
+          ))}
+        </View>
+        <View style={styles.wrap} accessibilityRole="radiogroup" accessibilityLabel="Número de noites">
+          {NIGHTS.map((n) => (
+            <Chip
+              key={n}
+              label={`${n} noites`}
+              selected={profile.nights === n}
+              onPress={() => dispatch({ type: 'setProfile', profile: { ...profile, nights: n } })}
+            />
+          ))}
+        </View>
+      </Section>
+
+      <Section index="02" eyebrow="cartões-postais" title="Escolha o seu próximo destino" />
       {results.map((r) => (
-        <DestinationCard key={r.destination.id} result={r} monthlyMinor={profile.monthlyMinor} saved={saved} />
+        <DestinationPostcard key={r.destination.id} result={r} originIata={profile.originIata} monthlyMinor={profile.monthlyMinor} saved={saved} />
       ))}
 
-      <Link href="/onboarding" asChild>
-        <Button label="Refazer as perguntas" variant="ghost" />
-      </Link>
+      <Button label="Refazer as perguntas" variant="ghost" onPress={() => router.push('/onboarding')} />
     </Screen>
   );
 }
 
-function DestinationCard({ result, monthlyMinor, saved }: { result: DestinationViability; monthlyMinor: number; saved: number }) {
+function DestinationPostcard({
+  result,
+  originIata,
+  monthlyMinor,
+  saved,
+}: {
+  result: DestinationViability;
+  originIata: string;
+  monthlyMinor: number;
+  saved: number;
+}) {
   const theme = useTheme();
   const { destination, firstViable, cheapest } = result;
-  const highlight = firstViable ?? cheapest;
-  const status = firstViable ? 'viable' : cheapest?.status ?? 'no_data';
-  const ui = VIABILITY_UI[status];
   const asOf = currentYearMonth();
+  const cell = firstViable ?? cheapest;
 
   let headline: string;
   let detail: string | null = null;
   if (firstViable?.cost) {
-    headline = `Dá para ir a partir de ${formatYearMonthPt(firstViable.month)}`;
-    detail = `Viagem completa: ${formatBrlShort(firstViable.cost.total)}`;
+    headline = `Dá pra ir a partir de ${formatYearMonthPt(firstViable.month)}`;
+    detail = `Viagem completa ${formatBrlShort(firstViable.cost.total)}`;
   } else if (cheapest?.cost) {
-    const needed = requiredMonthly(
-      { minor: saved, currency: 'BRL' },
-      cheapest.cost.total,
-      asOf,
-      cheapest.month,
-    );
-    headline = `Com ${formatBrlShort(monthlyMinor)}/mês, ainda não cabe nos próximos meses`;
-    detail = needed
-      ? `Guardando ${formatBrlShort(needed)}/mês, dá para ir em ${formatYearMonthPt(cheapest.month)} (${formatBrlShort(cheapest.cost.total)})`
-      : null;
+    const needed = requiredMonthly(money(saved), cheapest.cost.total, asOf, cheapest.month);
+    headline = needed
+      ? `Com ${formatBrlShort(needed)}/mês, você vai em ${formatYearMonthPt(cheapest.month)}`
+      : 'Ainda não cabe no seu ritmo atual';
+    detail = `Hoje você guarda ${formatBrlShort(monthlyMinor)}/mês · viagem ${formatBrlShort(cheapest.cost.total)}`;
   } else {
-    headline = 'Ainda não temos dados suficientes para este destino';
+    headline = 'Ainda sem dados para este destino';
   }
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${destination.city}, ${destination.country}. ${headline}. ${detail ?? ''}`}
-      onPress={() => router.push({ pathname: '/destino/[id]', params: { id: destination.id } })}>
-      <Card>
-        <View style={styles.cardHeader}>
-          <View style={styles.flex}>
-            <AppText variant="heading">{destination.city}</AppText>
-            <AppText variant="caption" color="textSecondary">
-              {destination.country}
-            </AppText>
-          </View>
-          <View style={[styles.status, { backgroundColor: theme[ui.bg] }]}>
-            <AppText variant="caption" color={ui.fg} style={styles.statusText}>
-              {ui.icon} {ui.label}
-            </AppText>
-          </View>
-        </View>
-        <AppText variant="bodyStrong">{headline}</AppText>
+      onPress={() => router.push({ pathname: '/destino/[id]', params: { id: destination.id } })}
+      style={({ pressed }) => [styles.card, { borderColor: theme.strongBorder, opacity: pressed ? 0.9 : 1 }]}>
+      <Postcard destination={destination} originIata={originIata} height={210} />
+      <View style={[styles.cardBody, { backgroundColor: theme.surface }]}>
+        <AppText variant="heading">{headline}</AppText>
         {detail ? <AppText color="textSecondary">{detail}</AppText> : null}
-        {highlight?.provenance ? <ProvenanceBadge provenance={highlight.provenance} /> : null}
-      </Card>
+        <View style={styles.cardFooter}>
+          {cell?.provenance ? <ProvenanceBadge provenance={cell.provenance} /> : <View />}
+          <AppText variant="eyebrow">
+            Ver plano ↗
+          </AppText>
+        </View>
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm },
-  flex: { flex: 1 },
-  status: { borderRadius: Radius.pill, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xxs },
-  statusText: { fontWeight: '600' },
+  card: { borderWidth: 1 },
+  cardBody: { padding: Spacing.lg, gap: Spacing.sm },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: Spacing.xs },
 });

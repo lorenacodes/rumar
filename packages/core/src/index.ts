@@ -8,3 +8,4 @@ export * from "./trip-cost";
 export * from "./goal";
 export * from "./viability";
 export * from "./readiness";
+export * from "./itinerary";

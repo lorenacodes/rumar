@@ -8,7 +8,7 @@
 ┌──────────────────────── apps/mobile (Expo) ────────────────────────┐
 │  Telas (Expo Router)                                                │
 │   onboarding → descobrir → destino/[id] → (meta) → minha viagem     │
-│                                              └→ aporte (modal)      │
+│                     aporte (modal) · jeito-de-viajar → roteiro      │
 │  state/   store (Context + reducer) ── StateRepository              │
 │                                         └ localRepository (aparelho)│
 │  data/catalog.ts  ── catálogo (HOJE: simulado)                      │
@@ -20,6 +20,7 @@
 │  goal        → meta de poupança (sem custódia)                      │
 │  viability   → calendário mês × destino                             │
 │  readiness   → tarefas com prazo, índice de prontidão, próxima ação │
+│  itinerary   → roteiro por interesses, ritmo e necessidades         │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -50,6 +51,8 @@
 |---|---|
 | Cálculos (custo total, meta, calendário, prontidão) | **Real** (testado) |
 | Persistência no aparelho | **Real** (AsyncStorage) |
+| Roteiro personalizado (algoritmo) | **Real** (testado) |
+| Lugares dos roteiros | **Simulado** (nomes fictícios) |
 | Destinos, preços, câmbio, IOF, regras de entrada | **Simulado** (`@rumar/core/fixtures`) — selo "Simulado" e aviso em todas as telas |
 | Banco de dados / login | **Não existe ainda** (decisão D-009) |
 | Radar de oportunidades, Open Finance, parceiros | **Não implementado** |
@@ -63,6 +66,20 @@
   destino, supondo volta em ~12 meses.
 - Os prazos das tarefas padrão (comprar passagem 60 dias antes etc.) são
   sugestões do produto, marcadas como tal.
+
+## Identidade visual
+
+Tokens em `apps/mobile/src/constants/theme.ts` (decisão D-010). Componentes-assinatura:
+`DepartureBoard` (painel de partidas), `BoardingPass` (cartão de embarque),
+`Postcard` (cartão-postal com gradiente acetinado por destino, paletas em
+`data/looks.ts`), `Section` (linha + rótulo "//01"). Cantos retos, fontes Lexend Exa e
+Open Sans carregadas no layout raiz, modo claro e escuro.
+
+## Privacidade do perfil de viagem
+
+O perfil de viagem (`AppState.persona`) pode conter interesse que revela dado sensível.
+Fica apenas no aparelho e não deve ser sincronizado sem consentimento específico
+(decisão D-011).
 
 ## Qualidade
 

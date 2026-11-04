@@ -1,7 +1,7 @@
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { MinTouchTarget, Radius, Spacing } from '@/constants/theme';
+import { FontFamily, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatReaisInput, parseReais } from '@/lib/format';
 
@@ -11,32 +11,31 @@ type Props = {
   valueMinor: number;
   onChange: (minor: number) => void;
   hint?: string;
+  suffix?: string;
 };
 
-/** Campo de valor em reais. Aceita apenas dígitos e formata enquanto digita. */
-export function MoneyInput({ label, valueMinor, onChange, hint }: Props) {
+/** Campo de valor em reais, grande e direto, com linha de base. */
+export function MoneyInput({ label, valueMinor, onChange, hint, suffix }: Props) {
   const theme = useTheme();
   return (
     <View style={styles.root}>
-      <AppText variant="bodyStrong" nativeID={`label-${label}`}>
+      <AppText variant="eyebrow" color="textSecondary">
         {label}
       </AppText>
-      <View style={[styles.field, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-        <AppText variant="heading" color="textSecondary">
-          R$
-        </AppText>
+      <View style={[styles.field, { borderBottomColor: theme.strongBorder }]}>
+        <AppText style={[styles.currency, { color: theme.textSecondary }]}>R$</AppText>
         <TextInput
           accessibilityLabel={label}
-          accessibilityLabelledBy={`label-${label}`}
           keyboardType="number-pad"
           inputMode="numeric"
           value={formatReaisInput(valueMinor)}
           onChangeText={(text) => onChange(parseReais(text))}
           placeholder="0"
-          placeholderTextColor={theme.textSecondary}
+          placeholderTextColor={theme.border}
           style={[styles.input, { color: theme.text }]}
           maxLength={9}
         />
+        {suffix ? <AppText style={[styles.currency, { color: theme.textSecondary }]}>{suffix}</AppText> : null}
       </View>
       {hint ? (
         <AppText variant="caption" color="textSecondary">
@@ -49,14 +48,14 @@ export function MoneyInput({ label, valueMinor, onChange, hint }: Props) {
 
 const styles = StyleSheet.create({
   root: { gap: Spacing.xs },
-  field: {
-    minHeight: MinTouchTarget + 8,
-    borderWidth: 1,
-    borderRadius: Radius.md,
-    paddingHorizontal: Spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
+  field: { flexDirection: 'row', alignItems: 'baseline', gap: Spacing.sm, borderBottomWidth: 2, paddingBottom: Spacing.xs },
+  currency: { fontFamily: FontFamily.display, fontSize: 18 },
+  input: {
+    flex: 1,
+    fontFamily: FontFamily.display,
+    fontSize: 40,
+    letterSpacing: -1.5,
+    paddingVertical: Spacing.xs,
+    minHeight: 56,
   },
-  input: { flex: 1, fontSize: 22, fontWeight: '600', paddingVertical: Spacing.sm },
 });

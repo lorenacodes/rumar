@@ -1,39 +1,57 @@
 import { ActivityIndicator, Pressable, StyleSheet, type PressableProps } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { MinTouchTarget, Radius, Spacing } from '@/constants/theme';
+import { FontFamily, MinTouchTarget, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { tapFeedback } from '@/lib/haptics';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'outline' | 'highlight' | 'ghost';
 
 export type ButtonProps = Omit<PressableProps, 'children'> & {
   label: string;
   variant?: Variant;
   loading?: boolean;
+  /** Seta ↗ no fim, como no site da Buovai. */
+  arrow?: boolean;
 };
 
-export function Button({ label, variant = 'primary', loading, disabled, style, ...rest }: ButtonProps) {
+export function Button({ label, variant = 'primary', loading, disabled, arrow, style, onPress, ...rest }: ButtonProps) {
   const theme = useTheme();
   const isDisabled = disabled || loading;
-  const bg = variant === 'primary' ? theme.accent : variant === 'secondary' ? theme.primarySoft : 'transparent';
-  const fg = variant === 'primary' ? '#FFFFFF' : theme.primary;
+  const colors = {
+    primary: { bg: theme.primary, fg: theme.onPrimary, border: theme.primary },
+    outline: { bg: 'transparent', fg: theme.text, border: theme.strongBorder },
+    highlight: { bg: theme.highlight, fg: theme.onHighlight, border: theme.highlight },
+    ghost: { bg: 'transparent', fg: theme.text, border: 'transparent' },
+  }[variant];
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled: !!isDisabled, busy: !!loading }}
       disabled={isDisabled}
+      onPress={(e) => {
+        tapFeedback();
+        onPress?.(e);
+      }}
       style={(state) => [
         styles.base,
-        { backgroundColor: bg, opacity: isDisabled ? 0.5 : state.pressed ? 0.85 : 1 },
+        {
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          opacity: isDisabled ? 0.4 : state.pressed ? 0.8 : 1,
+        },
         typeof style === 'function' ? style(state) : style,
       ]}
       {...rest}>
       {loading ? (
-        <ActivityIndicator color={fg} />
+        <ActivityIndicator color={colors.fg} />
       ) : (
-        <AppText variant="bodyStrong" style={{ color: fg }}>
+        <AppText
+          style={[styles.label, { color: colors.fg }, variant === 'ghost' && styles.ghostLabel]}
+          numberOfLines={2}>
           {label}
+          {arrow ? '  ↗' : ''}
         </AppText>
       )}
     </Pressable>
@@ -42,10 +60,12 @@ export function Button({ label, variant = 'primary', loading, disabled, style, .
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: MinTouchTarget,
-    borderRadius: Radius.pill,
+    minHeight: MinTouchTarget + 4,
+    borderWidth: 1,
     paddingHorizontal: Spacing.xl,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  label: { fontFamily: FontFamily.display, fontSize: 14, lineHeight: 20, letterSpacing: 0.3, textAlign: 'center' },
+  ghostLabel: { textDecorationLine: 'underline' },
 });
