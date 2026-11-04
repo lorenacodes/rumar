@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: { fontFamily: FontFamily.display, fontSize: 14, lineHeight: 20, letterSpacing: 0.3, textAlign: 'center' },
+  label: { fontFamily: FontFamily.bodyStrong, fontSize: 16, lineHeight: 22, textAlign: 'center' },
   ghostLabel: { textDecorationLine: 'underline' },
 });

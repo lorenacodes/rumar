@@ -1,30 +1,31 @@
 /**
- * Identidade visual do Rumar — v2.
+ * Identidade visual do Rumar — v3.
  *
- * DNA herdado da Buovai: papel creme, tinta quase preta, cantos retos, tipografia
- * Lexend Exa nos títulos e Open Sans no texto, rótulos "//01", listas numeradas e
- * gradientes acetinados verde-floresta → lima.
+ * Base herdada da Buovai: papel creme, tinta quase preta, cantos retos e a
+ * tipografia Lexend Exa (títulos) + Open Sans (texto).
  *
- * Tradução para viagem: o painel de embarque do aeroporto (preto + amarelo de
- * sinalização) e o cartão de embarque. Cada destino ganha uma paleta própria
- * para os cartões-postais.
+ * Personalidade de viagem: preto + laranja de pôr do sol, com amarelo-sol e areia
+ * só como apoio. Tom humano e editorial (revista de viagem), não tecnológico:
+ * rótulos em frase normal, sem códigos "//01" nem texto todo em maiúsculas.
  */
 import '@/global.css';
 
 export const Palette = {
   paper: '#FFFCEB',
-  paperDeep: '#F1EED8',
-  paperLine: '#C9CBB5',
+  sand: '#F4EBD6',
+  sandLine: '#D9CDB3',
   ink: '#0E0F0B',
-  ink2: '#2B2E24',
-  inkMuted: '#6B6F60',
-  forest: '#1F4905',
-  leaf: '#457528',
-  lime: '#DEFA9A',
-  signal: '#FFD23F',
-  stamp: '#C2410C',
+  ink2: '#2B2A26',
+  inkMuted: '#6E6A5E',
+  /** Laranja de preenchimento (botões de destaque, barras, selos). */
+  orange: '#FF5A1F',
+  /** Laranja para texto sobre o creme (contraste AA). */
+  orangeDeep: '#B8400C',
+  orangeSoft: '#FFE2D2',
+  sun: '#FFC845',
+  sunSoft: '#FFF0C7',
   board: '#0E0F0B',
-  boardLine: '#2B2E24',
+  boardLine: '#2B2A26',
 } as const;
 
 export const Colors = {
@@ -32,43 +33,45 @@ export const Colors = {
     text: Palette.ink,
     textSecondary: Palette.inkMuted,
     background: Palette.paper,
-    surface: '#FFFEF6',
-    surfaceMuted: Palette.paperDeep,
-    border: Palette.paperLine,
+    surface: '#FFFEF7',
+    surfaceMuted: Palette.sand,
+    border: Palette.sandLine,
     strongBorder: Palette.ink,
     primary: Palette.ink,
     onPrimary: Palette.paper,
-    highlight: Palette.lime,
+    highlight: Palette.orange,
     onHighlight: Palette.ink,
-    signal: Palette.signal,
-    accent: Palette.leaf,
-    success: Palette.leaf,
-    successSoft: Palette.lime,
+    accent: Palette.orangeDeep,
+    accentFill: Palette.orange,
+    accentSoft: Palette.orangeSoft,
+    success: Palette.orangeDeep,
+    successSoft: Palette.orangeSoft,
     warning: '#7A5200',
-    warningSoft: '#FDEFB8',
-    danger: Palette.stamp,
-    dangerSoft: '#FBE2D5',
+    warningSoft: Palette.sunSoft,
+    danger: '#A32A0A',
+    dangerSoft: '#F6D9CF',
   },
   dark: {
     text: Palette.paper,
-    textSecondary: '#A7AA97',
+    textSecondary: '#ABA594',
     background: Palette.ink,
-    surface: '#17190F',
-    surfaceMuted: '#22251A',
-    border: '#33362B',
+    surface: '#1A1915',
+    surfaceMuted: '#25231E',
+    border: '#3A3730',
     strongBorder: Palette.paper,
     primary: Palette.paper,
     onPrimary: Palette.ink,
-    highlight: Palette.lime,
+    highlight: Palette.orange,
     onHighlight: Palette.ink,
-    signal: Palette.signal,
-    accent: '#9CCB6E',
-    success: '#9CCB6E',
-    successSoft: '#26361A',
-    warning: Palette.signal,
-    warningSoft: '#3A3010',
-    danger: '#FF8A5C',
-    dangerSoft: '#3E1F12',
+    accent: '#FF8A5C',
+    accentFill: Palette.orange,
+    accentSoft: '#3D1E10',
+    success: '#FF8A5C',
+    successSoft: '#3D1E10',
+    warning: Palette.sun,
+    warningSoft: '#3A2E10',
+    danger: '#FF8A70',
+    dangerSoft: '#40180E',
   },
 } as const;
 
@@ -95,5 +98,5 @@ export const MaxContentWidth = 640;
 /** Alvo mínimo de toque (acessibilidade): 48dp. */
 export const MinTouchTarget = 48;
 
-/** Gradiente acetinado da marca (verde Buovai → lima), usado no onboarding. */
-export const BrandSatin = [Palette.forest, Palette.leaf, '#8DB85A', Palette.lime] as const;
+/** Gradiente de pôr do sol da marca, usado no onboarding. */
+export const BrandSunset = ['#C2410C', Palette.orange, '#FF8A3D', Palette.sun] as const;

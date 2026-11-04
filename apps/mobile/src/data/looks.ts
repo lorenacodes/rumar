@@ -20,15 +20,15 @@ const LOOKS: Record<string, DestinationLook> = {
     mood: 'Fim de tarde dourado, mesa na calçada, cidade que não tem pressa.',
   },
   'sim-b': {
-    palette: ['#0B3C49', '#1D7874', '#79C7C5'],
+    palette: ['#2B1B17', '#8A2E0E', '#E8662A'],
     ink: '#FFFCEB',
     mood: 'Ruas de pedra, museus, café quente e caminhadas sem fim.',
   },
 };
 
 const FALLBACK: DestinationLook = {
-  palette: ['#1F4905', '#457528', '#DEFA9A'],
-  ink: '#FFFCEB',
+  palette: ['#C2410C', '#FF5A1F', '#FFC845'],
+  ink: '#0E0F0B',
   mood: 'Um lugar novo esperando por você.',
 };
 

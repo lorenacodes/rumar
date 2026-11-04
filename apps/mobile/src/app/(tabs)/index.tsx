@@ -28,7 +28,7 @@ export default function MinhaViagem() {
     return (
       <Screen inTabs>
         <AppText variant="eyebrow" color="accent">
-          {'//minha viagem'}
+          Minha viagem
         </AppText>
         <AppText variant="display">Sua próxima viagem começa com uma escolha.</AppText>
         <AppText color="textSecondary">
@@ -65,7 +65,7 @@ export default function MinhaViagem() {
   return (
     <Screen inTabs>
       <AppText variant="eyebrow" color="accent">
-        {'//minha viagem'}
+        Minha viagem
       </AppText>
       <AppText variant="display">
         {readiness.scores.overall >= 1 ? 'Tudo pronto. Boa viagem!' : `Rumo a ${destination.city}.`}
@@ -153,7 +153,7 @@ function NextAction({ task, onDone }: { task: ReadinessTask; onDone: () => void 
   return (
     <Card tone="highlight">
       <AppText variant="eyebrow" color="onHighlight">
-        {'//01 · próximo passo'}
+        Seu próximo passo
       </AppText>
       <AppText variant="title" color="onHighlight">
         {task.title}

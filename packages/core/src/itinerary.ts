@@ -174,10 +174,16 @@ export function scorePlace(place: Place, persona: TravelPersona, style: TravelSt
   return { place, score, matched };
 }
 
+/** "Vida noturna" → "vida noturna"; preserva siglas como "LGBTQIA+". */
+export function lowerFirst(label: string): string {
+  const [first = "", second = ""] = label;
+  return second === second.toUpperCase() && /[A-Z]/.test(second) ? label : first.toLowerCase() + label.slice(1);
+}
+
 function reasonsFor(scored: Scored, persona: TravelPersona, style: TravelStyle): string[] {
   const reasons: string[] = [];
   if (scored.matched.length > 0) {
-    reasons.push(`Combina com: ${scored.matched.map((t) => INTEREST_LABEL_PT[t].toLowerCase()).join(", ")}`);
+    reasons.push(`Combina com: ${scored.matched.map((t) => lowerFirst(INTEREST_LABEL_PT[t])).join(", ")}`);
   }
   if (persona.pace === "calm" && scored.place.energy === 1) reasons.push("Clima tranquilo, no seu ritmo");
   if (persona.pace === "intense" && scored.place.energy === 3) reasons.push("Agitado, do jeito que você gosta");

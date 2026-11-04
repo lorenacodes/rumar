@@ -17,20 +17,20 @@ export function ItineraryDayView({ day, compact }: { day: ItineraryDay; compact?
   return (
     <View style={[styles.day, { borderColor: theme.strongBorder }]}>
       <View style={[styles.header, { backgroundColor: theme.primary }]}>
-        <AppText variant="board" style={{ color: theme.signal }}>
-          Dia {String(day.day).padStart(2, '0')}
+        <AppText variant="heading" style={{ color: theme.accentFill }}>
+          Dia {day.day}
         </AppText>
-        <AppText variant="eyebrow" style={{ color: theme.onPrimary }}>
+        <AppText variant="caption" style={{ color: theme.onPrimary }}>
           {KIND_LABEL[day.kind]}
           {day.area ? ` · ${day.area}` : ''}
         </AppText>
       </View>
       {day.items.map((item, i) => (
         <View key={`${item.slot}-${i}`} style={[styles.item, i > 0 && { borderTopColor: theme.border, borderTopWidth: 1 }]}>
-          <AppText variant="eyebrow" color="accent" style={styles.slot}>
-            {SLOT_LABEL_PT[item.slot]}
-          </AppText>
           <View style={styles.flex}>
+            <AppText variant="eyebrow" color="accent">
+              {SLOT_LABEL_PT[item.slot]}
+            </AppText>
             {item.place ? (
               <>
                 <AppText variant="heading">{item.place.name}</AppText>
@@ -63,9 +63,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
   },
-  item: { flexDirection: 'row', gap: Spacing.md, padding: Spacing.md },
-  slot: { width: 76, marginTop: 4 },
+  item: { padding: Spacing.md },
   flex: { flex: 1, gap: Spacing.xs },
   reasons: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs },
-  reason: { paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  reason: { paddingHorizontal: Spacing.sm, paddingVertical: 2, maxWidth: '100%' },
 });

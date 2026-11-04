@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Chip } from '@/components/ui/chip';
 import { MoneyInput } from '@/components/ui/money-input';
 import { Screen } from '@/components/ui/screen';
-import { BrandSatin, MaxContentWidth, Palette, Spacing } from '@/constants/theme';
+import { BrandSunset, MaxContentWidth, Palette, Spacing } from '@/constants/theme';
 import { catalog } from '@/data/catalog';
 import { useTheme } from '@/hooks/use-theme';
 import { currentYearMonth } from '@/state/selectors';
@@ -20,9 +20,9 @@ import type { PassportStatus } from '@/state/types';
 const TOTAL_STEPS = 3;
 
 const HEROES = [
-  { eyebrow: '//01 · seu ritmo', title: 'Seu próximo carimbo no passaporte começa aqui.' },
-  { eyebrow: '//02 · ponto de partida', title: 'De onde sai o seu voo?' },
-  { eyebrow: '//03 · o seu momento', title: 'Quando você se imagina embarcando?' },
+  { eyebrow: 'Vamos começar', title: 'Seu próximo carimbo no passaporte começa aqui.' },
+  { eyebrow: 'Ponto de partida', title: 'De onde sai o seu voo?' },
+  { eyebrow: 'O seu momento', title: 'Quando você se imagina embarcando?' },
 ] as const;
 
 /** Onboarding de 3 perguntas, sem cadastro. Uma decisão por tela. */
@@ -74,15 +74,15 @@ export default function Onboarding() {
   );
 
   const heroView = (
-    <Satin colors={BrandSatin} style={{ ...styles.hero, paddingTop: insets.top + Spacing.xl }}>
+    <Satin colors={BrandSunset} style={{ ...styles.hero, paddingTop: insets.top + Spacing.xl }}>
       <View style={styles.heroInner}>
         <View style={styles.heroTop}>
-          <AppText variant="eyebrow" style={styles.onSatin}>
+          <AppText variant="heading" style={styles.onSatin}>
             rumar
           </AppText>
           <View style={styles.dots} accessibilityLabel={`Pergunta ${step + 1} de ${TOTAL_STEPS}`}>
             {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-              <View key={i} style={[styles.dot, { backgroundColor: i <= step ? Palette.paper : 'rgba(255,252,235,.35)' }]} />
+              <View key={i} style={[styles.dot, { backgroundColor: i <= step ? Palette.ink : 'rgba(14,15,11,.25)' }]} />
             ))}
           </View>
         </View>
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   heroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'auto' },
-  onSatin: { color: Palette.paper },
+  onSatin: { color: Palette.ink },
   dots: { flexDirection: 'row', gap: 6 },
   dot: { width: 22, height: 4 },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },

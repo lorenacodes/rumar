@@ -128,10 +128,10 @@ export default function DestinoScreen() {
                     borderColor: isSelected ? Palette.board : theme.border,
                   },
                 ]}>
-                <AppText variant="board" style={{ color: isSelected ? Palette.signal : theme[ui.fg] }}>
+                <AppText variant="board" style={{ color: isSelected ? Palette.orange : theme[ui.fg] }}>
                   {SHORT_MONTHS[c.month.month - 1]}
                 </AppText>
-                <AppText variant="eyebrow" style={{ color: isSelected ? Palette.paper : theme[ui.fg] }}>
+                <AppText variant="caption" style={{ color: isSelected ? Palette.paper : theme[ui.fg] }}>
                   {ui.icon} {String(c.month.year).slice(2)}
                 </AppText>
               </Pressable>
@@ -182,8 +182,8 @@ function MonthDetail({ cell, saved }: { cell: ViabilityCell; saved: number }) {
       `Até lá você terá ${formatBrlShort(cell.available)}. Faltam ${formatBrlShort(-slack)}.` +
       (needed ? ` Para ir nesse mês, guarde ${formatBrlShort(needed)} por mês.` : '');
   }
-  const toneBg = tone === 'good' ? theme.highlight : tone === 'warn' ? theme.warningSoft : theme.dangerSoft;
-  const toneFg = tone === 'good' ? theme.onHighlight : theme.text;
+  const toneBg = tone === 'good' ? theme.accentSoft : tone === 'warn' ? theme.warningSoft : theme.dangerSoft;
+  const toneFg = theme.text;
 
   return (
     <Section index="02" eyebrow={`a viagem em ${month}`}>

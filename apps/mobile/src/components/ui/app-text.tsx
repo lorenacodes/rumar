@@ -34,13 +34,14 @@ export function AppText({ variant = 'body', color = 'text', style, ...rest }: Ap
 
 /** Fontes customizadas: o peso vem da família, nunca de `fontWeight`. */
 const styles = StyleSheet.create({
-  display: { fontFamily: FontFamily.display, fontSize: 32, lineHeight: 38, letterSpacing: -1.2 },
+  display: { fontFamily: FontFamily.display, fontSize: 30, lineHeight: 38, letterSpacing: -1 },
   title: { fontFamily: FontFamily.display, fontSize: 24, lineHeight: 30, letterSpacing: -0.8 },
   heading: { fontFamily: FontFamily.display, fontSize: 16, lineHeight: 22, letterSpacing: -0.3 },
-  eyebrow: { fontFamily: FontFamily.display, fontSize: 11, lineHeight: 16, letterSpacing: 1.1, textTransform: 'uppercase' },
+  /** Rótulo curto, em frase normal (sem maiúsculas forçadas). */
+  eyebrow: { fontFamily: FontFamily.bodyStrong, fontSize: 13, lineHeight: 18 },
   body: { fontFamily: FontFamily.body, fontSize: 16, lineHeight: 24 },
   bodyStrong: { fontFamily: FontFamily.bodyStrong, fontSize: 16, lineHeight: 24 },
   caption: { fontFamily: FontFamily.body, fontSize: 13, lineHeight: 18 },
   number: { fontFamily: FontFamily.displayStrong, fontSize: 30, lineHeight: 36, letterSpacing: -1, fontVariant: ['tabular-nums'] },
-  board: { fontFamily: FontFamily.display, fontSize: 13, lineHeight: 18, letterSpacing: 1, textTransform: 'uppercase', fontVariant: ['tabular-nums'] },
+  board: { fontFamily: FontFamily.display, fontSize: 15, lineHeight: 20, letterSpacing: -0.2, fontVariant: ['tabular-nums'] },
 });

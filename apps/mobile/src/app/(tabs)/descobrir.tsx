@@ -45,7 +45,7 @@ export default function Descobrir() {
     return (
       <Screen inTabs>
         <AppText variant="eyebrow" color="accent">
-          {'//descobrir'}
+          Descobrir
         </AppText>
         <AppText variant="display">Para onde dá pra ir?</AppText>
         <AppText color="textSecondary">Responda 3 perguntas rápidas e veja destinos possíveis para o seu bolso.</AppText>
@@ -59,7 +59,7 @@ export default function Descobrir() {
   return (
     <Screen inTabs>
       <AppText variant="eyebrow" color="accent">
-        {'//descobrir'}
+        Descobrir
       </AppText>
       <AppText variant="display">
         {viableCount > 0 ? `${viableCount} ${viableCount === 1 ? 'viagem cabe' : 'viagens cabem'} no seu plano.` : 'Vamos achar o seu caminho.'}

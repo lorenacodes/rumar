@@ -1,4 +1,4 @@
-import { INTEREST_LABEL_PT, PACE_LABEL_PT } from '@rumar/core';
+import { INTEREST_LABEL_PT, lowerFirst, PACE_LABEL_PT } from '@rumar/core';
 import { router } from 'expo-router';
 
 import { ItineraryDayView } from '@/components/itinerary-day';
@@ -30,19 +30,19 @@ export default function Roteiro() {
   return (
     <Screen edges={['left', 'right']}>
       <AppText variant="eyebrow" color="accent">
-        {`//roteiro · ${destination.city}`}
+        {`Roteiro · ${destination.city}`}
       </AppText>
       <AppText variant="display">Feito do seu jeito.</AppText>
       <AppText color="textSecondary">
         Ritmo {PACE_LABEL_PT[persona.pace].toLowerCase()} ·{' '}
-        {persona.interests.map((i) => INTEREST_LABEL_PT[i].toLowerCase()).join(', ')}
+        {persona.interests.map((i) => lowerFirst(INTEREST_LABEL_PT[i])).join(', ')}
       </AppText>
       <SimulatedBanner />
 
       {itinerary.uncoveredInterests.length > 0 ? (
         <Card tone="muted">
           <AppText variant="bodyStrong">
-            Ainda não temos lugares de {itinerary.uncoveredInterests.map((i) => INTEREST_LABEL_PT[i].toLowerCase()).join(', ')}{' '}
+            Ainda não temos lugares de {itinerary.uncoveredInterests.map((i) => lowerFirst(INTEREST_LABEL_PT[i])).join(', ')}{' '}
             para este destino.
           </AppText>
           <AppText variant="caption" color="textSecondary">

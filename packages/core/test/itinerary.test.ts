@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildItinerary, meetsNeeds, scorePlace, ValidationError, type TravelPersona } from "../src";
+import { buildItinerary, lowerFirst, meetsNeeds, scorePlace, ValidationError, type TravelPersona } from "../src";
 import { SIM_PLACES } from "../src/fixtures/simulated";
 
 const placesA = SIM_PLACES.filter((p) => p.destinationId === "sim-a");
@@ -85,5 +85,12 @@ describe("regras de pontuação", () => {
     const expensive = SIM_PLACES.find((p) => p.id === "a-restaurante")!;
     const persona: TravelPersona = { interests: ["food_drink"], pace: "calm", needs: [] };
     expect(scorePlace(expensive, persona, "economic").score).toBeLessThan(scorePlace(expensive, persona, "comfort").score);
+  });
+});
+
+describe("lowerFirst", () => {
+  it("põe a primeira letra em minúscula, mas preserva siglas", () => {
+    expect(lowerFirst("Vida noturna")).toBe("vida noturna");
+    expect(lowerFirst("Cena LGBTQIA+")).toBe("cena LGBTQIA+");
   });
 });

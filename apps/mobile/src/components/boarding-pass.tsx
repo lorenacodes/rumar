@@ -8,7 +8,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { lookFor } from '@/data/looks';
 import { formatPercent } from '@/lib/format';
 
-const SHORT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+const SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
 type Props = {
   destination: Destination;
@@ -34,11 +34,11 @@ export function BoardingPass({ destination, originIata, originLabel, departureMo
       <View style={[styles.stripe, { backgroundColor: look.palette[0] }]} />
       <View style={styles.body}>
         <View style={styles.rowBetween}>
-          <AppText variant="eyebrow" style={styles.signal}>
-            Cartão de embarque
+          <AppText variant="eyebrow" style={styles.orange}>
+            Seu cartão de embarque
           </AppText>
           <AppText variant="eyebrow" style={styles.dim}>
-            Rumar
+            rumar
           </AppText>
         </View>
         <View style={styles.route}>
@@ -57,7 +57,7 @@ export function BoardingPass({ destination, originIata, originLabel, departureMo
           </View>
         </View>
         <View style={styles.fields}>
-          <Field label="Embarque" value={`${SHORT[departureMonth.month - 1]} ${departureMonth.year}`} />
+          <Field label="Embarque" value={`${SHORT[departureMonth.month - 1]} de ${departureMonth.year}`} />
           <Field label="Faltam" value={daysToDeparture > 0 ? `${daysToDeparture} dias` : 'É hoje!'} />
           <Field label="Pronta" value={formatPercent(scores.overall)} highlight />
         </View>
@@ -70,9 +70,9 @@ export function BoardingPass({ destination, originIata, originLabel, departureMo
       </View>
 
       <View style={styles.stub}>
-        <ProgressBar label="Dinheiro" ratio={scores.money} detail={moneyDetail} fill={Palette.signal} empty={Palette.boardLine} textColor={Palette.paper} mutedColor="#A7AA97" />
-        <ProgressBar label="Documentos" ratio={scores.documents} fill={Palette.lime} empty={Palette.boardLine} textColor={Palette.paper} />
-        <ProgressBar label="Reservas e preparo" ratio={scores.plan} fill={Palette.paper} empty={Palette.boardLine} textColor={Palette.paper} />
+        <ProgressBar label="Dinheiro guardado" ratio={scores.money} detail={moneyDetail} fill={Palette.orange} empty={Palette.boardLine} textColor={Palette.paper} mutedColor="#ABA594" />
+        <ProgressBar label="Documentos" ratio={scores.documents} fill={Palette.sun} empty={Palette.boardLine} textColor={Palette.paper} />
+        <ProgressBar label="Reservas e preparativos" ratio={scores.plan} fill={Palette.paper} empty={Palette.boardLine} textColor={Palette.paper} />
       </View>
     </View>
   );
@@ -81,10 +81,10 @@ export function BoardingPass({ destination, originIata, originLabel, departureMo
 function Field({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <View style={styles.field}>
-      <AppText variant="eyebrow" style={styles.dim}>
+      <AppText variant="caption" style={styles.dim}>
         {label}
       </AppText>
-      <AppText variant="board" style={highlight ? styles.signal : styles.paper} numberOfLines={1}>
+      <AppText variant="board" style={highlight ? styles.orange : styles.paper} numberOfLines={1}>
         {value}
       </AppText>
     </View>
@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   right: { alignItems: 'flex-end' },
   iata: { fontFamily: 'LexendExa_600SemiBold', fontSize: 40, lineHeight: 46, letterSpacing: -1.5, color: Palette.paper },
-  plane: { fontSize: 22, color: Palette.signal },
+  plane: { fontSize: 22, color: Palette.orange },
   fields: { flexDirection: 'row', gap: Spacing.md },
   field: { flex: 1, gap: 2 },
-  signal: { color: Palette.signal },
+  orange: { color: Palette.orange },
   paper: { color: Palette.paper },
-  dim: { color: '#8A8D7C' },
+  dim: { color: '#9A9585' },
   perforation: { height: 24, justifyContent: 'center' },
   dashes: {
     marginHorizontal: 18,

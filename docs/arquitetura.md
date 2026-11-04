@@ -70,7 +70,7 @@
 ## Identidade visual
 
 Tokens em `apps/mobile/src/constants/theme.ts` (decisão D-010). Componentes-assinatura:
-`DepartureBoard` (painel de partidas), `BoardingPass` (cartão de embarque),
+`DepartureBoard` (quadro de partidas, preto + laranja), `BoardingPass` (cartão de embarque),
 `Postcard` (cartão-postal com gradiente acetinado por destino, paletas em
 `data/looks.ts`), `Section` (linha + rótulo "//01"). Cantos retos, fontes Lexend Exa e
 Open Sans carregadas no layout raiz, modo claro e escuro.

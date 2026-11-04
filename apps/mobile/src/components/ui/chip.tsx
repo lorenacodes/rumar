@@ -37,5 +37,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: { fontFamily: FontFamily.display, fontSize: 12, lineHeight: 16, letterSpacing: 0.4 },
+  label: { fontFamily: FontFamily.bodyStrong, fontSize: 15, lineHeight: 20 },
 });

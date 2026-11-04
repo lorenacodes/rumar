@@ -52,14 +52,18 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Consequência:** enquanto não houver banco nem curadoria, o catálogo de
   destinos, preços e regras é **simulado** e o app mostra isso de forma explícita.
 
-## D-010 — Identidade visual: DNA da Buovai traduzido para viagem
-- **Data:** 04/11/2026
+## D-010 — Identidade visual: base da Buovai, preto + laranja, tom humano
+- **Data:** 04/11/2026 (revisada no mesmo dia, v3)
 - **Status:** ✅ Aprovada (pedido da fundadora; detalhes podem evoluir)
 - **Decisão:** o Rumar herda da Buovai o papel creme (#FFFCEB), a tinta quase preta
-  (#0E0F0B), o lima (#DEFA9A), os verdes, a tipografia Lexend Exa + Open Sans, os
-  cantos retos, os rótulos "//01" e os gradientes acetinados. A tradução para viagem
-  vem do **painel de embarque** (preto + amarelo de sinalização #FFD23F), do
-  **cartão de embarque** e dos **cartões-postais** com paleta própria por destino.
+  (#0E0F0B), os cantos retos e a tipografia Lexend Exa (títulos) + Open Sans (texto).
+  A cor de personalidade é o **laranja de pôr do sol** (#FF5A1F; #B8400C para texto),
+  com amarelo-sol e areia só como apoio. **O verde e o lima da Buovai saíram**
+  (ficavam soltos no contexto de viagem).
+- **Tom:** humano e editorial, não tecnológico: rótulos em frase normal, sem "//01",
+  sem texto todo em maiúsculas espaçadas, barras de progresso contínuas.
+- **Elementos de viagem:** quadro de partidas (preto + laranja), cartão de embarque,
+  cartões-postais com gradiente quente por destino, custo em formato de recibo.
 - **Pendência:** fotos reais dos destinos (exigem licença de uso) e ícone/logo próprios.
 
 ## D-011 — Roteiro pelo jeito de viajar, sem perguntar identidade
