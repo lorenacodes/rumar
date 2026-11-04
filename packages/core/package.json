@@ -1,0 +1,22 @@
+{
+  "name": "@rumar/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dom\u00ednio do Rumar: custo porta a porta, meta de viagem, calend\u00e1rio de viabilidade e prontid\u00e3o. TypeScript puro, sem depend\u00eancias de plataforma.",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./fixtures": "./src/fixtures/simulated.ts"
+  }
+}

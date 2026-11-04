@@ -1,0 +1,18 @@
+{
+  "name": "rumar",
+  "private": true,
+  "description": "Rumar — da vontade ao embarque. Planejamento de viagens internacionais para brasileiros.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspace @rumar/core",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "check": "npm run typecheck && npm test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
