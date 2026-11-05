@@ -59,8 +59,8 @@ export function Tela1_4() {
                 onClick={() => setMensal(v)}
                 style={
                   marcado
-                    ? { flex: '1', height: '48px', background: 'var(--fundo-escuro)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 15px 'Open Sans'" }
-                    : { flex: '1', height: '48px', border: '1px solid var(--linha)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 15px 'Open Sans'" }
+                    ? { flex: '1', boxSizing: 'content-box', height: '48px', background: 'var(--fundo-escuro)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 15px 'Open Sans'" }
+                    : { flex: '1', boxSizing: 'content-box', height: '48px', border: '1px solid var(--linha)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 15px 'Open Sans'" }
                 }>
                 R$ {(v / 100).toLocaleString('pt-BR')}
               </button>
