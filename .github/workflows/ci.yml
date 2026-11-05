@@ -33,6 +33,8 @@ jobs:
     name: APK de teste (Android)
     needs: checar
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,3 +55,16 @@ jobs:
         with:
           name: rumar-debug-apk
           path: apps/app/android/app/build/outputs/apk/debug/*.apk
+      - name: Publicar o APK como versão de teste (link direto para o celular)
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp apps/app/android/app/build/outputs/apk/debug/app-debug.apk rumar-teste.apk
+          TAG="apk-teste-${GITHUB_REF_NAME//\//-}"
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" rumar-teste.apk \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "APK de teste · ${GITHUB_REF_NAME}" \
+            --notes "Versão de teste gerada automaticamente a partir de ${GITHUB_SHA::7}. Baixe rumar-teste.apk no celular Android e instale (permita instalar de fontes desconhecidas)."
