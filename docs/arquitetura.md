@@ -19,5 +19,6 @@ tools/visual/compare.mjs    design × app, pixel a pixel, limite 2%
   os mesmos arquivos no design.
 - **Rotas:** hash router (funciona igual no Capacitor e no navegador). As rotas
   `/dev/telas/*` só existem nos modos `development` e `dev-telas`.
-- **Backend:** Supabase (projeto próprio, separado da Buovai) — a ser ligado quando o
-  projeto aparecer na conta conectada.
+- **Backend:** Supabase, projeto "Rumar App" (`ofobfqzomviglkqjowkj`, us-east-1),
+  separado da Buovai. Banco vazio na Fase 0; tabelas entram por migrações versionadas
+  em `supabase/migrations/` a partir da Fase 1. Ver `supabase/README.md`.
