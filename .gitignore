@@ -11,3 +11,6 @@ coverage/
 /apps/mobile/android/
 supabase/.temp/
 .DS_Store
+tools/visual/out/
+apps/app/dist/
+apps/app/dist-dev-telas/

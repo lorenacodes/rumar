@@ -1,18 +1,25 @@
 {
   "name": "rumar",
   "private": true,
-  "description": "Rumar — da vontade ao embarque. Planejamento de viagens internacionais para brasileiros.",
+  "description": "Rumar — app de planejamento de viagens para brasileiros que mostra o que cabe no bolso.",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "test": "npm run test --workspace @rumar/core",
+    "dev": "npm run dev --workspace @rumar/app",
+    "build": "npm run build --workspace @rumar/app",
+    "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "visual": "node tools/visual/compare.mjs"
+  },
+  "devDependencies": {
+    "pixelmatch": "^8.0.0",
+    "playwright": "1.63.0",
+    "pngjs": "^7.0.0"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12"
   }
 }

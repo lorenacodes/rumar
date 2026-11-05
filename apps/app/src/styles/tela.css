@@ -1,0 +1,143 @@
+/*
+ * Primitivas de tela, com as medidas exatas do design (390 × 844).
+ * Cada classe corresponde a um padrão que se repete nas telas do Fluxo Unificado.
+ */
+
+.tela {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte-texto);
+}
+
+.tela-conteudo {
+  padding: calc(22px + env(safe-area-inset-top)) var(--margem) 0;
+}
+
+.marca {
+  font: 600 15px var(--fonte-texto);
+  color: var(--azul);
+  margin-top: 2px;
+}
+
+.titulo-tela {
+  font: 600 28px/33px var(--fonte-titulo);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.texto-apoio {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--texto-sec);
+  margin: 0;
+}
+
+.campo-rotulo {
+  display: block;
+  font: 600 15px var(--fonte-texto);
+  color: var(--texto-sec);
+}
+
+.campo {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid var(--texto);
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 0;
+  font: 500 19px var(--fonte-texto);
+  line-height: normal;
+  color: var(--texto);
+  outline-offset: 4px;
+}
+
+.campo::placeholder {
+  color: var(--texto-sec);
+  opacity: 1;
+}
+
+.nota {
+  background: var(--cartao-1);
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.cartao-apoio {
+  background: var(--cartao-2);
+  padding: 12px 14px;
+}
+
+.cartao-apoio-titulo {
+  font: 600 15px var(--fonte-texto);
+}
+
+.cartao-apoio-texto {
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--texto-sec);
+  margin-top: 4px;
+}
+
+.link-acao {
+  display: inline-block;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: 600 14px var(--fonte-texto);
+  color: var(--azul);
+  cursor: pointer;
+  text-align: left;
+}
+
+.rodape {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px var(--margem) calc(14px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--linha);
+  background: var(--fundo);
+}
+
+.botao-principal {
+  width: 100%;
+  height: 56px;
+  border: 0;
+  border-radius: 0;
+  background: var(--amarelo);
+  color: var(--botao-principal-texto);
+  font: 600 17px var(--fonte-texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: opacity var(--transicao);
+}
+
+.botao-principal:active {
+  opacity: 0.85;
+}
+
+.botao-principal:disabled {
+  cursor: default;
+}
+
+.botao-texto {
+  width: 100%;
+  height: 40px;
+  border: 0;
+  background: none;
+  font: 600 15px var(--fonte-texto);
+  color: var(--texto-sec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

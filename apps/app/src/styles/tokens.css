@@ -1,0 +1,42 @@
+/*
+ * Tokens do Rumar, copiados de docs/ESPECIFICACAO.md (seção 1) e do design.
+ * O design é a fonte da verdade: não ajustar valores "a olho".
+ */
+:root {
+  --marinho: #0b1f4b;
+  --azul: #1f4fd8;
+  --amarelo: #ffc845;
+  --fundo: #f7f4ea;
+  --linha: #cbd3e6;
+  --texto-sec: #4a5575;
+  --azul-claro-1: #dce6fb;
+  --azul-claro-2: #e9eef9;
+  --verde: #1a7a3e;
+  --ambar: #8a5a00;
+  --vermelho: #b3261e;
+
+  --texto: var(--marinho);
+  --fundo-escuro: var(--marinho);
+  --cartao-1: var(--azul-claro-1);
+  --cartao-2: var(--azul-claro-2);
+  --botao-principal-texto: #0b1f4b;
+
+  --fonte-titulo: 'Lexend Exa', sans-serif;
+  --fonte-texto: 'Open Sans', sans-serif;
+
+  --margem: 20px;
+  --abas: 64px;
+  --transicao: 150ms;
+}
+
+/* Tema escuro (telas 31.2 a 31.4). Aplicado por [data-tema='escuro']. */
+[data-tema='escuro'] {
+  --fundo: #0a1633;
+  --linha: #2a3a66;
+  --texto: #f7f4ea;
+  --texto-sec: #aebbe0;
+  --azul: #8fb0ff;
+  --cartao-1: #14264f;
+  --cartao-2: #101f44;
+  --fundo-escuro: #1f4fd8;
+}

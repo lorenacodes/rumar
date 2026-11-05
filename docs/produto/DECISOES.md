@@ -37,7 +37,7 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   em 04/11/2026 não encontrou app de viagem com esse nome no Brasil (não substitui a
   verificação formal).
 
-## D-008 — Stack: React Native + Expo + TypeScript + Supabase
+## D-008 — Stack: React Native + Expo + TypeScript + Supabase (substituída pela D-012)
 - **Data:** 04/11/2026
 - **Status:** ✅ Aprovada
 - **Decisão:** conforme seções 9.2 e 9.3 do doc 01. Projeto Supabase próprio,
@@ -52,7 +52,7 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Consequência:** enquanto não houver banco nem curadoria, o catálogo de
   destinos, preços e regras é **simulado** e o app mostra isso de forma explícita.
 
-## D-010 — Identidade visual: base da Buovai, preto + laranja, tom humano
+## D-010 — Identidade visual: base da Buovai, preto + laranja, tom humano (substituída pela D-012)
 - **Data:** 04/11/2026 (revisada no mesmo dia, v3)
 - **Status:** ✅ Aprovada (pedido da fundadora; detalhes podem evoluir)
 - **Decisão:** o Rumar herda da Buovai o papel creme (#FFFCEB), a tinta quase preta
@@ -82,6 +82,20 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Pendência importante:** para quem marcar a cena LGBTQIA+, o app deve mostrar
   informações de **segurança e legislação local** do destino, a partir de fontes
   confiáveis e com data (curadoria).
+
+## D-012 — Design "Fluxo Unificado" e app nativo com Capacitor
+- **Data:** 05/11/2026
+- **Status:** ✅ Aprovada
+- **Decisão:** o design `design/Rumar Fluxo Unificado.dc.html` (35 seções, ~185 telas)
+  e a especificação `docs/ESPECIFICACAO.md` passam a ser a fonte da verdade. O
+  visual e os textos seguem o design **exatamente** (marinho, azul e amarelo; Lexend
+  Exa + Open Sans; cantos retos). **Substitui a identidade preto + laranja da D-010.**
+- **Tecnologia:** React + TypeScript + Vite com CSS puro, empacotado como **app
+  nativo com Capacitor desde o início** (Play Store; iPhone depois). Não haverá
+  versão web pública. O app em React Native/Expo foi removido (D-008 substituída).
+  O teste visual compara cada tela com o design (limite 2%).
+- **Motivo:** fidelidade ao design (HTML/CSS) e um código só para Android e iPhone,
+  com custo baixo.
 
 ## Decisões pendentes
 | ID | Decisão | Recomendação |

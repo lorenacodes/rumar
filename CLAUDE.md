@@ -1,10 +1,14 @@
 # Rumar — instruções para agentes
 
-- Idioma do produto e da documentação: português brasileiro.
-- Regras de negócio ficam em `packages/core` (TypeScript puro, com testes). Telas não calculam custos nem prazos.
-- Nunca exibir valor sem procedência (`Provenance`). Dado simulado sempre marcado como `simulated`.
-- Nunca inventar preços, regras de entrada ou estatísticas. Sem dado → dizer que falta.
-- O app nunca guarda nem movimenta dinheiro do usuário.
-- Expo SDK 58: confira a documentação da versão antes de usar APIs do Expo (veja `apps/mobile/AGENTS.md`). Instale pacotes nativos na versão indicada em `node_modules/expo/bundledNativeModules.json`.
-- Antes de concluir: `npm run check` e `npx eslint src` em `apps/mobile`.
-- Decisões de produto: `docs/produto/DECISOES.md`.
+- Leia `docs/ESPECIFICACAO.md` antes de escrever código. O design
+  `design/Rumar Fluxo Unificado.dc.html` é a fonte da verdade: visual e textos
+  idênticos, sem "melhorar". Se o design parecer errado, avisar e não corrigir sozinho.
+- Cada tela usa o id do design (ex.: 1.1) no nome do componente, em `data-tela` e na
+  rota `/dev/telas/<id>`. Registre telas novas em `apps/app/src/telas/registro.ts`.
+- Depois de implementar uma tela: `npm run build:dev-telas --workspace @rumar/app`
+  e `npm run visual`. Limite: 2% de diferença.
+- Sem bibliotecas de componentes ou CSS que imponham visual. CSS puro com os tokens.
+- Dinheiro em centavos inteiros. Nunca inventar preços; todo valor tem selo.
+- Nenhum serviço pago sem perguntar e mostrar o custo. Nenhuma chave no repositório.
+- LGPD e segurança são requisitos (seção 8 da especificação).
+- Português do Brasil. Decisões: `docs/produto/DECISOES.md`.

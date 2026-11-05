@@ -1,44 +1,56 @@
 # Rumar
 
-**Da vontade ao embarque.** Planejamento de viagens internacionais para brasileiros:
-a pessoa diz quanto consegue guardar por mês, o Rumar mostra para onde e quando dá
-para ir (com o custo total real), cria a meta e acompanha tudo até o embarque —
-sem guardar o dinheiro de ninguém.
+App de planejamento de viagens para brasileiros que mostra o que cabe no bolso:
+viagens possíveis hoje, quanto guardar por mês até a viagem dos sonhos e
+acompanhamento antes, durante e depois da viagem. Não guarda nem movimenta dinheiro.
 
-> ⚠️ **Estágio atual: MVP em desenvolvimento, com dados simulados.** Destinos,
-> preços e regras de entrada ainda não são reais; o app mostra isso em todas as
-> telas. O banco de dados será criado depois, em projeto próprio.
+- **Design (fonte da verdade):** `design/Rumar Fluxo Unificado.dc.html`
+- **Especificação:** [`docs/ESPECIFICACAO.md`](docs/ESPECIFICACAO.md)
+- **Decisões:** [`docs/produto/DECISOES.md`](docs/produto/DECISOES.md)
 
 ## Estrutura
 
 ```
-apps/mobile/       App Android/iOS (Expo + React Native + TypeScript, Expo Router)
-packages/core/     Domínio em TypeScript puro: custo porta a porta, meta,
-                   calendário de viabilidade e prontidão (com testes)
-docs/              Arquitetura e documentação de produto/estratégia
+apps/app/          App (React + TypeScript + Vite, CSS puro) empacotado com Capacitor
+apps/app/android/  Projeto Android nativo gerado pelo Capacitor
+packages/core/     Regras de negócio em TypeScript puro (será a base do calc.ts)
+tools/visual/      Teste visual: compara cada tela com o design, pixel a pixel
+design/            Arquivo do design
+docs/              Especificação, produto e decisões
 ```
 
 ## Como rodar
 
-Requisitos: Node 22+.
+Requisitos: Node 22.12+.
 
 ```bash
 npm install
 ```
 
 ```bash
-npm run check          # typecheck de todos os pacotes + testes do domínio
+npm run dev
 ```
+
+Abre o app no navegador para desenvolver. Cada tela do design tem uma rota de
+comparação: `http://localhost:5173/#/dev/telas/1.1`.
 
 ```bash
-cd apps/mobile && npx expo start
+npm run check
 ```
 
-No celular, abra com o app **Expo Go** (ou uma development build) lendo o QR code.
-Para ver no navegador: `npx expo start --web`.
+Roda os tipos e os testes.
 
-## Documentação
+```bash
+npm run build:dev-telas --workspace @rumar/app && npm run visual
+```
 
-- [Arquitetura e status real × simulado](docs/arquitetura.md)
-- [Documentação de produto e estratégia](docs/produto/README.md)
-- [Registro de decisões](docs/produto/DECISOES.md)
+Compara as telas com o design (resultado em `tools/visual/out/`).
+
+### App Android
+
+O APK de teste é gerado pelo GitHub Actions a cada envio (artefato
+`rumar-debug-apk`). Localmente, com o Android Studio instalado:
+
+```bash
+cd apps/app && npm run cap:sync && npx cap open android
+```

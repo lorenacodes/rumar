@@ -2,11 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'fase-*']
   pull_request:
 
 jobs:
-  check:
+  checar:
+    name: Tipos, testes e teste visual
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,5 +18,38 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      - run: npx eslint src
-        working-directory: apps/mobile
+      - run: npm run build:dev-telas --workspace @rumar/app
+      - run: npx playwright install --with-deps chromium
+      - name: Comparar telas com o design (limite 2%)
+        run: npm run visual
+      - name: Guardar capturas e diferenças
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: teste-visual
+          path: tools/visual/out/
+
+  android:
+    name: APK de teste (Android)
+    needs: checar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build --workspace @rumar/app
+      - run: npx cap sync android
+        working-directory: apps/app
+      - run: ./gradlew assembleDebug --no-daemon
+        working-directory: apps/app/android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rumar-debug-apk
+          path: apps/app/android/app/build/outputs/apk/debug/*.apk
