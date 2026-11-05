@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { lerData, maiorDe18, mascararData } from '../../lib/idade';
+import { usePlano } from '../../state/plano';
 
 /** 1.1 Antes de começar — conferência de idade e resumo de privacidade. */
 export function Tela1_1() {
   const navegar = useNavigate();
   const [data, setData] = useState('');
   const [erro, setErro] = useState(false);
+  const atualizar = usePlano((p) => p.atualizar);
 
   const continuar = () => {
     const nascimento = lerData(data);
@@ -16,7 +18,9 @@ export function Tela1_1() {
       return;
     }
     // A data não é guardada: só o resultado "maior de 18" segue adiante.
-    navegar(maiorDe18(nascimento, new Date()) ? '/boas-vindas' : '/menor-de-18', { replace: true });
+    const maior = maiorDe18(nascimento, new Date());
+    atualizar({ maior18: maior });
+    navegar(maior ? '/boas-vindas' : '/menor-de-18', { replace: true });
   };
 
   return (
@@ -60,7 +64,7 @@ export function Tela1_1() {
             <br />
             Você vê, corrige, baixa e apaga quando quiser.
           </div>
-          <button type="button" className="link-acao" style={{ marginTop: 6 }} onClick={() => navegar('/privacidade')}>
+          <button type="button" className="link-acao" style={{ marginTop: 6 }} onClick={() => navegar('/em-breve/aviso-de-privacidade')}>
             Ler o aviso completo ›
           </button>
         </div>
