@@ -4,8 +4,8 @@ export type Aba = 'inicio' | 'descobrir' | 'viagem' | 'passaporte';
 
 const ABAS: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
-  { id: 'descobrir', nome: 'Descobrir', rota: '/inicio' },
-  { id: 'viagem', nome: 'Minha viagem', rota: '/inicio' },
+  { id: 'descobrir', nome: 'Descobrir', rota: '/em-breve/descobrir' },
+  { id: 'viagem', nome: 'Minha viagem', rota: '/em-breve/minha-viagem' },
   { id: 'passaporte', nome: 'Passaporte', rota: '/perfil' },
 ];
 

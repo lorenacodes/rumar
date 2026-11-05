@@ -49,21 +49,27 @@ const MOTIVOS: Record<string, string> = {
   google: 'Entrar com o Google precisa ser ligado nas configurações do projeto. Por enquanto, use e-mail e senha.',
   celular: 'Entrar com o celular depende de um serviço de SMS pago. Por enquanto, use e-mail e senha.',
   foto: 'A foto do perfil chega junto com o armazenamento seguro de fotos.',
+  descobrir:
+    'Aqui você vai ver as viagens que cabem no seu bolso, com passagem, hospedagem, comida e passeios estimados e o selo de cada valor. Chega na próxima versão.',
+  'minha-viagem':
+    'Aqui fica a sua viagem: cofrinho, reservas, documentos, mala e roteiro do dia. Chega depois do Descobrir.',
   'aviso-de-privacidade': 'O aviso de privacidade completo está em revisão jurídica e entra na próxima versão.',
 };
 
 /** Recurso do design que ainda não foi construído nesta versão. */
 export function EmBreve() {
   const { tela = '' } = useParams();
+  const aba = tela === 'descobrir' ? 'descobrir' : tela === 'minha-viagem' ? 'viagem' : null;
   const texto = MOTIVOS[tela] ?? `Esta parte (tela ${tela} do design) entra numa próxima versão.`;
   return (
     <main className="tela" data-provisoria="em-breve">
       <div style={{ padding: 'calc(22px + env(safe-area-inset-top)) 20px 0' }}>
-        <Voltar />
+        {aba ? null : <Voltar />}
         <Marca />
         <Titulo marginTop="30px">Quase lá.</Titulo>
         <Paragrafo>{texto}</Paragrafo>
       </div>
+      {aba ? <Abas ativa={aba} /> : null}
     </main>
   );
 }
