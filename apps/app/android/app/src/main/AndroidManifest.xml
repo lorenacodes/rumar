@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+        
+            <!-- Links dos e-mails da conta (senha nova, confirmação): com.rumar.app://auth -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.rumar.app" android:host="auth" />
+            </intent-filter>
         </activity>
 
         <provider
