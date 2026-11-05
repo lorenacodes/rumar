@@ -1,8 +1,5 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* Sem box-sizing global: o design usa o padrão do navegador (content-box) e
+   declara border-box só onde precisa. Copiar isso mantém as medidas idênticas. */
 
 html,
 body,
@@ -28,4 +25,50 @@ input {
 :focus-visible {
   outline: 2px solid var(--azul);
   outline-offset: 2px;
+}
+
+/* Botões e campos com o visual 100% vindo do design (estilos inline das telas). */
+.r-btn,
+.r-input {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  box-sizing: border-box;
+}
+.r-btn {
+  cursor: pointer;
+}
+.r-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.r-input {
+  width: 100%;
+  min-width: 0;
+  outline-offset: 4px;
+}
+.r-input::placeholder {
+  color: var(--texto-sec);
+  opacity: 1;
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* O valor digitado aparece em 500; o texto de exemplo (placeholder) em 400. */
+.campo-design::placeholder {
+  font-weight: 400;
 }

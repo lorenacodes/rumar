@@ -40,3 +40,8 @@
   --cartao-2: #101f44;
   --fundo-escuro: #1f4fd8;
 }
+
+/* Texto sobre fundos escuros (marinho/azul) — igual nos dois temas. */
+:root {
+  --sobre-escuro: #f7f4ea;
+}
