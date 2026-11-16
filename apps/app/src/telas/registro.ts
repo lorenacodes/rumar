@@ -5,6 +5,7 @@ import { Tela1_2 } from './s01/Tela1_2';
 import { Tela1_3 } from './s01/Tela1_3';
 import { Tela1_4 } from './s01/Tela1_4';
 import { Tela1_5 } from './s01/Tela1_5';
+import { Tela3_1 } from './s03/Tela3_1';
 import { Tela5_1 } from './s05/Tela5_1';
 import { Tela5_2Demo } from './s05/demo';
 import { Tela5_3 } from './s05/Tela5_3';
@@ -25,6 +26,7 @@ export const TELAS: Readonly<Record<string, ComponentType>> = {
   '1.3': Tela1_3,
   '1.4': Tela1_4,
   '1.5': Tela1_5,
+  '3.1': Tela3_1,
   '5.1': Tela5_1,
   '5.2': Tela5_2Demo,
   '5.3': Tela5_3,

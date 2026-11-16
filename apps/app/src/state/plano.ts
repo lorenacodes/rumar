@@ -19,6 +19,8 @@ export interface Plano {
   /** Centavos já guardados. */
   guardado: number;
   avisos: { preco: boolean; prazos: boolean; resumo: boolean } | null;
+  /** 3.1: onde a pessoa sonha em ir. */
+  sonho: 'brasil' | 'exterior' | 'os-dois' | null;
 }
 
 interface PlanoState extends Plano {
@@ -35,6 +37,7 @@ export const PLANO_INICIAL: Plano = {
   mensal: 0,
   guardado: 0,
   avisos: null,
+  sonho: null,
 };
 
 export const usePlano = create<PlanoState>()(
@@ -69,4 +72,5 @@ export const PLANO_ANA: Plano = {
   mensal: 60000,
   guardado: 200000,
   avisos: { preco: true, prazos: true, resumo: false },
+  sonho: 'os-dois',
 };

@@ -12,6 +12,7 @@ import { Tela1_2 } from './telas/s01/Tela1_2';
 import { Tela1_3 } from './telas/s01/Tela1_3';
 import { Tela1_4 } from './telas/s01/Tela1_4';
 import { Tela1_5 } from './telas/s01/Tela1_5';
+import { Tela3_1 } from './telas/s03/Tela3_1';
 import { Tela5_1 } from './telas/s05/Tela5_1';
 import { Tela5_3 } from './telas/s05/Tela5_3';
 import { Tela5_4 } from './telas/s05/Tela5_4';
@@ -46,6 +47,7 @@ const filhos: RouteObject[] = [
   { path: '/menor-de-18', element: <Tela1_2 /> },
   { path: '/boas-vindas', element: <Tela1_3 /> },
   { path: '/seu-plano', element: <Tela1_4 /> },
+  { path: '/sonho', element: <Tela3_1 /> },
   { path: '/avisos', element: <Tela1_5 /> },
   { path: '/inicio', element: <InicioProvisorio /> },
   { path: '/entrar', element: <Tela5_1 /> },

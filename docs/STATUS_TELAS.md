@@ -1,9 +1,9 @@
 # Status das telas do design
 
-> Gerado por `node tools/design/status.mjs` em 2026-11-05.
+> Gerado por `node tools/design/status.mjs` em 2026-11-16.
 > Fonte: `design/Rumar Fluxo Unificado.dc.html` (172 telas) e `apps/app/src/telas/registro.ts`.
 
-**Primeiro lançamento:** 23 de 159 telas feitas (14%).
+**Primeiro lançamento:** 24 de 159 telas feitas (15%).
 Fora do lançamento: seções 12–13 e 33–35 (futuro) e 32 (referência).
 
 | Tela | Título | Situação |
@@ -18,7 +18,7 @@ Fora do lançamento: seções 12–13 e 33–35 (futuro) e 32 (referência).
 | 2.3 | Custo e margem | ⏳ Pendente · Fase 1 |
 | 2.4 | Buscar destino | ⏳ Pendente · Fase 1 |
 | 2.5 | Meus destinos salvos | ⏳ Pendente · Fase 1 |
-| 3.1 | Para onde você sonha? | ⏳ Pendente · Fase 1 |
+| 3.1 | Para onde você sonha? | ✅ Feita |
 | 3.2 | Descobrir · Brasil | ⏳ Pendente · Fase 1 |
 | 3.3 | Destino no Brasil | ⏳ Pendente · Fase 1 |
 | 3.4 | Feriados e emendas | ⏳ Pendente · Fase 1 |

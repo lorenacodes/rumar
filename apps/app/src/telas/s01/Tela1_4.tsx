@@ -22,7 +22,7 @@ export function Tela1_4() {
   const continuar = () => {
     if (mensal <= 0) return;
     plano.atualizar({ mensal, guardado });
-    navegar('/avisos');
+    navegar('/sonho');
   };
 
   return (
