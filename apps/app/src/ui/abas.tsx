@@ -10,16 +10,16 @@ const ABAS: { id: Aba; nome: string; rota: string }[] = [
 ];
 
 /** Barra de abas fixa, 64 px, quatro abas (igual em todas as telas do design). */
-export function Abas({ ativa }: { ativa: Aba }) {
+export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRodape?: boolean }) {
   const navegar = useNavigate();
   return (
     <nav
       aria-label="Abas"
       style={{
-        position: 'absolute',
-        left: '0',
-        right: '0',
+        position: 'sticky',
         bottom: '0',
+        marginTop: logoAbaixoDoRodape ? '0' : 'auto',
+        zIndex: 1,
         height: 'calc(64px + env(safe-area-inset-bottom))',
         paddingBottom: 'env(safe-area-inset-bottom)',
         background: 'var(--fundo)',

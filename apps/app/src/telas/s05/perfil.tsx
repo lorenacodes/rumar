@@ -218,7 +218,7 @@ export function Tela5_17() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>Seu perfil.</div>
       </div>
       <div style={{ position: 'absolute', inset: '0', background: 'rgba(11,31,75,.55)' }} onClick={() => navegar(-1)} />
-      <div role="dialog" aria-modal="true" aria-labelledby="sair-titulo" style={{ position: 'absolute', left: '20px', right: '20px', top: '190px', background: 'var(--fundo)', padding: '20px', borderTop: '6px solid var(--amarelo)' }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="sair-titulo" style={{ position: 'absolute', left: '20px', right: '20px', top: 'clamp(16px, calc(100% - 524px), 190px)', maxHeight: 'calc(100% - 32px)', overflowY: 'auto', background: 'var(--fundo)', padding: '20px', borderTop: '6px solid var(--amarelo)' }}>
         <h2 id="sair-titulo" style={{ margin: 0, font: "600 22px/27px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
           Sair do Bo Vair?
         </h2>

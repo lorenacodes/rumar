@@ -38,10 +38,11 @@ export function Rodape({ children, padding = '10px 20px 22px', style }: { childr
   return (
     <div
       style={{
-        position: 'absolute',
-        left: '0',
-        right: '0',
+        // Preso embaixo sem cobrir o conteúdo (ver .tela em tela.css).
+        position: 'sticky',
         bottom: '0px',
+        marginTop: 'auto',
+        zIndex: 1,
         padding,
         borderTop: '1px solid var(--linha)',
         background: 'var(--fundo)',

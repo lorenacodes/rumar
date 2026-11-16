@@ -40,7 +40,7 @@ export function InicioProvisorio() {
           <BotaoPrincipal onClick={() => navegar('/seu-plano')}>Montar meu plano ↗</BotaoPrincipal>
         )}
       </Rodape>
-      <Abas ativa="inicio" />
+      <Abas ativa="inicio" logoAbaixoDoRodape />
     </main>
   );
 }

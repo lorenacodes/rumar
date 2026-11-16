@@ -59,8 +59,8 @@ export function Tela5_1() {
         onSubmit={(e) => {
           e.preventDefault();
           void enviar();
-        }}
-        style={{ padding: '24px 20px 0' }}>
+        }}>
+        <div style={{ padding: '24px 20px 0' }}>
         <Voltar />
         <MarcaQuadrada />
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '36px' }}>Que bom ver você de volta</div>
@@ -84,8 +84,9 @@ export function Tela5_1() {
           <BotaoContorno onClick={() => navegar('/conta/indisponivel/google')}>Continuar com Google</BotaoContorno>
           <BotaoContorno onClick={() => navegar('/conta/indisponivel/celular')}>Continuar com o celular</BotaoContorno>
         </div>
+        </div>
       </form>
-      <div style={{ position: 'absolute', left: '0', right: '0', bottom: '0', padding: '10px 20px 22px', borderTop: '1px solid var(--linha)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--fundo)' }}>
+      <div style={{ position: 'sticky', bottom: '0', marginTop: 'auto', zIndex: 1, padding: '10px 20px 22px', borderTop: '1px solid var(--linha)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--fundo)' }}>
         <span style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Ainda não tem conta?</span>
         <button type="button" className="r-btn" onClick={() => navegar('/conta/criar')} style={{ font: "600 16px 'Open Sans'", color: 'var(--azul)', minHeight: '44px' }}>
           Criar conta
@@ -130,7 +131,7 @@ export function Tela5_2(props: {
             Depois de 5 tentativas erradas, pedimos 15 minutos de pausa para proteger a conta.
           </div>
         </div>
-        <div style={{ position: 'absolute', left: '0', right: '0', bottom: '0px', padding: '10px 20px 14px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)' }}>
+        <div style={{ position: 'sticky', bottom: '0px', marginTop: 'auto', zIndex: 1, padding: '10px 20px 14px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)' }}>
           <BotaoPrincipal type="submit" disabled={props.enviando || props.erro === 'pausa'}>
             Entrar ↗
           </BotaoPrincipal>

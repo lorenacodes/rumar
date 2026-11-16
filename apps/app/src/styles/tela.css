@@ -7,10 +7,25 @@
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  /* O conteúdo rola e o rodapé fica preso embaixo, sem nunca cobrir o conteúdo
+     (telas menores que 390 × 844 ou com fonte grande). Em 390 × 844 fica igual ao design. */
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--fundo);
   color: var(--texto);
   font-family: var(--fonte-texto);
+}
+
+.tela > * {
+  flex-shrink: 0;
+}
+
+/* Formulários não podem quebrar o layout em coluna da tela. */
+.tela > form {
+  display: contents;
 }
 
 .tela-conteudo {
@@ -96,10 +111,10 @@
 }
 
 .rodape {
-  position: absolute;
-  left: 0;
-  right: 0;
+  position: sticky;
   bottom: 0;
+  margin-top: auto;
+  z-index: 1;
   padding: 10px var(--margem) calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--linha);
   background: var(--fundo);
