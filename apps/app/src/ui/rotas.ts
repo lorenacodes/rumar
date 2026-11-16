@@ -26,6 +26,9 @@ const ROTAS: Record<string, string> = {
   '5.17': '/perfil/sair',
   '5.18': '/conta/saiu',
   '28.7': '/sessao-terminou',
+  // 15.1 e 16.1 viraram uma tela só (D-017).
+  '15.1': '/minha-viagem',
+  '16.1': '/minha-viagem',
 };
 
 export function rotaDaTela(destino: string): string {

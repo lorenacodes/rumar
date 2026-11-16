@@ -132,7 +132,7 @@ export function Tela11_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("16.1")}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/minha-viagem")}>
           Salvar no meu plano ✓
         </div>
       </div>
@@ -151,7 +151,7 @@ export function Tela11_3() {
           ←
         </div>
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--azul)", marginTop: "2px" }}>
-          Passaporte · Sobre
+          Perfil · Sobre
         </div>
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Como o Bo Vair se mantém.

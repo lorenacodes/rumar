@@ -125,6 +125,15 @@ function destinoPerto(no, ctx) {
   return ctx.destinoTela;
 }
 
+/** Nomes aprovados pela fundadora: Bo Vair (D-013) e aba Perfil no lugar de Passaporte (D-016). */
+function renomear(t) {
+  return t
+    .replace(/\brumar\b/g, 'bo vair')
+    .replace(/\bRumar\b/g, 'Bo Vair')
+    .replace(/^Passaporte · /, 'Perfil · ')
+    .replace('ficam no seu Passaporte', 'ficam no seu Perfil');
+}
+
 function render(no, ctx, nivel) {
   const pad = '  '.repeat(nivel);
   // "Foto de X": rótulo do design que some quando a foto real carrega.
@@ -135,7 +144,7 @@ function render(no, ctx, nivel) {
     return `${pad}<RotuloFoto nome=${JSON.stringify(nome)}${st.length ? ` style={${obj(st)}}` : ''} />`;
   }
   if (no.texto !== undefined) {
-    let t = no.texto.replace(/\brumar\b/g, 'bo vair').replace(/\bRumar\b/g, 'Bo Vair');
+    let t = renomear(no.texto);
     if (t === ' ') return `${pad}{' '}`;
     t = t.replace(/[{}<>]/g, (c) => `{'${c}'}`);
     // Espaços nas pontas somem no JSX: preservar.

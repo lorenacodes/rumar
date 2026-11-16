@@ -138,3 +138,19 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   sem mandar o que a pessoa digita para fora). Dados: `tools/dados/cidades.mjs`.
 - **Visual:** a tela 1.3 continua igual ao design; a lista de sugestões só aparece ao digitar.
 - **Pendente:** usar a mesma lista em "Cidade de onde saio" (5.14) e na busca de destino (2.4).
+
+## D-016 — Aba "Passaporte" passa a se chamar "Perfil"
+- **Data:** 16/11/2026
+- **Status:** ✅ Aprovada pela fundadora
+- **Motivo:** "Passaporte" confundia com o documento (tela 18.1 "Tirar o passaporte"). A navegação
+  precisa ser clara até para uma criança.
+- **O que muda:** só o nome da aba e as trilhas ("Perfil · Sobre"). O documento continua "Passaporte".
+  O teste visual compara com o design já com o nome novo.
+
+## D-017 — Uma tela só para "Minha viagem"
+- **Data:** 16/11/2026
+- **Status:** ✅ Aprovada pela fundadora
+- **Motivo:** 15.1 e 16.1 repetiam o mesmo cartão (AJU ✈ CDG, dias, % pronta).
+- **O que muda:** a aba "Minha viagem" abre a 16.1 com a lista "Seu plano até o embarque" da 15.1
+  logo abaixo do cartão (`telas/s16/MinhaViagem.tsx`, rota `/minha-viagem`). Todos os links para a
+  15.1 ou a 16.1 levam a ela. As telas originais seguem no teste visual como referência do design.

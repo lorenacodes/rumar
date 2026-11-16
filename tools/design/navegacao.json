@@ -134,7 +134,7 @@
   },
   "6.6": {
    "toques": {
-    "Adicionar ao calendário ↗": "16.1"
+    "Adicionar ao calendário ↗": "/minha-viagem"
    }
   },
   "7.1": {
@@ -237,7 +237,7 @@
   },
   "11.2": {
    "toques": {
-    "Salvar no meu plano ✓": "16.1"
+    "Salvar no meu plano ✓": "/minha-viagem"
    }
   },
   "14.1": {
@@ -247,7 +247,7 @@
   },
   "14.2": {
    "toques": {
-    "Marcar minha parte como paga ✓": "16.1"
+    "Marcar minha parte como paga ✓": "/minha-viagem"
    }
   },
   "14.3": {
@@ -295,8 +295,8 @@
   },
   "16.4": {
    "toques": {
-    "Próxima dica": "16.1",
-    "Pular as dicas": "16.1"
+    "Próxima dica": "/minha-viagem",
+    "Pular as dicas": "/minha-viagem"
    }
   },
   "17.1": {
@@ -335,7 +335,7 @@
   "20.2": {
    "toques": {
     "Compartilhar o marco ↗": "26.3",
-    "Continuar": "15.1"
+    "Continuar": "/minha-viagem"
    }
   },
   "21.1": {
@@ -377,7 +377,7 @@
    "toques": {
     "Ana S.": "/perfil",
     "AS": "/perfil",
-    "Paris": "16.1",
+    "Paris": "/minha-viagem",
     "Maceió": "16.2",
     "Compartilhar com a marca Bo Vair ↗": "26.3",
     "Compartilhar com a marca Rumar ↗": "26.3",

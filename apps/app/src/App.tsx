@@ -24,6 +24,7 @@ import { Tela5_13, Tela5_14, Tela5_15, Tela5_17, Tela5_18 } from './telas/s05/pe
 import { Tela5_10, Tela5_11, Tela5_12, Tela5_16, Tela5_8, Tela5_9 } from './telas/s05/senha';
 import { Tela28_7 } from './telas/s28/Tela28_7';
 import { AvisoAtualizar } from './ui/atualizar';
+import { MinhaViagem } from './telas/s16/MinhaViagem';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
 function Raiz() {
@@ -86,6 +87,7 @@ const filhos: RouteObject[] = [
   { path: '/conta/indisponivel/:tela', element: <EmBreve /> },
   { path: '/em-breve/:tela', element: <EmBreve /> },
   { path: '/tela/:id', element: <TelaPorId /> },
+  { path: '/minha-viagem', element: <MinhaViagem /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];
 

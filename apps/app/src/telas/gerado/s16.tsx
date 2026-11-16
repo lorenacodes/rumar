@@ -175,7 +175,7 @@ export function Tela16_2() {
           </div>
         </div>
         <div style={{ fontSize: "14px", lineHeight: "20px", color: "var(--texto-sec)", marginTop: "12px" }}>
-          Viagens que você já fez ficam no seu Passaporte, com fotos e relatos.
+          Viagens que você já fez ficam no seu Perfil, com fotos e relatos.
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
@@ -313,10 +313,10 @@ export function Tela16_4() {
           <div style={{ width: "8px", height: "8px", background: "var(--linha)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
-          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("16.1")}>
+          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("/minha-viagem")}>
             Próxima dica
           </div>
-          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("16.1")}>
+          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("/minha-viagem")}>
             Pular as dicas
           </div>
         </div>

@@ -110,7 +110,7 @@ export function Tela25_2() {
         <div style={{ font: "600 17px 'Lexend Exa'", letterSpacing: "-0.02em", margin: "18px 0 8px" }}>
           Minhas viagens
         </div>
-        <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px" }} {...toque("16.1")}>
+        <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px" }} {...toque("/minha-viagem")}>
           <div style={{ width: "84px", flex: "none", height: "64px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
               <FotoDestino nome="Aracaju" />

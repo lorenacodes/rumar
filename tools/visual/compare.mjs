@@ -102,12 +102,21 @@ await design.route('**/*', (route) => {
 });
 await design.goto('file://' + DESIGN);
 await design.evaluate(() => document.fonts.ready);
-// Nome do app trocado de Rumar para Bo Vair (D-013, aprovado pela fundadora): o design
-// é comparado já com o nome novo, para a troca não contar como diferença.
+// Nomes trocados com aprovação da fundadora (D-013 Bo Vair, D-016 aba Perfil): o design
+// é comparado já com os nomes novos, para a troca não contar como diferença.
 await design.evaluate(() => {
   const andar = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let n = andar.nextNode(); n; n = andar.nextNode()) {
-    n.nodeValue = n.nodeValue.replace(/\bRumar\b/g, 'Bo Vair').replace(/\brumar\b/g, 'bo vair');
+    n.nodeValue = n.nodeValue
+      .replace(/\bRumar\b/g, 'Bo Vair')
+      .replace(/\brumar\b/g, 'bo vair')
+      // Aba "Passaporte" virou "Perfil" (D-016): só na barra de abas e nas trilhas.
+      .replace(/^Passaporte · /, 'Perfil · ')
+      .replace('ficam no seu Passaporte', 'ficam no seu Perfil');
+    const barra = n.parentElement?.parentElement;
+    if (n.nodeValue.trim() === 'Passaporte' && barra && getComputedStyle(barra).gridTemplateColumns.split(' ').length === 4) {
+      n.nodeValue = 'Perfil';
+    }
   }
 });
 await design.evaluate(() => document.fonts.ready);

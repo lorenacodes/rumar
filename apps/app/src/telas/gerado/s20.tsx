@@ -124,7 +124,7 @@ export function Tela20_2() {
           <div style={{ height: "56px", background: "var(--fundo-escuro)", color: "#fff", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("26.3")}>
             Compartilhar o marco ↗
           </div>
-          <div style={{ height: "48px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'" }} {...toque("15.1")}>
+          <div style={{ height: "48px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'" }} {...toque("/minha-viagem")}>
             Continuar
           </div>
         </div>
