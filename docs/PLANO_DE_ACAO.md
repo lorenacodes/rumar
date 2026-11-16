@@ -10,7 +10,7 @@
 
 | # | O quê | Por que é urgente | Quem | Prazo sugerido |
 |---|---|---|---|---|
-| 1 | **Liberar uma vaga no Supabase e criar o banco em São Paulo** | **O APK de teste está quebrado agora:** o app aponta para o banco dos EUA, que foi pausado/sumiu da conexão. Ninguém consegue criar conta. | Você (liberar vaga) → eu (criar e ligar) | Hoje |
+| 1 | ✅ **Banco em São Paulo criado e ligado ao app (16/11/2026)** | Organização no plano Pro, já pago pela fundadora. | — | Feito |
 | 2 | **Pesquisar se o nome "Rumar" está livre** no INPI (busca gratuita) e se o domínio `rumar.com.br` está disponível no Registro.br | Se o nome já tiver dono, tudo o que for feito com ele (logo, loja, divulgação) vai para o lixo. Nome é a **única** coisa da ideia que dá para registrar como sua. | Você | Esta semana |
 | 3 | **Criar a conta de desenvolvedor no Google Play** (US$ 25 ≈ R$ 140, pagamento único) | Contas pessoais novas só publicam depois de um **teste fechado com 12 pessoas por 14 dias**. É a etapa que mais demora no calendário e não depende de código. | Você | Esta semana |
 | 4 | **Juntar 12+ testadores** (amigos, família, grupos de viagem) | Necessário para o item 3 e é a primeira prova real de que a ideia funciona. | Você | Até a Fase 1 ficar pronta |
@@ -81,9 +81,10 @@ O que protege de verdade:
 | Item | Custo | Quando | Por quê |
 |---|---|---|---|
 | Busca de marca no INPI e domínio no Registro.br | Grátis (busca) | Agora | Decidir se o nome fica |
+| ✅ Supabase Pro (já pago) | ≈ R$ 140 por mês | Desde 16/11/2026 | Banco sem pausa, com backup; recorrente |
 | Conta Google Play | ≈ R$ 140 (US$ 25, uma vez) | Agora | Começar o teste de 14 dias |
 | Domínio `rumar.com.br` (se livre) | ≈ R$ 40/ano | Agora | E-mails da conta e página do app |
-| **Subtotal imediato** | **≈ R$ 180** | | |
+| **Subtotal imediato** | **≈ R$ 320** (Supabase do 1º mês + Play + domínio) | | Sobra ≈ R$ 180 dos R$ 500; a partir do 2º mês, +R$ 140/mês |
 | Registro de marca no INPI | R$ 440 (com desconto) | Assim que a busca confirmar | **Não cabe junto** com o resto nos R$ 500: faltam ≈ R$ 120 |
 | Registro do software no INPI | R$ 210 | Depois | Menos importante que a marca |
 
