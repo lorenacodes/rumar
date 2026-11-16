@@ -72,3 +72,13 @@ input {
 .campo-design::placeholder {
   font-weight: 400;
 }
+
+/* Foco nos campos: linha azul logo abaixo do campo, sem caixa por cima do rótulo
+   (a caixa padrão do navegador cobria o texto acima do campo no celular). */
+.r-input:focus,
+.r-input:focus-visible,
+.campo:focus,
+.campo:focus-visible {
+  outline: none;
+  box-shadow: 0 2px 0 var(--azul);
+}

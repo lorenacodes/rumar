@@ -22,3 +22,13 @@ describe('regras de conta', () => {
     expect(iniciais('')).toBe('R');
   });
 });
+
+describe('sugestão de e-mail', () => {
+  it('corrige domínios digitados errado', async () => {
+    const { sugerirEmail } = await import('./servico');
+    expect(sugerirEmail('lorena@gamil.com')).toBe('lorena@gmail.com');
+    expect(sugerirEmail('ana@hotmial.com')).toBe('ana@hotmail.com');
+    expect(sugerirEmail('ana@gmail.com')).toBeNull();
+    expect(sugerirEmail('ana@empresa.com.br')).toBeNull();
+  });
+});

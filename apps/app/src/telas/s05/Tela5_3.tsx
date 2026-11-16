@@ -1,11 +1,28 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { criarConta, emailValido, regrasSenha, senhaValida } from '../../conta/servico';
+import { criarConta, emailValido, regrasSenha, senhaValida, sugerirEmail } from '../../conta/servico';
 import { useFluxoConta } from '../../conta/fluxo';
 import { ANA, useDemo, useValorInicial } from '../../dev/demo';
 import { usePlano } from '../../state/plano';
 import { Aviso, BotaoPrincipal, Caixa, Campo, Rodape, Voltar } from '../../ui/pecas';
+
+/** Cartão com o plano deste aparelho enquanto o destino ainda não foi escolhido. */
+function CartaoPlano({ mensal, guardado }: { mensal: number; guardado: number }) {
+  const reais = (c: number) => `R$ ${Math.round(c / 100).toLocaleString('pt-BR')}`;
+  return (
+    <div style={{ background: 'var(--fundo-escuro)', borderTop: '6px solid var(--amarelo)', color: '#fff', marginTop: '14px', padding: '12px 16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <b style={{ font: "600 26px/34px 'Lexend Exa'" }}>{reais(mensal)}</b>
+        <span style={{ fontSize: '14px', color: '#AEBBE0' }}>por mês</span>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '14px', color: '#AEBBE0' }}>
+        <span>Já guardado</span>
+        <b style={{ color: 'var(--amarelo)' }}>{reais(guardado)}</b>
+      </div>
+    </div>
+  );
+}
 
 /** Cartão da viagem do plano (aparece quando o plano já tem destino). */
 function CartaoViagem() {
@@ -29,6 +46,8 @@ export function Tela5_3() {
   const navegar = useNavigate();
   const demo = useDemo();
   const maior18 = usePlano((p) => p.maior18);
+  const mensal = usePlano((p) => p.mensal);
+  const guardadoPlano = usePlano((p) => p.guardado);
   const setFluxo = useFluxoConta((s) => s.set);
   const [nome, setNome] = useState(useValorInicial<string>(ANA.nome, ''));
   const [email, setEmail] = useState(useValorInicial<string>(ANA.email, ''));
@@ -54,7 +73,13 @@ export function Tela5_3() {
     setFluxo({ email, tipoCodigo: 'signup' });
     if (r.ok) return navegar('/conta/codigo');
     if (r.motivo === 'existe') return navegar('/conta/ja-existe');
-    setErro(r.motivo === 'invalido' ? 'Confira o e-mail e a senha.' : 'Não conseguimos criar a conta agora. Confira a internet e tente de novo.');
+    const mensagens: Record<string, string> = {
+      email_invalido: 'Esse e-mail não existe ou tem um erro de digitação. Confira o endereço (por exemplo, gmail.com).',
+      limite_email: 'Enviamos muitos e-mails em pouco tempo. Espere alguns minutos e tente de novo.',
+      email_nao_autorizado: 'Ainda não conseguimos enviar e-mail para esse endereço. Tente com outro e-mail.',
+      invalido: 'Confira o e-mail e a senha.',
+    };
+    setErro(mensagens[r.motivo] ?? 'Não conseguimos criar a conta agora. Confira a internet e tente de novo.');
   };
 
   return (
@@ -69,9 +94,14 @@ export function Tela5_3() {
           <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Seu plano está pronto</div>
           <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Guarde seu plano.</h1>
           {/* O destino entra com a Fase 1 (Descobrir); até lá o cartão só aparece no modo demonstração. */}
-          {demo ? <CartaoViagem /> : null}
+          {demo ? <CartaoViagem /> : mensal > 0 ? <CartaoPlano mensal={mensal} guardado={guardadoPlano} /> : null}
           <Campo id="nome" rotulo="Seu nome" autoComplete="name" valor={nome} aoMudar={setNome} />
           <Campo id="email" rotulo="E-mail" type="email" inputMode="email" autoComplete="email" placeholder="nome@exemplo.com" valor={email} aoMudar={setEmail} />
+          {sugerirEmail(email) ? (
+            <button type="button" className="r-btn" onClick={() => setEmail(sugerirEmail(email)!)} style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--azul)', fontWeight: 600, marginTop: '6px' }}>
+              Você quis dizer {sugerirEmail(email)}?
+            </button>
+          ) : null}
           <Campo id="senha" rotulo="Senha" type="password" autoComplete="new-password" placeholder="••••••••" valor={senha} aoMudar={setSenha} aria-describedby="regras-senha" />
           {senha ? (
             <div id="regras-senha" style={{ fontSize: '13px', lineHeight: '20px', marginTop: '4px' }}>

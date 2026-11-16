@@ -28,6 +28,25 @@ export function emailValido(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 }
 
+const DOMINIOS_COMUNS = ['gmail.com', 'hotmail.com', 'outlook.com', 'live.com', 'yahoo.com', 'yahoo.com.br', 'icloud.com', 'uol.com.br', 'bol.com.br', 'terra.com.br'];
+
+function distancia(a: string, b: string): number {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array<number>(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0]![j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      d[i]![j] = Math.min(d[i - 1]![j]! + 1, d[i]![j - 1]! + 1, d[i - 1]![j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length]![b.length]!;
+}
+
+/** Sugere a correção de domínios digitados errado (ex.: "gamil.com" → "gmail.com"). */
+export function sugerirEmail(email: string): string | null {
+  const [nome, dominio] = email.trim().toLowerCase().split('@');
+  if (!nome || !dominio || DOMINIOS_COMUNS.includes(dominio)) return null;
+  const perto = DOMINIOS_COMUNS.find((d) => distancia(dominio, d) <= 2);
+  return perto ? `${nome}@${perto}` : null;
+}
+
 // ---------------------------------------------------------------------------
 // Limite de tentativas no aparelho (5.2): 5 erros → 15 minutos de pausa.
 // O Supabase também limita tentativas no servidor.
@@ -66,7 +85,7 @@ export async function criarConta(dados: {
   email: string;
   senha: string;
   novidades: boolean;
-}): Promise<Resultado<'existe' | 'rede' | 'invalido'>> {
+}): Promise<Resultado<'existe' | 'rede' | 'invalido' | 'email_invalido' | 'limite_email' | 'email_nao_autorizado'>> {
   const { data, error } = await supabase.auth.signUp({
     email: dados.email.trim(),
     password: dados.senha,
@@ -76,7 +95,11 @@ export async function criarConta(dados: {
     },
   });
   if (error) {
-    if (/registered|exists/i.test(error.message)) return { ok: false, motivo: 'existe' };
+    // Códigos do Supabase Auth: https://supabase.com/docs/guides/auth/debugging/error-codes
+    if (error.code === 'email_address_invalid') return { ok: false, motivo: 'email_invalido' };
+    if (error.code === 'over_email_send_rate_limit' || error.status === 429) return { ok: false, motivo: 'limite_email' };
+    if (error.code === 'email_address_not_authorized') return { ok: false, motivo: 'email_nao_autorizado' };
+    if (error.code === 'user_already_exists' || /registered|exists/i.test(error.message)) return { ok: false, motivo: 'existe' };
     if (error.status === 400 || error.status === 422) return { ok: false, motivo: 'invalido' };
     return { ok: false, motivo: 'rede' };
   }
