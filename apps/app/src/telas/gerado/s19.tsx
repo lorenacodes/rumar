@@ -2,6 +2,7 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { Chip, registrarInicial } from '../../ui/chip';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 19.1 Minha mala */
@@ -97,6 +98,9 @@ export function Tela19_1() {
   );
 }
 
+registrarInicial("19.2:g1", ["Despachada"]);
+registrarInicial("19.2:g2", ["Não"]);
+registrarInicial("19.2:g4", ["Remédio de uso contínuo"]);
 /** 19.2 Montar a mala */
 export function Tela19_2() {
   const toque = useToque();
@@ -117,51 +121,31 @@ export function Tela19_2() {
           Bagagem
         </div>
         <div style={{ display: "flex", gap: "6px" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Só de mão
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Despachada
-          </div>
+          <Chip grupo="19.2:g1" valor="Só de mão" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="19.2:g1" valor="Despachada" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)", margin: "16px 0 6px" }}>
           Vai lavar roupa?
         </div>
         <div style={{ display: "flex", gap: "6px" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Sim
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Não
-          </div>
+          <Chip grupo="19.2:g2" valor="Sim" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="19.2:g2" valor="Não" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)", margin: "16px 0 6px" }}>
           O que você vai fazer
         </div>
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Museus
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Caminhar muito
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Vida noturna
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Trabalhar
-          </div>
+          <Chip grupo="19.2:g3" valor="Museus" modo="varios" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="19.2:g3" valor="Caminhar muito" modo="varios" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="19.2:g3" valor="Vida noturna" modo="varios" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="19.2:g3" valor="Trabalhar" modo="varios" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)", margin: "16px 0 6px" }}>
           Alguma necessidade
         </div>
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Remédio de uso contínuo
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Alimentação especial
-          </div>
+          <Chip grupo="19.2:g4" valor="Remédio de uso contínuo" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="19.2:g4" valor="Alimentação especial" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ background: "var(--cartao-1)", padding: "12px 14px", marginTop: "14px", fontSize: "14px", lineHeight: "20px" }}>
           Com o seu roteiro, sugerimos 2 sapatos confortáveis, 1 roupa para a noite e o notebook com adaptador de tomada. Você pode mudar tudo.

@@ -2,9 +2,12 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { Chip, registrarInicial } from '../../ui/chip';
 import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
+registrarInicial("3.2:g1", ["Brasil"]);
+registrarInicial("3.2:g2", ["Ônibus"]);
 /** 3.2 Descobrir · Brasil */
 export function Tela3_2() {
   const toque = useToque();
@@ -20,9 +23,7 @@ export function Tela3_2() {
           Para onde dá no Brasil.
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "12px" }}>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Brasil
-          </div>
+          <Chip grupo="3.2:g1" valor="Brasil" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
           <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }} {...toque("2.1")}>
             Exterior
           </div>
@@ -31,15 +32,9 @@ export function Tela3_2() {
           </div>
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Ônibus
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Carro
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Feriado
-          </div>
+          <Chip grupo="3.2:g2" valor="Ônibus" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="3.2:g2" valor="Carro" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="3.2:g2" valor="Feriado" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
           <FotoDestino nome="Maceió" />
@@ -388,6 +383,8 @@ export function Tela3_4() {
   );
 }
 
+registrarInicial("3.5:g1", ["Carro"]);
+registrarInicial("3.5:g2", ["3 pessoas"]);
 /** 3.5 Ônibus ou carro */
 export function Tela3_5() {
   const toque = useToque();
@@ -405,20 +402,12 @@ export function Tela3_5() {
           Como chegar de Aracaju.
         </div>
         <div style={{ display: "flex", gap: "6px", margin: "12px 0 0" }}>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Ônibus
-          </div>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Carro
-          </div>
+          <Chip grupo="3.5:g1" valor="Ônibus" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="3.5:g1" valor="Carro" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            1 pessoa
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ 3 pessoas
-          </div>
+          <Chip grupo="3.5:g2" valor="1 pessoa" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="3.5:g2" valor="3 pessoas" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ background: "var(--cartao-2)", padding: "6px 14px 12px", marginTop: "12px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>

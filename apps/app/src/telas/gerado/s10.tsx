@@ -2,8 +2,10 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { Chip, registrarInicial } from '../../ui/chip';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
+registrarInicial("10.1:g1", ["Por data"]);
 /** 10.1 Cofrinho · por data */
 export function Tela10_1() {
   const toque = useToque();
@@ -21,9 +23,7 @@ export function Tela10_1() {
           Quando você quer ir?
         </div>
         <div style={{ display: "flex", gap: "6px", margin: "14px 0 0" }}>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
-            Por data
-          </div>
+          <Chip grupo="10.1:g1" valor="Por data" modo="um" marcadoNoDesign={true} comCheck={false} estiloMarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
           <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("10.2")}>
             Por valor
           </div>
@@ -112,6 +112,7 @@ export function Tela10_1() {
   );
 }
 
+registrarInicial("10.2:g1", ["Por valor"]);
 /** 10.2 Cofrinho · por valor */
 export function Tela10_2() {
   const toque = useToque();
@@ -132,9 +133,7 @@ export function Tela10_2() {
           <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("10.1")}>
             Por data
           </div>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
-            Por valor
-          </div>
+          <Chip grupo="10.2:g1" valor="Por valor" modo="um" marcadoNoDesign={true} comCheck={false} estiloMarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <p style={{ fontSize: "15px", lineHeight: "22px", color: "var(--texto-sec)", margin: "12px 0 0" }}>
           Arraste o valor e veja quando você chega.
@@ -329,6 +328,8 @@ export function Tela10_3() {
   );
 }
 
+registrarInicial("10.4:g1", ["Poupança"]);
+registrarInicial("10.4:g2", ["Todo domingo"]);
 /** 10.4 Confirmar meu cofrinho */
 export function Tela10_4() {
   const toque = useToque();
@@ -394,29 +395,17 @@ export function Tela10_4() {
           Onde você guarda? (só para lembrar)
         </div>
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          <div style={{ height: "48px", padding: "0 14px", background: "var(--fundo-escuro)", color: "#fff", display: "flex", alignItems: "center", font: "600 15px 'Open Sans'" }}>
-            ✓ Poupança
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", border: "1px solid var(--linha)", display: "flex", alignItems: "center", font: "500 15px 'Open Sans'" }}>
-            Pix ou conta
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", border: "1px solid var(--linha)", display: "flex", alignItems: "center", font: "500 15px 'Open Sans'" }}>
-            Outro
-          </div>
+          <Chip grupo="10.4:g1" valor="Poupança" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.4:g1" valor="Pix ou conta" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.4:g1" valor="Outro" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)", margin: "16px 0 6px" }}>
           Lembrar de registrar
         </div>
         <div style={{ display: "flex", gap: "6px" }}>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
-            Todo domingo
-          </div>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
-            Dia 5
-          </div>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
-            Não
-          </div>
+          <Chip grupo="10.4:g2" valor="Todo domingo" modo="um" marcadoNoDesign={true} comCheck={false} estiloMarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.4:g2" valor="Dia 5" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.4:g2" valor="Não" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ fontSize: "14px", lineHeight: "20px", color: "var(--texto-sec)", marginTop: "12px" }}>
           O dinheiro continua com você. O Bo Vair só soma e lembra.
@@ -552,6 +541,7 @@ export function Tela10_5() {
   );
 }
 
+registrarInicial("10.7:g1", ["R$ 150"]);
 /** 10.7 Registrar o que guardei */
 export function Tela10_7() {
   const toque = useToque();
@@ -574,18 +564,10 @@ export function Tela10_7() {
           </span>
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
-            R$ 50
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ R$ 150
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
-            R$ 300
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
-            Outro
-          </div>
+          <Chip grupo="10.7:g1" valor="R$ 50" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.7:g1" valor="R$ 150" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.7:g1" valor="R$ 300" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="10.7:g1" valor="Outro" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ marginTop: "16px" }}>
           <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)" }}>

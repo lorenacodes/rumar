@@ -134,8 +134,53 @@ function renomear(t) {
     .replace('ficam no seu Passaporte', 'ficam no seu Perfil');
 }
 
+/** Opção marcável do design: 48 px de altura, padding 0 14px, borda ou fundo escuro. */
+function ehChip(no) {
+  if (!no.tag || no.filhos.length !== 1 || no.filhos[0].texto === undefined) return false;
+  const d = Object.fromEntries(decls(no.style));
+  return d.height === '48px' && /^0 1[0-9]px$/.test(d.padding ?? '') && (Boolean(d.border) || d.background === 'var(--fundo-escuro)');
+}
+const marcadoChip = (no) => Object.fromEntries(decls(no.style)).background === 'var(--fundo-escuro)';
+
+/** Numera os grupos de chips da tela (um grupo = mesmo elemento pai, 2 ou mais chips). */
+function marcarGrupos(raiz, id) {
+  const nomes = NAV.grupos?.[id] ?? [];
+  const modos = NAV.modos ?? {};
+  let n = 0;
+  const visitar = (no) => {
+    if (!no.filhos) return;
+    const chips = no.filhos.filter(ehChip);
+    if (chips.length >= 2) {
+      const nome = `${id}:${nomes[n] ?? `g${n + 1}`}`;
+      n++;
+      const marcados = chips.filter(marcadoChip);
+      const modo = modos[nome] ?? (marcados.length > 1 ? 'varios' : 'um');
+      for (const c of chips) c.grupo = { nome, modo, iniciais: modo === 'um' ? marcados.map((m) => textoDe(m).replace(/^✓ /, '')) : [] };
+    }
+    no.filhos.forEach(visitar);
+  };
+  visitar(raiz);
+}
+
+function estilosChip(no) {
+  const base = decls(no.style).filter(([p]) => !['background', 'color', 'border', 'font'].includes(p));
+  const font = Object.fromEntries(decls(no.style)).font ?? "500 15px 'Open Sans'";
+  const tamanho = font.replace(/^\d+ /, '');
+  return {
+    marcado: [...base, ['font', `600 ${tamanho}`], ['background', 'var(--fundo-escuro)'], ['color', '#fff']],
+    desmarcado: [...base, ['font', `500 ${tamanho}`], ['border', '1px solid var(--linha)']],
+  };
+}
+
 function render(no, ctx, nivel) {
   const pad = '  '.repeat(nivel);
+  if (no.grupo && !ctx.nav[textoDe(no)] && !ctx.dentroDeToque) {
+    ctx.usa.add('chip');
+    const valor = textoDe(no).replace(/^✓ /, '');
+    const e = estilosChip(no);
+    if (no.grupo.iniciais.length) ctx.iniciais.set(no.grupo.nome, no.grupo.iniciais);
+    return `${pad}<Chip grupo=${JSON.stringify(no.grupo.nome)} valor=${JSON.stringify(renomear(valor))} modo="${no.grupo.modo}" marcadoNoDesign={${marcadoChip(no)}} comCheck={${/^✓ /.test(textoDe(no)) || !marcadoChip(no)}} estiloMarcado={${obj(e.marcado)}} estiloDesmarcado={${obj(e.desmarcado)}} />`;
+  }
   // "Foto de X": rótulo do design que some quando a foto real carrega.
   if (no.tag && no.filhos.length === 1 && no.filhos[0].texto !== undefined && /^Foto de /.test(textoDe(no))) {
     const nome = textoDe(no).slice(8);
@@ -198,8 +243,9 @@ function render(no, ctx, nivel) {
 
 function gerarTela(t) {
   const raiz = parse(t.html);
+  marcarGrupos(raiz, t.id);
   const textoTela = textoDe(raiz);
-  const ctx = { usa: new Set(), nav: NAV.telas?.[t.id]?.toques ?? {}, rodape: false, dentroDeToque: false, destinoTela: DESTINOS.find((d) => textoTela.includes(d)) ?? 'Paris' };
+  const ctx = { usa: new Set(), nav: NAV.telas?.[t.id]?.toques ?? {}, rodape: false, dentroDeToque: false, destinoTela: DESTINOS.find((d) => textoTela.includes(d)) ?? 'Paris', iniciais: new Map() };
   const filhos = raiz.filhos.map((f) => render(f, ctx, 3)).join('\n');
   const nome = `Tela${t.id.replace('.', '_')}`;
   // Fundo e cor da moldura (telas escuras, como 26.3 e o tema escuro da seção 31).
@@ -214,7 +260,8 @@ ${filhos}
     </main>
   );
 }`;
-  return { nome, corpo: ctx.usa.has('toque') ? corpo : corpo.replace('  const toque = useToque();\n', ''), usa: ctx.usa };
+  const iniciais = [...ctx.iniciais].map(([g, v]) => `registrarInicial(${JSON.stringify(g)}, ${JSON.stringify(v)});`).join('\n');
+  return { nome, corpo: (iniciais ? iniciais + '\n' : '') + (ctx.usa.has('toque') ? corpo : corpo.replace('  const toque = useToque();\n', '')), usa: ctx.usa };
 }
 
 mkdirSync(OUT, { recursive: true });
@@ -226,10 +273,11 @@ for (const secao of args) {
   const usaAbas = geradas.some((g) => g.usa.has('Abas'));
   const usaToque = geradas.some((g) => g.usa.has('toque'));
   const usaFoto = geradas.some((g) => g.usa.has('foto'));
+  const usaChip = geradas.some((g) => g.usa.has('chip'));
   const src = `// GERADO por tools/design/to-app.mjs a partir de design/Rumar Fluxo Unificado.dc.html.
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
-${usaAbas ? "import { Abas } from '../../ui/abas';\n" : ''}${usaFoto ? "import { FotoDestino, RotuloFoto } from '../../ui/foto';\n" : ''}import { AvisoExemplo${usaToque ? ', useToque' : ''} } from '../../ui/toque';
+${usaAbas ? "import { Abas } from '../../ui/abas';\n" : ''}${usaChip ? "import { Chip, registrarInicial } from '../../ui/chip';\n" : ''}${usaFoto ? "import { FotoDestino, RotuloFoto } from '../../ui/foto';\n" : ''}import { AvisoExemplo${usaToque ? ', useToque' : ''} } from '../../ui/toque';
 
 ${geradas.map((g) => g.corpo).join('\n\n')}
 

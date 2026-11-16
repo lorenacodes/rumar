@@ -270,7 +270,11 @@ const caminhoFoto = (userId: string) => `${userId}/perfil.jpg`;
 export async function carregarPerfil(): Promise<Perfil | null> {
   const { data: u } = await supabase.auth.getUser();
   if (!u.user) return null;
-  const { data } = await supabase.from('profiles').select('display_name, origin_city, origin, photo_updated_at').eq('user_id', u.user.id).maybeSingle();
+  let { data } = await supabase.from('profiles').select('display_name, origin_city, origin, photo_updated_at').eq('user_id', u.user.id).maybeSingle();
+  // Sem perfil (conta criada antes da correção): cria agora e lê de novo.
+  if (!data && (await garantirPerfil())) {
+    ({ data } = await supabase.from('profiles').select('display_name, origin_city, origin, photo_updated_at').eq('user_id', u.user.id).maybeSingle());
+  }
   if (!data) return null;
   let foto: string | null = null;
   if (data.photo_updated_at) {

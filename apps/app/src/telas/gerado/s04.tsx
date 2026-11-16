@@ -2,9 +2,11 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { Chip, registrarInicial } from '../../ui/chip';
 import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
+registrarInicial("4.1:g1", ["Dá para ir já"]);
 /** 4.1 Viagens que cabem hoje */
 export function Tela4_1() {
   const toque = useToque();
@@ -20,9 +22,7 @@ export function Tela4_1() {
           O que cabe hoje.
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "12px" }}>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Dá para ir já
-          </div>
+          <Chip grupo="4.1:g1" valor="Dá para ir já" modo="um" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
           <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }} {...toque("4.3")}>
             Meus sonhos
           </div>
@@ -36,15 +36,9 @@ export function Tela4_1() {
           </b>
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "10px", overflow: "hidden" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Fim de semana
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
-            ✓ Ônibus
-          </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Até 6 h
-          </div>
+          <Chip grupo="4.1:g2" valor="Fim de semana" modo="varios" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="4.1:g2" valor="Ônibus" modo="varios" marcadoNoDesign={true} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
+          <Chip grupo="4.1:g2" valor="Até 6 h" modo="varios" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("4.2")}>
           <FotoDestino nome="Penedo" />
@@ -331,6 +325,7 @@ export function Tela4_3() {
   );
 }
 
+registrarInicial("4.4:g1", ["Dá para ir já"]);
 /** 4.4 Quando ainda não cabe */
 export function Tela4_4() {
   const toque = useToque();
@@ -352,9 +347,7 @@ export function Tela4_4() {
           <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }} {...toque("4.1")}>
             ✓ Dá para ir já
           </div>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
-            Meus sonhos
-          </div>
+          <Chip grupo="4.4:g1" valor="Meus sonhos" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ background: "var(--cartao-1)", padding: "10px 14px", marginTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
           <span style={{ fontSize: "15px" }}>

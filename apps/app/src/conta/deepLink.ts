@@ -26,10 +26,11 @@ export function ouvirLinks(navegar: (rota: string) => void): () => void {
   };
   const ouvinte = CapApp.addListener('appUrlOpen', (e) => void tratar(e.url));
   // Link de senha: o Supabase avisa com o evento PASSWORD_RECOVERY.
-  const { data } = supabase.auth.onAuthStateChange((evento) => {
+  const { data } = supabase.auth.onAuthStateChange((evento, sessao) => {
     if (evento === 'PASSWORD_RECOVERY') navegar('/conta/senha-nova');
     // Qualquer entrada (código, link ou senha) garante o perfil, fora do callback do Supabase.
-    if (evento === 'SIGNED_IN') setTimeout(() => void garantirPerfil(), 0);
+    // Também ao abrir o app já logado (INITIAL_SESSION): contas antigas ganham o perfil.
+    if ((evento === 'SIGNED_IN' || evento === 'INITIAL_SESSION') && sessao) setTimeout(() => void garantirPerfil(), 0);
   });
   return () => {
     void ouvinte.then((o) => o.remove());

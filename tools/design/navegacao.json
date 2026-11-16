@@ -549,5 +549,17 @@
     "Abrir canais oficiais ↗": "https://www.consumidor.gov.br"
    }
   }
+ },
+ "grupos": {
+  "6.1": [
+   "motivo",
+   "viver",
+   "ritmo",
+   "necessidades"
+  ]
+ },
+ "modos": {
+  "6.1:necessidades": "varios",
+  "6.1:motivo": "varios"
  }
 }
