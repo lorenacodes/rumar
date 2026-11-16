@@ -102,6 +102,15 @@ await design.route('**/*', (route) => {
 });
 await design.goto('file://' + DESIGN);
 await design.evaluate(() => document.fonts.ready);
+// Nome do app trocado de Rumar para Bo Vair (D-013, aprovado pela fundadora): o design
+// é comparado já com o nome novo, para a troca não contar como diferença.
+await design.evaluate(() => {
+  const andar = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = andar.nextNode(); n; n = andar.nextNode()) {
+    n.nodeValue = n.nodeValue.replace(/\bRumar\b/g, 'Bo Vair').replace(/\brumar\b/g, 'bo vair');
+  }
+});
+await design.evaluate(() => document.fonts.ready);
 
 const app = await ctxApp.newPage();
 const linhas = [];
