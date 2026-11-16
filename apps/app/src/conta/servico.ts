@@ -126,7 +126,17 @@ export async function confirmarCodigo(
 }
 
 /** Cria o perfil e registra os consentimentos da tela 5.3. */
-export async function finalizarCadastro(sessao: Session): Promise<Resultado<'menor' | 'rede'>> {
+let finalizando: Promise<Resultado<'menor' | 'rede'>> | null = null;
+
+/** Evita gravar duas vezes quando o código e o evento de entrada chegam juntos. */
+export function finalizarCadastro(sessao: Session): Promise<Resultado<'menor' | 'rede'>> {
+  finalizando ??= finalizarCadastroUmaVez(sessao).finally(() => {
+    finalizando = null;
+  });
+  return finalizando;
+}
+
+async function finalizarCadastroUmaVez(sessao: Session): Promise<Resultado<'menor' | 'rede'>> {
   const plano = usePlano.getState();
   // A data de nascimento nunca saiu do aparelho: só o resultado da tela 1.1.
   if (!plano.maior18) return { ok: false, motivo: 'menor' };
@@ -208,6 +218,7 @@ export async function garantirPerfil(): Promise<boolean> {
   const existe = await supabase.from('profiles').select('user_id').eq('user_id', sessao.user.id).maybeSingle();
   if (existe.error) return false;
   if (existe.data) return true;
+  if (finalizando) return (await finalizando).ok;
   const r = await finalizarCadastro(sessao);
   return r.ok;
 }
