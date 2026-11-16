@@ -62,8 +62,11 @@ jobs:
         run: |
           cp apps/app/android/app/build/outputs/apk/debug/app-debug.apk bovair-teste.apk
           TAG="apk-teste-${GITHUB_REF_NAME//\//-}"
+          # O app lê este arquivo para avisar "Nova versão disponível · Atualizar".
+          printf '{"versionCode":%s,"apk":"https://github.com/%s/releases/download/%s/bovair-teste.apk","commit":"%s"}\n' \
+            "$GITHUB_RUN_NUMBER" "$GITHUB_REPOSITORY" "$TAG" "${GITHUB_SHA::7}" > versao.json
           gh release delete "$TAG" --yes --cleanup-tag || true
-          gh release create "$TAG" bovair-teste.apk \
+          gh release create "$TAG" bovair-teste.apk versao.json \
             --prerelease \
             --target "$GITHUB_SHA" \
             --title "APK de teste Bo Vair · ${GITHUB_REF_NAME}" \

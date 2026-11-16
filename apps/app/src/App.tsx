@@ -21,6 +21,7 @@ import { Tela5_7 } from './telas/s05/Tela5_7';
 import { Tela5_13, Tela5_14, Tela5_15, Tela5_17, Tela5_18 } from './telas/s05/perfil';
 import { Tela5_10, Tela5_11, Tela5_12, Tela5_16, Tela5_8, Tela5_9 } from './telas/s05/senha';
 import { Tela28_7 } from './telas/s28/Tela28_7';
+import { AvisoAtualizar } from './ui/atualizar';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
 function Raiz() {
@@ -32,7 +33,12 @@ function Raiz() {
     });
     return () => data.subscription.unsubscribe();
   }, [navegar]);
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <AvisoAtualizar />
+    </>
+  );
 }
 
 /** Primeira tela: conferência de idade, ou o início se ela já foi feita. */
