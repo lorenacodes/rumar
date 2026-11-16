@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, type RouteObject } from 'react-router-dom';
+import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, useParams, type RouteObject } from 'react-router-dom';
+
+import { TELAS } from './telas/registro';
 
 import { ouvirLinks } from './conta/deepLink';
 import { sessaoTerminouSozinha } from './conta/servico';
@@ -41,6 +43,13 @@ function Raiz() {
   );
 }
 
+/** Telas geradas do design, pelo id (/tela/2.1). */
+function TelaPorId() {
+  const { id = '' } = useParams();
+  const Tela = TELAS[id];
+  return Tela ? <Tela key={id} /> : <Navigate to={`/em-breve/${id}`} replace />;
+}
+
 /** Primeira tela: conferência de idade, ou o início se ela já foi feita. */
 function Comeco() {
   // Lido só na abertura: ao confirmar a idade, a própria 1.1 segue para a 1.3.
@@ -75,6 +84,7 @@ const filhos: RouteObject[] = [
   { path: '/sessao-terminou', element: <Tela28_7 /> },
   { path: '/conta/indisponivel/:tela', element: <EmBreve /> },
   { path: '/em-breve/:tela', element: <EmBreve /> },
+  { path: '/tela/:id', element: <TelaPorId /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];
 

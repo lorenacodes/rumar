@@ -1,0 +1,42 @@
+import type { KeyboardEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { useDemo } from '../dev/demo';
+import { rotaDaTela } from './rotas';
+
+/**
+ * Toque em um elemento do design que leva a outra tela, sem mudar o visual: o elemento
+ * vira um botão para leitor de tela e teclado. Destino: id do design ("2.2"), rota
+ * ("/perfil") ou "voltar".
+ */
+export function useToque() {
+  const navegar = useNavigate();
+  return (destino: string) => {
+    const ir = () => (destino === 'voltar' ? navegar(-1) : navegar(rotaDaTela(destino)));
+    return {
+      role: 'button' as const,
+      tabIndex: 0,
+      onClick: ir,
+      onKeyDown: (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          ir();
+        }
+      },
+    };
+  };
+}
+
+/**
+ * Faixa no alto das telas que ainda mostram os números de exemplo do design (Ana S.).
+ * Selo △ Simulado da especificação: valor de exemplo, sem fonte. Some no modo de
+ * comparação com o design (/dev/telas) e quando a tela passa a usar os dados da pessoa.
+ */
+export function AvisoExemplo() {
+  if (useDemo()) return null;
+  return (
+    <div role="note" style={{ background: 'var(--cartao-2)', color: 'var(--texto-sec)', font: "600 13px/18px 'Open Sans'", padding: '8px 20px', paddingTop: 'calc(8px + env(safe-area-inset-top))' }}>
+      △ Exemplo · números da Ana S. Os seus entram nesta tela em breve.
+    </div>
+  );
+}

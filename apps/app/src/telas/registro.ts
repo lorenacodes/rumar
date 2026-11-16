@@ -15,12 +15,15 @@ import { Tela5_7 } from './s05/Tela5_7';
 import { Tela5_13, Tela5_14, Tela5_15, Tela5_17, Tela5_18 } from './s05/perfil';
 import { Tela5_10, Tela5_11, Tela5_12, Tela5_16, Tela5_8, Tela5_9 } from './s05/senha';
 import { Tela28_7 } from './s28/Tela28_7';
+import { TELAS_GERADAS } from './gerado';
 
 /**
  * Telas implementadas, pelo id do design (seção.tela).
  * Usado pela rota /dev/telas/<id> e pelo teste visual.
  */
 export const TELAS: Readonly<Record<string, ComponentType>> = {
+  // Geradas do design (dados de exemplo); as feitas à mão abaixo têm prioridade.
+  ...TELAS_GERADAS,
   '1.1': Tela1_1,
   '1.2': Tela1_2,
   '1.3': Tela1_3,

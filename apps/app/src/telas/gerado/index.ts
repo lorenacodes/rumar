@@ -1,0 +1,30 @@
+// GERADO por tools/design/to-app.mjs.
+import { TELAS_02 } from './s02';
+import { TELAS_03 } from './s03';
+import { TELAS_04 } from './s04';
+import { TELAS_06 } from './s06';
+import { TELAS_07 } from './s07';
+import { TELAS_08 } from './s08';
+import { TELAS_09 } from './s09';
+import { TELAS_10 } from './s10';
+import { TELAS_11 } from './s11';
+import { TELAS_14 } from './s14';
+import { TELAS_15 } from './s15';
+import { TELAS_16 } from './s16';
+import { TELAS_17 } from './s17';
+import { TELAS_18 } from './s18';
+import { TELAS_19 } from './s19';
+import { TELAS_20 } from './s20';
+import { TELAS_21 } from './s21';
+import { TELAS_22 } from './s22';
+import { TELAS_23 } from './s23';
+import { TELAS_24 } from './s24';
+import { TELAS_25 } from './s25';
+import { TELAS_26 } from './s26';
+import { TELAS_27 } from './s27';
+import { TELAS_28 } from './s28';
+import { TELAS_29 } from './s29';
+import { TELAS_30 } from './s30';
+import { TELAS_31 } from './s31';
+
+export const TELAS_GERADAS = { ...TELAS_02, ...TELAS_03, ...TELAS_04, ...TELAS_06, ...TELAS_07, ...TELAS_08, ...TELAS_09, ...TELAS_10, ...TELAS_11, ...TELAS_14, ...TELAS_15, ...TELAS_16, ...TELAS_17, ...TELAS_18, ...TELAS_19, ...TELAS_20, ...TELAS_21, ...TELAS_22, ...TELAS_23, ...TELAS_24, ...TELAS_25, ...TELAS_26, ...TELAS_27, ...TELAS_28, ...TELAS_29, ...TELAS_30, ...TELAS_31 };
