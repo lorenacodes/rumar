@@ -2,7 +2,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
 export function Marca({ marginTop = '2px' }: { marginTop?: string }) {
-  return <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop }}>rumar</div>;
+  return <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop }}>bo vair</div>;
 }
 
 export function RotuloAzul({ children, marginTop = '2px' }: { children: ReactNode; marginTop?: string }) {

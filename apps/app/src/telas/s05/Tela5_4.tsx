@@ -14,7 +14,7 @@ export function Tela5_4() {
       <div style={{ padding: '22px 20px 0' }}>
         <Voltar />
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Guardar o plano</div>
-        <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Esse e-mail já está no Rumar.</h1>
+        <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Esse e-mail já está no Bo Vair.</h1>
         <p style={{ margin: 0, fontSize: '15px', lineHeight: '22px', color: 'var(--texto-sec)', marginTop: '8px' }}>
           Achamos uma conta com {email}. Entre nela e escolha o que fazer com o plano deste aparelho.
         </p>

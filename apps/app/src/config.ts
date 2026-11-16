@@ -14,4 +14,4 @@ export const SUPABASE_PUBLISHABLE_KEY =
 export const VERSAO_TEXTOS_LEGAIS = 'rascunho-2026-11-05';
 
 /** Endereço que abre o app a partir dos links de e-mail (deep link). */
-export const DEEP_LINK = 'com.rumar.app://auth';
+export const DEEP_LINK = 'com.bovair.app://auth';

@@ -1,4 +1,4 @@
-# Rumar — instruções para agentes
+# Bo Vair (antigo Rumar) — instruções para agentes
 
 - Leia `docs/ESPECIFICACAO.md` antes de escrever código. O design
   `design/Rumar Fluxo Unificado.dc.html` é a fonte da verdade: visual e textos

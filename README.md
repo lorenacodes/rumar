@@ -1,4 +1,7 @@
-# Rumar
+# Bo Vair
+
+> Antes chamado "Rumar" (nome trocado em 16/11/2026: "Rumar" já é marca registrada de
+> terceiros no ramo de viagens). Nomes internos de pacotes e do repositório ainda usam `rumar`.
 
 App de planejamento de viagens para brasileiros que mostra o que cabe no bolso:
 viagens possíveis hoje, quanto guardar por mês até a viagem dos sonhos e

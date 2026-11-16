@@ -60,11 +60,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp apps/app/android/app/build/outputs/apk/debug/app-debug.apk rumar-teste.apk
+          cp apps/app/android/app/build/outputs/apk/debug/app-debug.apk bovair-teste.apk
           TAG="apk-teste-${GITHUB_REF_NAME//\//-}"
           gh release delete "$TAG" --yes --cleanup-tag || true
-          gh release create "$TAG" rumar-teste.apk \
+          gh release create "$TAG" bovair-teste.apk \
             --prerelease \
             --target "$GITHUB_SHA" \
-            --title "APK de teste · ${GITHUB_REF_NAME}" \
-            --notes "Versão de teste gerada automaticamente a partir de ${GITHUB_SHA::7}. Baixe rumar-teste.apk no celular Android e instale (permita instalar de fontes desconhecidas)."
+            --title "APK de teste Bo Vair · ${GITHUB_REF_NAME}" \
+            --notes "Versão de teste gerada automaticamente a partir de ${GITHUB_SHA::7}. Baixe bovair-teste.apk no celular Android e instale (permita instalar de fontes desconhecidas)."

@@ -14,7 +14,7 @@
 | 2 | **Pesquisar se o nome "Rumar" está livre** no INPI (busca gratuita) e se o domínio `rumar.com.br` está disponível no Registro.br | Se o nome já tiver dono, tudo o que for feito com ele (logo, loja, divulgação) vai para o lixo. Nome é a **única** coisa da ideia que dá para registrar como sua. | Você | Esta semana |
 | 3 | **Criar a conta de desenvolvedor no Google Play** (US$ 25 ≈ R$ 140, pagamento único) | Contas pessoais novas só publicam depois de um **teste fechado com 12 pessoas por 14 dias**. É a etapa que mais demora no calendário e não depende de código. | Você | Esta semana |
 | 4 | **Juntar 12+ testadores** (amigos, família, grupos de viagem) | Necessário para o item 3 e é a primeira prova real de que a ideia funciona. | Você | Até a Fase 1 ficar pronta |
-| 5 | **3 ajustes no painel do Supabase** (no banco novo): código no e-mail, endereço `com.rumar.app://auth`, senha forte | Sem isso a confirmação de conta e a troca de senha não funcionam no celular. | Você (eu passo o passo a passo) | Logo após o item 1 |
+| 5 | **3 ajustes no painel do Supabase** (no banco novo): código no e-mail, endereço `com.bovair.app://auth`, senha forte | Sem isso a confirmação de conta e a troca de senha não funcionam no celular. | Você (eu passo o passo a passo) | Logo após o item 1 |
 | 6 | **Contas gratuitas:** Travelpayouts (passagens), LiteAPI (hotéis), Unsplash (fotos) | Sem elas os preços ficam como "estimativa" e não há fotos reais. Só você pode se cadastrar. | Você | Durante a Fase 1 |
 
 ---

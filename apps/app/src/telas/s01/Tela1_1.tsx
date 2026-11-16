@@ -26,12 +26,12 @@ export function Tela1_1() {
   return (
     <main className="tela" data-tela="1.1">
       <div className="tela-conteudo">
-        <div className="marca">rumar</div>
+        <div className="marca">bo vair</div>
         <h1 className="titulo-tela" style={{ marginTop: 40 }}>
           Antes de começar.
         </h1>
         <p className="texto-apoio" style={{ marginTop: 10 }}>
-          O Rumar é para maiores de 18 anos. Qual é a sua data de nascimento?
+          O Bo Vair é para maiores de 18 anos. Qual é a sua data de nascimento?
         </p>
         <div style={{ marginTop: 18 }}>
           <label className="campo-rotulo" htmlFor="nascimento">

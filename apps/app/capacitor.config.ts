@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.rumar.app',
-  appName: 'Rumar',
+  appId: 'com.bovair.app',
+  appName: 'Bo Vair',
   webDir: 'dist',
   android: { backgroundColor: '#F7F4EA' },
 };

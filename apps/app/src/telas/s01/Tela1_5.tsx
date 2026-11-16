@@ -24,7 +24,7 @@ export function Tela1_5() {
   return (
     <main className="tela" data-tela="1.5">
       <div style={{ padding: '22px 20px 0' }}>
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>rumar</div>
+        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>bo vair</div>
         <h1 style={{ margin: 0, font: "600 34px/40px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>
           Quer receber os avisos do seu plano?
         </h1>

@@ -97,6 +97,22 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Motivo:** fidelidade ao design (HTML/CSS) e um código só para Android e iPhone,
   com custo baixo.
 
+## D-013 — Nome do produto: "Bo Vair" (substitui "Rumar")
+- **Data:** 16/11/2026
+- **Status:** ✅ Aprovada pela fundadora
+- **Motivo:** no INPI, "RUMAR" tem registro em vigor da RUMAR VIAGENS LTDA na classe 39
+  (viagens) e pedidos de terceiros nas classes 9 e 42 (aplicativos e software). O domínio
+  `rumar.com.br` também tem dono. Usar o nome traria risco de ser obrigada a trocar depois.
+- **Verificação:** buscas no INPI por `bo vair`, `bovair`, `bovai` e `buovai` sem resultados
+  (15/11/2026, segundo a fundadora). A busca não garante o registro; o exame é do INPI.
+  Domínio `bovair.com.br` disponível em 15/11/2026 (compra prevista após o dia 30).
+- **Como escrever:** marca "Bo Vair" (separado); tudo junto em domínio, redes e código:
+  `bovair.com.br`, `@bovair`, identificador Android `com.bovair.app`, link `com.bovair.app://auth`.
+- **Ainda com o nome antigo (interno, invisível ao usuário):** repositório `lorenacodes/rumar`,
+  pacotes `@rumar/*`, organização e projeto "rumar" no Supabase.
+- **Design:** o arquivo do design continua com "rumar" na marca; nas telas do app a palavra
+  vira "bo vair". O teste visual aceita essa diferença (dentro do limite de 2%).
+
 ## Decisões pendentes
 | ID | Decisão | Recomendação |
 |---|---|---|

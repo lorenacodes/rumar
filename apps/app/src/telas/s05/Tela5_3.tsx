@@ -91,7 +91,7 @@ export function Tela5_3() {
               Quero receber novidades por e-mail (opcional).
             </Caixa>
           </div>
-          <div style={{ fontSize: '14px', lineHeight: '18px', color: 'var(--texto-sec)' }}>O Rumar não guarda nem movimenta seu dinheiro.</div>
+          <div style={{ fontSize: '14px', lineHeight: '18px', color: 'var(--texto-sec)' }}>O Bo Vair não guarda nem movimenta seu dinheiro.</div>
           {erro ? <Aviso>{erro}</Aviso> : null}
         </div>
         <Rodape>

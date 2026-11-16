@@ -13,7 +13,7 @@
 | Guardar o plano do aparelho na conta (5.3, 5.7) | ✅ | Valor mensal e guardado; o destino entra com a Fase 1 |
 | Entrar com e-mail e senha (5.1) | ✅ | |
 | Senha incorreta e pausa após 5 erros (5.2) | ✅ | Contagem no aparelho + limite do próprio Supabase no servidor |
-| Esqueci a senha → link → senha nova (5.8–5.12) | ✅ 🔧 | Link abre o app (com.rumar.app://auth); precisa liberar o endereço (passo 2) |
+| Esqueci a senha → link → senha nova (5.8–5.12) | ✅ 🔧 | Link abre o app (com.bovair.app://auth); precisa liberar o endereço (passo 2) |
 | Perfil: nome, cidade, e-mail, senha (5.13–5.16) | ✅ | Trocar e-mail usa código no e-mail novo |
 | Sair da conta e "Você saiu" (5.17, 5.18) | ✅ | Escolha sobre documentos fica guardada para a carteira (seção 17) |
 | Sessão terminou (28.7) | ✅ | |
@@ -66,7 +66,7 @@ O conector que eu uso não altera as configurações de login, então estes pass
    "Seu código do Rumar é {{ .Token }}. Ele vale por 1 hora."). Faça o mesmo em
    *Change email address*.
 2. **Link que abre o app.** Authentication → URL Configuration → *Redirect URLs*:
-   adicione `com.rumar.app://auth`.
+   adicione `com.bovair.app://auth`.
 3. **Senha forte no servidor.** Authentication → Providers → Email: senha mínima de
    8 caracteres e exigir letras e números (o app já confere, isso garante no servidor).
 4. **E-mails para outras pessoas.** O e-mail padrão do Supabase só entrega para os

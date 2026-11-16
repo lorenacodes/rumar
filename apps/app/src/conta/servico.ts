@@ -32,7 +32,7 @@ export function emailValido(email: string): boolean {
 // Limite de tentativas no aparelho (5.2): 5 erros → 15 minutos de pausa.
 // O Supabase também limita tentativas no servidor.
 // ---------------------------------------------------------------------------
-const CHAVE_TENTATIVAS = 'rumar.tentativas';
+const CHAVE_TENTATIVAS = 'bovair.tentativas';
 const MAX_TENTATIVAS = 5;
 const PAUSA_MS = 15 * 60 * 1000;
 

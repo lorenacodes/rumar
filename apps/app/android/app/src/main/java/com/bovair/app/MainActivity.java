@@ -1,4 +1,4 @@
-package com.rumar.app;
+package com.bovair.app;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -13,9 +13,9 @@ export function MarcaQuadrada() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <div style={{ width: '30px', height: '30px', background: 'var(--fundo-escuro)', borderTop: '5px solid var(--amarelo)', boxSizing: 'border-box', color: '#fff', font: "600 17px/22px 'Lexend Exa'", textAlign: 'center' }} aria-hidden>
-        r
+        b
       </div>
-      <span style={{ font: "600 22px 'Lexend Exa'", letterSpacing: '-0.04em' }}>rumar</span>
+      <span style={{ font: "600 22px 'Lexend Exa'", letterSpacing: '-0.04em' }}>bo vair</span>
     </div>
   );
 }
@@ -115,7 +115,7 @@ export function Tela5_2(props: {
         }}>
         <div style={{ padding: '22px 20px 0' }}>
           <Voltar />
-          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>rumar</div>
+          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>bo vair</div>
           <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Entrar.</h1>
           <div style={{ marginTop: '18px' }}>
             <Campo id="email" rotulo="E-mail" type="email" autoComplete="email" valor={props.email} aoMudar={props.setEmail} rotuloStyle={{ marginTop: 0 }} />

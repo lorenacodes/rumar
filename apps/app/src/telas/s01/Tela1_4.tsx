@@ -28,7 +28,7 @@ export function Tela1_4() {
   return (
     <main className="tela" data-tela="1.4">
       <div style={{ height: '130px', background: 'linear-gradient(160deg,var(--amarelo) 0%,#8FB0F5 100%)', padding: '22px 20px 0', boxSizing: 'border-box', color: '#0B1F4B' }}>
-        <div style={{ font: "600 20px 'Lexend Exa'", letterSpacing: '-0.04em' }}>rumar</div>
+        <div style={{ font: "600 20px 'Lexend Exa'", letterSpacing: '-0.04em' }}>bo vair</div>
         <div style={{ font: "600 14px 'Open Sans'", marginTop: '22px' }}>Passo 2 de 3</div>
       </div>
       <div style={{ padding: '14px 20px 0' }}>
@@ -83,7 +83,7 @@ export function Tela1_4() {
           />
         </div>
         <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '14px 0 0' }}>
-          Seu dinheiro continua com você. O Rumar só soma, acompanha e lembra. Sem cadastro por enquanto.
+          Seu dinheiro continua com você. O Bo Vair só soma, acompanha e lembra. Sem cadastro por enquanto.
         </p>
       </div>
       <Rodape>

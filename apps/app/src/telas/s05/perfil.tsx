@@ -87,7 +87,7 @@ export function Tela5_13() {
           <Linha titulo="Idioma e avisos" onClick={emBreve('30.1')} />
           <Linha minHeight="44px" titulo="Privacidade" detalhe="Dados, encontros e conta" onClick={emBreve('30.3')} />
           <Linha titulo="Ajuda e contato" onClick={emBreve('29.1')} />
-          <Linha minHeight="44px" titulo="Sobre o Rumar" detalhe="Termos, privacidade e versão" onClick={emBreve('30.12')} />
+          <Linha minHeight="44px" titulo="Sobre o Bo Vair" detalhe="Termos, privacidade e versão" onClick={emBreve('30.12')} />
         </div>
         <button type="button" className="r-btn" onClick={() => navegar('/perfil/sair')} style={{ width: '100%', height: '48px', marginTop: '0px', font: "600 15px 'Open Sans'", color: 'var(--vermelho)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           Sair da conta
@@ -206,7 +206,7 @@ export function Tela5_17() {
       : { height: '48px', padding: '0 14px', display: 'flex', alignItems: 'center', gap: '6px', font: "500 15px 'Open Sans'", boxSizing: 'border-box' as const, border: '1px solid var(--linha)', width: '100%' };
   const confirmar = async () => {
     // A carteira de documentos (seção 17) ainda não existe: a escolha fica registrada para ela.
-    localStorage.setItem('rumar.docs.manter', String(manterDocs));
+    localStorage.setItem('bovair.docs.manter', String(manterDocs));
     await sair();
     navegar('/conta/saiu', { replace: true });
   };
@@ -220,7 +220,7 @@ export function Tela5_17() {
       <div style={{ position: 'absolute', inset: '0', background: 'rgba(11,31,75,.55)' }} onClick={() => navegar(-1)} />
       <div role="dialog" aria-modal="true" aria-labelledby="sair-titulo" style={{ position: 'absolute', left: '20px', right: '20px', top: '190px', background: 'var(--fundo)', padding: '20px', borderTop: '6px solid var(--amarelo)' }}>
         <h2 id="sair-titulo" style={{ margin: 0, font: "600 22px/27px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
-          Sair do Rumar?
+          Sair do Bo Vair?
         </h2>
         <p style={{ fontSize: '15px', lineHeight: '22px', color: 'var(--texto-sec)', margin: '8px 0 0' }}>Seu plano e seu cofrinho ficam guardados na conta. É só entrar de novo.</p>
         <div style={{ marginTop: '12px', font: "600 14px 'Open Sans'", color: 'var(--texto-sec)' }} id="docs">
@@ -254,7 +254,7 @@ export function Tela5_18() {
   return (
     <main className="tela" data-tela="5.18">
       <div style={{ padding: '22px 20px 0' }}>
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>rumar</div>
+        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>bo vair</div>
         <Titulo marginTop="60px">Até a próxima.</Titulo>
         <p style={{ margin: 0, fontSize: '16px', lineHeight: '24px', color: 'var(--texto-sec)', marginTop: '10px' }}>Você saiu desta conta. Seu plano continua guardado e volta quando você entrar.</p>
         <Nota>Se removeu os documentos deste aparelho, é só adicioná-los de novo depois.</Nota>

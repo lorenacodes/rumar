@@ -6,9 +6,9 @@ export function Tela1_2() {
   return (
     <main className="tela" data-tela="1.2">
       <div className="tela-conteudo">
-        <div className="marca">rumar</div>
+        <div className="marca">bo vair</div>
         <h1 className="titulo-tela" style={{ marginTop: 60 }}>
-          O Rumar ainda não é para você.
+          O Bo Vair ainda não é para você.
         </h1>
         <p className="texto-apoio" style={{ marginTop: 10 }}>
           O app é para maiores de 18 anos. Não guardamos nada do que você digitou. Quando fizer 18 anos, a gente te

@@ -39,7 +39,7 @@ export const usePlano = create<PlanoState>()(
       atualizar: (parcial) => set(parcial),
       limpar: () => set(PLANO_INICIAL),
     }),
-    { name: 'rumar.plano', storage: createJSONStorage(() => localStorage), version: 1 },
+    { name: 'bovair.plano', storage: createJSONStorage(() => localStorage), version: 1 },
   ),
 );
 

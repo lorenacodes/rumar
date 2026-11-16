@@ -1,6 +1,6 @@
 /**
  * Links dos e-mails (senha nova, confirmação, troca de e-mail) abrem o app pelo
- * endereço com.rumar.app://auth (configurado no AndroidManifest e no Supabase).
+ * endereço com.bovair.app://auth (configurado no AndroidManifest e no Supabase).
  */
 import { App as CapApp } from '@capacitor/app';
 
@@ -8,8 +8,8 @@ import { supabase } from '../lib/supabase';
 
 export function ouvirLinks(navegar: (rota: string) => void): () => void {
   const tratar = async (url: string) => {
-    if (!url.startsWith('com.rumar.app://auth')) return;
-    const u = new URL(url.replace('com.rumar.app://', 'https://app.rumar/'));
+    if (!url.startsWith('com.bovair.app://auth')) return;
+    const u = new URL(url.replace('com.bovair.app://', 'https://app.bovair/'));
     const params = new URLSearchParams(u.search + '&' + u.hash.replace(/^#/, ''));
     if (params.get('error_code') === 'otp_expired' || params.get('error')) return navegar('/conta/link-vencido');
     const code = params.get('code');
