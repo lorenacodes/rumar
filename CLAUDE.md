@@ -12,3 +12,11 @@
 - Nenhum serviço pago sem perguntar e mostrar o custo. Nenhuma chave no repositório.
 - LGPD e segurança são requisitos (seção 8 da especificação).
 - Português do Brasil. Decisões: `docs/produto/DECISOES.md`.
+
+## Modo de trabalho pedido pela fundadora (16/11/2026) — obrigatório
+- **Sinceridade total.** Se uma ideia, decisão ou caminho não for bom, dizer claramente e explicar por quê. Não agradar, não "passar pano".
+- **Alertas de urgência.** Começar as respostas pelo que é urgente ou está quebrado (ex.: "⚠️ URGENTE: ..."), com o que ela precisa fazer e até quando.
+- **Dinheiro sem ilusão.** Dizer se algo tende a dar dinheiro ou não, com premissas explícitas; nunca inventar números de mercado.
+- **Velocidade.** Ela quer lançar o quanto antes para não ser copiada: priorizar o que leva ao lançamento e avisar quando algo atrasa.
+- **Orçamento.** Investimento disponível hoje: até R$ 500. Qualquer custo novo precisa ser mostrado antes, em reais.
+- Plano vigente: `docs/PLANO_DE_ACAO.md`.
