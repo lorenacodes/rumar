@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import type { Cidade } from '../lib/cidades';
+
 /**
  * Plano montado sem cadastro (telas 1.x). Fica só no aparelho até a pessoa
  * guardar na conta (5.3). Nunca guarda a data de nascimento: só "maior de 18".
@@ -8,6 +10,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 export interface Plano {
   maior18: boolean;
   cidade: string;
+  /** Cidade escolhida na lista, com os aeroportos próximos: é dela que saem os custos. */
+  origem: Cidade | null;
   idiomaApp: 'pt' | 'en' | 'es' | 'fr';
   idiomasFalados: string[];
   /** Centavos por mês. */
@@ -25,6 +29,7 @@ interface PlanoState extends Plano {
 export const PLANO_INICIAL: Plano = {
   maior18: false,
   cidade: '',
+  origem: null,
   idiomaApp: 'pt',
   idiomasFalados: ['Português'],
   mensal: 0,
@@ -39,14 +44,26 @@ export const usePlano = create<PlanoState>()(
       atualizar: (parcial) => set(parcial),
       limpar: () => set(PLANO_INICIAL),
     }),
-    { name: 'bovair.plano', storage: createJSONStorage(() => localStorage), version: 1 },
+    { name: 'bovair.plano', storage: createJSONStorage(() => localStorage), version: 2, migrate: (antigo) => ({ ...PLANO_INICIAL, ...(antigo as Partial<Plano>), origem: null }) },
   ),
 );
+
+export const ORIGEM_ANA: Cidade = {
+  nome: 'Aracaju',
+  outroNome: '',
+  regiao: 'SE',
+  pais: 'Brasil',
+  aeroportos: [
+    { iata: 'AJU', km: 8 },
+    { iata: 'MCZ', km: 209 },
+  ],
+};
 
 /** Plano de exemplo da Ana S. (especificação, "Decisões fixas"). */
 export const PLANO_ANA: Plano = {
   maior18: true,
   cidade: 'Aracaju, Brasil',
+  origem: ORIGEM_ANA,
   idiomaApp: 'pt',
   idiomasFalados: ['Português', 'Inglês'],
   mensal: 60000,

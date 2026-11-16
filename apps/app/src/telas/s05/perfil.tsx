@@ -127,15 +127,6 @@ export function Tela5_14() {
             <div style={{ width: '72px', height: '72px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 24px 'Lexend Exa'" }} aria-hidden>
               {iniciais(nome || 'R')}
             </div>
-            {/* Foto: entra junto com o armazenamento de fotos (Storage privado). */}
-            <div>
-              <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/em-breve/foto')} style={{ font: "600 16px 'Open Sans'", display: 'block' }}>
-                Trocar foto
-              </button>
-              <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/em-breve/foto')} style={{ font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', marginTop: '4px', display: 'block' }}>
-                Remover foto
-              </button>
-            </div>
           </div>
           <div style={{ marginTop: '18px' }}>
             <Campo id="nome" rotulo="Nome" autoComplete="name" valor={nome} aoMudar={setNome} erro={erro && !nome.trim()} rotuloStyle={{ marginTop: 0 }} />
@@ -147,6 +138,18 @@ export function Tela5_14() {
           <Nota marginTop="14px">Mudar a cidade recalcula as passagens do plano. Mostramos a diferença antes de salvar.</Nota>
         </div>
         <Rodape padding="10px 20px 14px">
+          {/*
+           * Ajuste aprovado pela fundadora (16/11/2026, D-014): as ações da foto saíram do alto
+           * da tela para perto do polegar. Foto entra com o armazenamento privado (Storage).
+           */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+            <button type="button" className="r-btn" onClick={() => navegar('/em-breve/foto')} style={{ flex: 1, height: '48px', boxSizing: 'border-box', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>
+              Trocar foto
+            </button>
+            <button type="button" className="r-btn" onClick={() => navegar('/em-breve/foto')} style={{ flex: 1, height: '48px', boxSizing: 'border-box', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)' }}>
+              Remover foto
+            </button>
+          </div>
           <BotaoPrincipal type="submit">Salvar ✓</BotaoPrincipal>
         </Rodape>
       </form>

@@ -120,3 +120,21 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 | D-004 | Público: S1 como foco de marca; S3 e S4 como foco de receita inicial | Sim |
 | D-005 | Aplicar as atualizações propostas ao doc 01 | Sim |
 | D-007 | Orçamento para testes de aquisição; liberar `tripnarrative.in` na rede | A definir |
+
+## D-014 — Ações da foto perto do polegar (5.14)
+- **Data:** 16/11/2026
+- **Status:** ✅ Aprovada pela fundadora
+- **Decisão:** "Trocar foto" e "Remover foto" saem do alto da tela 5.14 e viram dois botões
+  de 48 px logo acima de "Salvar", na área do polegar. Única diferença visual em relação ao design.
+- **Junto:** links e botões de texto ganham área de toque invisível de 44 px (sem mudar o visual).
+
+## D-015 — "Onde moro" é escolhido de uma lista, não texto livre (1.3)
+- **Data:** 16/11/2026
+- **Status:** ✅ Pedido da fundadora
+- **Decisão:** a cidade só vale se escolhida na lista de sugestões que aparece ao digitar.
+  A lista cobre todos os municípios do Brasil (IBGE) e as cidades do mundo com voo regular
+  (OurAirports), cada uma com os 2 aeroportos comerciais mais próximos e a distância.
+  É daí que saem os custos de passagem. A busca roda no aparelho (rápida, sem internet, sem custo,
+  sem mandar o que a pessoa digita para fora). Dados: `tools/dados/cidades.mjs`.
+- **Visual:** a tela 1.3 continua igual ao design; a lista de sugestões só aparece ao digitar.
+- **Pendente:** usar a mesma lista em "Cidade de onde saio" (5.14) e na busca de destino (2.4).
