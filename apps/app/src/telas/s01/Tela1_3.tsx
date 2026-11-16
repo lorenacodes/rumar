@@ -1,9 +1,10 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useValorInicial } from '../../dev/demo';
 import { BotaoPrincipal, BotaoTexto, Rodape } from '../../ui/pecas';
-import { buscarCidades, carregarCidades, detalheCidade, rotuloCidade, type Cidade } from '../../lib/cidades';
+import type { Cidade } from '../../lib/cidades';
+import { SugestoesCidade, useCampoCidade } from '../../ui/sugestoesCidade';
 import { ORIGEM_ANA, usePlano, type Plano } from '../../state/plano';
 
 const IDIOMAS_APP: { id: Plano['idiomaApp']; nome: string }[] = [
@@ -38,33 +39,16 @@ function Chip({ marcado, aoTocar, children }: { marcado: boolean; aoTocar: () =>
 export function Tela1_3() {
   const navegar = useNavigate();
   const plano = usePlano();
-  const [cidade, setCidade] = useState(useValorInicial('Aracaju, Brasil', plano.cidade));
+  const cidade = useValorInicial('Aracaju, Brasil', plano.cidade);
   const [idiomaApp, setIdiomaApp] = useState(useValorInicial<Plano['idiomaApp']>('pt', plano.idiomaApp));
   const [falados, setFalados] = useState<string[]>(useValorInicial(['Português', 'Inglês'], plano.idiomasFalados));
-  const [origem, setOrigem] = useState<Cidade | null>(useValorInicial<Cidade | null>(ORIGEM_ANA, plano.origem));
-  const [aberta, setAberta] = useState(false);
-  const [pronta, setPronta] = useState(false);
-  // Só vale cidade escolhida na lista: é dela que vêm os aeroportos e os custos.
+  const campo = useCampoCidade(cidade, useValorInicial<Cidade | null>(ORIGEM_ANA, plano.origem));
+  const origem = campo.escolhida;
   const cidadeOk = origem !== null;
-  const sugestoes = aberta && pronta && !cidadeOk ? buscarCidades(cidade) : [];
-
-  useEffect(() => {
-    let vivo = true;
-    void carregarCidades().then(() => vivo && setPronta(true));
-    return () => {
-      vivo = false;
-    };
-  }, []);
-
-  const escolher = (c: Cidade) => {
-    setOrigem(c);
-    setCidade(rotuloCidade(c));
-    setAberta(false);
-  };
 
   const continuar = () => {
     if (!cidadeOk) return;
-    plano.atualizar({ cidade: cidade.trim(), origem, idiomaApp, idiomasFalados: falados });
+    plano.atualizar({ cidade: campo.texto.trim(), origem, idiomaApp, idiomasFalados: falados });
     navegar('/seu-plano');
   };
 
@@ -83,45 +67,17 @@ export function Tela1_3() {
           <input
             id="cidade"
             className="r-input"
-            value={cidade}
+            value={campo.texto}
             placeholder="Sua cidade"
-            autoComplete="off"
-            role="combobox"
-            aria-expanded={sugestoes.length > 0}
-            aria-controls="cidades-sugeridas"
-            aria-autocomplete="list"
-            onFocus={() => setAberta(true)}
-            onChange={(e) => {
-              setCidade(e.target.value);
-              setOrigem(null);
-              setAberta(true);
-            }}
+            {...campo.atributos}
+            aria-expanded={campo.sugestoes.length > 0}
+            onFocus={campo.focar}
+            onChange={(e) => campo.digitar(e.target.value)}
             style={{ flex: '1', font: "600 22px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}
           />
           {cidadeOk ? <span style={{ color: 'var(--azul)', fontWeight: '600' }}>✓</span> : null}
         </label>
-        <div style={{ position: 'relative' }}>
-          {sugestoes.length > 0 ? (
-            <ul id="cidades-sugeridas" role="listbox" aria-label="Cidades" style={{ position: 'absolute', zIndex: 2, left: 0, right: 0, top: 0, margin: 0, padding: 0, listStyle: 'none', background: 'var(--fundo)', border: '1px solid var(--linha)', borderTop: 'none', boxShadow: '0 8px 16px rgba(11,31,75,0.12)' }}>
-              {sugestoes.map((c) => (
-                <li key={`${c.nome}|${c.regiao}|${c.pais}`} role="option" aria-selected={false}>
-                  <button type="button" className="r-btn" onClick={() => escolher(c)} style={{ width: '100%', minHeight: '56px', padding: '8px 12px', boxSizing: 'border-box', textAlign: 'left', borderBottom: '1px solid var(--linha)', display: 'block' }}>
-                    <span style={{ display: 'block', font: "600 16px/22px 'Open Sans'" }}>{c.nome}</span>
-                    <span style={{ display: 'block', font: "400 14px/20px 'Open Sans'", color: 'var(--texto-sec)' }}>{detalheCidade(c)}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : aberta && pronta && !cidadeOk && cidade.trim().length >= 2 ? (
-            <div role="status" style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>
-              Não achamos essa cidade. Confira a grafia ou digite a cidade grande mais perto.
-            </div>
-          ) : !cidadeOk && cidade.trim().length >= 2 && pronta ? (
-            <div role="status" style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>
-              Escolha sua cidade na lista para calcularmos os custos.
-            </div>
-          ) : null}
-        </div>
+        <SugestoesCidade campo={campo} />
         <div style={rotulo} id="idioma-app">
           Idioma do app
         </div>

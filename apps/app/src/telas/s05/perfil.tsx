@@ -1,14 +1,16 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { carregarPerfil, emailValido, conferirSenhaAtual, iniciais, pedirTrocaDeEmail, sair, salvarPerfil, useSessao, type Perfil } from '../../conta/servico';
+import { carregarPerfil, emailValido, conferirSenhaAtual, enviarFoto, iniciais, pedirTrocaDeEmail, removerFoto, sair, salvarPerfil, useSessao, type Perfil } from '../../conta/servico';
 import { useFluxoConta } from '../../conta/fluxo';
 import { ANA, useDemo, useValorInicial } from '../../dev/demo';
+import { ORIGEM_ANA } from '../../state/plano';
 import { Abas } from '../../ui/abas';
 import { Aviso, BotaoPrincipal, Campo, Rodape, Voltar } from '../../ui/pecas';
+import { SugestoesCidade, useCampoCidade } from '../../ui/sugestoesCidade';
 import { Nota, Titulo } from '../../ui/textos';
 
-const PERFIL_ANA: Perfil = { display_name: ANA.nome, origin_city: ANA.cidade, email: ANA.email };
+const PERFIL_ANA: Perfil = { display_name: ANA.nome, origin_city: ANA.cidade, origem: ORIGEM_ANA, email: ANA.email };
 
 /** Perfil da conta: dados de exemplo no modo demonstração, do Supabase no app. */
 function usePerfil(): Perfil | null | undefined {
@@ -19,6 +21,15 @@ function usePerfil(): Perfil | null | undefined {
     void carregarPerfil().then(setPerfil);
   }, [demo]);
   return perfil;
+}
+
+/** Quadrado amarelo com as iniciais (como no design) ou a foto da pessoa. */
+function Avatar({ nome, foto, lado, fonte }: { nome: string; foto?: string | null; lado: string; fonte: string }) {
+  return (
+    <div style={{ width: lado, height: lado, flex: 'none', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: fonte, overflow: 'hidden' }} aria-hidden>
+      {foto ? <img src={foto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : iniciais(nome)}
+    </div>
+  );
 }
 
 function Linha({ titulo, detalhe, onClick, minHeight = '42px' }: { titulo: string; detalhe?: string; onClick?: () => void; minHeight?: string }) {
@@ -69,9 +80,7 @@ export function Tela5_13() {
       <div style={{ padding: '22px 20px 0' }}>
         <Cabecalho />
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '6px' }}>
-          <div style={{ width: '60px', height: '60px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 22px 'Lexend Exa'" }} aria-hidden>
-            {iniciais(p.display_name)}
-          </div>
+          <Avatar nome={p.display_name} foto={p.foto} lado="60px" fonte="600 22px 'Lexend Exa'" />
           <div>
             <div style={{ font: "600 20px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{p.display_name}</div>
             <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{p.email}</div>
@@ -103,17 +112,37 @@ export function Tela5_14() {
   const navegar = useNavigate();
   const perfil = usePerfil();
   const [nome, setNome] = useState('');
-  const [cidade, setCidade] = useState('');
+  const campo = useCampoCidade('', null);
   const [erro, setErro] = useState(false);
+  const [foto, setFoto] = useState<string | null>(null);
+  const [fotoMsg, setFotoMsg] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const seletor = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (perfil) {
       setNome(perfil.display_name);
-      setCidade(perfil.origin_city ?? '');
+      campo.definir(perfil.origin_city ?? '', perfil.origem ?? null);
+      setFoto(perfil.foto ?? null);
     }
   }, [perfil]);
+  const escolherFoto = async (arquivo: File | undefined) => {
+    if (!arquivo) return;
+    setEnviando(true);
+    setFotoMsg(null);
+    const r = await enviarFoto(arquivo);
+    if (r.ok) setFoto((await carregarPerfil())?.foto ?? null);
+    else setFotoMsg(r.motivo === 'tipo' ? 'Escolha uma foto (JPG ou PNG).' : 'Não conseguimos enviar a foto. Confira a internet e tente de novo.');
+    setEnviando(false);
+  };
+  const tirarFoto = async () => {
+    setFotoMsg(null);
+    if (await removerFoto()) setFoto(null);
+    else setFotoMsg('Não conseguimos remover a foto agora. Tente de novo.');
+  };
+  const cidadeInvalida = campo.texto.trim().length > 0 && !campo.escolhida;
   const salvar = async () => {
-    if (!nome.trim()) return setErro(true);
-    if (await salvarPerfil(nome, cidade)) navegar('/perfil', { replace: true });
+    if (!nome.trim() || cidadeInvalida) return setErro(true);
+    if (await salvarPerfil(nome, campo.escolhida)) navegar('/perfil', { replace: true });
     else setErro(true);
   };
   return (
@@ -124,29 +153,30 @@ export function Tela5_14() {
           <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Meu perfil</div>
           <Titulo marginTop="6px">Nome e foto.</Titulo>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '16px' }}>
-            <div style={{ width: '72px', height: '72px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 24px 'Lexend Exa'" }} aria-hidden>
-              {iniciais(nome || 'R')}
-            </div>
+            <Avatar nome={nome || 'R'} foto={foto} lado="72px" fonte="600 24px 'Lexend Exa'" />
           </div>
           <div style={{ marginTop: '18px' }}>
             <Campo id="nome" rotulo="Nome" autoComplete="name" valor={nome} aoMudar={setNome} erro={erro && !nome.trim()} rotuloStyle={{ marginTop: 0 }} />
           </div>
           <div style={{ marginTop: '12px' }}>
-            <Campo id="cidade" rotulo="Cidade de onde saio" autoComplete="address-level2" valor={cidade} aoMudar={setCidade} rotuloStyle={{ marginTop: 0 }} />
+            <Campo id="cidade" rotulo="Cidade de onde saio" valor={campo.texto} aoMudar={campo.digitar} onFocus={campo.focar} rotuloStyle={{ marginTop: 0 }} {...campo.atributos} aria-expanded={campo.sugestoes.length > 0} erro={erro && cidadeInvalida} />
+            <SugestoesCidade campo={campo} />
           </div>
+          {fotoMsg ? <Aviso>{fotoMsg}</Aviso> : null}
           {erro ? <Aviso>Não conseguimos salvar. Confira o nome e tente de novo.</Aviso> : null}
           <Nota marginTop="14px">Mudar a cidade recalcula as passagens do plano. Mostramos a diferença antes de salvar.</Nota>
         </div>
         <Rodape padding="10px 20px 14px">
           {/*
            * Ajuste aprovado pela fundadora (16/11/2026, D-014): as ações da foto saíram do alto
-           * da tela para perto do polegar. Foto entra com o armazenamento privado (Storage).
+           * da tela para perto do polegar. A foto fica em pasta privada (só a pessoa vê).
            */}
+          <input ref={seletor} type="file" accept="image/*" className="visualmente-oculto" tabIndex={-1} aria-hidden onChange={(e) => void escolherFoto(e.target.files?.[0]).finally(() => (e.target.value = ''))} />
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-            <button type="button" className="r-btn" onClick={() => navegar('/em-breve/foto')} style={{ flex: 1, height: '48px', boxSizing: 'border-box', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>
-              Trocar foto
+            <button type="button" className="r-btn" disabled={enviando} onClick={() => seletor.current?.click()} style={{ flex: 1, height: '48px', boxSizing: 'border-box', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>
+              {enviando ? 'Enviando…' : 'Trocar foto'}
             </button>
-            <button type="button" className="r-btn" onClick={() => navegar('/em-breve/foto')} style={{ flex: 1, height: '48px', boxSizing: 'border-box', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)' }}>
+            <button type="button" className="r-btn" disabled={!foto || enviando} onClick={() => void tirarFoto()} style={{ flex: 1, height: '48px', boxSizing: 'border-box', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', opacity: foto ? 1 : 0.5 }}>
               Remover foto
             </button>
           </div>

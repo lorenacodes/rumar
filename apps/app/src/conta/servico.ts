@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { DEEP_LINK, VERSAO_TEXTOS_LEGAIS } from '../config';
 import { supabase } from '../lib/supabase';
+import { rotuloCidade, type Cidade } from '../lib/cidades';
 import { usePlano } from '../state/plano';
 
 export type Resultado<T extends string> = { ok: true } | { ok: false; motivo: T };
@@ -147,6 +148,7 @@ async function finalizarCadastroUmaVez(sessao: Session): Promise<Resultado<'meno
     user_id: user.id,
     display_name: meta.display_name ?? 'Viajante',
     origin_city: plano.cidade || null,
+    origin: plano.origem,
     language: plano.idiomaApp,
     spoken_languages: plano.idiomasFalados,
     birth_ok: true,
@@ -256,23 +258,39 @@ export interface Perfil {
   display_name: string;
   origin_city: string | null;
   email: string;
+  /** Cidade escolhida da lista (contas antigas podem ter só o texto). */
+  origem?: Cidade | null;
+  /** Endereço temporário (1 hora) da foto privada; nulo sem foto. */
+  foto?: string | null;
 }
+
+const PASTA_FOTOS = 'fotos-perfil';
+const caminhoFoto = (userId: string) => `${userId}/perfil.jpg`;
 
 export async function carregarPerfil(): Promise<Perfil | null> {
   const { data: u } = await supabase.auth.getUser();
   if (!u.user) return null;
-  const { data } = await supabase.from('profiles').select('display_name, origin_city').eq('user_id', u.user.id).maybeSingle();
+  const { data } = await supabase.from('profiles').select('display_name, origin_city, origin, photo_updated_at').eq('user_id', u.user.id).maybeSingle();
   if (!data) return null;
-  return { ...data, email: u.user.email ?? '' };
+  let foto: string | null = null;
+  if (data.photo_updated_at) {
+    const assinada = await supabase.storage.from(PASTA_FOTOS).createSignedUrl(caminhoFoto(u.user.id), 3600);
+    // O número da versão evita mostrar a foto antiga guardada no aparelho.
+    if (assinada.data) foto = `${assinada.data.signedUrl}&v=${Date.parse(data.photo_updated_at as string)}`;
+  }
+  return { display_name: data.display_name, origin_city: data.origin_city, origem: (data.origin as Cidade | null) ?? null, email: u.user.email ?? '', foto };
 }
 
-export async function salvarPerfil(nome: string, cidade: string): Promise<boolean> {
+export async function salvarPerfil(nome: string, origem: Cidade | null): Promise<boolean> {
   const { data: u } = await supabase.auth.getUser();
   if (!u.user) return false;
+  const cidade = origem ? rotuloCidade(origem) : null;
   const { error } = await supabase
     .from('profiles')
-    .update({ display_name: nome.trim(), origin_city: cidade.trim() || null })
+    .update({ display_name: nome.trim(), origin_city: cidade, origin: origem })
     .eq('user_id', u.user.id);
+  // O plano do aparelho passa a sair da mesma cidade.
+  if (!error && origem) usePlano.getState().atualizar({ cidade: cidade ?? '', origem });
   return !error;
 }
 
@@ -309,4 +327,46 @@ export function sessaoTerminouSozinha(): boolean {
 export function iniciais(nome: string): string {
   const partes = nome.trim().split(/\s+/).filter(Boolean);
   return ((partes[0]?.[0] ?? '') + (partes[1]?.[0] ?? '')).toUpperCase() || 'R';
+}
+
+// ---------------------------------------------------------------------------
+// Foto de perfil (5.14): reduzida no aparelho e guardada em pasta privada.
+// ---------------------------------------------------------------------------
+/** Recorta no centro em quadrado de 512 px e salva como JPEG (fica com ~50 a 150 KB). */
+async function prepararFoto(arquivo: File): Promise<Blob> {
+  const bitmap = await createImageBitmap(arquivo);
+  const lado = Math.min(bitmap.width, bitmap.height);
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('sem canvas');
+  ctx.drawImage(bitmap, (bitmap.width - lado) / 2, (bitmap.height - lado) / 2, lado, lado, 0, 0, 512, 512);
+  bitmap.close();
+  return new Promise((ok, erro) => canvas.toBlob((b) => (b ? ok(b) : erro(new Error('falhou'))), 'image/jpeg', 0.85));
+}
+
+export async function enviarFoto(arquivo: File): Promise<Resultado<'tipo' | 'rede'>> {
+  if (!arquivo.type.startsWith('image/')) return { ok: false, motivo: 'tipo' };
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return { ok: false, motivo: 'rede' };
+  let blob: Blob;
+  try {
+    blob = await prepararFoto(arquivo);
+  } catch {
+    return { ok: false, motivo: 'tipo' };
+  }
+  const envio = await supabase.storage.from(PASTA_FOTOS).upload(caminhoFoto(u.user.id), blob, { upsert: true, contentType: 'image/jpeg' });
+  if (envio.error) return { ok: false, motivo: 'rede' };
+  const { error } = await supabase.from('profiles').update({ photo_updated_at: new Date().toISOString() }).eq('user_id', u.user.id);
+  return error ? { ok: false, motivo: 'rede' } : { ok: true };
+}
+
+export async function removerFoto(): Promise<boolean> {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return false;
+  const apagou = await supabase.storage.from(PASTA_FOTOS).remove([caminhoFoto(u.user.id)]);
+  if (apagou.error) return false;
+  const { error } = await supabase.from('profiles').update({ photo_updated_at: null }).eq('user_id', u.user.id);
+  return !error;
 }
