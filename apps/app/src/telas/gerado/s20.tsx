@@ -2,10 +2,11 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
-import { AvisoExemplo } from '../../ui/toque';
+import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 20.1 Avisos */
 export function Tela20_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="20.1">
       <AvisoExemplo />
@@ -16,7 +17,7 @@ export function Tela20_1() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           O que mudou para você.
         </div>
-        <div style={{ background: "var(--cartao-1)", border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }}>
+        <div style={{ background: "var(--cartao-1)", border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }} {...toque("8.1")}>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--azul)" }}>
             Preço em queda · hoje
           </div>
@@ -35,7 +36,7 @@ export function Tela20_1() {
             </span>
           </div>
         </div>
-        <div style={{ background: "#fff", border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }}>
+        <div style={{ background: "#fff", border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }} {...toque("11.1")}>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--azul)" }}>
             Seu plano · esta semana
           </div>
@@ -54,7 +55,7 @@ export function Tela20_1() {
             </span>
           </div>
         </div>
-        <div style={{ background: "#fff", border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }}>
+        <div style={{ background: "#fff", border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }} {...toque("11.1")}>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--azul)" }}>
             Faltam 4 dias
           </div>
@@ -77,7 +78,7 @@ export function Tela20_1() {
           <span>
             Máximo de 1 aviso por dia
           </span>
-          <b style={{ color: "var(--azul)" }}>
+          <b style={{ color: "var(--azul)" }} {...toque("30.1")}>
             Ajustar
           </b>
         </div>
@@ -89,6 +90,7 @@ export function Tela20_1() {
 
 /** 20.2 Marco de 50% */
 export function Tela20_2() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="20.2">
       <AvisoExemplo />
@@ -119,10 +121,10 @@ export function Tela20_2() {
           </div>
         </div>
         <div style={{ position: "absolute", left: "0", right: "0", bottom: "0", padding: "12px 20px 26px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <div style={{ height: "56px", background: "var(--fundo-escuro)", color: "#fff", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "56px", background: "var(--fundo-escuro)", color: "#fff", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("26.3")}>
             Compartilhar o marco ↗
           </div>
-          <div style={{ height: "48px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'" }}>
+          <div style={{ height: "48px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'" }} {...toque("15.1")}>
             Continuar
           </div>
         </div>

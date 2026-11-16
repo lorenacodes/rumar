@@ -6,6 +6,7 @@ import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 15.1 Minha viagem */
 export function Tela15_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="15.1">
       <AvisoExemplo />
@@ -43,7 +44,7 @@ export function Tela15_1() {
         <div style={{ font: "600 17px 'Lexend Exa'", letterSpacing: "-0.02em", margin: "16px 0 4px" }}>
           Seu plano até o embarque
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("2.2")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
             ✓
           </div>
@@ -54,7 +55,7 @@ export function Tela15_1() {
             feito
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("2.3")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
             ✓
           </div>
@@ -65,7 +66,7 @@ export function Tela15_1() {
             feito
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("18.1")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", border: "2px solid var(--texto)", background: "var(--amarelo)" }} />
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'" }}>
             Tirar o passaporte (45 dias)
@@ -74,7 +75,7 @@ export function Tela15_1() {
             até 12 dez
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("11.1")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", border: "2px solid var(--linha)" }} />
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'" }}>
             Reservar o voo
@@ -83,7 +84,7 @@ export function Tela15_1() {
             até 15 fev
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("11.1")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", border: "2px solid var(--linha)" }} />
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'" }}>
             Reservar o hotel
@@ -92,7 +93,7 @@ export function Tela15_1() {
             até 1 mai
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("18.3")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", border: "2px solid var(--linha)" }} />
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'" }}>
             Seguro e câmbio
@@ -109,6 +110,7 @@ export function Tela15_1() {
 
 /** 15.2 Meta da semana */
 export function Tela15_2() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="15.2">
       <AvisoExemplo />
@@ -177,7 +179,7 @@ export function Tela15_2() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.7")}>
           Registrar quanto guardei ↗
         </div>
       </div>
@@ -219,7 +221,7 @@ export function Tela15_3() {
         <div style={{ font: "600 16px 'Open Sans'", margin: "14px 0 2px" }}>
           Aulas no YouTube desta semana
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("https://www.youtube.com/results?search_query=franc%C3%AAs+para+viajantes+cumprimentos")}>
           <div style={{ width: "88px", height: "54px", flex: "none", background: "var(--fundo-escuro)", color: "var(--amarelo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>
             ▶
           </div>
@@ -235,7 +237,7 @@ export function Tela15_3() {
             12 min
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("https://www.youtube.com/results?search_query=franc%C3%AAs+pedir+comida+restaurante")}>
           <div style={{ width: "88px", height: "54px", flex: "none", background: "var(--fundo-escuro)", color: "var(--amarelo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>
             ▶
           </div>
@@ -259,7 +261,7 @@ export function Tela15_3() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("https://www.youtube.com/results?search_query=franc%C3%AAs+para+viajantes+iniciante")}>
           Abrir no YouTube ↗
         </div>
       </div>

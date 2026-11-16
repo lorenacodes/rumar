@@ -2,6 +2,7 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 27.1 Denunciar */
@@ -78,7 +79,9 @@ export function Tela27_2() {
         </div>
         <div style={{ position: "relative", marginTop: "12px" }}>
           <div style={{ height: "170px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Paris" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ position: "absolute", left: "30%", top: "42%", width: "60px", height: "60px", background: "rgba(11,31,75,.65)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "12px", textAlign: "center" }}>
@@ -106,7 +109,7 @@ export function Tela27_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.2")}>
           Continuar ↗
         </div>
       </div>
@@ -225,7 +228,7 @@ export function Tela27_4() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.2")}>
           Publicar de novo ↗
         </div>
       </div>

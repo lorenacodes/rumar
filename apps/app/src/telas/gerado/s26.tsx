@@ -2,6 +2,7 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 26.1 Página do lugar */
@@ -12,7 +13,9 @@ export function Tela26_1() {
       <AvisoExemplo />
       <div style={{ position: "relative" }}>
         <div style={{ height: "170px", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+            <FotoDestino nome="Montmartre" />
+          </div>
           <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
         </div>
         <div style={{ position: "absolute", left: "12px", top: "12px", width: "48px", height: "48px", background: "var(--fundo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }} {...toque('voltar')}>
@@ -53,11 +56,15 @@ export function Tela26_1() {
           </div>
           <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
             <div style={{ width: "130px", flex: "none", height: "80px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Aracaju" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ width: "130px", flex: "none", height: "80px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Aracaju" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
           </div>
@@ -88,7 +95,7 @@ export function Tela26_1() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.2")}>
           + Contar minha experiência
         </div>
       </div>
@@ -132,11 +139,15 @@ export function Tela26_2() {
         </div>
         <div style={{ display: "flex", gap: "8px" }}>
           <div style={{ width: "80px", flex: "none", height: "80px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Montmartre" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ width: "80px", flex: "none", height: "80px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Montmartre" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ width: "80px", height: "80px", border: "2px dashed var(--linha)", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "var(--texto-sec)" }}>
@@ -173,7 +184,7 @@ export function Tela26_2() {
         </p>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.1")}>
           Publicar ↗
         </div>
       </div>
@@ -202,7 +213,9 @@ export function Tela26_3() {
         <div style={{ width: "210px", height: "373px", margin: "14px auto 0", position: "relative", overflow: "hidden", background: "var(--fundo)", color: "var(--texto)" }}>
           <div style={{ position: "absolute", inset: "0" }}>
             <div style={{ height: "250px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
           </div>
@@ -419,7 +432,7 @@ export function Tela26_5() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque('voltar')}>
           Enviar convite ↗
         </div>
       </div>
@@ -430,6 +443,7 @@ export function Tela26_5() {
 
 /** 26.6 Roteiro compartilhado, no navegador */
 export function Tela26_6() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="26.6">
       <AvisoExemplo />
@@ -479,7 +493,7 @@ export function Tela26_6() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/")}>
           Abrir no Bo Vair ↗
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>

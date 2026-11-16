@@ -12,7 +12,12 @@ import { rotaDaTela } from './rotas';
 export function useToque() {
   const navegar = useNavigate();
   return (destino: string) => {
-    const ir = () => (destino === 'voltar' ? navegar(-1) : navegar(rotaDaTela(destino)));
+    const ir = () => {
+      if (destino === 'voltar') return navegar(-1);
+      // Link de fora (YouTube, sites oficiais): abre no app ou navegador do celular.
+      if (/^https?:\/\//.test(destino)) return void (window.location.href = destino);
+      navegar(rotaDaTela(destino));
+    };
     return {
       role: 'button' as const,
       tabIndex: 0,

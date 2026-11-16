@@ -29,7 +29,7 @@ export function Tela24_1() {
           </b>
         </div>
         <div style={{ marginTop: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "58px", borderBottom: "1px solid var(--linha)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "58px", borderBottom: "1px solid var(--linha)" }} {...toque("24.2")}>
             <div style={{ flex: "1" }}>
               <div style={{ font: "600 16px 'Open Sans'" }}>
                 Perdi o passaporte
@@ -311,7 +311,7 @@ export function Tela24_3() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("https://www.consumidor.gov.br")}>
           Abrir canais oficiais ↗
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>

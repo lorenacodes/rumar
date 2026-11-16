@@ -2,6 +2,7 @@
 import { TELAS_02 } from './s02';
 import { TELAS_03 } from './s03';
 import { TELAS_04 } from './s04';
+import { TELAS_05 } from './s05';
 import { TELAS_06 } from './s06';
 import { TELAS_07 } from './s07';
 import { TELAS_08 } from './s08';
@@ -27,4 +28,4 @@ import { TELAS_29 } from './s29';
 import { TELAS_30 } from './s30';
 import { TELAS_31 } from './s31';
 
-export const TELAS_GERADAS = { ...TELAS_02, ...TELAS_03, ...TELAS_04, ...TELAS_06, ...TELAS_07, ...TELAS_08, ...TELAS_09, ...TELAS_10, ...TELAS_11, ...TELAS_14, ...TELAS_15, ...TELAS_16, ...TELAS_17, ...TELAS_18, ...TELAS_19, ...TELAS_20, ...TELAS_21, ...TELAS_22, ...TELAS_23, ...TELAS_24, ...TELAS_25, ...TELAS_26, ...TELAS_27, ...TELAS_28, ...TELAS_29, ...TELAS_30, ...TELAS_31 };
+export const TELAS_GERADAS = { ...TELAS_02, ...TELAS_03, ...TELAS_04, ...TELAS_05, ...TELAS_06, ...TELAS_07, ...TELAS_08, ...TELAS_09, ...TELAS_10, ...TELAS_11, ...TELAS_14, ...TELAS_15, ...TELAS_16, ...TELAS_17, ...TELAS_18, ...TELAS_19, ...TELAS_20, ...TELAS_21, ...TELAS_22, ...TELAS_23, ...TELAS_24, ...TELAS_25, ...TELAS_26, ...TELAS_27, ...TELAS_28, ...TELAS_29, ...TELAS_30, ...TELAS_31 };

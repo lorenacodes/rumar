@@ -1,1 +1,553 @@
-{ "ignorar": ["3.1"], "telas": {} }
+{
+ "ignorar": [
+  "3.1",
+  "5.1",
+  "5.2",
+  "5.3",
+  "5.4",
+  "5.5",
+  "5.7",
+  "5.8",
+  "5.9",
+  "5.10",
+  "5.11",
+  "5.12",
+  "5.13",
+  "5.14",
+  "5.15",
+  "5.16",
+  "5.17",
+  "5.18",
+  "5.23"
+ ],
+ "telas": {
+  "2.1": {
+   "toques": {
+    "Paris": "2.2",
+    "Lisboa": "2.2",
+    "Passaporte ▾": "2.4",
+    "Mês ▾": "2.4",
+    "Estilo ▾": "2.4"
+   }
+  },
+  "2.2": {
+   "toques": {
+    "Escolher julho de 2027 ↗": "2.3",
+    "Em Paris falam francês.": "15.3",
+    "Temos aulas curtas para você.": "15.3"
+   }
+  },
+  "2.3": {
+   "toques": {
+    "Seguir com julho ↗": "10.1"
+   }
+  },
+  "2.4": {
+   "toques": {
+    "Lisboa": "2.2",
+    "Cascais": "2.2",
+    "Lagos, Portugal": "2.2",
+    "Paris": "2.2",
+    "Maceió": "3.3",
+    "Penedo": "4.2"
+   }
+  },
+  "2.5": {
+   "toques": {
+    "Paris": "2.2",
+    "Lisboa": "2.2",
+    "Salvador": "3.3",
+    "Comparar 2 destinos ↗": "2.3"
+   }
+  },
+  "3.2": {
+   "toques": {
+    "Exterior": "2.1",
+    "Todos": "2.1"
+   }
+  },
+  "3.3": {
+   "toques": {
+    "Planejar essa viagem ↗": "10.1"
+   }
+  },
+  "3.4": {
+   "toques": {
+    "Ver 27 de maio ↗": "3.3"
+   }
+  },
+  "3.5": {
+   "toques": {
+    "Usar o carro ↗": "3.3"
+   }
+  },
+  "4.1": {
+   "toques": {
+    "Meus sonhos": "4.3",
+    "Penedo": "4.2",
+    "Maceió": "4.2",
+    "Foto de Penedo": "4.2",
+    "Foto de Maceió": "4.2"
+   }
+  },
+  "4.2": {
+   "toques": {
+    "Planejar essa viagem ↗": "10.1"
+   }
+  },
+  "4.3": {
+   "toques": {
+    "Ver minhas opções de hoje ↗": "4.1"
+   }
+  },
+  "4.4": {
+   "toques": {
+    "✓ Dá para ir já": "4.1",
+    "Criar meu cofrinho ↗": "10.1"
+   }
+  },
+  "6.1": {
+   "toques": {
+    "Montar meu roteiro ↗": "6.3"
+   }
+  },
+  "6.2": {
+   "toques": {
+    "Permitir e ajustar": "6.3",
+    "Agora não": "voltar"
+   }
+  },
+  "6.3": {
+   "toques": {
+    "Reservar a viagem ↗": "11.1"
+   }
+  },
+  "6.4": {
+   "toques": {
+    "Recalcular o plano ↗": "10.1"
+   }
+  },
+  "6.5": {
+   "toques": {
+    "Adicionar um lugar ↗": "2.4"
+   }
+  },
+  "6.6": {
+   "toques": {
+    "Adicionar ao calendário ↗": "16.1"
+   }
+  },
+  "7.1": {
+   "toques": {
+    "Marina R.": "7.2",
+    "6 noites com calma e muita comida": "7.2",
+    "Lucas P.": "7.2",
+    "5 noites para conhecer gente": "7.2"
+   }
+  },
+  "7.2": {
+   "toques": {
+    "Copiar para minha viagem ↗": "7.3"
+   }
+  },
+  "7.3": {
+   "toques": {
+    "Adicionar ao meu roteiro ✓": "6.3"
+   }
+  },
+  "7.4": {
+   "toques": {
+    "Publicar roteiro ↗": "26.3"
+   }
+  },
+  "8.1": {
+   "toques": {
+    "Ligar o aviso de preço ↗": "9.1"
+   }
+  },
+  "8.3": {
+   "toques": {
+    "Enviar valor ↗": "voltar"
+   }
+  },
+  "9.1": {
+   "toques": {
+    "Salvar o teto ↗": "20.1"
+   }
+  },
+  "9.2": {
+   "toques": {
+    "Ver agosto ↗": "2.2"
+   }
+  },
+  "10.1": {
+   "toques": {
+    "Por valor": "10.2",
+    "Guardar R$ 653 por mês ↗": "10.4"
+   }
+  },
+  "10.2": {
+   "toques": {
+    "Por data": "10.1",
+    "Usar R$ 600 por mês ↗": "10.4"
+   }
+  },
+  "10.3": {
+   "toques": {
+    "Escolher R$ 700 ↗": "10.4"
+   }
+  },
+  "10.4": {
+   "toques": {
+    "Criar meu cofrinho ✓": "/conta/criar"
+   }
+  },
+  "10.5": {
+   "toques": {
+    "Por data": "10.1",
+    "Por valor": "10.2",
+    "Ver julho ↗": "10.1"
+   }
+  },
+  "10.7": {
+   "toques": {
+    "Registrar ✓": "10.8"
+   }
+  },
+  "10.8": {
+   "toques": {
+    "Registrar quanto guardei ↗": "10.7"
+   }
+  },
+  "10.9": {
+   "toques": {
+    "Atualizar o cofrinho ↗": "10.8"
+   }
+  },
+  "10.10": {
+   "toques": {
+    "Entendi": "voltar",
+    "Não mostrar dicas": "voltar"
+   }
+  },
+  "11.1": {
+   "toques": {
+    "Já reservei": "11.2"
+   }
+  },
+  "11.2": {
+   "toques": {
+    "Salvar no meu plano ✓": "16.1"
+   }
+  },
+  "14.1": {
+   "toques": {
+    "Lembrar o Caio com carinho ↗": "14.3"
+   }
+  },
+  "14.2": {
+   "toques": {
+    "Marcar minha parte como paga ✓": "16.1"
+   }
+  },
+  "14.3": {
+   "toques": {
+    "Enviar pelo WhatsApp ↗": "voltar"
+   }
+  },
+  "15.1": {
+   "toques": {
+    "Tirar o passaporte (45 dias)": "18.1",
+    "Reservar o voo": "11.1",
+    "Reservar o hotel": "11.1",
+    "Seguro e câmbio": "18.3",
+    "Ver custo e folga": "2.3",
+    "Escolher destino e mês": "2.2"
+   }
+  },
+  "15.2": {
+   "toques": {
+    "Registrar quanto guardei ↗": "10.7"
+   }
+  },
+  "16.1": {
+   "toques": {
+    "Roteiro": "6.3",
+    "Cofrinho": "10.8",
+    "Reservas": "11.1",
+    "Documentos": "17.1",
+    "Mala": "19.1",
+    "Quem vai": "14.1",
+    "Se algo der errado": "24.1",
+    "Ajuda": "29.1",
+    "trocar ▾": "16.2"
+   }
+  },
+  "16.2": {
+   "toques": {
+    "Planejar outra viagem ↗": "2.1"
+   }
+  },
+  "16.3": {
+   "toques": {
+    "Apagar esta viagem": "16.2"
+   }
+  },
+  "16.4": {
+   "toques": {
+    "Próxima dica": "16.1",
+    "Pular as dicas": "16.1"
+   }
+  },
+  "17.1": {
+   "toques": {
+    "Adicionar documento ↗": "17.2"
+   }
+  },
+  "18.3": {
+   "toques": {
+    "Guardar minha apólice ↗": "17.2"
+   }
+  },
+  "19.1": {
+   "toques": {
+    "Montar a mala": "19.2"
+   }
+  },
+  "19.2": {
+   "toques": {
+    "Ver minha mala ↗": "19.1"
+   }
+  },
+  "19.3": {
+   "toques": {
+    "Marcar tudo como conferido ✓": "19.1"
+   }
+  },
+  "20.1": {
+   "toques": {
+    "Ver o voo ↗": "8.1",
+    "Ver o hotel ↗": "11.1",
+    "Reservar ↗": "11.1",
+    "Ajustar": "30.1"
+   }
+  },
+  "20.2": {
+   "toques": {
+    "Compartilhar o marco ↗": "26.3",
+    "Continuar": "15.1"
+   }
+  },
+  "21.1": {
+   "toques": {
+    "Abrir cartão de embarque ↗": "17.3"
+   }
+  },
+  "21.2": {
+   "toques": {
+    "Publicar ↗": "26.2"
+   }
+  },
+  "23.2": {
+   "toques": {
+    "Aceitar as trocas ✓": "6.3"
+   }
+  },
+  "23.4": {
+   "toques": {
+    "Aceitar ↗": "25.1",
+    "Agora não": "25.1"
+   }
+  },
+  "24.1": {
+   "toques": {
+    "Perdi o passaporte": "24.2",
+    "Voo cancelado ou atrasado": "24.3",
+    "Emergência no Brasil": "24.4"
+   }
+  },
+  "25.1": {
+   "toques": {
+    "Quero ir também ↗": "7.2",
+    "Marina R.": "7.2",
+    "Para você:": "8.1"
+   }
+  },
+  "25.2": {
+   "toques": {
+    "Ana S.": "/perfil",
+    "AS": "/perfil",
+    "Paris": "16.1",
+    "Maceió": "16.2",
+    "Compartilhar com a marca Bo Vair ↗": "26.3",
+    "Compartilhar com a marca Rumar ↗": "26.3",
+    "Encontros com conterrâneos": "26.4",
+    "Idioma: Português": "30.1",
+    "Avisos": "20.1",
+    "Privacidade": "30.3"
+   }
+  },
+  "26.1": {
+   "toques": {
+    "+ Contar minha experiência": "26.2"
+   }
+  },
+  "26.2": {
+   "toques": {
+    "Publicar ↗": "26.1"
+   }
+  },
+  "26.4": {
+   "toques": {}
+  },
+  "26.5": {
+   "toques": {
+    "Enviar convite ↗": "voltar"
+   }
+  },
+  "26.6": {
+   "toques": {
+    "Abrir no Rumar ↗": "/"
+   }
+  },
+  "27.2": {
+   "toques": {
+    "Continuar ↗": "26.2"
+   }
+  },
+  "27.4": {
+   "toques": {
+    "Publicar de novo ↗": "26.2"
+   }
+  },
+  "28.3": {
+   "toques": {
+    "Continuar com este valor ↗": "voltar"
+   }
+  },
+  "28.4": {
+   "toques": {
+    "Reservar 13 de julho ↗": "11.1"
+   }
+  },
+  "28.5": {
+   "toques": {
+    "Ver o que cabe hoje ↗": "4.1"
+   }
+  },
+  "28.6": {
+   "toques": {
+    "Ajustar avisos ↗": "30.1"
+   }
+  },
+  "28.10": {
+   "toques": {
+    "Ver roteiros de quem foi ↗": "7.1"
+   }
+  },
+  "28.11": {
+   "toques": {
+    "Li e concordo ↗": "voltar",
+    "Ler o que mudou": "30.12"
+   }
+  },
+  "28.13": {
+   "toques": {
+    "Continuar editando": "voltar",
+    "Descartar": "voltar"
+   }
+  },
+  "28.14": {
+   "toques": {
+    "Trocar minha senha ↗": "/perfil/senha"
+   }
+  },
+  "29.1": {
+   "toques": {
+    "Falar com a gente ↗": "29.3"
+   }
+  },
+  "29.2": {
+   "toques": {
+    "Corrigir este valor ↗": "8.3"
+   }
+  },
+  "29.3": {
+   "toques": {
+    "Enviar mensagem ↗": "29.4"
+   }
+  },
+  "29.4": {
+   "toques": {
+    "Nova mensagem ↗": "29.3"
+   }
+  },
+  "29.5": {
+   "toques": {
+    "Sim, estou gostando": "voltar",
+    "Mais ou menos": "29.6",
+    "Agora não": "voltar"
+   }
+  },
+  "29.6": {
+   "toques": {
+    "Enviar ↗": "voltar"
+   }
+  },
+  "30.6": {
+   "toques": {
+    "Pedir meus dados ↗": "30.4"
+   }
+  },
+  "30.7": {
+   "toques": {
+    "Manter minha conta": "voltar",
+    "Baixar meus dados": "30.6",
+    "Apagar mesmo assim": "30.8"
+   }
+  },
+  "30.8": {
+   "toques": {
+    "Apagar minha conta": "30.9",
+    "Manter minha conta": "/perfil"
+   }
+  },
+  "30.9": {
+   "toques": {
+    "Cancelar a exclusão ↗": "/perfil"
+   }
+  },
+  "30.10": {
+   "toques": {
+    "Criar uma conta nova ↗": "/"
+   }
+  },
+  "30.12": {
+   "toques": {
+    "Ler a política completa ↗": "30.14"
+   }
+  },
+  "31.4": {
+   "toques": {
+    "Adicionar documento ↗": "17.2"
+   }
+  },
+  "15.3": {
+   "toques": {
+    "Abrir no YouTube ↗": "https://www.youtube.com/results?search_query=franc%C3%AAs+para+viajantes+iniciante",
+    "Francês para viajantes: cumprimentar": "https://www.youtube.com/results?search_query=franc%C3%AAs+para+viajantes+cumprimentos",
+    "Pedir comida em um restaurante": "https://www.youtube.com/results?search_query=franc%C3%AAs+pedir+comida+restaurante"
+   }
+  },
+  "18.1": {
+   "toques": {
+    "Abrir o site da Polícia Federal ↗": "https://www.gov.br/pf/pt-br/assuntos/passaporte"
+   }
+  },
+  "24.3": {
+   "toques": {
+    "Abrir canais oficiais ↗": "https://www.consumidor.gov.br"
+   }
+  }
+ }
+}

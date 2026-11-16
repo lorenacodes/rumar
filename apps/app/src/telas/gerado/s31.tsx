@@ -2,7 +2,8 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
-import { AvisoExemplo } from '../../ui/toque';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
+import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 31.1 Texto maior */
 export function Tela31_1() {
@@ -18,7 +19,9 @@ export function Tela31_1() {
         </div>
         <div style={{ marginTop: "14px", border: "2px solid var(--texto)" }}>
           <div style={{ height: "120px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Aracaju" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ padding: "12px 14px" }}>
@@ -171,7 +174,9 @@ export function Tela31_3() {
         <div style={{ marginTop: "12px", border: "2px solid var(--sobre-escuro)" }}>
           <div style={{ position: "relative" }}>
             <div style={{ height: "150px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Aracaju" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#8FB0FF,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "12px", top: "12px", border: "2px solid #fff", color: "#fff", padding: "2px 9px", transform: "rotate(7deg)", font: "600 16px 'Lexend Exa'" }}>
@@ -207,7 +212,9 @@ export function Tela31_3() {
         <div style={{ marginTop: "10px", border: "1px solid #2A3A66" }}>
           <div style={{ position: "relative" }}>
             <div style={{ height: "96px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Lisboa" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#8FB0FF,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", left: "14px", bottom: "8px", color: "#fff", font: "600 22px/26px 'Lexend Exa'", letterSpacing: "-0.03em", textShadow: "0 1px 8px rgba(0,0,0,.6)" }}>
@@ -231,6 +238,7 @@ export function Tela31_3() {
 
 /** 31.4 Tema escuro · Carteira */
 export function Tela31_4() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="31.4" data-tema="escuro" style={{ background: "rgb(10, 22, 51)", color: "var(--sobre-escuro)" }}>
       <AvisoExemplo />
@@ -310,7 +318,7 @@ export function Tela31_4() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid #2A3A66", background: "#0A1633" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", color: "var(--botao-principal-texto)" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", color: "var(--botao-principal-texto)" }} {...toque("17.2")}>
           Adicionar documento ↗
         </div>
       </div>

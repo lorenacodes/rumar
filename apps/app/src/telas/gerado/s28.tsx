@@ -149,7 +149,7 @@ export function Tela28_3() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque('voltar')}>
           Continuar com este valor ↗
         </div>
       </div>
@@ -159,6 +159,7 @@ export function Tela28_3() {
 
 /** 28.4 Reserva não concluída */
 export function Tela28_4() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="28.4">
       <AvisoExemplo />
@@ -219,7 +220,7 @@ export function Tela28_4() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("11.1")}>
           Reservar 13 de julho ↗
         </div>
       </div>
@@ -229,6 +230,7 @@ export function Tela28_4() {
 
 /** 28.5 Ainda sem viagem */
 export function Tela28_5() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="28.5">
       <AvisoExemplo />
@@ -252,7 +254,7 @@ export function Tela28_5() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("4.1")}>
           Ver o que cabe hoje ↗
         </div>
       </div>
@@ -263,6 +265,7 @@ export function Tela28_5() {
 
 /** 28.6 Sem avisos */
 export function Tela28_6() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="28.6">
       <AvisoExemplo />
@@ -281,7 +284,7 @@ export function Tela28_6() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("30.1")}>
           Ajustar avisos ↗
         </div>
       </div>
@@ -403,6 +406,7 @@ export function Tela28_9() {
 
 /** 28.10 Link que não abre */
 export function Tela28_10() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="28.10">
       <AvisoExemplo />
@@ -418,7 +422,7 @@ export function Tela28_10() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("7.1")}>
           Ver roteiros de quem foi ↗
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -431,6 +435,7 @@ export function Tela28_10() {
 
 /** 28.11 Termos atualizados */
 export function Tela28_11() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="28.11">
       <AvisoExemplo />
@@ -449,10 +454,10 @@ export function Tela28_11() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque('voltar')}>
           Li e concordo ↗
         </div>
-        <div style={{ height: "48px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "8px", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ height: "48px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "8px", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("30.12")}>
           Ler o que mudou
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -524,10 +529,10 @@ export function Tela28_13() {
           O que você escreveu aqui será perdido. A mesma pergunta aparece ao voltar de relato, roteiro, perfil, valores do cofrinho e documentos.
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
-          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque('voltar')}>
             Continuar editando
           </div>
-          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque('voltar')}>
             Descartar
           </div>
         </div>
@@ -538,6 +543,7 @@ export function Tela28_13() {
 
 /** 28.14 Aviso de segurança */
 export function Tela28_14() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="28.14">
       <AvisoExemplo />
@@ -620,7 +626,7 @@ export function Tela28_14() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/perfil/senha")}>
           Trocar minha senha ↗
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>

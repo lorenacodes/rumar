@@ -24,7 +24,7 @@ export function Tela10_1() {
           <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
             Por data
           </div>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("10.2")}>
             Por valor
           </div>
         </div>
@@ -104,7 +104,7 @@ export function Tela10_1() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.4")}>
           Guardar R$ 653 por mês ↗
         </div>
       </div>
@@ -129,7 +129,7 @@ export function Tela10_2() {
           Quanto cabe por mês?
         </div>
         <div style={{ display: "flex", gap: "6px", margin: "14px 0 0" }}>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("10.1")}>
             Por data
           </div>
           <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
@@ -205,7 +205,7 @@ export function Tela10_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.4")}>
           Usar R$ 600 por mês ↗
         </div>
       </div>
@@ -321,7 +321,7 @@ export function Tela10_3() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.4")}>
           Escolher R$ 700 ↗
         </div>
       </div>
@@ -423,7 +423,7 @@ export function Tela10_4() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/conta/criar")}>
           Criar meu cofrinho ✓
         </div>
       </div>
@@ -448,10 +448,10 @@ export function Tela10_5() {
           Quando você quer ir?
         </div>
         <div style={{ display: "flex", gap: "6px", margin: "14px 0 0" }}>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }}>
+          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff" }} {...toque("10.1")}>
             Por data
           </div>
-          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ flex: "1", height: "48px", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("10.2")}>
             Por valor
           </div>
         </div>
@@ -544,7 +544,7 @@ export function Tela10_5() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
           Ver julho ↗
         </div>
       </div>
@@ -611,7 +611,7 @@ export function Tela10_7() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.8")}>
           Registrar ✓
         </div>
       </div>
@@ -679,7 +679,7 @@ export function Tela10_8() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.7")}>
           Registrar quanto guardei ↗
         </div>
       </div>
@@ -762,7 +762,7 @@ export function Tela10_9() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.8")}>
           Atualizar o cofrinho ↗
         </div>
       </div>
@@ -802,10 +802,10 @@ export function Tela10_10() {
           <div style={{ width: "8px", height: "8px", background: "var(--linha)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
-          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque('voltar')}>
             Entendi
           </div>
-          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque('voltar')}>
             Não mostrar dicas
           </div>
         </div>

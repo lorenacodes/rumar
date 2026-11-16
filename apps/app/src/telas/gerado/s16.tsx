@@ -6,6 +6,7 @@ import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 16.1 Central da viagem */
 export function Tela16_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="16.1">
       <AvisoExemplo />
@@ -16,7 +17,7 @@ export function Tela16_1() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Tudo de Paris num lugar.
         </div>
-        <div style={{ background: "var(--fundo-escuro)", color: "#fff", padding: "14px 16px", marginTop: "10px" }}>
+        <div style={{ background: "var(--fundo-escuro)", color: "#fff", padding: "14px 16px", marginTop: "10px" }} {...toque("16.2")}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <span style={{ font: "600 15px 'Open Sans'", color: "var(--amarelo)" }}>
               Paris · jul de 2027
@@ -45,7 +46,7 @@ export function Tela16_1() {
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: "8px", marginTop: "12px" }}>
-          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }}>
+          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }} {...toque("6.3")}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Roteiro
             </div>
@@ -53,7 +54,7 @@ export function Tela16_1() {
               6 dias · 1 já montado
             </div>
           </div>
-          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }}>
+          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }} {...toque("10.8")}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Cofrinho
             </div>
@@ -61,7 +62,7 @@ export function Tela16_1() {
               R$ 2.000 de R$ 7.678
             </div>
           </div>
-          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }}>
+          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }} {...toque("11.1")}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Reservas
             </div>
@@ -69,7 +70,7 @@ export function Tela16_1() {
               0 de 2 · voo e hotel
             </div>
           </div>
-          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }}>
+          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }} {...toque("17.1")}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Documentos
             </div>
@@ -77,7 +78,7 @@ export function Tela16_1() {
               Nenhum guardado ainda
             </div>
           </div>
-          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }}>
+          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }} {...toque("19.1")}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Mala
             </div>
@@ -85,7 +86,7 @@ export function Tela16_1() {
               24 itens · abre 30 dias antes
             </div>
           </div>
-          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }}>
+          <div style={{ background: "var(--cartao-2)", color: "var(--texto)", padding: "12px 12px", minHeight: "76px", boxSizing: "border-box" }} {...toque("14.1")}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Quem vai
             </div>
@@ -95,7 +96,7 @@ export function Tela16_1() {
           </div>
         </div>
         <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-          <div style={{ flex: "1", border: "2px solid var(--texto)", padding: "10px 12px", boxSizing: "border-box" }}>
+          <div style={{ flex: "1", border: "2px solid var(--texto)", padding: "10px 12px", boxSizing: "border-box" }} {...toque("24.1")}>
             <div style={{ font: "600 15px 'Open Sans'" }}>
               Se algo der errado
             </div>
@@ -103,7 +104,7 @@ export function Tela16_1() {
               Guia por situação
             </div>
           </div>
-          <div style={{ flex: "1", border: "2px solid var(--texto)", padding: "10px 12px", boxSizing: "border-box" }}>
+          <div style={{ flex: "1", border: "2px solid var(--texto)", padding: "10px 12px", boxSizing: "border-box" }} {...toque("29.1")}>
             <div style={{ font: "600 15px 'Open Sans'" }}>
               Ajuda
             </div>
@@ -178,7 +179,7 @@ export function Tela16_2() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.1")}>
           Planejar outra viagem ↗
         </div>
       </div>
@@ -273,7 +274,7 @@ export function Tela16_3() {
             Nada daqui mexe no seu dinheiro. O Bo Vair só soma e lembra.
           </div>
         </div>
-        <div style={{ height: "48px", marginTop: "6px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ height: "48px", marginTop: "6px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("16.2")}>
           Apagar esta viagem
         </div>
       </div>
@@ -284,6 +285,7 @@ export function Tela16_3() {
 
 /** 16.4 Dica · sua viagem num lugar */
 export function Tela16_4() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="16.4">
       <AvisoExemplo />
@@ -311,10 +313,10 @@ export function Tela16_4() {
           <div style={{ width: "8px", height: "8px", background: "var(--linha)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
-          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("16.1")}>
             Próxima dica
           </div>
-          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--vermelho)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("16.1")}>
             Pular as dicas
           </div>
         </div>

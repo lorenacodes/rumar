@@ -2,10 +2,12 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 21.1 Durante a viagem · Hoje */
 export function Tela21_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="21.1">
       <AvisoExemplo />
@@ -87,7 +89,7 @@ export function Tela21_1() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("17.3")}>
           Abrir cartão de embarque ↗
         </div>
       </div>
@@ -118,7 +120,9 @@ export function Tela21_2() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginTop: "14px" }}>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
             <div style={{ height: "104px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", background: "var(--amarelo)", border: "2px solid var(--texto)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
@@ -127,7 +131,9 @@ export function Tela21_2() {
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
             <div style={{ height: "104px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", background: "var(--amarelo)", border: "2px solid var(--texto)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
@@ -136,14 +142,18 @@ export function Tela21_2() {
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
             <div style={{ height: "104px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", border: "2px solid #fff" }} />
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
             <div style={{ height: "104px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", background: "var(--amarelo)", border: "2px solid var(--texto)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
@@ -152,14 +162,18 @@ export function Tela21_2() {
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
             <div style={{ height: "104px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", border: "2px solid #fff" }} />
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
             <div style={{ height: "104px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Paris" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", border: "2px solid #fff" }} />
@@ -181,7 +195,7 @@ export function Tela21_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.2")}>
           Publicar ↗
         </div>
       </div>

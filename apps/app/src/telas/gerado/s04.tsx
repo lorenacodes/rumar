@@ -2,14 +2,17 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 4.1 Viagens que cabem hoje */
 export function Tela4_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="4.1">
       <AvisoExemplo />
       <div style={{ padding: "20px 20px 0" }}>
+        <FotoDestino nome="PenedoPenedo2 noites · ônibus ~3 hR$ 630Folgadosobram R$ 1.370" />
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--azul)" }}>
           Saindo de Aracaju
         </div>
@@ -20,7 +23,7 @@ export function Tela4_1() {
           <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
             ✓ Dá para ir já
           </div>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
+          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }} {...toque("4.3")}>
             Meus sonhos
           </div>
         </div>
@@ -43,12 +46,13 @@ export function Tela4_1() {
             Até 6 h
           </div>
         </div>
-        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
+        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("4.2")}>
+          <FotoDestino nome="Penedo" />
           <div style={{ position: "relative" }}>
+            <FotoDestino nome="Penedo" />
             <div style={{ height: "92px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
-              <span style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }}>
-                Foto de Penedo
-              </span>
+              <FotoDestino nome="Penedo" />
+              <RotuloFoto nome="Penedo" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
             </div>
           </div>
           <div style={{ padding: "10px 14px", display: "flex", justifyContent: "space-between", gap: "10px" }}>
@@ -73,12 +77,13 @@ export function Tela4_1() {
             </div>
           </div>
         </div>
-        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
+        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("4.2")}>
+          <FotoDestino nome="Maceió" />
           <div style={{ position: "relative" }}>
+            <FotoDestino nome="Maceió" />
             <div style={{ height: "92px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
-              <span style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }}>
-                Foto de Maceió
-              </span>
+              <FotoDestino nome="Maceió" />
+              <RotuloFoto nome="Maceió" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
             </div>
           </div>
           <div style={{ padding: "10px 14px", display: "flex", justifyContent: "space-between", gap: "10px" }}>
@@ -116,10 +121,10 @@ export function Tela4_2() {
     <main className="tela" data-tela="4.2">
       <AvisoExemplo />
       <div style={{ position: "relative" }}>
+        <FotoDestino nome="Maceió" />
         <div style={{ height: "200px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
-          <span style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }}>
-            Foto de Maceió
-          </span>
+          <FotoDestino nome="Maceió" />
+          <RotuloFoto nome="Maceió" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
         </div>
         <div style={{ position: "absolute", left: "12px", top: "12px", width: "48px", height: "48px", background: "var(--fundo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }} {...toque('voltar')}>
           ←
@@ -205,7 +210,7 @@ export function Tela4_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
           Planejar essa viagem ↗
         </div>
       </div>
@@ -317,7 +322,7 @@ export function Tela4_3() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("4.1")}>
           Ver minhas opções de hoje ↗
         </div>
       </div>
@@ -333,6 +338,7 @@ export function Tela4_4() {
     <main className="tela" data-tela="4.4">
       <AvisoExemplo />
       <div style={{ padding: "20px 20px 0" }}>
+        <FotoDestino nome="PenedoPenedo, bate-voltaÔnibus ~3 h · R$ 150 com comidaFolgado" />
         <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", fontSize: "24px", marginLeft: "-4px" }} {...toque('voltar')}>
           ←
         </div>
@@ -343,7 +349,7 @@ export function Tela4_4() {
           O que cabe hoje.
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "12px" }}>
-          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }}>
+          <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }} {...toque("4.1")}>
             ✓ Dá para ir já
           </div>
           <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", border: "1px solid var(--linha)" }}>
@@ -367,11 +373,12 @@ export function Tela4_4() {
           </div>
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px", display: "flex", gap: "12px" }}>
+          <FotoDestino nome="Penedo" />
           <div style={{ width: "96px", flex: "none" }}>
+            <FotoDestino nome="Penedo" />
             <div style={{ height: "84px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
-              <span style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }}>
-                Foto de Penedo
-              </span>
+              <FotoDestino nome="Penedo" />
+              <RotuloFoto nome="Penedo" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
             </div>
           </div>
           <div style={{ padding: "8px 8px 8px 0" }}>
@@ -399,7 +406,7 @@ export function Tela4_4() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
           Criar meu cofrinho ↗
         </div>
       </div>

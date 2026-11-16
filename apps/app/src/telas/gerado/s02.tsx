@@ -2,10 +2,12 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 2.1 Descobrir */
 export function Tela2_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="2.1">
       <AvisoExemplo />
@@ -17,20 +19,22 @@ export function Tela2_1() {
           2 viagens cabem no seu plano.
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "12px" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("2.4")}>
             Passaporte ▾
           </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("2.4")}>
             Mês ▾
           </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("2.4")}>
             Estilo ▾
           </div>
         </div>
-        <div style={{ marginTop: "12px", border: "2px solid var(--texto)" }}>
+        <div style={{ marginTop: "12px", border: "2px solid var(--texto)" }} {...toque("2.2")}>
           <div style={{ position: "relative" }}>
             <div style={{ height: "150px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Aracaju" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "12px", top: "12px", border: "2px solid #fff", color: "#fff", padding: "2px 9px", transform: "rotate(7deg)", font: "600 16px 'Lexend Exa'" }}>
@@ -63,10 +67,12 @@ export function Tela2_1() {
             </div>
           </div>
         </div>
-        <div style={{ marginTop: "10px", border: "1px solid var(--linha)" }}>
+        <div style={{ marginTop: "10px", border: "1px solid var(--linha)" }} {...toque("2.2")}>
           <div style={{ position: "relative" }}>
             <div style={{ height: "96px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Lisboa" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", left: "14px", bottom: "8px", color: "#fff", font: "600 22px/26px 'Lexend Exa'", letterSpacing: "-0.03em", textShadow: "0 1px 8px rgba(0,0,0,.6)" }}>
@@ -96,7 +102,9 @@ export function Tela2_2() {
       <AvisoExemplo />
       <div style={{ position: "relative" }}>
         <div style={{ height: "220px", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+            <FotoDestino nome="Paris" />
+          </div>
           <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
         </div>
         <div style={{ position: "absolute", left: "12px", top: "12px", width: "48px", height: "48px", background: "var(--fundo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }} {...toque('voltar')}>
@@ -150,7 +158,7 @@ export function Tela2_2() {
         <div style={{ fontSize: "14px", lineHeight: "20px", color: "var(--texto-sec)", marginTop: "10px" }}>
           Em julho a viagem cabe, com pouca sobra. Em agosto você ganha folga e a passagem fica mais barata.
         </div>
-        <div style={{ marginTop: "12px", display: "flex", gap: "10px", alignItems: "center", background: "var(--cartao-1)", padding: "10px 12px" }}>
+        <div style={{ marginTop: "12px", display: "flex", gap: "10px", alignItems: "center", background: "var(--cartao-1)", padding: "10px 12px" }} {...toque("15.3")}>
           <div style={{ flex: "1", fontSize: "14px", lineHeight: "20px" }}>
             <b>
               Em Paris falam francês.
@@ -160,7 +168,7 @@ export function Tela2_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.3")}>
           Escolher julho de 2027 ↗
         </div>
       </div>
@@ -306,7 +314,7 @@ export function Tela2_3() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
           Seguir com julho ↗
         </div>
       </div>
@@ -339,7 +347,7 @@ export function Tela2_4() {
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)", margin: "14px 0 6px" }}>
           Resultados
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("2.2")}>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Lisboa
@@ -355,7 +363,7 @@ export function Tela2_4() {
             ›
           </span>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("2.2")}>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Cascais
@@ -368,7 +376,7 @@ export function Tela2_4() {
             ›
           </span>
         </div>
-        <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }}>
+        <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("2.2")}>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
               Lagos, Portugal
@@ -385,13 +393,13 @@ export function Tela2_4() {
           Buscas recentes
         </div>
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("2.2")}>
             Paris
           </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("3.3")}>
             Maceió
           </div>
-          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }}>
+          <div style={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "500 15px 'Open Sans'", boxSizing: "border-box", border: "1px solid var(--linha)" }} {...toque("4.2")}>
             Penedo
           </div>
         </div>
@@ -424,7 +432,7 @@ export function Tela2_5() {
           Destinos que você salvou com ♡. O selo muda se o seu plano mudar.
         </div>
         <div style={{ marginTop: "8px" }}>
-          <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }}>
+          <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("2.2")}>
             <div style={{ flex: "1" }}>
               <div style={{ font: "600 16px 'Open Sans'" }}>
                 Paris
@@ -440,7 +448,7 @@ export function Tela2_5() {
               ›
             </span>
           </div>
-          <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }}>
+          <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("2.2")}>
             <div style={{ flex: "1" }}>
               <div style={{ font: "600 16px 'Open Sans'" }}>
                 Lisboa
@@ -456,7 +464,7 @@ export function Tela2_5() {
               ›
             </span>
           </div>
-          <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }}>
+          <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("3.3")}>
             <div style={{ flex: "1" }}>
               <div style={{ font: "600 16px 'Open Sans'" }}>
                 Salvador
@@ -478,7 +486,7 @@ export function Tela2_5() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.3")}>
           Comparar 2 destinos ↗
         </div>
       </div>

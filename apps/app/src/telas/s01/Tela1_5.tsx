@@ -19,7 +19,7 @@ export function Tela1_5() {
   const atualizar = usePlano((s) => s.atualizar);
   const seguir = (ativar: boolean) => {
     atualizar({ avisos: { preco: ativar, prazos: ativar, resumo: ativar } });
-    navegar('/inicio');
+    navegar('/tela/4.1');
   };
   return (
     <main className="tela" data-tela="1.5">

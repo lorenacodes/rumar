@@ -2,6 +2,7 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 7.1 Roteiros de quem foi */
@@ -31,10 +32,12 @@ export function Tela7_1() {
             Comida
           </div>
         </div>
-        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
+        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("7.2")}>
           <div style={{ position: "relative" }}>
             <div style={{ height: "96px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Aracaju" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", left: "12px", bottom: "8px", display: "flex", alignItems: "center", gap: "8px", color: "#fff", textShadow: "0 1px 6px rgba(0,0,0,.7)" }}>
@@ -69,10 +72,12 @@ export function Tela7_1() {
             </div>
           </div>
         </div>
-        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
+        <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("7.2")}>
           <div style={{ position: "relative" }}>
             <div style={{ height: "96px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+              <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+                <FotoDestino nome="Aracaju" />
+              </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", left: "12px", bottom: "8px", display: "flex", alignItems: "center", gap: "8px", color: "#fff", textShadow: "0 1px 6px rgba(0,0,0,.7)" }}>
@@ -118,7 +123,9 @@ export function Tela7_2() {
       <AvisoExemplo />
       <div style={{ position: "relative" }}>
         <div style={{ height: "150px", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+            <FotoDestino nome="Aracaju" />
+          </div>
           <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
         </div>
         <div style={{ position: "absolute", left: "12px", top: "12px", width: "48px", height: "48px", background: "var(--fundo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }} {...toque('voltar')}>
@@ -194,7 +201,7 @@ export function Tela7_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("7.3")}>
           Copiar para minha viagem ↗
         </div>
       </div>
@@ -271,7 +278,7 @@ export function Tela7_3() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("6.3")}>
           Adicionar ao meu roteiro ✓
         </div>
       </div>
@@ -362,7 +369,7 @@ export function Tela7_4() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.3")}>
           Publicar roteiro ↗
         </div>
       </div>

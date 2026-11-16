@@ -4,9 +4,9 @@ export type Aba = 'inicio' | 'descobrir' | 'viagem' | 'passaporte';
 
 const ABAS: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
-  { id: 'descobrir', nome: 'Descobrir', rota: '/em-breve/descobrir' },
-  { id: 'viagem', nome: 'Minha viagem', rota: '/em-breve/minha-viagem' },
-  { id: 'passaporte', nome: 'Passaporte', rota: '/perfil' },
+  { id: 'descobrir', nome: 'Descobrir', rota: '/tela/2.1' },
+  { id: 'viagem', nome: 'Minha viagem', rota: '/tela/16.1' },
+  { id: 'passaporte', nome: 'Passaporte', rota: '/tela/25.2' },
 ];
 
 /** Barra de abas fixa, 64 px, quatro abas (igual em todas as telas do design). */

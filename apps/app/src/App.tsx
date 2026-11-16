@@ -8,7 +8,7 @@ import { sessaoTerminouSozinha } from './conta/servico';
 import { DevIndice, DevTela } from './dev/DevTelas';
 import { supabase } from './lib/supabase';
 import { usePlano } from './state/plano';
-import { EmBreve, InicioProvisorio } from './telas/provisorias';
+import { EmBreve } from './telas/provisorias';
 import { Tela1_1 } from './telas/s01/Tela1_1';
 import { Tela1_2 } from './telas/s01/Tela1_2';
 import { Tela1_3 } from './telas/s01/Tela1_3';
@@ -44,8 +44,9 @@ function Raiz() {
 }
 
 /** Telas geradas do design, pelo id (/tela/2.1). */
-function TelaPorId() {
-  const { id = '' } = useParams();
+function TelaPorId({ id: fixo }: { id?: string }) {
+  const { id: daRota = '' } = useParams();
+  const id = fixo ?? daRota;
   const Tela = TELAS[id];
   return Tela ? <Tela key={id} /> : <Navigate to={`/em-breve/${id}`} replace />;
 }
@@ -64,7 +65,7 @@ const filhos: RouteObject[] = [
   { path: '/seu-plano', element: <Tela1_4 /> },
   { path: '/sonho', element: <Tela3_1 /> },
   { path: '/avisos', element: <Tela1_5 /> },
-  { path: '/inicio', element: <InicioProvisorio /> },
+  { path: '/inicio', element: <TelaPorId id="25.1" /> },
   { path: '/entrar', element: <Tela5_1 /> },
   { path: '/conta/criar', element: <Tela5_3 /> },
   { path: '/conta/ja-existe', element: <Tela5_4 /> },

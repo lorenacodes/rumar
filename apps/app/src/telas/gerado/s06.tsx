@@ -2,6 +2,7 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
 import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 6.1 Seu jeito de viajar */
@@ -104,7 +105,7 @@ export function Tela6_1() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("6.3")}>
           Montar meu roteiro ↗
         </div>
       </div>
@@ -141,10 +142,10 @@ export function Tela6_2() {
           Sem aceitar, o roteiro continua normal, só sem esses filtros.
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
-          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "52px", background: "var(--amarelo)", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("6.3")}>
             Permitir e ajustar
           </div>
-          <div style={{ height: "52px", border: "2px solid var(--texto)", boxSizing: "border-box", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "52px", border: "2px solid var(--texto)", boxSizing: "border-box", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque('voltar')}>
             Agora não
           </div>
         </div>
@@ -177,7 +178,9 @@ export function Tela6_3() {
             9h
           </div>
           <div style={{ width: "60px", flex: "none", height: "60px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Montmartre" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ flex: "1" }}>
@@ -197,7 +200,9 @@ export function Tela6_3() {
             13h
           </div>
           <div style={{ width: "60px", flex: "none", height: "60px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Montmartre" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ flex: "1" }}>
@@ -217,7 +222,9 @@ export function Tela6_3() {
             16h
           </div>
           <div style={{ width: "60px", flex: "none", height: "60px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Montmartre" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ flex: "1" }}>
@@ -237,7 +244,9 @@ export function Tela6_3() {
             20h
           </div>
           <div style={{ width: "60px", flex: "none", height: "60px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Montmartre" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ flex: "1" }}>
@@ -262,7 +271,7 @@ export function Tela6_3() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("11.1")}>
           Reservar a viagem ↗
         </div>
       </div>
@@ -383,7 +392,7 @@ export function Tela6_4() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
           Recalcular o plano ↗
         </div>
       </div>
@@ -497,7 +506,7 @@ export function Tela6_5() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.4")}>
           Adicionar um lugar ↗
         </div>
       </div>
@@ -583,7 +592,7 @@ export function Tela6_6() {
         </div>
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("16.1")}>
           Adicionar ao calendário ↗
         </div>
       </div>

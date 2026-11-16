@@ -46,7 +46,7 @@ export function Tela11_1() {
         <div style={{ height: "48px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "8px", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Ver no site da companhia ↗
         </div>
-        <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--azul)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--azul)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("11.2")}>
           Já reservei
         </div>
         <div style={{ border: "1px solid var(--linha)", padding: "12px 14px", marginTop: "8px" }}>
@@ -132,7 +132,7 @@ export function Tela11_2() {
         </div>
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
-        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("16.1")}>
           Salvar no meu plano ✓
         </div>
       </div>

@@ -2,10 +2,12 @@
 // Não edite à mão: mude tools/design/navegacao.json e rode o gerador de novo.
 /* eslint-disable */
 import { Abas } from '../../ui/abas';
-import { AvisoExemplo } from '../../ui/toque';
+import { FotoDestino, RotuloFoto } from '../../ui/foto';
+import { AvisoExemplo, useToque } from '../../ui/toque';
 
 /** 25.1 Início */
 export function Tela25_1() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="25.1">
       <AvisoExemplo />
@@ -22,7 +24,7 @@ export function Tela25_1() {
           Seguindo
         </span>
       </div>
-      <div style={{ margin: "0 20px 12px", background: "var(--cartao-1)", padding: "10px 12px", fontSize: "14px", lineHeight: "20px" }}>
+      <div style={{ margin: "0 20px 12px", background: "var(--cartao-1)", padding: "10px 12px", fontSize: "14px", lineHeight: "20px" }} {...toque("8.1")}>
         <b>
           Para você:
         </b>
@@ -46,7 +48,9 @@ export function Tela25_1() {
           </div>
         </div>
         <div style={{ height: "200px", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+          <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+            <FotoDestino nome="Paris" />
+          </div>
           <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
         </div>
         <div style={{ background: "var(--fundo-escuro)", borderTop: "5px solid var(--amarelo)", color: "#fff", padding: "8px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -73,7 +77,7 @@ export function Tela25_1() {
           <div style={{ height: "48px", flex: "1", border: "2px solid var(--texto)", boxSizing: "border-box", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
             ♡ 128
           </div>
-          <div style={{ height: "48px", flex: "2.2", background: "var(--amarelo)", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "48px", flex: "2.2", background: "var(--amarelo)", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("7.2")}>
             Quero ir também ↗
           </div>
         </div>
@@ -85,16 +89,17 @@ export function Tela25_1() {
 
 /** 25.2 Passaporte */
 export function Tela25_2() {
+  const toque = useToque();
   return (
     <main className="tela" data-tela="25.2">
       <AvisoExemplo />
       <div style={{ padding: "24px 20px 0" }}>
         <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
-          <div style={{ width: "68px", height: "68px", background: "var(--amarelo)", display: "flex", alignItems: "center", justifyContent: "center", font: "600 24px 'Lexend Exa'" }}>
+          <div style={{ width: "68px", height: "68px", background: "var(--amarelo)", display: "flex", alignItems: "center", justifyContent: "center", font: "600 24px 'Lexend Exa'" }} {...toque("/perfil")}>
             AS
           </div>
           <div>
-            <div style={{ font: "600 26px/30px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
+            <div style={{ font: "600 26px/30px 'Lexend Exa'", letterSpacing: "-0.02em" }} {...toque("/perfil")}>
               Ana S.
             </div>
             <div style={{ fontSize: "14px", color: "var(--texto-sec)" }}>
@@ -105,9 +110,11 @@ export function Tela25_2() {
         <div style={{ font: "600 17px 'Lexend Exa'", letterSpacing: "-0.02em", margin: "18px 0 8px" }}>
           Minhas viagens
         </div>
-        <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px" }}>
+        <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px" }} {...toque("16.1")}>
           <div style={{ width: "84px", flex: "none", height: "64px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Aracaju" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ flex: "1" }}>
@@ -122,9 +129,11 @@ export function Tela25_2() {
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px", marginTop: "8px" }}>
+        <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px", marginTop: "8px" }} {...toque("16.2")}>
           <div style={{ width: "84px", flex: "none", height: "64px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }} />
+            <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
+              <FotoDestino nome="Aracaju" />
+            </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
           <div style={{ flex: "1" }}>
@@ -136,10 +145,10 @@ export function Tela25_2() {
             </div>
           </div>
         </div>
-        <div style={{ font: "600 17px 'Lexend Exa'", letterSpacing: "-0.02em", margin: "18px 0 8px" }}>
+        <div style={{ font: "600 17px 'Lexend Exa'", letterSpacing: "-0.02em", margin: "18px 0 8px" }} {...toque("30.3")}>
           Privacidade
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "var(--cartao-1)", padding: "12px 14px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "var(--cartao-1)", padding: "12px 14px" }} {...toque("26.4")}>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 15px 'Open Sans'" }}>
               Encontros com conterrâneos
@@ -153,10 +162,10 @@ export function Tela25_2() {
           </div>
         </div>
         <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-          <div style={{ flex: "1", height: "48px", border: "1px solid var(--linha)", display: "flex", alignItems: "center", justifyContent: "center", font: "500 14px 'Open Sans'" }}>
+          <div style={{ flex: "1", height: "48px", border: "1px solid var(--linha)", display: "flex", alignItems: "center", justifyContent: "center", font: "500 14px 'Open Sans'" }} {...toque("30.1")}>
             Idioma: Português
           </div>
-          <div style={{ flex: "1", height: "48px", border: "1px solid var(--linha)", display: "flex", alignItems: "center", justifyContent: "center", font: "500 14px 'Open Sans'" }}>
+          <div style={{ flex: "1", height: "48px", border: "1px solid var(--linha)", display: "flex", alignItems: "center", justifyContent: "center", font: "500 14px 'Open Sans'" }} {...toque("20.1")}>
             Avisos
           </div>
         </div>
