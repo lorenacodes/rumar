@@ -192,7 +192,24 @@ export async function entrar(email: string, senha: string): Promise<Resultado<'s
     return { ok: false, motivo: 'rede' };
   }
   zerarTentativas();
+  await garantirPerfil();
   return { ok: true };
+}
+
+/**
+ * Conta confirmada pelo link do e-mail (e não pelo código) ainda não tem perfil:
+ * cria na primeira vez que a pessoa entra. Os termos e a privacidade foram aceitos na
+ * tela 5.3 (o botão só funciona com as duas caixas marcadas).
+ */
+export async function garantirPerfil(): Promise<boolean> {
+  const { data } = await supabase.auth.getSession();
+  const sessao = data.session;
+  if (!sessao) return false;
+  const existe = await supabase.from('profiles').select('user_id').eq('user_id', sessao.user.id).maybeSingle();
+  if (existe.error) return false;
+  if (existe.data) return true;
+  const r = await finalizarCadastro(sessao);
+  return r.ok;
 }
 
 // ---------------------------------------------------------------------------
