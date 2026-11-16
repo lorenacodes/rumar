@@ -3,6 +3,8 @@ import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, usePar
 
 import { TELAS } from './telas/registro';
 
+import { App as CapApp } from '@capacitor/app';
+
 import { ouvirLinks } from './conta/deepLink';
 import { sessaoTerminouSozinha } from './conta/servico';
 import { DevIndice, DevTela } from './dev/DevTelas';
@@ -30,6 +32,16 @@ import { MinhaViagem } from './telas/s16/MinhaViagem';
 function Raiz() {
   const navegar = useNavigate();
   useEffect(() => ouvirLinks(navegar), [navegar]);
+  // Regra 16.6: o voltar do Android faz o mesmo que a seta ← e nunca fecha o app sem querer.
+  useEffect(() => {
+    const ouvinte = CapApp.addListener('backButton', () => {
+      const raiz = ['/', '/inicio', '/tela/2.1', '/minha-viagem', '/tela/25.2'].includes(window.location.hash.slice(1) || '/');
+      if (window.history.state?.idx > 0) navegar(-1);
+      else if (!raiz) navegar('/inicio');
+      else void CapApp.minimizeApp();
+    });
+    return () => void ouvinte.then((o) => o.remove());
+  }, [navegar]);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((evento) => {
       if (evento === 'SIGNED_OUT' && sessaoTerminouSozinha()) navegar('/sessao-terminou');

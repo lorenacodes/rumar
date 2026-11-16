@@ -12,7 +12,7 @@ export function Voltar({ para, rotulo = 'Voltar' }: { para?: string; rotulo?: st
       type="button"
       className="r-btn"
       aria-label={rotulo}
-      onClick={() => (para ? navegar(para) : navegar(-1))}
+      onClick={() => (para ? navegar(para) : window.history.state?.idx > 0 ? navegar(-1) : navegar('/inicio'))}
       style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', fontSize: '24px', marginLeft: '-4px' }}>
       ←
     </button>
@@ -26,7 +26,7 @@ export function VoltarComTexto({ texto, para }: { texto: string; para?: string }
     <button
       type="button"
       className="r-btn"
-      onClick={() => (para ? navegar(para) : navegar(-1))}
+      onClick={() => (para ? navegar(para) : window.history.state?.idx > 0 ? navegar(-1) : navegar('/inicio'))}
       style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '48px', font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>
       <span style={{ fontSize: '22px' }}>←</span>
       {texto}

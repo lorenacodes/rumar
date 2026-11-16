@@ -13,7 +13,8 @@ export function useToque() {
   const navegar = useNavigate();
   return (destino: string) => {
     const ir = () => {
-      if (destino === 'voltar') return navegar(-1);
+      // Regra 16.6: a seta nunca fecha o app nem deixa sem saída; sem tela anterior, vai ao Início.
+      if (destino === 'voltar') return window.history.state?.idx > 0 ? navegar(-1) : navegar('/inicio');
       // Link de fora (YouTube, sites oficiais): abre no app ou navegador do celular.
       if (/^https?:\/\//.test(destino)) return void (window.location.href = destino);
       navegar(rotaDaTela(destino));
