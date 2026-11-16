@@ -91,7 +91,7 @@ export function BotaoTexto({ children, onClick, marginTop }: { children: ReactNo
   return (
     <button
       type="button"
-      className="r-btn"
+      className="r-btn alvo-toque"
       onClick={onClick}
       style={{
         width: '100%',
@@ -133,7 +133,7 @@ export function BotaoContorno({ children, onClick, style }: { children: ReactNod
 /** Link azul em linha ("Esqueci a senha"). */
 export function LinkAzul({ children, onClick, style }: { children: ReactNode; onClick?: () => void; style?: CSSProperties }) {
   return (
-    <button type="button" className="r-btn" onClick={onClick} style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', ...style }}>
+    <button type="button" className="r-btn alvo-toque" onClick={onClick} style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', ...style }}>
       {children}
     </button>
   );

@@ -82,3 +82,20 @@ input {
   outline: none;
   box-shadow: 0 2px 0 var(--azul);
 }
+
+/*
+ * Área de toque maior sem mudar o visual: links de texto e linhas finas do design
+ * ganham uma área invisível de pelo menos 44 px de altura para o dedo.
+ */
+.alvo-toque {
+  position: relative;
+}
+.alvo-toque::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: max(100%, 44px);
+  transform: translateY(-50%);
+}

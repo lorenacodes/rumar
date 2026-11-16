@@ -100,6 +100,7 @@
 }
 
 .link-acao {
+  position: relative;
   display: inline-block;
   background: none;
   border: 0;
@@ -155,4 +156,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.link-acao::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 48px;
+  transform: translateY(-50%);
 }

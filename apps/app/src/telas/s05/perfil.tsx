@@ -23,7 +23,7 @@ function usePerfil(): Perfil | null | undefined {
 
 function Linha({ titulo, detalhe, onClick, minHeight = '42px' }: { titulo: string; detalhe?: string; onClick?: () => void; minHeight?: string }) {
   return (
-    <button type="button" className="r-btn" onClick={onClick} style={{ width: '100%', boxSizing: 'content-box', display: 'flex', alignItems: 'center', gap: '12px', minHeight, borderBottom: '1px solid var(--linha)' }}>
+    <button type="button" className="r-btn alvo-toque" onClick={onClick} style={{ width: '100%', boxSizing: 'content-box', display: 'flex', alignItems: 'center', gap: '12px', minHeight, borderBottom: '1px solid var(--linha)' }}>
       <div style={{ flex: '1' }}>
         <div style={{ font: "600 16px 'Open Sans'" }}>{titulo}</div>
         {detalhe ? <div style={{ fontSize: '14px', lineHeight: '19px', color: 'var(--texto-sec)' }}>{detalhe}</div> : null}
@@ -129,10 +129,10 @@ export function Tela5_14() {
             </div>
             {/* Foto: entra junto com o armazenamento de fotos (Storage privado). */}
             <div>
-              <button type="button" className="r-btn" onClick={() => navegar('/em-breve/foto')} style={{ font: "600 16px 'Open Sans'", display: 'block' }}>
+              <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/em-breve/foto')} style={{ font: "600 16px 'Open Sans'", display: 'block' }}>
                 Trocar foto
               </button>
-              <button type="button" className="r-btn" onClick={() => navegar('/em-breve/foto')} style={{ font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', marginTop: '4px', display: 'block' }}>
+              <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/em-breve/foto')} style={{ font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', marginTop: '4px', display: 'block' }}>
                 Remover foto
               </button>
             </div>

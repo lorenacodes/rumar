@@ -135,7 +135,7 @@ export function Tela5_2(props: {
           <BotaoPrincipal type="submit" disabled={props.enviando || props.erro === 'pausa'}>
             Entrar ↗
           </BotaoPrincipal>
-          <button type="button" className="r-btn" onClick={() => navegar('/conta/esqueci')} style={{ width: '100%', height: '40px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/conta/esqueci')} style={{ width: '100%', height: '40px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             Esqueci a senha
           </button>
         </div>

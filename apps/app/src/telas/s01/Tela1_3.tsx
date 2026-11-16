@@ -59,7 +59,7 @@ export function Tela1_3() {
         <label htmlFor="cidade" style={{ display: 'block', ...rotulo }}>
           Onde moro
         </label>
-        <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid var(--texto)', padding: '4px 0' }}>
+        <label htmlFor="cidade" style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid var(--texto)', padding: '4px 0', minHeight: '38px' }}>
           <input
             id="cidade"
             className="r-input"
@@ -70,7 +70,7 @@ export function Tela1_3() {
             style={{ flex: '1', font: "600 22px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}
           />
           {cidadeOk ? <span style={{ color: 'var(--azul)', fontWeight: '600' }}>✓</span> : null}
-        </div>
+        </label>
         <div style={rotulo} id="idioma-app">
           Idioma do app
         </div>
