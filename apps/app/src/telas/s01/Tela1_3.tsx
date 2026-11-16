@@ -59,7 +59,7 @@ export function Tela1_3() {
         <label htmlFor="cidade" style={{ display: 'block', ...rotulo }}>
           Onde moro
         </label>
-        <label htmlFor="cidade" style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid var(--texto)', padding: '4px 0', minHeight: '38px' }}>
+        <label htmlFor="cidade" style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid var(--texto)', padding: '4px 0' }}>
           <input
             id="cidade"
             className="r-input"
