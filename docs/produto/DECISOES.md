@@ -250,3 +250,38 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   e destinos, o app manda confirmar no Portal Consular em vez de afirmar.
 - **Limites sinceros:** não há notificação no celular ainda ("lembretes" = prazos na tela); só Paris tem
   roteiro; a passagem não é estimada (sem fonte confiável) e precisa ser informada.
+
+## D-024 — Qualquer destino: base de destinos, base de lugares e cobertura transparente (seção 12)
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora. Paris deixa de ser o centro; continua com a curadoria (preços conferidos).
+- **Destinos:** tabela `destinos` com os 5.570 municípios do IBGE (com coordenadas) + destinos no exterior
+  (Lisboa, Porto, Cascais, Madri, Barcelona, Roma, Londres, Nova York, Buenos Aires, Santiago, Montevidéu,
+  Paris). Tipos (praia, histórica, natureza, gastronomia, cultural, rural, aventura, diversão) para 181
+  destinos turísticos, por curadoria (não é lista oficial; próximo passo: Mapa do Turismo Brasileiro).
+  Nova cidade no exterior = uma linha em `tools/dados/destinos-turisticos.json`.
+- **Lugares:** tabela `lugares` (15 categorias: restaurantes, bares, cafés, hospedagem, museus, parques,
+  praias, pontos turísticos, histórico, cultura, compras, mercados, vida noturna, lazer, transporte), com
+  fonte, id na fonte, data da base, "verificado" (curadoria) ou não, ativo/inativo (o que some da fonte
+  fica inativo, não apagado), duplicados removidos (mesmo nome a menos de ~80 m) e relevância (redes e
+  fast-food descem).
+- **Fonte e coleta:** OpenStreetMap (gratuito, ODbL, com atribuição) via Overpass, no GitHub Actions:
+  uma consulta por cidade, área em volta do centro (raio por destino), limite por categoria, pausas.
+  Fotos: Wikimedia Commons (etiqueta do OSM ou imagem do Wikidata). Gravação pela função
+  `importar-lugares`, que aceita só o token OIDC do GitHub deste repositório (nenhuma chave guardada).
+  Os servidores públicos do Overpass recusam o Supabase, por isso a coleta não roda no servidor do app.
+- **Fila:** cidade sem lugares → botão "Pedir" no app → coleta a cada 3 horas (até 5 cidades por vez).
+- **Transparência:** tabela `cobertura` por cidade e categoria (quantidade, parcial quando bate no limite,
+  área, data). O app mostra "cobertura parcial" sempre e lista o que não tem fonte (experiências locais,
+  avaliações). Preço só com fonte; o filtro de preço explica quem fica de fora.
+- **Limites sinceros:** o OpenStreetMap não tem avaliações e quase nunca tem preço ou foto de restaurante,
+  bar, balada e hotel comum. Isso só se resolve com serviço pago ou parceiro (ver checklist).
+
+## D-025 — Fotos de destaque dos destinos
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora ("gerar desejo").
+- Escolha automática no Wikimedia Commons, nesta ordem: "Featured pictures" (eleitas pela comunidade) >
+  "Quality images" > alta resolução. Só foto horizontal, ≥ 1.600 px, tirada perto do destino (coordenadas
+  do arquivo) e sem títulos de interior, aeroporto, shopping, pintura, mural, carro etc. Cenas pensadas
+  para encantar (ex.: Paris → Torre Eiffel à noite). Destino sem foto aprovada fica sem foto: melhor do que
+  foto errada. Crédito do autor e licença sempre visíveis.
+- Realce leve na exibição (saturação +15%, contraste +5%), sem alterar o arquivo.

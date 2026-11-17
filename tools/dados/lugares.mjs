@@ -18,7 +18,7 @@
 import { gerarDestinos, normalizar } from './destinos.mjs';
 
 const FUNCAO = 'https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/importar-lugares';
-const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter'];
+const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter'];
 const UA = 'BoVair/0.1 (coleta de lugares turísticos; github.com/lorenacodes)';
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 const args = process.argv.slice(2);
@@ -123,16 +123,32 @@ export function semDuplicados(lista) {
 }
 
 // ---------------------------------------------------------------- Overpass
+/** Espera um "slot" livre no servidor (política do Overpass: poucas consultas simultâneas por cliente). */
+async function aguardarVez(url) {
+  const status = url.replace(/interpreter$/, 'status');
+  for (let i = 0; i < 20; i++) {
+    const r = await fetch(status, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(15_000) }).catch(() => null);
+    const txt = r && r.ok ? await r.text() : '';
+    if (!txt || /slots? available now/.test(txt)) return;
+    const segundos = Math.max(...[...txt.matchAll(/in (\d+) seconds/g)].map((m) => Number(m[1])), 5);
+    console.log(`   aguardando vez no Overpass: ${segundos} s`);
+    await espera((segundos + 2) * 1000);
+  }
+}
+
 async function overpass(consulta) {
   let ultimoErro = '';
   for (const url of OVERPASS) {
     for (let tentativa = 0; tentativa < 2; tentativa++) {
+      await aguardarVez(url);
+      const t0 = Date.now();
       try {
-        const r = await fetch(url, { method: 'POST', body: new URLSearchParams({ data: consulta }), headers: { 'User-Agent': UA, Accept: '*/*' }, signal: AbortSignal.timeout(200_000) });
-        if (r.status === 429 || r.status === 504) { ultimoErro = `${url} ${r.status}`; console.log(`   ${ultimoErro}: aguardando`); await espera(30_000); continue; }
-        if (!r.ok) { ultimoErro = `${url} ${r.status}`; break; }
-        return await r.json();
-      } catch (e) { ultimoErro = `${url} ${e.message}`; await espera(5_000); }
+        const r = await fetch(url, { method: 'POST', body: new URLSearchParams({ data: consulta }), headers: { 'User-Agent': UA, Accept: '*/*' }, signal: AbortSignal.timeout(240_000) });
+        if (!r.ok) { ultimoErro = `${url} ${r.status}`; console.log(`   ${ultimoErro} (${Math.round((Date.now() - t0) / 1000)} s)`); await espera(r.status === 429 || r.status === 504 ? 30_000 : 5_000); continue; }
+        const d = await r.json();
+        if (d.remark && /timed out|out of memory/i.test(d.remark)) { ultimoErro = `${url}: ${d.remark.slice(0, 120)}`; console.log(`   ${ultimoErro}`); continue; }
+        return d;
+      } catch (e) { ultimoErro = `${url} ${e.message}`; console.log(`   ${ultimoErro} (${Math.round((Date.now() - t0) / 1000)} s)`); await espera(5_000); }
     }
   }
   throw new Error(`Overpass indisponível: ${ultimoErro}`);

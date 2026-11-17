@@ -13,6 +13,11 @@
 - [ ] **B. Chave da LiteAPI no Supabase** — Edge Functions → Secrets → `LITEAPI_KEY` = a chave (hoje a de teste; depois a de produção, nova, porque a de teste apareceu num print). Liga a busca de hotéis.
 - [ ] **C. Chave de produção da LiteAPI** — quando quiser preços para reservar de verdade (a de teste mostra "ambiente de teste").
 
+## Fotos e avaliações de restaurantes, bares, baladas e hotéis — DECISÃO SUA (custo)
+- [ ] Escolher se liga uma fonte paga/parceira de fotos e avaliações de estabelecimentos. Sem isso, essas
+      categorias aparecem sem foto (só museus, monumentos, praias e parques conhecidos têm foto livre).
+      Opções e custos estão no relatório da seção 12. Nada foi contratado.
+
 ## Seções 13–16 (moedas e linha do tempo) — o que depende de você
 - [ ] **Conferir os links oficiais** em Etapas (PF, Itamaraty, UE, Receita, Ministério da Saúde, Banco Central).
       Os textos foram escritos a partir de buscas em 17/11/2026; o ambiente de desenvolvimento não abre
