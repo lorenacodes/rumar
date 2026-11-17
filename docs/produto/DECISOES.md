@@ -333,3 +333,16 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   num "Editar"; Nova viagem com opcionais recolhidos; Hospedagem avisa antes quando a busca não está ligada;
   Viagens com "Faltam N dias / Acontecendo agora / Viagem feita". Descobrir: "Planejar viagem para X",
   filtro de preço recolhido.
+
+## D-029 — Termos de uso, aviso sem internet e contraste no tema escuro
+- **Data:** 17/11/2026
+- **Status:** ✅ Consequência das decisões aprovadas (D-028); sem mudança de produto.
+- **Termos de uso** (/termos) em linguagem simples: o cadastro pedia "Li e concordo com os Termos" sem
+  existir texto. A 5.3 ganha "Ler os Termos ›" e "Ler a Política ›" e, no app, título "Crie sua conta."
+  (a pessoa não montou um "plano" no onboarding curto). Comparação com o design mantém a 5.3 original.
+- **Sem internet:** aviso fixo no topo quando a conexão cai, e "Internet de volta" quando volta.
+- **Contraste:** texto secundário sobre fundo escuro ganha a cor `--sobre-escuro-sec` (igual ao design no
+  tema claro; mais clara no escuro, de 3,5:1 para 5,5:1). Auditoria automática (axe-core) sem violações
+  nas 12 telas principais.
+- **Loja:** rascunho da ficha da Google Play e respostas de "Segurança dos dados" em
+  `docs/LOJA_GOOGLE_PLAY.md`; páginas públicas de privacidade e exclusão de conta em `docs/web/`.

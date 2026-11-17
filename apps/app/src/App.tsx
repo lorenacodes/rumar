@@ -26,6 +26,7 @@ import { Tela5_13, Tela5_14, Tela5_15, Tela5_17, Tela5_18 } from './telas/s05/pe
 import { Tela5_10, Tela5_11, Tela5_12, Tela5_16, Tela5_8, Tela5_9 } from './telas/s05/senha';
 import { Tela28_7 } from './telas/s28/Tela28_7';
 import { AvisoAtualizar } from './ui/atualizar';
+import { SemInternet } from './ui/semInternet';
 import { Descobrir } from './telas/descobrir/Descobrir';
 import { Lugar } from './telas/descobrir/Lugar';
 import { Destinos } from './telas/destinos/Destinos';
@@ -38,7 +39,7 @@ import { Montar } from './telas/viagem/Montar';
 import { Inicio } from './telas/s25/Inicio';
 import { Moeda } from './telas/s05/Moeda';
 import { Usuario } from './telas/s05/Usuario';
-import { Ajuda, AvisoPrivacidade, Privacidade, Sobre } from './telas/s05/Conta';
+import { Ajuda, AvisoPrivacidade, Privacidade, Sobre, Termos } from './telas/s05/Conta';
 import { Idioma } from './telas/viagens/Idioma';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
@@ -65,6 +66,7 @@ function Raiz() {
     <>
       <Outlet />
       <AvisoAtualizar />
+      <SemInternet />
     </>
   );
 }
@@ -126,6 +128,7 @@ const filhos: RouteObject[] = [
   { path: '/perfil/ajuda', element: <Ajuda /> },
   { path: '/perfil/sobre', element: <Sobre /> },
   { path: '/privacidade', element: <AvisoPrivacidade /> },
+  { path: '/termos', element: <Termos /> },
   { path: '/montar', element: <Navigate to="/viagens/nova" replace /> },
   { path: '/perfil-viajante', element: <Montar soPerfil /> },
   { path: '/perfil-moeda', element: <Moeda /> },

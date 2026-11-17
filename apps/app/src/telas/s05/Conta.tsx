@@ -129,6 +129,33 @@ export function AvisoPrivacidade() {
   );
 }
 
+/** Termos de uso: o que o app faz e não faz, em linguagem simples. */
+export function Termos() {
+  const secoes: [string, string][] = [
+    ['O que é o Bo Vair', 'Um aplicativo para planejar viagens: descobrir lugares, montar roteiros, organizar o dinheiro e planejar com amigos. O Bo Vair não vende passagens nem hospedagens e não recebe pagamentos pelo app.'],
+    ['Quem pode usar', 'Pessoas com 18 anos ou mais. Você é responsável por manter sua senha em segredo e pelas informações que coloca na conta.'],
+    ['Preços, regras e prazos são referências', 'Mostramos preços, câmbio, regras de entrada, prazos e horários com a fonte e a data em que conferimos. Eles mudam: antes de pagar, viajar ou decidir, confirme na fonte oficial. Estimativas não são garantias, e a aceitação de cartões ou moedas depende de cada estabelecimento.'],
+    ['Lugares e conteúdo de terceiros', 'Lugares vêm do OpenStreetMap (mapa colaborativo) e da curadoria do Bo Vair; fotos, do Wikimedia Commons; aulas, de canais do YouTube. Esse conteúdo pertence a quem o criou, pode estar desatualizado e não é endossado pelo Bo Vair.'],
+    ['Viagens em grupo', 'Quem você convida para uma viagem vê o roteiro, os gastos e o histórico dela; editores também podem alterar. Use com respeito: conteúdo ofensivo ou ilegal pode levar à suspensão da conta.'],
+    ['Seus dados', 'Como tratamos seus dados está no Aviso de privacidade. Você pode baixar seus dados e excluir sua conta quando quiser, em Perfil → Privacidade.'],
+    ['Mudanças e encerramento', 'Podemos mudar estes termos; avisaremos no app antes de valerem. Você pode deixar de usar o app e excluir a conta a qualquer momento.'],
+    ['Lei aplicável', 'Valem as leis do Brasil, incluindo o Código de Defesa do Consumidor e a LGPD.'],
+  ];
+  return (
+    <Pagina titulo="Termos de uso" sobre="Bo Vair" voltar="-1">
+      <p style={{ ...p, color: 'var(--texto-sec)' }}>Versão de {VERSAO_AVISO}.</p>
+      {secoes.map(([t, x]) => (
+        <div key={t}>
+          <Rotulo>{t}</Rotulo>
+          <p style={{ ...p, marginTop: 0 }}>{x}</p>
+        </div>
+      ))}
+      <Rotulo>Contato</Rotulo>
+      <p style={p}>{contato}.</p>
+    </Pagina>
+  );
+}
+
 export function Ajuda() {
   return (
     <Pagina titulo="Ajuda e contato" sobre="Perfil">
@@ -157,6 +184,7 @@ export function Sobre() {
       <p style={p}>Planejamento de viagens com preços de fonte conhecida, roteiro do seu jeito e amigos junto.</p>
       <p style={{ ...p, color: 'var(--texto-sec)' }}>Versão {import.meta.env.VITE_VERSAO ?? '0.1'}.</p>
       <button type="button" className="r-btn" onClick={() => navegar('/privacidade')} style={{ display: 'block', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Aviso de privacidade ›</button>
+      <button type="button" className="r-btn" onClick={() => navegar('/termos')} style={{ display: 'block', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Termos de uso ›</button>
       <Rotulo>Créditos dos dados</Rotulo>
       <p style={{ fontSize: '14px', lineHeight: '20px' }}>Mapas e lugares: © colaboradores do OpenStreetMap (ODbL), mapas OpenFreeMap. Fotos: Wikimedia Commons (autor e licença em cada foto). Câmbio: Banco Central do Brasil (PTAX). Municípios: IBGE.</p>
     </Pagina>

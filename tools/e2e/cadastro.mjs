@@ -26,22 +26,15 @@ const passo = async (nome) => { await p.waitForTimeout(700); n++; await p.screen
 
 console.log('— 1. Abrir sem conta');
 await p.goto(URL); await passo('abrir-app');
-console.log('— 2. Começar');
-await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await passo('passo-1-cidade');
-await p.locator('#cidade').fill(''); await p.locator('#cidade').type('aracaj', { delay: 40 }); await p.waitForTimeout(400);
-await p.locator('#cidades-sugeridas button').first().click(); await p.getByRole('button', { name: /Continuar/ }).click(); await passo('passo-2-orcamento');
-console.log('— 3. Orçamento');
-await p.locator('#mensal').fill('450'); await p.locator('#guardado').fill('1200');
-await p.getByRole('button', { name: /Ver as viagens/ }).click(); await passo('passo-3-sonho');
-await p.getByRole('radio', { name: /Brasil/ }).click(); await p.getByRole('button', { name: /Ver as viagens/ }).click(); await passo('avisos');
-await p.getByRole('button', { name: /Agora não/ }).click(); await passo('inicio-sem-conta');
-console.log('   ', await texto(300));
+console.log('— 2. Idade → Início com destinos (onboarding curto, D-028)');
+await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2000); await passo('inicio-sem-conta');
+console.log('    vai direto ao Início:', p.url().endsWith('#/inicio'), '|', await texto(120));
 console.log('— 4. Preencher dados');
-await p.getByRole('button', { name: /Criar conta e guardar/ }).click(); await passo('formulario');
+await p.getByRole('button', { name: /^Criar conta/ }).first().click(); await passo('formulario');
 await p.locator('#nome').fill('Teste E2E'); await p.locator('#senha').fill('Viagem2027');
 await p.getByText(/Li e concordo/).click(); await p.getByText(/Li a Política/).click();
 await p.locator('#email').fill('e2e.teste@dominio-que-nao-existe-bovair.com.br');
-await p.getByRole('button', { name: /Criar conta e guardar/ }).click(); await p.waitForTimeout(2500); await passo('email-inexistente');
+await p.getByRole('button', { name: /^Criar conta/ }).click(); await p.waitForTimeout(2500); await passo('email-inexistente');
 console.log('    mensagem:', (await texto(2000)).match(/Esse e-mail[^.]*\./)?.[0]);
 console.log('— 5. Código (usuário de teste com código conhecido no banco; nenhum e-mail enviado)');
 await p.evaluate(() => localStorage.setItem('bovair.cadastro', JSON.stringify({ state: { email: 'e2e.teste@bovair.com.br', tipoCodigo: 'signup', enviadoEm: Date.now(), erros: 0 }, version: 1 })));
@@ -51,10 +44,16 @@ await p.locator('#codigo').fill('123456'); await p.getByRole('button', { name: /
 console.log('    mensagem:', (await texto(2000)).match(/Digite os \d+ números do código\./)?.[0]);
 await p.locator('#codigo').fill('11112222'); await p.getByRole('button', { name: /Confirmar/ }).click(); await p.waitForTimeout(2500); await passo('codigo-errado');
 console.log('    mensagem:', (await texto(2000)).match(/Código incorreto[^.]*\./)?.[0]);
-console.log('— 6. Finalizar');
-await p.locator('#codigo').fill('48213976'); await p.getByRole('button', { name: /Confirmar/ }).click(); await p.waitForTimeout(4500); await passo('cadastro-concluido');
+console.log('— 6. Finalizar → escolher o @');
+await p.locator('#codigo').fill('48213976'); await p.getByRole('button', { name: /Confirmar/ }).click(); await p.waitForTimeout(4500); await passo('nome-de-usuario');
+console.log('    tela do @:', p.url().includes('bem-vindo/usuario'), '|', await texto(160));
+await p.locator('#usuario').fill('admin'); await p.waitForTimeout(1500); console.log('    @admin:', (await texto(600)).match(/@admin [^.]*\./)?.[0]);
+await p.locator('#usuario').fill('teste.e2e.bovair'); await p.waitForTimeout(1800); console.log('    @teste.e2e.bovair:', (await texto(600)).match(/@teste\.e2e\.bovair [^.]*/)?.[0]);
+if (await p.getByRole('button', { name: /Continuar/ }).isEnabled()) await p.getByRole('button', { name: /Continuar/ }).click(); else await p.getByRole('button', { name: 'Agora não' }).click();
+await p.waitForTimeout(2500); await passo('cadastro-concluido');
 console.log('   ', await texto(160));
 console.log('— 7. Perfil');
+await p.getByRole('button', { name: /Pular por agora|Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.getByRole('button', { name: 'Perfil', exact: true }).click(); await p.waitForTimeout(3000); await passo('perfil');
 console.log('   ', await texto(150));
 console.log('— 8. Atualizar a página');
@@ -67,8 +66,8 @@ await p.goto(URL + '#/inicio'); await p.waitForTimeout(1500); console.log('    i
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.teste@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4500); await passo('entrou-de-novo');
 console.log('   ', await texto(160));
-console.log('— 10. Fotos');
-for (const rota of ['#/tela/4.1', '#/tela/2.1', '#/tela/3.2']) {
+console.log('— 10. Fotos dos destinos no Início');
+for (const rota of ['#/inicio']) {
   await p.goto(URL + rota); await p.waitForTimeout(4000); await passo('fotos-' + rota.split('/').pop());
   const imgs = await p.locator('img').evaluateAll((l) => l.map((i) => `${i.alt}:${i.complete && i.naturalWidth > 0 ? 'ok' : 'FALHOU'}`));
   console.log('    imagens:', imgs.join(', ') || 'nenhuma');

@@ -116,12 +116,12 @@ export function Viagem() {
         {orc ? (
           <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>
-              <span style={{ display: 'block', fontSize: '13px', color: '#AEBBE0' }}>Custo estimado {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
+              <span style={{ display: 'block', fontSize: '13px', color: 'var(--sobre-escuro-sec)' }}>Custo estimado {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
               {orc.o.provavelBRL > 0
                 ? <b style={{ font: "600 22px 'Lexend Exa'" }}>{reais(orc.o.provavelBRL)}</b>
                 : <b style={{ font: "600 16px/21px 'Lexend Exa'" }}>Ainda sem preços com fonte</b>}
             </span>
-            <span style={{ textAlign: 'right', fontSize: '13px', color: '#AEBBE0', alignSelf: 'center' }}>
+            <span style={{ textAlign: 'right', fontSize: '13px', color: 'var(--sobre-escuro-sec)', alignSelf: 'center' }}>
               {orc.o.provavelBRL > 0 ? `${reais(orc.o.porPessoaBRL)} por pessoa` : 'Escolha a hospedagem ou informe gastos'}
               {v.viagem.orcamento_centavos ? <span style={{ display: 'block', color: acima > 0 ? 'var(--amarelo)' : '#9fe0b4', fontWeight: 600 }}>{acima > 0 ? `${reais(acima)} acima do orçamento` : 'Dentro do orçamento'}</span> : null}
             </span>

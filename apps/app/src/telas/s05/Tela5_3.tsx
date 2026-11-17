@@ -91,8 +91,8 @@ export function Tela5_3() {
         }}>
         <div style={{ padding: '20px 20px 0' }}>
           <Voltar />
-          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Seu plano está pronto</div>
-          <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Guarde seu plano.</h1>
+          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>{demo ? 'Seu plano está pronto' : 'Conta grátis'}</div>
+          <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>{demo ? 'Guarde seu plano.' : 'Crie sua conta.'}</h1>
           {/* O destino entra com a Fase 1 (Descobrir); até lá o cartão só aparece no modo demonstração. */}
           {demo ? <CartaoViagem /> : mensal > 0 ? <CartaoPlano mensal={mensal} guardado={guardadoPlano} /> : null}
           <Campo id="nome" rotulo="Seu nome" autoComplete="name" valor={nome} aoMudar={setNome} />
@@ -117,6 +117,13 @@ export function Tela5_3() {
             <Caixa marcada={privacidade} aoMudar={setPrivacidade}>
               Li a Política de Privacidade.
             </Caixa>
+            {/* Links para ler o que se aceita (D-029); a comparação com o design mantém a 5.3 original. */}
+            {!demo ? (
+              <div style={{ display: 'flex', gap: '16px', margin: '0 0 6px 34px' }}>
+                <button type="button" className="r-btn" onClick={() => navegar('/termos')} style={{ minHeight: '40px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Ler os Termos ›</button>
+                <button type="button" className="r-btn" onClick={() => navegar('/privacidade')} style={{ minHeight: '40px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Ler a Política ›</button>
+              </div>
+            ) : null}
             <Caixa marcada={novidades} aoMudar={setNovidades}>
               Quero receber novidades por e-mail (opcional).
             </Caixa>
@@ -131,7 +138,7 @@ export function Tela5_3() {
             </div>
           ) : null}
           <BotaoPrincipal type="submit" disabled={enviando}>
-            {enviando ? 'Criando sua conta…' : 'Criar conta e guardar ↗'}
+            {enviando ? 'Criando sua conta…' : demo ? 'Criar conta e guardar ↗' : 'Criar conta ↗'}
           </BotaoPrincipal>
         </Rodape>
       </form>

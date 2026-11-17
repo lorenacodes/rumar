@@ -44,4 +44,10 @@
 /* Texto sobre fundos escuros (marinho/azul) — igual nos dois temas. */
 :root {
   --sobre-escuro: #f7f4ea;
+  /* Texto secundário sobre fundo escuro: no tema escuro o fundo-escuro é azul, e #aebbe0
+     ficaria abaixo do contraste mínimo (3,5:1). */
+  --sobre-escuro-sec: #aebbe0;
+}
+[data-tema='escuro'] {
+  --sobre-escuro-sec: #e3eaff;
 }

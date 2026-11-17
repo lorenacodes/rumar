@@ -43,7 +43,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
     <section style={{ marginTop: '14px' }}>
       <div style={{ padding: '14px', background: 'var(--fundo-escuro)', color: '#fff' }}>
         <div style={{ font: "600 24px 'Lexend Exa'" }}>{situacao}</div>
-        <div style={{ fontSize: '14px', color: '#AEBBE0', marginTop: '2px' }}>
+        <div style={{ fontSize: '14px', color: 'var(--sobre-escuro-sec)', marginTop: '2px' }}>
           Etapa atual: <b style={{ color: '#fff' }}>{ETAPAS[idxAtual]?.nome}</b> · {feitas} de {acionaveis.length} tarefas feitas
           {!j.ctx.dataDefinida ? ' · data prevista' : ''}
         </div>
@@ -51,7 +51,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
           <div style={{ height: '6px', width: `${Math.round((feitas / Math.max(1, acionaveis.length)) * 100)}%`, background: 'var(--amarelo)' }} />
         </div>
         {j.plano ? (
-          <div style={{ fontSize: '14px', marginTop: '10px', color: '#AEBBE0' }}>
+          <div style={{ fontSize: '14px', marginTop: '10px', color: 'var(--sobre-escuro-sec)' }}>
             Guardado: <b style={{ color: '#fff' }}>{dinheiro(j.guardado, j.moedaPlano)}</b> de {dinheiro(j.plano.meta, j.moedaPlano)}
             {j.plano.falta ? <> · guardar <b style={{ color: '#fff' }}>{dinheiro(j.plano.mensal, j.moedaPlano)}/mês</b></> : ' · meta atingida'}
           </div>
