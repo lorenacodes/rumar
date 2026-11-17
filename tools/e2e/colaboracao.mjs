@@ -51,7 +51,7 @@ await ana.getByRole('tab', { name: /Hospedagem/ }).click(); await ana.waitForTim
 await ana.getByRole('button', { name: /Buscar para 2 pessoas/ }).click(); await ana.waitForTimeout(6000); await foto(ana, 'viagem-hospedagem');
 console.log('   ', (await texto(ana, 900)).match(/(\d+ opções com preço[^·]*|A busca de hotéis ainda não foi ligada[^.]*\.|Não conseguimos buscar[^.]*\.)/)?.[0]);
 console.log('— 8-9. Orçamento');
-await ana.getByRole('tab', { name: 'Orçamento' }).click(); await ana.waitForTimeout(800);
+await ana.getByRole('tab', { name: 'Dinheiro' }).click(); await ana.waitForTimeout(800);
 console.log('   ', (await texto(ana, 600)).slice(0, 420));
 for (const c of ['Lazer e passeios', 'Alimentação', 'Transporte']) { await ana.getByRole('button', { name: new RegExp(c) }).click(); await ana.waitForTimeout(200); }
 await foto(ana, 'viagem-orcamento');

@@ -4,20 +4,22 @@
  * apps/app/src/dados/cambio.json. Fonte: API pública Olinda do BCB (gratuita, sem chave).
  * Roda todo dia útil pelo workflow "Câmbio".
  */
-import { writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const MOEDAS = ['EUR', 'USD', 'ARS'];
+// Moedas com PTAX no Banco Central. Peso argentino, chileno, uruguaio etc. não têm PTAX:
+// o app pede a taxa à pessoa ("informado") em vez de inventar.
+const MOEDAS = ['EUR', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'JPY', 'DKK', 'NOK', 'SEK'];
 const fmt = (d) => `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}-${d.getFullYear()}`;
 const fim = new Date();
 const inicio = new Date(Date.now() - 10 * 86_400_000);
 const saida = { fonte: 'Banco Central do Brasil, PTAX (venda)', url: 'https://www.bcb.gov.br/estabilidadefinanceira/historicocotacoes', moedas: {} };
 for (const m of MOEDAS) {
   const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaPeriodo(moeda=@moeda,dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@moeda='${m}'&@dataInicial='${fmt(inicio)}'&@dataFinalCotacao='${fmt(fim)}'&$format=json&$orderby=dataHoraCotacao desc&$top=20`;
-  const r = await fetch(url);
-  const dados = r.ok ? await r.json() : null;
+  const r = await fetch(url).catch(() => null);
+  const dados = r?.ok ? await r.json() : null;
   // Fechamento do dia (o último boletim) é o "Fechamento PTAX".
   const linha = dados?.value?.find((v) => v.tipoBoletim === 'Fechamento') ?? dados?.value?.[0];
   if (!linha) { console.log(`sem cotação: ${m}`); continue; }
@@ -25,4 +27,8 @@ for (const m of MOEDAS) {
   console.log(m, linha.cotacaoVenda, linha.dataHoraCotacao);
 }
 if (!Object.keys(saida.moedas).length) throw new Error('BCB sem resposta');
-writeFileSync(join(ROOT, 'apps/app/src/dados/cambio.json'), JSON.stringify(saida, null, 1));
+// Mantém a última cotação conhecida (com a data dela) das moedas que falharam hoje.
+const arquivo = join(ROOT, 'apps/app/src/dados/cambio.json');
+const anterior = existsSync(arquivo) ? JSON.parse(readFileSync(arquivo, 'utf8')).moedas ?? {} : {};
+saida.moedas = { ...anterior, ...saida.moedas };
+writeFileSync(arquivo, JSON.stringify(saida, null, 1));

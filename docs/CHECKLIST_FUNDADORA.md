@@ -13,6 +13,14 @@
 - [ ] **B. Chave da LiteAPI no Supabase** — Edge Functions → Secrets → `LITEAPI_KEY` = a chave (hoje a de teste; depois a de produção, nova, porque a de teste apareceu num print). Liga a busca de hotéis.
 - [ ] **C. Chave de produção da LiteAPI** — quando quiser preços para reservar de verdade (a de teste mostra "ambiente de teste").
 
+## Seções 13–16 (moedas e linha do tempo) — o que depende de você
+- [ ] **Conferir os links oficiais** em Etapas (PF, Itamaraty, UE, Receita, Ministério da Saúde, Banco Central).
+      Os textos foram escritos a partir de buscas em 17/11/2026; o ambiente de desenvolvimento não abre
+      gov.br nem europa.eu, então os links não foram abertos daqui. 10 minutos no celular resolvem.
+- [ ] **Rodar o workflow "Câmbio"** no GitHub (Actions → Câmbio → Run workflow) para trazer libra, franco
+      suíço, dólar canadense e australiano, iene e coroas. Hoje o app só tem euro e dólar.
+- [ ] Revisar uma vez por mês: taxa do passaporte, ETIAS, IOF e cota da Receita (o app mostra a data da consulta).
+
 ## ⚠️ Esta semana
 
 - [x] **1. Confirmar que "Bo Vair" está livre no INPI** (feito em 15/11/2026: nada encontrado) (grátis, 15 min) — `busca.inpi.gov.br` → Marca → Radical: `bo vair`, `bovair`, `bovai`, `buovai`. Ver classes **9, 35, 39 e 42**.

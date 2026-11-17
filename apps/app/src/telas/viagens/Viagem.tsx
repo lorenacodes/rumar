@@ -10,16 +10,21 @@ import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type 
 import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
   acompanhar, adicionarGasto, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
-  montarRoteiro, moverItem, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
+  marcarFeito, montarRoteiro, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
 } from '../../lib/viagens';
+import { converter, taxa } from '../../lib/moedas';
+import { usePlano } from '../../state/plano';
 import { useViajante } from '../../state/viajante';
+import { AbaDinheiro, PlanejadoReal } from './Dinheiro';
+import { AbaEtapas } from './Etapas';
+import { montarJornada } from './jornada';
 import { Abas } from '../../ui/abas';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa, type Ponto } from '../../ui/Mapa';
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rotulo, Segmentos, Selo } from './comum';
 
-type Aba = 'roteiro' | 'mapa' | 'hospedagem' | 'orcamento' | 'grupo';
+type Aba = 'etapas' | 'roteiro' | 'mapa' | 'hospedagem' | 'dinheiro' | 'grupo';
 const HORA: Record<string, string> = { morning: '9h30', afternoon: '14h', evening: '18h30', night: '21h30' };
 const FAIXA: Record<string, string> = { morning: 'Manhã', afternoon: 'Tarde', evening: 'Noite', night: 'Noite' };
 const P = PRECOS as unknown as Precos;
@@ -40,7 +45,8 @@ export function Viagem() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
   const [params, setParams] = useSearchParams();
-  const aba = (params.get('aba') ?? 'roteiro') as Aba;
+  const pedida = params.get('aba') ?? 'etapas';
+  const aba = (pedida === 'orcamento' ? 'dinheiro' : pedida) as Aba;
   const [v, setV] = useState<ViagemCompleta | null | undefined>(undefined);
   const [dia, setDia] = useState(1);
   const local = useLocation();
@@ -60,6 +66,7 @@ export function Viagem() {
   }, [id, recarregar]);
 
   const { preferencias } = useViajante();
+  const { paisResidencia, paisPassaporte, moedaReferencia } = usePlano();
   const grupo = useMemo(() => (v ? mesclar(v.pessoas) ?? preferencias : null), [v, preferencias]);
   const itens = useMemo(() => (v?.itens ?? []).map((it) => ({ it, l: lugarPorId(it.place_id) })).filter((x): x is { it: Item; l: Lugar } => Boolean(x.l)), [v]);
   const orc = useMemo(() => {
@@ -72,14 +79,18 @@ export function Viagem() {
       viajantes: v.viagem.viajantes, noites: v.viagem.noites, euroEmReais: EURO?.venda ?? null, prefereTransporte: grupo?.deslocamento === 'transporte',
     };
     const o = calcular(entrada);
-    return { o, sugestoes: v.viagem.orcamento_centavos ? sugerirAjustes(entrada, o, v.viagem.orcamento_centavos) : [] };
+    // O orçamento é guardado na moeda de planejamento da viagem; a comparação é feita em reais.
+    const limiteBRL = v.viagem.orcamento_centavos ? converter(v.viagem.orcamento_centavos, taxa(v.viagem.moeda_planejamento ?? 'BRL', 'BRL')) : null;
+    return { o, limiteBRL, sugestoes: limiteBRL ? sugerirAjustes(entrada, o, limiteBRL) : [] };
   }, [v, itens, grupo]);
+  const j = useMemo(() => (v && orc ? montarJornada(v, orc.o.semCambio ? null : orc.o.provavelBRL, { paisResidencia, paisPassaporte, moedaReferencia }) : null), [v, orc, paisResidencia, paisPassaporte, moedaReferencia]);
 
   if (v === null) return <Navigate to="/viagens" replace />;
   if (!v) return <main className="tela" aria-busy="true" style={{ padding: '40px 20px' }}>Carregando a viagem…</main>;
   const pode = v.papel === 'dono' || v.papel === 'editor';
   const total = v.viagem.noites + 1;
-  const acima = orc && v.viagem.orcamento_centavos ? orc.o.provavelBRL - v.viagem.orcamento_centavos : 0;
+  const acima = orc?.limiteBRL ? orc.o.provavelBRL - orc.limiteBRL : 0;
+  const irPara = (a: string) => setParams({ aba: a }, { replace: true });
 
   return (
     <main className="tela" data-tela="viagem" data-real="viagem">
@@ -88,7 +99,7 @@ export function Viagem() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
         {orc ? (
-          <button type="button" className="r-btn" onClick={() => setParams({ aba: 'orcamento' }, { replace: true })} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
+          <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>
               <span style={{ display: 'block', fontSize: '13px', color: '#AEBBE0' }}>Custo estimado {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
               <b style={{ font: "600 22px 'Lexend Exa'" }}>{reais(orc.o.provavelBRL)}</b>
@@ -101,7 +112,7 @@ export function Viagem() {
         ) : null}
         <div style={{ marginTop: '12px' }}>
           <Segmentos rotulo="Partes da viagem" valor={aba} aoMudar={(a) => setParams({ aba: a }, { replace: true })}
-            opcoes={[{ id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: v.hospedagem ? 'Hospedagem ✓' : 'Hospedagem' }, { id: 'orcamento', nome: 'Orçamento' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
+            opcoes={[{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: v.hospedagem ? 'Hospedagem ✓' : 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
         </div>
         {aba === 'roteiro' || aba === 'mapa' ? (
           <div role="tablist" aria-label="Dias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
@@ -119,10 +130,11 @@ export function Viagem() {
           </div>
         ) : null}
 
+        {aba === 'etapas' && j && orc ? <AbaEtapas v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} resumoFinal={<PlanejadoReal v={v} j={j} orc={orc.o} comCompartilhar />} /> : null}
         {aba === 'roteiro' ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} /> : null}
         {aba === 'mapa' ? <AbaMapa v={v} dia={dia} itens={itens} /> : null}
         {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} /> : null}
-        {aba === 'orcamento' && orc ? <AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} /> : null}
+        {aba === 'dinheiro' && orc && j ? <AbaDinheiro v={v} j={j} orc={orc.o} pode={pode} recarregar={recarregar} resumo={<AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} moeda={j.moedaPlano} />} /> : null}
         {aba === 'grupo' ? <AbaGrupo v={v} pode={pode} recarregar={recarregar} /> : null}
         <div style={{ height: '24px' }} />
       </div>
@@ -162,14 +174,15 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
             return (
               <article key={it.id} style={{ display: 'grid', gridTemplateColumns: '84px 1fr', gap: '10px', padding: '10px 0', borderBottom: '1px dashed var(--linha)' }}>
                 <div>
-                  <div style={{ font: "600 14px 'Lexend Exa'", marginBottom: '4px' }}>{HORA[it.periodo]}</div>
+                  <div style={{ font: "600 14px 'Lexend Exa'", marginBottom: '4px' }}>{it.hora ? it.hora.slice(0, 5).replace(':', 'h') : HORA[it.periodo]}</div>
                   <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?viagem=${v.viagem.id}`)} aria-label={`${l.nome}: detalhes`} style={{ display: 'block', width: '84px' }}>
                     <FotoLugar id={l.id} proporcao="1 / 1" credito={false} compacto />
                   </button>
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ font: "700 11px/15px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{NOME_CATEGORIA[l.categoria]}</div>
-                  <div style={{ font: "600 17px/22px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{l.nome}</div>
+                  <div style={{ font: "600 17px/22px 'Lexend Exa'", letterSpacing: '-0.02em', textDecoration: it.feito ? 'line-through' : 'none' }}>{l.nome}</div>
+                  {it.feito ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--verde)' }}>✓ Feito</div> : null}
                   {it.situacao === 'sugerido' ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--ambar)' }}>Sugestão de um participante</div> : null}
                   <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{enderecoCurto(l.endereco) ?? l.area}</div>
                   <div style={{ fontSize: '14px', lineHeight: '20px', marginTop: '2px' }}>
@@ -195,6 +208,11 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                         </select>
                       </label>
                       <button type="button" className="r-btn" onClick={() => setTrocando(trocando === it.id ? null : it.id)} style={acao}>Trocar</button>
+                      <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? '✓ Feito' : 'Marcar feito'}</button>
+                      <label style={{ ...acao, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <span className="visualmente-oculto">Horário de {l.nome}</span>
+                        <input type="time" defaultValue={it.hora?.slice(0, 5) ?? ''} onBlur={(e) => { const h = e.target.value; if (h !== (it.hora?.slice(0, 5) ?? '')) void executar(mudarHora(it, h || null)); }} style={{ border: 0, background: 'transparent', font: "600 13px 'Open Sans'", color: 'var(--texto)', width: '88px' }} />
+                      </label>
                       <button type="button" className="r-btn" aria-label={`Tirar ${l.nome}`} onClick={() => void executar(removerItem(it))} style={{ ...acao, color: 'var(--vermelho)' }}>Tirar</button>
                     </div>
                   ) : (
@@ -374,7 +392,7 @@ const th = { textAlign: 'left' as const, padding: '6px', borderBottom: '2px soli
 const td = { padding: '6px', borderBottom: '1px solid var(--linha)', verticalAlign: 'top' as const };
 
 // ---------------------------------------------------------------- Orçamento
-function AbaOrcamento({ v, orc, itens, pode, recarregar }: { v: ViagemCompleta; orc: { o: ReturnType<typeof calcular>; sugestoes: ReturnType<typeof sugerirAjustes> }; itens: { it: Item; l: Lugar }[]; pode: boolean; recarregar: () => void }) {
+function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCompleta; orc: { o: ReturnType<typeof calcular>; limiteBRL: number | null; sugestoes: ReturnType<typeof sugerirAjustes> }; itens: { it: Item; l: Lugar }[]; pode: boolean; recarregar: () => void; moeda: string }) {
   const [limite, setLimite] = useState(v.viagem.orcamento_centavos ? String(v.viagem.orcamento_centavos / 100) : '');
   const [aberta, setAberta] = useState<string | null>(null);
   const [desc, setDesc] = useState('');
@@ -382,7 +400,7 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar }: { v: ViagemCompleta; 
   const [cat, setCat] = useState('passagem');
   const { o, sugestoes } = orc;
   const ativos = v.membros.filter((m) => m.status === 'ativo');
-  const limiteC = v.viagem.orcamento_centavos;
+  const limiteC = orc.limiteBRL;
   const aplicar = async (de: string, para: string, dia: number) => {
     const it = itens.find((x) => x.l.id === de && x.it.dia === dia)?.it;
     if (it) await trocarItem(it, para);
@@ -407,7 +425,7 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar }: { v: ViagemCompleta; 
       ) : null}
       {pode ? (
         <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', marginTop: '10px' }}>
-          <label style={{ flex: 1, fontSize: '13px', color: 'var(--texto-sec)' }}>Orçamento total (R$)<input inputMode="numeric" className="r-input" value={limite} onChange={(e) => setLimite(e.target.value.replace(/\D/g, ''))} style={campo} /></label>
+          <label style={{ flex: 1, fontSize: '13px', color: 'var(--texto-sec)' }}>Orçamento total ({moeda})<input inputMode="numeric" className="r-input" value={limite} onChange={(e) => setLimite(e.target.value.replace(/\D/g, ''))} style={campo} /></label>
           <button type="button" className="r-btn" onClick={() => void atualizarViagem(v.viagem.id, { orcamento_centavos: limite ? Number(limite) * 100 : null }).then(recarregar)} style={{ ...acao, height: '44px' }}>Salvar</button>
         </div>
       ) : null}

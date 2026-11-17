@@ -21,6 +21,11 @@ export interface Plano {
   avisos: { preco: boolean; prazos: boolean; resumo: boolean } | null;
   /** 3.1: onde a pessoa sonha em ir. */
   sonho: 'brasil' | 'exterior' | 'os-dois' | null;
+  /** Onde a pessoa mora e em que moeda pensa (escolhidos por ela, não deduzidos). */
+  paisResidencia: string;
+  moedaReferencia: string;
+  /** País do passaporte (regras de visto dependem dele). */
+  paisPassaporte: string;
 }
 
 interface PlanoState extends Plano {
@@ -38,6 +43,9 @@ export const PLANO_INICIAL: Plano = {
   guardado: 0,
   avisos: null,
   sonho: null,
+  paisResidencia: 'BR',
+  moedaReferencia: 'BRL',
+  paisPassaporte: 'BR',
 };
 
 export const usePlano = create<PlanoState>()(
@@ -73,4 +81,7 @@ export const PLANO_ANA: Plano = {
   guardado: 200000,
   avisos: { preco: true, prazos: true, resumo: false },
   sonho: 'os-dois',
+  paisResidencia: 'BR',
+  moedaReferencia: 'BRL',
+  paisPassaporte: 'BR',
 };

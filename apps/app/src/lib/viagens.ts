@@ -7,6 +7,7 @@ import { supabase } from './supabase';
 import { LUGARES, lugarPorId } from './catalogo';
 import { mesclar, type Pessoa } from './grupo';
 import { planejar, type Preferencias } from './planejador';
+import type { Diagnostico } from './linhaDoTempo';
 
 export interface Viagem {
   id: string;
@@ -17,8 +18,21 @@ export interface Viagem {
   viajantes: number;
   orcamento_centavos: number | null;
   visibilidade: 'privada' | 'amigos';
+  data_definida?: boolean;
+  moeda_destino?: string | null;
+  guardado_centavos?: number;
+  capacidade_mensal_centavos?: number | null;
+  reserva_pct?: number;
+  diagnostico?: Diagnostico;
+  encerrada_em?: string | null;
+  avaliacao?: number | null;
+  comentario?: string | null;
+  moeda_planejamento?: string;
 }
-export interface Item { id: string; trip_id: string; dia: number; periodo: string; ordem: number; place_id: string; situacao: string; adicionado_por: string | null }
+export interface TarefaSalva { id: string; chave: string | null; etapa: string; titulo: string | null; descricao: string | null; prazo: string | null; ordem: number; feita: boolean }
+export interface Aporte { id: string; valor_centavos: number; data: string; nota: string | null }
+export interface GastoReal { id: string; data: string; categoria: string; descricao: string; valor_centavos: number; moeda: string; forma: string; taxa: number | null; taxa_fonte: string | null; valor_ref_centavos: number | null; moeda_ref: string | null }
+export interface Item { id: string; trip_id: string; dia: number; periodo: string; ordem: number; place_id: string; situacao: string; adicionado_por: string | null; feito?: boolean; hora?: string | null }
 export interface Membro { user_id: string; papel: 'dono' | 'editor' | 'leitor'; status: 'convidado' | 'ativo'; nome: string }
 export interface Hospedagem { hotel_id: string; nome: string; endereco: string | null; lat: number | null; lon: number | null; foto: string | null; nota: number | null; checkin: string; checkout: string; total_centavos: number; moeda: string; fonte: string; cotado_em: string }
 export interface Gasto { id: string; categoria: string; descricao: string; valor_centavos: number; moeda: string }
@@ -33,6 +47,9 @@ export interface ViagemCompleta {
   eventos: Evento[];
   papel: 'dono' | 'editor' | 'leitor' | null;
   pessoas: Pessoa[];
+  tarefas: TarefaSalva[];
+  aportes: Aporte[];
+  gastosReais: GastoReal[];
 }
 
 export async function eu(): Promise<string | null> {
@@ -82,13 +99,13 @@ export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Prefe
   await registrar(v.id, pessoas.length > 1 ? `Roteiro refeito com as preferências de ${pessoas.length} pessoas.` : 'Roteiro montado com o seu jeito de viajar.');
 }
 
-export async function criarViagem(dados: { destino: string; dataIda: string; noites: number; viajantes: number; orcamento: number | null }, prefs: Preferencias | null): Promise<string | null> {
+export async function criarViagem(dados: { destino: string; dataIda: string; noites: number; viajantes: number; orcamento: number | null; dataDefinida?: boolean; moedaDestino?: string | null; guardado?: number; capacidadeMensal?: number | null; diagnostico?: Diagnostico; moedaPlanejamento?: string }, prefs: Preferencias | null): Promise<string | null> {
   const uid = await eu();
   if (!uid) return null;
   const { data, error } = await supabase
     .from('trips')
-    .insert({ user_id: uid, destino: dados.destino, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: dados.orcamento })
-    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade')
+    .insert({ user_id: uid, destino: dados.destino, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: dados.orcamento, data_definida: dados.dataDefinida ?? true, moeda_destino: dados.moedaDestino ?? null, guardado_centavos: dados.guardado ?? 0, capacidade_mensal_centavos: dados.capacidadeMensal ?? null, diagnostico: dados.diagnostico ?? {}, moeda_planejamento: dados.moedaPlanejamento ?? 'BRL' })
+    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento')
     .single();
   if (error || !data) return null;
   await registrar(data.id as string, 'Viagem criada.');
@@ -98,13 +115,16 @@ export async function criarViagem(dados: { destino: string; dataIda: string; noi
 
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
-  const [v, itens, membros, hosp, gastos, eventos] = await Promise.all([
-    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade').eq('id', id).maybeSingle(),
+  const [v, itens, membros, hosp, gastos, eventos, tarefas, aportes, reais] = await Promise.all([
+    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento').eq('id', id).maybeSingle(),
     supabase.from('trip_items').select('*').eq('trip_id', id).order('dia').order('ordem'),
     supabase.from('trip_members').select('user_id, papel, status').eq('trip_id', id),
     supabase.from('trip_lodging').select('*').eq('trip_id', id).maybeSingle(),
     supabase.from('trip_expenses').select('id, categoria, descricao, valor_centavos, moeda').eq('trip_id', id).order('created_at'),
     supabase.from('trip_events').select('id, texto, created_at, autor').eq('trip_id', id).order('created_at', { ascending: false }).limit(30),
+    supabase.from('trip_tasks').select('id, chave, etapa, titulo, descricao, prazo, ordem, feita').eq('trip_id', id).order('ordem'),
+    supabase.from('trip_savings').select('id, valor_centavos, data, nota').eq('trip_id', id).order('data'),
+    supabase.from('trip_spend').select('id, data, categoria, descricao, valor_centavos, moeda, forma, taxa, taxa_fonte, valor_ref_centavos, moeda_ref').eq('trip_id', id).order('data').order('created_at'),
   ]);
   if (!v.data) return null;
   const nomes = await Promise.all(
@@ -123,6 +143,9 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     eventos: (eventos.data ?? []) as Evento[],
     papel: (meu?.papel as ViagemCompleta['papel']) ?? null,
     pessoas: await pessoasDaViagem(id),
+    tarefas: (tarefas.data ?? []) as TarefaSalva[],
+    aportes: ((aportes.data ?? []) as Aporte[]).map((a) => ({ ...a, valor_centavos: Number(a.valor_centavos) })),
+    gastosReais: ((reais.data ?? []) as GastoReal[]).map((g) => ({ ...g, valor_centavos: Number(g.valor_centavos), taxa: g.taxa === null ? null : Number(g.taxa), valor_ref_centavos: g.valor_ref_centavos === null ? null : Number(g.valor_ref_centavos) })),
   };
 }
 
@@ -155,9 +178,9 @@ export async function confirmarSugestao(it: Item) {
 }
 
 // ---------------------------------------------------------------- viagem, hospedagem e gastos
-export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 'data_ida' | 'noites' | 'viajantes' | 'orcamento_centavos' | 'visibilidade'>>) {
+export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 'data_ida' | 'noites' | 'viajantes' | 'orcamento_centavos' | 'visibilidade' | 'data_definida' | 'guardado_centavos' | 'capacidade_mensal_centavos' | 'reserva_pct' | 'diagnostico' | 'encerrada_em' | 'avaliacao' | 'comentario'>>, texto?: string) {
   await supabase.from('trips').update({ ...parcial, updated_at: new Date().toISOString() }).eq('id', id);
-  await registrar(id, parcial.visibilidade ? (parcial.visibilidade === 'amigos' ? 'Compartilhou a viagem com os amigos.' : 'Deixou a viagem privada.') : 'Atualizou os dados da viagem.');
+  await registrar(id, texto ?? (parcial.visibilidade ? (parcial.visibilidade === 'amigos' ? 'Compartilhou a viagem com os amigos.' : 'Deixou a viagem privada.') : 'Atualizou os dados da viagem.'));
 }
 
 export interface Hotel { id: string; nome: string; foto: string | null; endereco: string; lat: number; lon: number; estrelas: number | null; nota: number | null; avaliacoes: number | null; comodidades: string[]; total: number; porNoite: number }
@@ -215,9 +238,65 @@ export async function mudarPapel(tripId: string, userId: string, papel: 'editor'
 /** Atualiza ao vivo quando outro participante muda algo. */
 export function acompanhar(tripId: string, aoMudar: () => void): () => void {
   const canal = supabase.channel(`viagem-${tripId}`);
-  for (const tabela of ['trip_items', 'trip_events', 'trip_lodging', 'trip_members', 'trip_expenses']) {
+  for (const tabela of ['trip_items', 'trip_events', 'trip_lodging', 'trip_members', 'trip_expenses', 'trip_tasks', 'trip_savings', 'trip_spend']) {
     canal.on('postgres_changes' as never, { event: '*', schema: 'public', table: tabela, filter: `trip_id=eq.${tripId}` } as never, aoMudar as never);
   }
   canal.subscribe();
   return () => void supabase.removeChannel(canal);
+}
+
+// ---------------------------------------------------------------- linha do tempo, economia e gastos reais
+export async function marcarFeito(it: Item, feito: boolean) {
+  await supabase.from('trip_items').update({ feito }).eq('id', it.id);
+  if (feito) await registrar(it.trip_id, `Marcou ${nome(it.place_id)} como feito.`);
+}
+export async function mudarHora(it: Item, hora: string | null) {
+  await supabase.from('trip_items').update({ hora: hora || null }).eq('id', it.id);
+  await registrar(it.trip_id, `Mudou o horário de ${nome(it.place_id)}${hora ? ` para ${hora}` : ''}.`);
+}
+
+/** Marca (ou desmarca) uma tarefa do sistema pela chave. */
+export async function marcarTarefaSistema(tripId: string, chave: string, etapa: string, feita: boolean, titulo: string) {
+  const uid = await eu();
+  await supabase.from('trip_tasks').upsert({ trip_id: tripId, chave, etapa, feita, feita_em: feita ? new Date().toISOString() : null, criado_por: uid }, { onConflict: 'trip_id,chave' });
+  if (feita) await registrar(tripId, `Concluiu: ${titulo}.`);
+}
+export async function marcarTarefaPessoal(t: TarefaSalva, tripId: string, feita: boolean) {
+  await supabase.from('trip_tasks').update({ feita, feita_em: feita ? new Date().toISOString() : null }).eq('id', t.id);
+  if (feita) await registrar(tripId, `Concluiu: ${t.titulo}.`);
+}
+export async function criarTarefa(tripId: string, dados: { etapa: string; titulo: string; prazo: string | null; ordem: number }) {
+  const uid = await eu();
+  const { error } = await supabase.from('trip_tasks').insert({ trip_id: tripId, etapa: dados.etapa, titulo: dados.titulo.slice(0, 120), prazo: dados.prazo, ordem: dados.ordem, criado_por: uid });
+  if (!error) await registrar(tripId, `Criou a tarefa: ${dados.titulo.slice(0, 60)}.`);
+  return !error;
+}
+export async function ordenarTarefas(pares: { id: string; ordem: number }[]) {
+  await Promise.all(pares.map((p) => supabase.from('trip_tasks').update({ ordem: p.ordem }).eq('id', p.id)));
+}
+export async function removerTarefa(tripId: string, id: string) {
+  await supabase.from('trip_tasks').delete().eq('id', id);
+  await registrar(tripId, 'Removeu uma tarefa pessoal.');
+}
+
+export async function adicionarAporte(tripId: string, valor: number, nota: string | null) {
+  const uid = await eu();
+  const { error } = await supabase.from('trip_savings').insert({ trip_id: tripId, valor_centavos: valor, nota, criado_por: uid });
+  if (!error) await registrar(tripId, valor > 0 ? 'Registrou um depósito na economia da viagem.' : 'Registrou uma retirada da economia da viagem.');
+  return !error;
+}
+export async function removerAporte(tripId: string, id: string) {
+  await supabase.from('trip_savings').delete().eq('id', id);
+  await registrar(tripId, 'Removeu um registro da economia.');
+}
+
+export async function adicionarGastoReal(tripId: string, g: Omit<GastoReal, 'id'>) {
+  const uid = await eu();
+  const { error } = await supabase.from('trip_spend').insert({ trip_id: tripId, ...g, criado_por: uid });
+  if (!error) await registrar(tripId, `Anotou um gasto: ${g.descricao}.`);
+  return !error;
+}
+export async function removerGastoReal(tripId: string, id: string) {
+  await supabase.from('trip_spend').delete().eq('id', id);
+  await registrar(tripId, 'Removeu um gasto anotado.');
 }

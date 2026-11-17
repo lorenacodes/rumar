@@ -4,7 +4,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { carregarPerfil, emailValido, conferirSenhaAtual, enviarFoto, iniciais, pedirTrocaDeEmail, removerFoto, sair, salvarPerfil, useSessao, type Perfil } from '../../conta/servico';
 import { useFluxoConta } from '../../conta/fluxo';
 import { ANA, useDemo, useValorInicial } from '../../dev/demo';
-import { ORIGEM_ANA } from '../../state/plano';
+import { ORIGEM_ANA, usePlano } from '../../state/plano';
+import { paisPorCodigo } from '../../lib/moedas';
 import { NOME_ESTILO } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
@@ -72,12 +73,14 @@ function useExigirSessao(): 'carregando' | 'ok' | 'sem' {
 function SecaoViajante() {
   const navegar = useNavigate();
   const { preferencias, salvos } = useViajante();
+  const { paisResidencia, moedaReferencia } = usePlano();
   const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
   return (
     <div style={{ marginTop: '10px' }}>
       <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '8px 0 2px' }}>Viagens</div>
       <Linha minHeight="44px" titulo="Meu jeito de viajar" detalhe={preferencias ? `Estilo ${NOME_ESTILO[preferencias.estilo]} · ritmo ${RITMO[preferencias.ritmo]}` : 'Responder em 1 minuto'} onClick={() => navegar('/perfil-viajante')} />
       <Linha minHeight="44px" titulo="Minhas viagens" detalhe="Roteiros, hospedagem e orçamento" onClick={() => navegar('/viagens')} />
+      <Linha minHeight="44px" titulo="País e moeda" detalhe={`${paisPorCodigo(paisResidencia)?.nome ?? paisResidencia} · ${moedaReferencia}`} onClick={() => navegar('/perfil-moeda')} />
       <Linha minHeight="44px" titulo="Destinos favoritos" detalhe="Lugares que quero conhecer" onClick={() => navegar('/destinos')} />
       <Linha minHeight="44px" titulo="Lugares salvos" detalhe={salvos.length ? `${salvos.length} ${salvos.length === 1 ? 'lugar' : 'lugares'}` : 'Nenhum ainda'} onClick={() => navegar('/descobrir?ver=salvos')} />
     </div>

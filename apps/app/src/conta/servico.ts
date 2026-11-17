@@ -165,7 +165,7 @@ export async function carregarDaConta(): Promise<void> {
   const user = s.session?.user;
   if (!user) return;
   const [perfil, plano] = await Promise.all([
-    supabase.from('profiles').select('display_name, origin_city, origin, language, spoken_languages, birth_ok').eq('user_id', user.id).maybeSingle(),
+    supabase.from('profiles').select('display_name, origin_city, origin, language, spoken_languages, birth_ok, pais_residencia, moeda_referencia, pais_passaporte').eq('user_id', user.id).maybeSingle(),
     supabase.from('savings_plan').select('monthly_cents, saved_cents').eq('user_id', user.id).maybeSingle(),
   ]);
   const atual = usePlano.getState();
@@ -174,6 +174,9 @@ export async function carregarDaConta(): Promise<void> {
     if (perfil.data.birth_ok) parcial.maior18 = true;
     if (perfil.data.origin_city) parcial.cidade = perfil.data.origin_city as string;
     if (perfil.data.origin) parcial.origem = perfil.data.origin as Cidade;
+    if (perfil.data.pais_residencia) parcial.paisResidencia = perfil.data.pais_residencia as string;
+    if (perfil.data.moeda_referencia) parcial.moedaReferencia = perfil.data.moeda_referencia as string;
+    if (perfil.data.pais_passaporte) parcial.paisPassaporte = perfil.data.pais_passaporte as string;
   }
   if (plano.data) {
     parcial.mensal = plano.data.monthly_cents as number;
@@ -209,6 +212,9 @@ async function finalizarCadastroUmaVez(sessao: Session): Promise<Resultado<'meno
     language: plano.idiomaApp,
     spoken_languages: plano.idiomasFalados,
     birth_ok: true,
+    pais_residencia: plano.paisResidencia,
+    moeda_referencia: plano.moedaReferencia,
+    pais_passaporte: plano.paisPassaporte,
   });
   if (perfil.error) return { ok: false, motivo: 'rede' };
 
@@ -352,6 +358,18 @@ export async function salvarPerfil(nome: string, origem: Cidade | null): Promise
     .eq('user_id', u.user.id);
   // O plano do aparelho passa a sair da mesma cidade.
   if (!error && origem) usePlano.getState().atualizar({ cidade: cidade ?? '', origem });
+  return !error;
+}
+
+/** País onde mora, moeda de referência e país do passaporte (editáveis a qualquer hora). */
+export async function salvarMoeda(dados: { paisResidencia: string; moedaReferencia: string; paisPassaporte: string }): Promise<boolean> {
+  usePlano.getState().atualizar(dados);
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return true; // sem conta: fica só no aparelho
+  const { error } = await supabase
+    .from('profiles')
+    .update({ pais_residencia: dados.paisResidencia, moeda_referencia: dados.moedaReferencia, pais_passaporte: dados.paisPassaporte })
+    .eq('user_id', u.user.id);
   return !error;
 }
 

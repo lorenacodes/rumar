@@ -224,3 +224,29 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   sugeridas (mesma categoria, perto, mais barato) que se aplicam com um toque.
 - **Favoritos:** destinos que a pessoa quer conhecer (logo após o cadastro e no perfil); sugestões de
   destinos parecidos por características em comum.
+
+## D-023 — Moedas, linha do tempo da viagem e dinheiro (seções 13–16)
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora. Telas novas, fora do design original (não alteram as telas comparadas).
+- **Perfil → País e moeda:** país onde mora, moeda de referência e país do passaporte, escolhidos pela
+  pessoa (não deduzidos da nacionalidade). Moedas de referência: só as com cotação oficial no app.
+- **Viagem:** abas Etapas · Roteiro · Mapa · Hospedagem · Dinheiro · Grupo. "Orçamento" virou parte de
+  Dinheiro (Custos · Economia · Como levar · Na viagem). A viagem abre em Etapas.
+- **Moeda de planejamento:** cada viagem guarda a moeda em que é planejada (a de referência de quem
+  cria). Orçamento, meta e depósitos do grupo ficam nela.
+- **Três valores de câmbio, nunca misturados:** referência (PTAX do Banco Central, com data), estimativa
+  (referência + IOF de 3,5%, Decreto 12.499/2025; spread não incluído e avisado) e custo efetivo (VET que a
+  instituição informou, digitado pela pessoa). Moeda sem PTAX (peso argentino, chileno…) não é convertida:
+  a pessoa informa a taxa.
+- **Linha do tempo:** tarefas do sistema calculadas a partir da viagem (data, destino, diagnóstico,
+  orçamento, depósitos); no banco fica só o que foi marcado e as tarefas pessoais (reordenáveis). Mudar a
+  data, o destino ou o orçamento recalcula prazos, metas e valor por mês na hora.
+- **Prazos:** cada um diz o tipo — regra oficial, pela data da viagem, sugestão do Bo Vair (dita como
+  sugestão) ou "a confirmar". Nenhum prazo de órgão ou empresa foi inventado.
+- **Regras com fonte e data (conferidas em 17/11/2026):** passaporte (PF, taxa R$ 257,25; prazo de entrega
+  informado no atendimento), Schengen para passaporte brasileiro (sem visto até 90 dias em 180; passaporte
+  válido 3 meses após a saída), ETIAS (ainda não funciona), EES, seguro (orientação de 30 mil euros), saúde
+  do viajante, cota da Receita (US$ 1.000 por via aérea, individual, excedente 50%). Para outros passaportes
+  e destinos, o app manda confirmar no Portal Consular em vez de afirmar.
+- **Limites sinceros:** não há notificação no celular ainda ("lembretes" = prazos na tela); só Paris tem
+  roteiro; a passagem não é estimada (sem fonte confiável) e precisa ser informada.
