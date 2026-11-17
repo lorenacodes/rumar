@@ -17,16 +17,18 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const UA = 'BoVairApp/0.1 (https://instagram.com/bovair.app) fotos-de-destinos';
 
 /** chave usada no app → artigo da Wikipédia em português. */
+// Sem artigo com foto certa (ficam com o fundo do design): Mercado dos Enfants Rouges,
+// Rua Montorgueil ("Les Halles" levava a uma vila homônima no Ródano).
 const ARTIGOS = {
   Paris: 'Paris', Lisboa: 'Lisboa', Penedo: 'Penedo (Alagoas)', Maceió: 'Maceió', Salvador: 'Salvador (Bahia)',
   Recife: 'Recife', Cascais: 'Cascais', Lagos: 'Lagos (Portugal)', Itália: 'Coliseu', Roma: 'Roma', Aracaju: 'Aracaju',
   Montmartre: 'Montmartre',
   'Museu do Louvre': 'Pirâmide do Louvre', "Museu d'Orsay": "Museu d'Orsay", 'Centro Pompidou': 'Beaubourg',
   'Montmartre e Sacré-Cœur': 'Basílica do Sagrado Coração (Paris)', 'Museu de Montmartre': 'Montmartre',
-  'Mercado dos Enfants Rouges': 'Le Marais', 'Ruas do Marais': 'Le Marais', 'Bares do Marais': 'Le Marais',
+  'Ruas do Marais': 'Le Marais', 'Bares do Marais': 'Le Marais',
   'Jardim de Luxemburgo': 'Jardim de Luxemburgo', 'Cafés de Saint-Germain': 'Café de Flore',
   'Canal Saint-Martin': 'Canal Saint-Martin', 'Rua Oberkampf': 'Rue Oberkampf', 'Torre Eiffel e Campo de Marte': 'Torre Eiffel',
-  'Passeio de barco no Sena': 'Rio Sena', 'Rua Montorgueil': 'Les Halles', 'Galerias Lafayette': 'Galeries Lafayette',
+  'Passeio de barco no Sena': 'Rio Sena', 'Galerias Lafayette': 'Galeries Lafayette',
   'Cemitério Père-Lachaise': 'Cemitério do Père-Lachaise', 'Bosque de Vincennes': 'Bosque de Vincennes',
   'Livraria Shakespeare and Company': 'Shakespeare and Company (livraria)', 'Catedral de Notre-Dame': 'Catedral de Notre-Dame de Paris',
 };
