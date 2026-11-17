@@ -5,8 +5,10 @@ export type Aba = 'inicio' | 'descobrir' | 'viagem' | 'passaporte';
 const ABAS: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
   { id: 'descobrir', nome: 'Descobrir', rota: '/tela/2.1' },
-  { id: 'viagem', nome: 'Minha viagem', rota: '/minha-viagem' },
-  { id: 'passaporte', nome: 'Perfil', rota: '/tela/25.2' },
+  // Ainda não há viagem escolhida guardada: mostra o estado "Ainda sem viagem" (28.5).
+  { id: 'viagem', nome: 'Minha viagem', rota: '/tela/28.5' },
+  // Perfil de verdade (5.13, dados do banco). Sem conta, a 5.13 leva a Entrar/Criar conta.
+  { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
 ];
 
 /** Barra de abas fixa, 64 px, quatro abas (igual em todas as telas do design). */

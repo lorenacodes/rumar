@@ -114,7 +114,8 @@ await design.evaluate(() => {
       .replace(/^Passaporte · /, 'Perfil · ')
       .replace('ficam no seu Passaporte', 'ficam no seu Perfil');
     const barra = n.parentElement?.parentElement;
-    if (n.nodeValue.trim() === 'Passaporte' && barra && getComputedStyle(barra).gridTemplateColumns.split(' ').length === 4) {
+    const trilha = n.nodeValue.trim() === 'Passaporte' && getComputedStyle(n.parentElement).color === 'rgb(31, 79, 216)';
+    if (trilha || (n.nodeValue.trim() === 'Passaporte' && barra && getComputedStyle(barra).gridTemplateColumns.split(' ').length === 4)) {
       n.nodeValue = 'Perfil';
     }
   }

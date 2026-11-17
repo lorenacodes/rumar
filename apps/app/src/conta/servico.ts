@@ -5,9 +5,11 @@
 import type { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
-import { DEEP_LINK, VERSAO_TEXTOS_LEGAIS } from '../config';
+import { CODIGO_DIGITOS, CODIGO_VALIDADE_MIN, DEEP_LINK, VERSAO_TEXTOS_LEGAIS } from '../config';
+import { useFluxoConta } from './fluxo';
 import { supabase } from '../lib/supabase';
 import { rotuloCidade, type Cidade } from '../lib/cidades';
+import { useEscolhas } from '../state/escolhas';
 import { usePlano } from '../state/plano';
 
 export type Resultado<T extends string> = { ok: true } | { ok: false; motivo: T };
@@ -109,21 +111,74 @@ export async function criarConta(dados: {
   return { ok: true };
 }
 
-export async function reenviarCodigo(email: string, tipo: 'signup' | 'email_change'): Promise<boolean> {
-  const { error } = await supabase.auth.resend({ type: tipo, email: email.trim() });
-  return !error;
+/**
+ * Pede um código novo. O Supabase só deixa pedir de novo depois de alguns segundos e
+ * limita quantos e-mails saem por hora: as duas respostas viram mensagens claras.
+ */
+export async function reenviarCodigo(
+  email: string,
+  tipo: 'signup' | 'email_change',
+): Promise<{ ok: true } | { ok: false; motivo: 'espera'; segundos: number } | { ok: false; motivo: 'limite' | 'rede' }> {
+  const { error } = await supabase.auth.resend({ type: tipo, email: email.trim(), options: { emailRedirectTo: DEEP_LINK } });
+  if (!error) {
+    useFluxoConta.getState().set({ enviadoEm: Date.now(), erros: 0 });
+    return { ok: true };
+  }
+  const segundos = /after (\d+) seconds?/i.exec(error.message)?.[1];
+  if (segundos) return { ok: false, motivo: 'espera', segundos: Number(segundos) };
+  if (error.status === 429 || error.code === 'over_email_send_rate_limit') return { ok: false, motivo: 'limite' };
+  return { ok: false, motivo: 'rede' };
 }
 
-/** Confirma o código de 6 números (5.5) e, no cadastro, guarda perfil, consentimentos e plano. */
-export async function confirmarCodigo(
-  email: string,
-  codigo: string,
-  tipo: 'signup' | 'email_change',
-): Promise<Resultado<'codigo' | 'menor' | 'rede'>> {
+export type MotivoCodigo = 'formato' | 'invalido' | 'vencido' | 'muitas_tentativas' | 'menor' | 'rede';
+
+/**
+ * Confirma o código do e-mail (5.5). O Supabase gera o código, guarda só o resumo
+ * criptográfico (e-mail + código) junto do usuário e confere aqui: o código precisa
+ * ter exatamente CODIGO_DIGITOS números e valer para ESTE e-mail. No cadastro, em
+ * seguida guarda perfil, consentimentos e plano.
+ */
+export async function confirmarCodigo(email: string, codigo: string, tipo: 'signup' | 'email_change'): Promise<Resultado<MotivoCodigo>> {
+  if (!new RegExp(`^\\d{${CODIGO_DIGITOS}}$`).test(codigo)) return { ok: false, motivo: 'formato' };
+  const fluxo = useFluxoConta.getState();
   const { data, error } = await supabase.auth.verifyOtp({ email: email.trim(), token: codigo, type: tipo });
-  if (error || !data.session) return { ok: false, motivo: 'codigo' };
+  if (error || !data.session) {
+    if (error?.status === 429 || error?.code === 'over_request_rate_limit') return { ok: false, motivo: 'muitas_tentativas' };
+    if (error && !error.status) return { ok: false, motivo: 'rede' };
+    fluxo.set({ erros: fluxo.erros + 1 });
+    // O Supabase responde igual para código errado e vencido; pela hora do envio dá para saber qual.
+    const vencido = fluxo.enviadoEm > 0 && Date.now() - fluxo.enviadoEm > CODIGO_VALIDADE_MIN * 60_000;
+    return { ok: false, motivo: vencido ? 'vencido' : 'invalido' };
+  }
+  fluxo.set({ erros: 0 });
   if (tipo === 'signup') return finalizarCadastro(data.session);
   return { ok: true };
+}
+
+/**
+ * Traz da conta para o aparelho o que está no banco (perfil e plano), para o app mostrar
+ * os dados da pessoa em qualquer celular, depois de atualizar ou entrar de novo.
+ */
+export async function carregarDaConta(): Promise<void> {
+  const { data: s } = await supabase.auth.getSession();
+  const user = s.session?.user;
+  if (!user) return;
+  const [perfil, plano] = await Promise.all([
+    supabase.from('profiles').select('display_name, origin_city, origin, language, spoken_languages, birth_ok').eq('user_id', user.id).maybeSingle(),
+    supabase.from('savings_plan').select('monthly_cents, saved_cents').eq('user_id', user.id).maybeSingle(),
+  ]);
+  const atual = usePlano.getState();
+  const parcial: Partial<typeof atual> = {};
+  if (perfil.data) {
+    if (perfil.data.birth_ok) parcial.maior18 = true;
+    if (perfil.data.origin_city) parcial.cidade = perfil.data.origin_city as string;
+    if (perfil.data.origin) parcial.origem = perfil.data.origin as Cidade;
+  }
+  if (plano.data) {
+    parcial.mensal = plano.data.monthly_cents as number;
+    parcial.guardado = plano.data.saved_cents as number;
+  }
+  if (Object.keys(parcial).length) atual.atualizar(parcial);
 }
 
 /** Cria o perfil e registra os consentimentos da tela 5.3. */
@@ -308,6 +363,11 @@ let saidaVoluntaria = false;
 export async function sair(): Promise<void> {
   saidaVoluntaria = true;
   await supabase.auth.signOut();
+  // O plano e as escolhas são da conta que saiu: não ficam à mostra para quem entrar
+  // depois neste aparelho (eles continuam guardados no banco e voltam ao entrar).
+  usePlano.getState().limpar();
+  useEscolhas.setState({ valores: {}, consentimentoNecessidades: false });
+  useFluxoConta.getState().set({ email: '', erros: 0, enviadoEm: 0 });
 }
 
 /** Sessão atual, atualizada em tempo real. `undefined` enquanto carrega. */

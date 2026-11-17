@@ -70,7 +70,7 @@ export function Tela5_3() {
     setEnviando(true);
     const r = await criarConta({ nome, email, senha, novidades });
     setEnviando(false);
-    setFluxo({ email, tipoCodigo: 'signup' });
+    setFluxo({ email, tipoCodigo: 'signup', ...(r.ok ? { enviadoEm: Date.now(), erros: 0 } : {}) });
     if (r.ok) return navegar('/conta/codigo');
     if (r.motivo === 'existe') return navegar('/conta/ja-existe');
     const mensagens: Record<string, string> = {

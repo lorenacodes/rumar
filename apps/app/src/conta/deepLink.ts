@@ -5,7 +5,7 @@
 import { App as CapApp } from '@capacitor/app';
 
 import { supabase } from '../lib/supabase';
-import { garantirPerfil } from './servico';
+import { carregarDaConta, garantirPerfil } from './servico';
 
 export function ouvirLinks(navegar: (rota: string) => void): () => void {
   const tratar = async (url: string) => {
@@ -30,7 +30,10 @@ export function ouvirLinks(navegar: (rota: string) => void): () => void {
     if (evento === 'PASSWORD_RECOVERY') navegar('/conta/senha-nova');
     // Qualquer entrada (código, link ou senha) garante o perfil, fora do callback do Supabase.
     // Também ao abrir o app já logado (INITIAL_SESSION): contas antigas ganham o perfil.
-    if ((evento === 'SIGNED_IN' || evento === 'INITIAL_SESSION') && sessao) setTimeout(() => void garantirPerfil(), 0);
+    if ((evento === 'SIGNED_IN' || evento === 'INITIAL_SESSION') && sessao) {
+      // Cria o perfil se faltar e traz perfil e plano do banco para este aparelho.
+      setTimeout(() => void garantirPerfil().then(() => carregarDaConta()), 0);
+    }
   });
   return () => {
     void ouvinte.then((o) => o.remove());

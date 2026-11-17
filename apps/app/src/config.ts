@@ -15,3 +15,13 @@ export const VERSAO_TEXTOS_LEGAIS = 'rascunho-2026-11-05';
 
 /** Endereço que abre o app a partir dos links de e-mail (deep link). */
 export const DEEP_LINK = 'com.bovair.app://auth';
+
+/**
+ * Quantos números tem o código que o Supabase manda por e-mail (cadastro e troca de
+ * e-mail). TEM de ser igual a "Email OTP Length" no painel (Authentication → Sign In /
+ * Providers → Email). Hoje o projeto gera 8 (conferido no banco em 17/11/2026).
+ */
+export const CODIGO_DIGITOS = Number(import.meta.env.VITE_CODIGO_DIGITOS ?? 8);
+
+/** Validade do código, também configurada no painel ("Email OTP Expiration"). */
+export const CODIGO_VALIDADE_MIN = 60;

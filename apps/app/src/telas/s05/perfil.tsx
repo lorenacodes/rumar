@@ -50,7 +50,7 @@ function Cabecalho({ children }: { children?: ReactNode }) {
   return (
     <>
       <Voltar para="/inicio" />
-      <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Passaporte</div>
+      <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Perfil</div>
       <Titulo marginTop="4px">Seu perfil.</Titulo>
       {children}
     </>
@@ -199,7 +199,7 @@ export function Tela5_15() {
     if (!emailValido(novo)) return setErro('Confira o e-mail novo.');
     if (!(await conferirSenhaAtual(senha))) return setErro('A senha não confere.');
     if (!(await pedirTrocaDeEmail(novo))) return setErro('Não conseguimos enviar o código agora. Tente de novo.');
-    setFluxo({ email: novo, tipoCodigo: 'email_change' });
+    setFluxo({ email: novo, tipoCodigo: 'email_change', enviadoEm: Date.now(), erros: 0 });
     navegar('/conta/codigo');
   };
   return (
@@ -247,7 +247,7 @@ export function Tela5_17() {
     <main className="tela" data-tela="5.17">
       <div style={{ padding: '22px 20px 0', opacity: '.35' }} aria-hidden>
         <div style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', fontSize: '24px', marginLeft: '-4px' }}>←</div>
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Passaporte</div>
+        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Perfil</div>
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>Seu perfil.</div>
       </div>
       <div style={{ position: 'absolute', inset: '0', background: 'rgba(11,31,75,.55)' }} onClick={() => navegar(-1)} />

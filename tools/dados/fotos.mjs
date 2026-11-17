@@ -66,7 +66,8 @@ for (const [chave, artigo] of Object.entries(ARTIGOS)) {
   const ii = metaPorArquivo[p.pageimage.replace(/ /g, '_')];
   const meta = ii?.extmetadata ?? {};
   fotos[chave] = {
-    url: p.thumbnail.source,
+    // Sem os parâmetros de rastreio que a API acrescenta.
+    url: p.thumbnail.source.split('?')[0],
     largura: p.thumbnail.width ?? null,
     altura: p.thumbnail.height ?? null,
     autor: semHtml(meta.Artist?.value) || 'Autor no Wikimedia Commons',

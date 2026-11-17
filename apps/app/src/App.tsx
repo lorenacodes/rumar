@@ -28,6 +28,7 @@ import { Tela28_7 } from './telas/s28/Tela28_7';
 import { AvisoAtualizar } from './ui/atualizar';
 import { MinhaViagem } from './telas/s16/MinhaViagem';
 import { Roteiro } from './telas/s06/Roteiro';
+import { Inicio } from './telas/s25/Inicio';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
 function Raiz() {
@@ -79,7 +80,7 @@ const filhos: RouteObject[] = [
   { path: '/seu-plano', element: <Tela1_4 /> },
   { path: '/sonho', element: <Tela3_1 /> },
   { path: '/avisos', element: <Tela1_5 /> },
-  { path: '/inicio', element: <TelaPorId id="25.1" /> },
+  { path: '/inicio', element: <Inicio /> },
   { path: '/entrar', element: <Tela5_1 /> },
   { path: '/conta/criar', element: <Tela5_3 /> },
   { path: '/conta/ja-existe', element: <Tela5_4 /> },

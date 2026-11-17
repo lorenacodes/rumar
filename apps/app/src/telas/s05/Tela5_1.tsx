@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { contaTemPlano, emailValido, entrar } from '../../conta/servico';
+import { contaTemPlano, emailValido, entrar, reenviarCodigo } from '../../conta/servico';
 import { useFluxoConta } from '../../conta/fluxo';
 import { useValorInicial, ANA } from '../../dev/demo';
 import { supabase } from '../../lib/supabase';
@@ -25,7 +25,7 @@ export async function destinoDepoisDeEntrar(): Promise<string> {
   const { data } = await supabase.auth.getUser();
   const temPlanoLocal = usePlano.getState().mensal > 0;
   if (data.user && temPlanoLocal && !(await contaTemPlano(data.user.id))) return '/conta/plano-deste-aparelho';
-  return '/perfil';
+  return '/inicio';
 }
 
 /** 5.1 Entrar (com o estado de senha incorreta da 5.2). */
@@ -45,7 +45,9 @@ export function Tela5_1() {
     setFluxo({ email });
     if (r.ok) return navegar(await destinoDepoisDeEntrar(), { replace: true });
     if (r.motivo === 'nao_confirmado') {
-      setFluxo({ email, tipoCodigo: 'signup' });
+      // Conta criada e não confirmada: manda um código novo e leva à tela do código.
+      setFluxo({ email, tipoCodigo: 'signup', erros: 0 });
+      void reenviarCodigo(email, 'signup');
       return navegar('/conta/codigo');
     }
     setErro(r.motivo);
