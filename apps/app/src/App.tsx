@@ -37,6 +37,7 @@ import { Viagens } from './telas/viagens/Viagens';
 import { Montar } from './telas/viagem/Montar';
 import { Inicio } from './telas/s25/Inicio';
 import { Moeda } from './telas/s05/Moeda';
+import { Usuario } from './telas/s05/Usuario';
 import { Idioma } from './telas/viagens/Idioma';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
@@ -118,6 +119,8 @@ const filhos: RouteObject[] = [
   { path: '/pessoa/:id', element: <Pessoa /> },
   { path: '/destinos', element: <Destinos /> },
   { path: '/bem-vindo', element: <Destinos primeiraVez /> },
+  { path: '/bem-vindo/usuario', element: <Usuario primeiraVez /> },
+  { path: '/perfil/usuario', element: <Usuario /> },
   { path: '/montar', element: <Navigate to="/viagens/nova" replace /> },
   { path: '/perfil-viajante', element: <Montar soPerfil /> },
   { path: '/perfil-moeda', element: <Moeda /> },

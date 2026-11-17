@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
+import { meuUsuario } from '../../lib/usuario';
 import { buscarPessoas, minhasAmizades, pedirAmizade, responderAmizade, type Amizade, type PessoaPublica } from '../../lib/social';
 import { listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
@@ -22,12 +23,16 @@ export function Social() {
   const [achados, setAchados] = useState<PessoaPublica[]>([]);
   const [amizades, setAmizades] = useState<Amizade[]>([]);
   const [deAmigos, setDeAmigos] = useState<Viagem[]>([]);
+  const [meu, setMeu] = useState<string | null | undefined>(undefined);
   const carregar = () => {
     void minhasAmizades().then(setAmizades);
     void listarViagens().then((v) => setDeAmigos(v.deAmigos));
   };
   useEffect(() => {
-    if (sessao) carregar();
+    if (sessao) {
+      carregar();
+      void meuUsuario().then((m) => setMeu(m?.username ?? null));
+    }
   }, [sessao]);
   useEffect(() => {
     const t = setTimeout(() => void buscarPessoas(termo).then(setAchados), 300);
@@ -60,8 +65,15 @@ export function Social() {
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Social</div>
         <h1 style={titulo}>Amigos e viagens.</h1>
-        <label htmlFor="busca-pessoa" className="visualmente-oculto">Buscar pessoas pelo nome</label>
-        <input id="busca-pessoa" type="search" className="r-input" placeholder="Buscar pessoas pelo nome" value={termo} onChange={(e) => setTermo(e.target.value)} style={{ ...campo, marginTop: '12px' }} />
+        {meu ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '4px' }}>Você é <b style={{ color: 'var(--texto)' }}>@{meu}</b>: passe esse nome para seus amigos te acharem.</div> : null}
+        {meu === null ? (
+          <div style={{ marginTop: '10px', padding: '12px 14px', background: 'var(--cartao-1)', fontSize: '14px', lineHeight: '20px' }}>
+            <b>Escolha seu nome de usuário.</b> Sem ele, seus amigos só te acham pelo nome completo.
+            <button type="button" className="r-btn" onClick={() => navegar('/perfil/usuario')} style={{ display: 'block', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Escolher meu @ ↗</button>
+          </div>
+        ) : null}
+        <label htmlFor="busca-pessoa" className="visualmente-oculto">Buscar pessoas por nome ou nome de usuário</label>
+        <input id="busca-pessoa" type="search" className="r-input" placeholder="Buscar por nome ou @usuário" value={termo} onChange={(e) => setTermo(e.target.value)} style={{ ...campo, marginTop: '12px' }} />
         {termo.trim().length >= 2 ? (
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
             {achados.map((p) => {
@@ -69,7 +81,7 @@ export function Social() {
               return (
                 <li key={p.user_id} style={linha}>
                   <Inicial nome={p.display_name} />
-                  <span style={{ flex: 1 }}><b>{p.display_name}</b><span style={sub}>{p.origin_city ?? ''}</span></span>
+                  <span style={{ flex: 1 }}><b>{p.display_name}</b><span style={sub}>{[p.username ? `@${p.username}` : null, p.origin_city].filter(Boolean).join(' · ')}</span></span>
                   {r ? <span style={sub}>{r.status === 'aceita' ? 'Amigos' : 'Pedido enviado'}</span> : (
                     <button type="button" className="r-btn" onClick={() => void pedirAmizade(p.user_id).then(carregar)} style={acao}>Adicionar</button>
                   )}
@@ -85,7 +97,7 @@ export function Social() {
             {recebidos.map((a) => (
               <div key={a.outro.user_id} style={linha}>
                 <Inicial nome={a.outro.display_name} />
-                <b style={{ flex: 1 }}>{a.outro.display_name}</b>
+                <span style={{ flex: 1 }}><b>{a.outro.display_name}</b>{a.outro.username ? <span style={sub}>@{a.outro.username}</span> : null}</span>
                 <button type="button" className="r-btn" onClick={() => void responderAmizade(a.outro.user_id, true).then(carregar)} style={{ ...acao, background: 'var(--amarelo)', border: 0 }}>Aceitar</button>
                 <button type="button" className="r-btn" onClick={() => void responderAmizade(a.outro.user_id, false).then(carregar)} style={acao}>Recusar</button>
               </div>
@@ -96,7 +108,7 @@ export function Social() {
         {amigos.map((a) => (
           <button key={a.outro.user_id} type="button" className="r-btn" onClick={() => navegar(`/pessoa/${a.outro.user_id}`)} style={{ ...linha, width: '100%', textAlign: 'left' }}>
             <Inicial nome={a.outro.display_name} />
-            <span style={{ flex: 1 }}><b>{a.outro.display_name}</b><span style={sub}>{a.outro.origin_city ?? ''}</span></span>
+            <span style={{ flex: 1 }}><b>{a.outro.display_name}</b><span style={sub}>{[a.outro.username ? `@${a.outro.username}` : null, a.outro.origin_city].filter(Boolean).join(' · ')}</span></span>
             <span aria-hidden>›</span>
           </button>
         ))}

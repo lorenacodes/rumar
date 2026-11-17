@@ -22,7 +22,7 @@ export function Pessoa() {
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 24px' }}>
         <Voltar para="/social" />
         <h1 style={{ margin: '6px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{p?.display_name ?? 'Pessoa'}</h1>
-        <div style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{p?.origin_city ?? ''}{p?.amigos ? ' · vocês são amigos' : ''}</div>
+        <div style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{[p?.username ? `@${p.username}` : null, p?.origin_city, p?.amigos ? 'vocês são amigos' : null].filter(Boolean).join(' · ')}</div>
         <Rotulo>Viagens compartilhadas</Rotulo>
         {viagens.map((v) => (
           <button key={v.id} type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}`)} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', minHeight: '56px', alignItems: 'center', borderBottom: '1px solid var(--linha)', textAlign: 'left' }}>
