@@ -28,7 +28,8 @@ await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout
 
 const CIDADES = [['Aracaju', 'SE'], ['Salvador', 'BA'], ['Recife', 'PE'], ['São Paulo', 'SP'], ['Rio de Janeiro', 'RJ'], ['Gramado', 'RS'], ['Florianópolis', 'SC'], ['Paris', null]];
 const resumo = [];
-for (const [cidade, uf] of CIDADES) {
+const SO = process.env.CIDADES?.split(',');
+for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   console.log(`— ${cidade}${uf ? ` (${uf})` : ''}`);
   await p.goto(URL + '#/descobrir'); await p.waitForTimeout(1500);
   const trocar = p.getByRole('button', { name: 'Trocar cidade' });
@@ -46,24 +47,24 @@ for (const [cidade, uf] of CIDADES) {
   const rest = await p.locator('main ul li').count();
   confere(`${cidade}: categoria Restaurantes (${rest} na 1ª página)`, rest > 0);
   // Nome: usa a primeira palavra do primeiro restaurante
-  const primeiro = (await p.locator('main ul li').first().innerText()).split('\n')[1] ?? '';
+  const primeiro = await p.locator('main ul li').first().locator('span[style*="Lexend"]').first().innerText();
   const palavra = primeiro.split(' ').find((w) => w.length >= 4) ?? primeiro.slice(0, 4);
   await p.locator('#busca-lugar').fill(palavra); await p.waitForTimeout(2000);
   confere(`${cidade}: busca por nome "${palavra}"`, (await p.locator('main ul li').count()) > 0);
   await p.locator('#busca-lugar').fill('');
   // Preço
   await p.getByRole('tab', { name: /^Tudo/ }).click(); await p.waitForTimeout(1500);
-  await p.getByRole('button', { name: 'Grátis' }).click(); await p.waitForTimeout(2000);
+  await p.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(2000);
   t = await texto();
   const gratis = await p.locator('main ul li').count();
   confere(`${cidade}: filtro de preço explica quem fica de fora (${gratis} grátis)`, /ficam de fora deste filtro/.test(t));
-  await p.getByRole('button', { name: 'Grátis' }).click(); await p.waitForTimeout(1500);
+  await p.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(1500);
   // Mapa
-  await p.getByRole('button', { name: 'Ver no mapa' }).click(); await p.waitForTimeout(4500);
+  await p.getByRole('button', { name: 'Ver no mapa', exact: true }).click(); await p.waitForTimeout(4500);
   const marcadores = await p.locator('.maplibregl-marker').count();
   confere(`${cidade}: mapa com ${marcadores} marcadores`, marcadores > 0);
   await foto(`${cidade}-mapa`);
-  await p.getByRole('button', { name: 'Ver lista' }).click(); await p.waitForTimeout(800);
+  await p.getByRole('button', { name: 'Ver lista', exact: true }).click(); await p.waitForTimeout(800);
   // Abrir e salvar
   await p.locator('main ul li button').first().click(); await p.waitForTimeout(2500);
   t = await texto();
