@@ -139,12 +139,13 @@ async function aguardarVez(url) {
 async function overpass(consulta) {
   let ultimoErro = '';
   for (const url of OVERPASS) {
-    for (let tentativa = 0; tentativa < 2; tentativa++) {
+    // O servidor principal às vezes devolve 502/503 por alguns minutos: mais tentativas e mais espera.
+    for (let tentativa = 0; tentativa < (url === OVERPASS[0] ? 4 : 1); tentativa++) {
       await aguardarVez(url);
       const t0 = Date.now();
       try {
         const r = await fetch(url, { method: 'POST', body: new URLSearchParams({ data: consulta }), headers: { 'User-Agent': UA, Accept: '*/*' }, signal: AbortSignal.timeout(240_000) });
-        if (!r.ok) { ultimoErro = `${url} ${r.status}`; console.log(`   ${ultimoErro} (${Math.round((Date.now() - t0) / 1000)} s)`); await espera(r.status === 429 || r.status === 504 ? 30_000 : 5_000); continue; }
+        if (!r.ok) { ultimoErro = `${url} ${r.status}`; console.log(`   ${ultimoErro} (${Math.round((Date.now() - t0) / 1000)} s)`); await espera([429, 502, 503, 504].includes(r.status) ? 60_000 : 5_000); continue; }
         const d = await r.json();
         if (d.remark && /timed out|out of memory/i.test(d.remark)) { ultimoErro = `${url}: ${d.remark.slice(0, 120)}`; console.log(`   ${ultimoErro}`); continue; }
         return d;
