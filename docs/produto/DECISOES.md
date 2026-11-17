@@ -184,3 +184,21 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Decisão:** a automação "Fotos dos lugares" (GitHub Actions) resolve as fotos com autor e licença e
   grava em `dados/fotos.json` (embutido) e na tabela `fotos_lugares` (Supabase, leitura pública). O app
   só carrega a imagem do CDN da Wikimedia e mostra o crédito; sem foto, fica o fundo do design.
+
+## D-021 — Planejador de viagem personalizado
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora
+- **Perfil de viajante:** descoberta em 6 etapas curtas (viagem; estilo; gostos; ritmo e dia/noite;
+  o que evitar; orçamento, grátis, menos turístico e deslocamento). Salvo no aparelho e na tabela
+  `travel_preferences` (RLS por usuário); muda em Perfil → Meu jeito de viajar.
+- **Roteiro:** `lib/planejador.ts` (testado). "Evitar" e orçamento tiram lugares; estilo e gostos dão
+  pontos; cada dia agrupa por bairro e distância real (coordenadas do OpenStreetMap); o ritmo define as
+  paradas; cada parada diz por que foi escolhida. Distância em linha reta; tempo de trajeto só pelo link
+  de rota do mapa (nunca estimado por chute).
+- **Lugares:** catálogo curado (`dados/catalogo.json`, 31 lugares de Paris em 9 categorias). Endereço e
+  horário vêm do OpenStreetMap; fotos do Wikimedia Commons (artigo ou imagem oficial do lugar no
+  Wikidata), baixadas para dentro do app; sem foto conferida, aviso discreto.
+- **Telas reais no caminho do usuário:** Início, Descobrir (busca, categorias, para você, populares,
+  menos turísticos, salvos), Lugar, Minha viagem, Roteiro e Perfil. As telas de exemplo do design deixam
+  de ser alcançadas por esses caminhos.
+- **Limite atual (sincero):** só Paris tem roteiro; outras cidades precisam de curadoria.
