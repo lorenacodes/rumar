@@ -155,8 +155,8 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
   if (f.soGratis) q = q.eq('gratuito', true);
   if (f.precoMin != null) q = q.gte('preco_max_centavos', f.precoMin);
   if (f.precoMax != null) q = q.lte('preco_min_centavos', f.precoMax);
-  // Primeiro os que têm mais informação conferível (foto, site), depois por nome.
-  const { data, count } = await q.order('foto', { ascending: true, nullsFirst: false }).order('site', { ascending: true, nullsFirst: false }).order('nome').range(pagina * porPagina, pagina * porPagina + porPagina - 1);
+  // Primeiro os mais documentados (foto, Wikidata, cozinha, horário); redes e fast-food depois.
+  const { data, count } = await q.order('relevancia', { ascending: false }).order('nome').range(pagina * porPagina, pagina * porPagina + porPagina - 1);
   const lugares = (data ?? []) as LugarBase[];
   guardar(lugares);
   return { lugares, total: count ?? lugares.length };
@@ -186,7 +186,7 @@ export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
 /** Candidatos para montar um roteiro automático: os mais documentados de cada categoria. */
 export async function candidatosRoteiro(destino: string): Promise<Lugar[]> {
   const cats = ORDEM_CATEGORIAS.filter((c) => CATEGORIAS_LUGAR[c].roteiro);
-  const res = await Promise.all(cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).order('foto', { ascending: true, nullsFirst: false }).order('site', { ascending: true, nullsFirst: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20)));
+  const res = await Promise.all(cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20)));
   const todos = res.flatMap((r) => (r.data ?? []) as LugarBase[]);
   guardar(todos);
   return todos.map(paraLugar).filter((l) => l !== null) as Lugar[];

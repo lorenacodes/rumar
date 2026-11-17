@@ -116,3 +116,8 @@ alter table public.trips add column if not exists destino_id text references pub
 
 -- A coleta grava pela função importar-lugares com o papel de serviço.
 grant select, insert, update, delete on public.destinos, public.lugares, public.cobertura, public.cidades_pedidas to service_role;
+
+-- Ordem de exibição: quanto mais documentado (foto, Wikidata, cozinha, horário, site), mais alto;
+-- fast-food e redes (marca) descem. Calculada na coleta.
+alter table public.lugares add column if not exists relevancia smallint not null default 0;
+create index if not exists lugares_destino_cat_rel on public.lugares (destino_id, categoria, relevancia desc) where ativo;

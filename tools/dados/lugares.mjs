@@ -89,8 +89,23 @@ export function normalizarElemento(e, destino, dadosDe) {
     ...foto,
     wikidata: /^Q\d+$/.test(t.wikidata ?? '') ? t.wikidata : null,
     verificado: false, dados_de: dadosDe,
+    relevancia: relevancia(t, foto.foto),
     _tags: Object.keys(t).length,
   };
+}
+
+/** Ordem de exibição: lugares documentados primeiro; fast-food e redes (marca) depois. */
+export function relevancia(t, foto) {
+  let r = 0;
+  if (foto) r += 3;
+  if (t.wikidata || t.wikipedia) r += 3;
+  if (t.cuisine) r += 1;
+  if (t.opening_hours) r += 1;
+  if (t.website || t['contact:website']) r += 1;
+  if (t.heritage || t.historic) r += 1;
+  if (t.amenity === 'fast_food' || t.amenity === 'food_court') r -= 3;
+  if (t.brand || t['brand:wikidata']) r -= 3;
+  return Math.max(-9, Math.min(9, r));
 }
 
 /** Mesmo nome a menos de ~80 m = o mesmo lugar (ponto e contorno do prédio, por exemplo). */
@@ -113,8 +128,8 @@ async function overpass(consulta) {
   for (const url of OVERPASS) {
     for (let tentativa = 0; tentativa < 2; tentativa++) {
       try {
-        const r = await fetch(url, { method: 'POST', body: new URLSearchParams({ data: consulta }), headers: { 'User-Agent': UA, Accept: '*/*' }, signal: AbortSignal.timeout(120_000) });
-        if (r.status === 429 || r.status === 504) { ultimoErro = `${url} ${r.status}`; await espera(15_000); continue; }
+        const r = await fetch(url, { method: 'POST', body: new URLSearchParams({ data: consulta }), headers: { 'User-Agent': UA, Accept: '*/*' }, signal: AbortSignal.timeout(200_000) });
+        if (r.status === 429 || r.status === 504) { ultimoErro = `${url} ${r.status}`; console.log(`   ${ultimoErro}: aguardando`); await espera(30_000); continue; }
         if (!r.ok) { ultimoErro = `${url} ${r.status}`; break; }
         return await r.json();
       } catch (e) { ultimoErro = `${url} ${e.message}`; await espera(5_000); }
@@ -165,28 +180,51 @@ async function banco(corpo) {
 }
 
 // ---------------------------------------------------------------- coleta de uma cidade
+/** Em que categoria um elemento cai (a mesma regra dos filtros, na ordem das categorias). */
+const testes = Object.fromEntries(Object.entries(CATEGORIAS).map(([cat, { filtros }]) => [cat, filtros.map((f) => {
+  const [k, op, v] = f.replace(/\]\[.*$/, '').match(/^([^=~]+)(=|~)"?([^"]*)"?$/).slice(1);
+  return (t) => t[k] !== undefined && (op === '=' ? t[k] === v : new RegExp(v).test(t[k]));
+})]));
+export const categoriaDe = (t) => Object.keys(testes).find((c) => testes[c].some((f) => f(t))) ?? null;
+
 async function coletar(d) {
+  const t0 = Date.now();
   console.log(`\n== ${d.nome} (${d.regiao}, ${d.pais}) · raio ${d.raio_km} km`);
-  const bb = caixa(d);
+  const inicio = new Date().toISOString();
+  // UMA consulta por cidade: um conjunto e um limite por categoria (vários "out" no mesmo pedido).
+  const partes = Object.entries(CATEGORIAS).map(([cat, { limite, filtros }], i) => `(${filtros.map((f) => `nwr[${f}][name];`).join('')})->.c${i};.c${i} out center tags ${limite};`);
+  const consulta = `[out:json][timeout:180][bbox:${caixa(d)}];${partes.join('')}`;
+  const dados = await overpass(consulta);
+  const dadosDe = dados.osm3s?.timestamp_osm_base?.slice(0, 10) ?? null;
+  console.log(`   overpass: ${(dados.elements ?? []).length} elementos em ${Math.round((Date.now() - t0) / 1000)} s`);
+  const porCat = Object.fromEntries(Object.keys(CATEGORIAS).map((c) => [c, []]));
+  const brutosPorCat = Object.fromEntries(Object.keys(CATEGORIAS).map((c) => [c, 0]));
+  const vistos = new Set();
+  for (const e of dados.elements ?? []) {
+    const cat = categoriaDe(e.tags ?? {});
+    if (!cat) continue;
+    brutosPorCat[cat]++;
+    const l = normalizarElemento(e, d, dadosDe);
+    if (!l || vistos.has(l.id)) continue;
+    vistos.add(l.id);
+    porCat[cat].push(l);
+  }
+  const t1 = Date.now();
+  const todos = Object.values(porCat).flat();
+  await fotosDoWikidata(todos);
+  console.log(`   fotos do Wikidata: ${Math.round((Date.now() - t1) / 1000)} s`);
   const resumo = [];
-  for (const [cat, { limite, filtros }] of Object.entries(CATEGORIAS)) {
-    const inicio = new Date().toISOString();
-    const consulta = `[out:json][timeout:90][bbox:${bb}];(${filtros.map((f) => `nwr[${f}][name];`).join('')});out center tags ${limite};`;
-    let dados;
-    try { dados = await overpass(consulta); } catch (e) { console.log(`   ${cat}: ERRO ${e.message}`); resumo.push(`${cat}=erro`); continue; }
-    const dadosDe = dados.osm3s?.timestamp_osm_base?.slice(0, 10) ?? null;
-    const brutos = dados.elements ?? [];
-    const lugares = semDuplicados(brutos.map((e) => normalizarElemento(e, d, dadosDe)).filter(Boolean));
-    await fotosDoWikidata(lugares);
+  for (const [cat, lista] of Object.entries(porCat)) {
+    const lugares = semDuplicados(lista);
     for (const l of lugares) delete l._tags;
-    const atingiu = brutos.length >= limite;
+    const atingiu = brutosPorCat[cat] >= CATEGORIAS[cat].limite;
     for (let i = 0; i < Math.max(1, lugares.length); i += 400) {
       await banco({ acao: 'gravar', destino_id: d.id, categoria: cat, lugares: lugares.slice(i, i + 400), inicio, final: i + 400 >= lugares.length, raio_km: d.raio_km, limite_atingido: atingiu, dados_de: dadosDe });
     }
     resumo.push(`${cat}=${lugares.length}${atingiu ? '+' : ''}`);
-    await espera(3000);
   }
-  console.log('   ' + resumo.join(' · '));
+  console.log(`   ${resumo.join(' · ')}\n   total ${Math.round((Date.now() - t0) / 1000)} s`);
+  await espera(5000); // pausa entre cidades (política de uso do Overpass)
   return resumo;
 }
 

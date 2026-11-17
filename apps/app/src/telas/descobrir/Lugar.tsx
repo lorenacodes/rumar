@@ -124,12 +124,15 @@ function LugarDaBase() {
     : b.gratuito ? 'Grátis (segundo o OpenStreetMap)' : 'Não informado pela fonte. Confira no local ou no site.';
   return (
     <main className="tela" data-tela="lugar" data-real="lugar">
-      <div style={{ position: 'relative', maxHeight: '320px', overflow: 'hidden' }}>
-        <FotoLugar id={id} proporcao="4 / 3" />
-        <div style={{ position: 'absolute', top: 'calc(8px + env(safe-area-inset-top))', left: '12px', background: 'var(--fundo)', zIndex: 2 }}><Voltar /></div>
-      </div>
+      {b.foto ? (
+        <div style={{ position: 'relative', maxHeight: '320px', overflow: 'hidden' }}>
+          <FotoLugar id={id} proporcao="4 / 3" />
+          <div style={{ position: 'absolute', top: 'calc(8px + env(safe-area-inset-top))', left: '12px', background: 'var(--fundo)', zIndex: 2 }}><Voltar /></div>
+        </div>
+      ) : <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}><Voltar /></div>}
       <div style={{ padding: '14px 20px 24px' }}>
         <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS_LUGAR[b.categoria].nome} · {nomeTipo(b.tipo)}</div>
+        {!b.foto ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Ainda sem foto com licença livre deste lugar.</div> : null}
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{b.nome}</h1>
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
           {linha('Onde', b.endereco ?? b.bairro ?? 'Endereço não informado (veja no mapa).')}

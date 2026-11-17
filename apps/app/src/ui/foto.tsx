@@ -113,7 +113,7 @@ export function FotoLugar({ id, proporcao = '16 / 9', credito = true, compacto =
         compacto ? (
           // Miniatura: só a inicial, sem texto espremido.
           <span aria-label="Sem foto conferida" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 22px 'Lexend Exa'", color: 'var(--texto-sec)' }}>
-            {id.replace(/[^\p{L}]/gu, '')[0]?.toUpperCase() ?? '·'}
+            {(base?.nome ?? id).replace(/[^\p{L}]/gu, '')[0]?.toUpperCase() ?? '·'}
           </span>
         ) : (
           <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 13px 'Open Sans'", color: 'var(--texto-sec)', textAlign: 'center', padding: '8px' }}>
