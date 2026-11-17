@@ -1,1 +1,254 @@
-{ "fonte": "OpenStreetMap (ODbL) via Nominatim", "atualizadoEm": null, "lugares": {} }
+{
+ "fonte": "OpenStreetMap (ODbL) via Nominatim",
+ "atualizadoEm": "2026-11-17",
+ "lugares": {
+  "louvre": {
+   "lat": 48.8611473,
+   "lon": 2.3380277,
+   "endereco": "Place du Carrousel · Paris 1er Arrondissement · 75001",
+   "horario": "Mo,Th,Sa-Su 09:00-18:00; Tu off; We,Fr 09:00-21:00; Jan 01,May 01,Dec 25 off",
+   "site": "https://www.louvre.fr",
+   "osm": "https://www.openstreetmap.org/relation/7515426"
+  },
+  "orsay": {
+   "lat": 48.8599179,
+   "lon": 2.3265849,
+   "endereco": "Rue de la Légion d'Honneur, 1 · Paris 7e Arrondissement · 75007",
+   "horario": "Tu-Su 09:30-18:00; Th 09:30-21:45",
+   "site": "https://www.musee-orsay.fr/",
+   "osm": "https://www.openstreetmap.org/way/63178753"
+  },
+  "rodin": {
+   "lat": 48.8547473,
+   "lon": 2.315867,
+   "endereco": "Rue de Varenne, 77 · Paris 7e Arrondissement · 75007",
+   "horario": "Tu-Su 10:00-18:30",
+   "site": "https://www.musee-rodin.fr/",
+   "osm": "https://www.openstreetmap.org/way/472159547"
+  },
+  "sainte-chapelle": {
+   "lat": 48.8553933,
+   "lon": 2.3449941,
+   "endereco": "Boulevard du Palais, 8 · Paris 1er Arrondissement · 75001",
+   "horario": "Jan-Mar 09:00-17:00; Apr-Sep 09:00-19:00; Oct-Dec 09:00-17:00",
+   "site": "https://www.sainte-chapelle.fr/",
+   "osm": "https://www.openstreetmap.org/relation/3344870"
+  },
+  "notre-dame": {
+   "lat": 48.8529371,
+   "lon": 2.3500501,
+   "endereco": "Parvis Notre-Dame - Place Jean-Paul II, 6 · Paris 4e Arrondissement · 75004",
+   "horario": "Mo,Tu,We,Fr 07:50-19:00; Th 07:50-22:00; Sa,Su 08:15-19:30",
+   "site": "https://www.notredamedeparis.fr/",
+   "osm": "https://www.openstreetmap.org/way/201611261"
+  },
+  "opera": {
+   "lat": 48.8720949,
+   "lon": 2.3323339,
+   "endereco": "Place Jacques Rouché · Paris 9e Arrondissement · 75009",
+   "horario": "Mo-Su 08:00-23:59",
+   "site": "www.opera-restaurant.fr",
+   "osm": "https://www.openstreetmap.org/node/1393155090"
+  },
+  "pere-lachaise": {
+   "lat": 48.8611296,
+   "lon": 2.3940087,
+   "endereco": "Boulevard de Ménilmontant, 8 · Paris 20e Arrondissement · 75020",
+   "horario": "Mo-Fr 08:00-17:30; Sa 08:30-17:30; Su 09:00-17:30",
+   "site": "https://www.paris.fr/equipements/cimetiere-du-pere-lachaise-4080",
+   "osm": "https://www.openstreetmap.org/way/13859706"
+  },
+  "montorgueil": {
+   "lat": 48.8660976,
+   "lon": 2.3471073,
+   "endereco": "Rue Montorgueil · Paris 2e Arrondissement · 75002",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/171873401"
+  },
+  "aligre": {
+   "lat": 48.8488749,
+   "lon": 2.3780461,
+   "endereco": "Place d'Aligre · Paris 12e Arrondissement · 75012",
+   "horario": "Tu-Fr 07:30-13:30; Sa-Su 07:30-14:30",
+   "site": "https://www.paris.fr/lieux/marche-decouvert-d-aligre-5481",
+   "osm": "https://www.openstreetmap.org/way/42558360"
+  },
+  "enfants-rouges": {
+   "lat": 48.8627659,
+   "lon": 2.3625185,
+   "endereco": "Rue Charlot · Paris 3e Arrondissement · 75003",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/node/3200443067"
+  },
+  "mouffetard": {
+   "lat": 48.8423013,
+   "lon": 2.3497717,
+   "endereco": "Rue Mouffetard · Paris 5e Arrondissement · 75005",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/164010797"
+  },
+  "flore": {
+   "lat": 48.8541444,
+   "lon": 2.3326307,
+   "endereco": "Rue Saint-Benoît · Paris 6e Arrondissement · 75006",
+   "horario": "Mo-Su 07:30-01:30",
+   "site": "https://cafedeflore.fr/",
+   "osm": "https://www.openstreetmap.org/node/251699776"
+  },
+  "deux-magots": {
+   "lat": 48.854069,
+   "lon": 2.3330634,
+   "endereco": "Place Saint-Germain des Prés, 6 · Paris 6e Arrondissement · 75006",
+   "horario": "Mo-Su 07:30-01:00",
+   "site": "https://lesdeuxmagots.fr",
+   "osm": "https://www.openstreetmap.org/node/251699775"
+  },
+  "pain-idees": {
+   "lat": 48.8712472,
+   "lon": 2.3629042,
+   "endereco": "Rue de Marseille · Paris 10e Arrondissement · 75010",
+   "horario": "Mo-Fr 07:00-19:30",
+   "site": "https://dupainetdesidees.com",
+   "osm": "https://www.openstreetmap.org/node/324294628"
+  },
+  "marais-noite": {
+   "lat": 48.857809,
+   "lon": 2.3545847,
+   "endereco": "Rue des Archives · Paris 4e Arrondissement · 75004",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/172312427"
+  },
+  "oberkampf": {
+   "lat": 48.8646898,
+   "lon": 2.3726564,
+   "endereco": "Rue Oberkampf · Paris 11e Arrondissement · 75011",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/526117138"
+  },
+  "canal-noite": {
+   "lat": 48.8812455,
+   "lon": 2.3681433,
+   "endereco": "Quai de Valmy · Paris 10e Arrondissement · 75010",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/310297255"
+  },
+  "luxembourg": {
+   "lat": 48.8467228,
+   "lon": 2.3364148,
+   "endereco": "Rue Royer-Collard · Paris 5e Arrondissement · 75005",
+   "horario": "open \"check website https://www.senat.fr/visite/jardin/horaires.html\"; (sunset-00:30)-(sunrise-00:15) closed; Mar01-Sep30 (sunset-00:30)-07:30 closed",
+   "site": "https://www.senat.fr/visite/jardin/",
+   "osm": "https://www.openstreetmap.org/way/128206209"
+  },
+  "tuileries": {
+   "lat": 48.8635662,
+   "lon": 2.3269552,
+   "endereco": "Jardins das Tulherias, 113 · Paris · 75001",
+   "horario": "Mo-Su 07:30-21:00",
+   "site": "https://www.parisinfo.com/musee-monument-paris/71304/Jardin-des-Tuileries",
+   "osm": "https://www.openstreetmap.org/way/53820452"
+  },
+  "buttes-chaumont": {
+   "lat": 48.8795551,
+   "lon": 2.3820982,
+   "endereco": "Parc des Buttes-Chaumont · Paris",
+   "horario": "Apr,Sep 07:00-21:00; Oct-Mar 07:00-20:00; May-Aug 07:00-22:00",
+   "site": "https://www.paris.fr/lieux/parc-des-buttes-chaumont-1757",
+   "osm": "https://www.openstreetmap.org/way/173204460"
+  },
+  "vincennes": {
+   "lat": 48.831548,
+   "lon": 2.4341479,
+   "endereco": "Bois de Vincennes · 94410",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/relation/18047835"
+  },
+  "marais": {
+   "lat": 48.8563655,
+   "lon": 2.3647259,
+   "endereco": "Rue des Francs Bourgeois · Paris 3e Arrondissement · 75003",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/45828501"
+  },
+  "lafayette": {
+   "lat": 48.8736459,
+   "lon": 2.3321271,
+   "endereco": "Boulevard Haussmann, 40 · Paris 9e Arrondissement · 75009",
+   "horario": "Mo-Sa 10:00-20:30; Su 11:00-20:00",
+   "site": "https://haussmann.galerieslafayette.com",
+   "osm": "https://www.openstreetmap.org/way/69224062"
+  },
+  "bon-marche": {
+   "lat": 48.8511832,
+   "lon": 2.3243945,
+   "endereco": "Rue du Bac · Paris 7e Arrondissement · 75007",
+   "horario": "Mo-We, Fr-Sa 10:00-20:00; Th 10:00-20:45; Su 11:00-20:00",
+   "site": "https://www.lebonmarche.com/",
+   "osm": "https://www.openstreetmap.org/relation/10166422"
+  },
+  "moulin-rouge": {
+   "lat": 48.8841094,
+   "lon": 2.3323564,
+   "endereco": "Boulevard de Clichy, 82 · Paris 18e Arrondissement · 75018",
+   "horario": null,
+   "site": "https://www.moulinrouge.fr/",
+   "osm": "https://www.openstreetmap.org/node/252969214"
+  },
+  "sena": {
+   "lat": 48.8605021,
+   "lon": 2.2939902,
+   "endereco": "Port de la Bourdonnais · Paris 7e Arrondissement · 75007",
+   "horario": null,
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/137032390"
+  },
+  "torre": {
+   "lat": 48.8582599,
+   "lon": 2.2945006,
+   "endereco": "Avenue Anatole France, 5 · Paris 7e Arrondissement · 75007",
+   "horario": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
+   "site": "https://www.toureiffel.paris/",
+   "osm": "https://www.openstreetmap.org/way/5013364"
+  },
+  "montmartre": {
+   "lat": 48.8868058,
+   "lon": 2.3430153,
+   "endereco": "Rue du Chevalier de la Barre · Quartier de Clignancourt · 75018",
+   "horario": "06:00-22:30",
+   "site": "https://www.sacre-coeur-montmartre.com/",
+   "osm": "https://www.openstreetmap.org/way/23762981"
+  },
+  "arco": {
+   "lat": 48.8737791,
+   "lon": 2.2950372,
+   "endereco": "Place Charles de Gaulle · Paris 8e Arrondissement · 75008",
+   "horario": "Apr 02-Jan 31: Mo-Su 10:00-22:30; Apr 01,Sep 30: Mo-Su 10:00-23:00; Oct 01,Dec 31: Mo-Su 10:00-22:30; Jan 01,May 01,May 08,Jul 14,Nov 11,Dec 25: off",
+   "site": "https://www.paris-arc-de-triomphe.fr/",
+   "osm": "https://www.openstreetmap.org/way/226413508"
+  },
+  "palais-royal": {
+   "lat": 48.8649078,
+   "lon": 2.3377594,
+   "endereco": "Rue de Valois · Paris 1er Arrondissement · 75001",
+   "horario": "Mo-Su 08:00-22:30",
+   "site": null,
+   "osm": "https://www.openstreetmap.org/way/4263203"
+  },
+  "shakespeare": {
+   "lat": 48.8525747,
+   "lon": 2.3471123,
+   "endereco": "Rue de la Bûcherie, 37 · Paris 5e Arrondissement · 75005",
+   "horario": "Mo-Su 10:00-23:00",
+   "site": "https://www.shakespeareandcompany.com/",
+   "osm": "https://www.openstreetmap.org/node/251373380"
+  }
+ }
+}
