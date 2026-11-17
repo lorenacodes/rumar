@@ -113,8 +113,8 @@
   },
   "6.2": {
    "toques": {
-    "Permitir e ajustar": "6.3",
-    "Agora não": "voltar"
+    "Permitir e ajustar": "acao:consentirNecessidades>/roteiro",
+    "Agora não": "acao:recusarNecessidades>/roteiro"
    }
   },
   "6.3": {

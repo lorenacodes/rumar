@@ -149,7 +149,10 @@ function marcarGrupos(raiz, id) {
   let n = 0;
   const visitar = (no) => {
     if (!no.filhos) return;
-    const chips = no.filhos.filter(ehChip);
+    // Chip direto ou dentro de um invólucro de um filho só (ex.: ritmo, cada opção em flex:1).
+    const chips = no.filhos
+      .map((f) => (ehChip(f) ? f : f.tag && f.filhos.length === 1 && ehChip(f.filhos[0]) ? f.filhos[0] : null))
+      .filter(Boolean);
     if (chips.length >= 2) {
       const nome = `${id}:${nomes[n] ?? `g${n + 1}`}`;
       n++;

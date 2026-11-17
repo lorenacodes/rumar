@@ -29,6 +29,8 @@ const ROTAS: Record<string, string> = {
   // 15.1 e 16.1 viraram uma tela só (D-017).
   '15.1': '/minha-viagem',
   '16.1': '/minha-viagem',
+  // Roteiro de verdade, montado pelas escolhas da 6.1.
+  '6.3': '/roteiro',
 };
 
 export function rotaDaTela(destino: string): string {

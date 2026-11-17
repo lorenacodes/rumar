@@ -2,6 +2,7 @@ import type { KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useDemo } from '../dev/demo';
+import { ACOES } from './acoes';
 import { rotaDaTela } from './rotas';
 
 /**
@@ -15,6 +16,12 @@ export function useToque() {
     const ir = () => {
       // Regra 16.6: a seta nunca fecha o app nem deixa sem saída; sem tela anterior, vai ao Início.
       if (destino === 'voltar') return window.history.state?.idx > 0 ? navegar(-1) : navegar('/inicio');
+      // Ação antes de seguir: "acao:nome>destino".
+      if (destino.startsWith('acao:')) {
+        const [nome = '', depois = 'voltar'] = destino.slice(5).split('>');
+        ACOES[nome]?.();
+        return depois === 'voltar' ? navegar(-1) : navegar(rotaDaTela(depois));
+      }
       // Link de fora (YouTube, sites oficiais): abre no app ou navegador do celular.
       if (/^https?:\/\//.test(destino)) return void (window.location.href = destino);
       navegar(rotaDaTela(destino));
