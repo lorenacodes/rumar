@@ -20,6 +20,10 @@
 - [ ] **Página web para pedir exclusão de conta** (exigência da Google Play para apps com conta): uma página
       pública simples com "como excluir sua conta" e o contato. Posso montar; precisa de um endereço público.
 - [ ] **Revisão por advogado(a)** do Aviso de privacidade (Perfil → Sobre → Aviso de privacidade) antes do lançamento.
+- [x] **Ramo principal atualizado (17/11/2026):** o `main` foi igualado ao `fase-0-base`, e os agendamentos
+      (coleta da fila a cada 3 h, câmbio nos dias úteis, remoção diária de contas) passam a rodar sozinhos.
+      Os workflows usam o código do `fase-0-base`; quando um arquivo de workflow mudar, o `main` precisa ser
+      atualizado de novo (eu faço junto com a mudança).
 - [ ] **Aprovar no Supabase** as mudanças de banco que pedem confirmação (nome de usuário) e a exclusão dos usuários de teste.
 
 ## Aulas de idioma específicas — chave gratuita do YouTube (5 minutos, R$ 0)
