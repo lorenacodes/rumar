@@ -7,6 +7,12 @@
 > **"Bo Vair"** (D-013; domínio `bovair.com.br` livre em 15/11/2026; compra prevista para depois do dia 30).
 > Plano completo e custos: `docs/PLANO_DE_ACAO.md`.
 
+## ⚠️ Para ligar o que já está pronto (17/11/2026)
+
+- [ ] **A. Envio de e-mail próprio (Gmail ou Resend)** — sem isso, pessoas novas não conseguem criar conta (limite do e-mail de teste do Supabase).
+- [ ] **B. Chave da LiteAPI no Supabase** — Edge Functions → Secrets → `LITEAPI_KEY` = a chave (hoje a de teste; depois a de produção, nova, porque a de teste apareceu num print). Liga a busca de hotéis.
+- [ ] **C. Chave de produção da LiteAPI** — quando quiser preços para reservar de verdade (a de teste mostra "ambiente de teste").
+
 ## ⚠️ Esta semana
 
 - [x] **1. Confirmar que "Bo Vair" está livre no INPI** (feito em 15/11/2026: nada encontrado) (grátis, 15 min) — `busca.inpi.gov.br` → Marca → Radical: `bo vair`, `bovair`, `bovai`, `buovai`. Ver classes **9, 35, 39 e 42**.

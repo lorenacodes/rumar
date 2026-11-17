@@ -84,6 +84,7 @@ export function calcular(e: Entrada): Orcamento {
   for (const it of e.itens) {
     if (it.lugar.categoria === 'gastronomia' && (it.lugar as Lugar & { refeicao?: boolean }).refeicao) continue;
     const p = P[it.lugar.id];
+    if ((it.lugar as Lugar & { ingresso?: boolean }).ingresso === false && !p) continue; // rua, feira, loja: sem ingresso
     if (p) lazer.push({ texto: `${it.lugar.nome} (${pessoas} ${pessoas === 1 ? 'pessoa' : 'pessoas'})`, min: p.min * pessoas, max: p.max * pessoas, moeda: 'EUR', selo: p.selo, fonte: p.fonte, url: p.url });
     else if (it.lugar.custo === 0) lazer.push({ texto: `${it.lugar.nome}`, min: 0, max: 0, moeda: 'EUR', selo: 'referencia', fonte: 'Entrada gratuita' });
     else lazer.push({ texto: `${it.lugar.nome}`, min: 0, max: 0, moeda: 'EUR', selo: 'estimativa', semPreco: true, fonte: 'Preço não confirmado' });

@@ -43,7 +43,7 @@ function ParaVoce() {
       <Rot t="Próxima viagem" />
       {viagem ? (
         <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', textAlign: 'left', border: '2px solid var(--texto)', padding: '10px' }}>
-          <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={viagem.destino} proporcao="1 / 1" credito={false} /></span>
+          <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={viagem.destino} proporcao="1 / 1" credito={false} compacto /></span>
           <span><b style={{ font: "600 18px 'Lexend Exa'" }}>{viagem.destino}</b><span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>Roteiro, hospedagem e orçamento ›</span></span>
         </button>
       ) : viagem === null ? (
@@ -54,7 +54,7 @@ function ParaVoce() {
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 4px' }}>
           {favs.map((f) => (
             <div key={f.chave} style={{ flex: 'none', width: '120px' }}>
-              <FotoLugar id={f.nome} proporcao="4 / 3" credito={false} />
+              <FotoLugar id={f.nome} proporcao="4 / 3" credito={false} compacto />
               <b style={{ display: 'block', fontSize: '14px', marginTop: '4px' }}>{f.nome}</b>
               <span style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>{f.pais}</span>
             </div>
@@ -67,7 +67,7 @@ function ParaVoce() {
           <Rot t="Você também pode gostar" />
           {sugestoes.map((d) => (
             <div key={d.nome} style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--linha)' }}>
-              <span style={{ width: '56px', flex: 'none' }}><FotoLugar id={d.foto ?? d.nome} proporcao="1 / 1" credito={false} /></span>
+              <span style={{ width: '56px', flex: 'none' }}><FotoLugar id={d.foto ?? d.nome} proporcao="1 / 1" credito={false} compacto /></span>
               <span style={{ flex: 1 }}><b>{d.nome}</b> <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>· {d.pais}</span><span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{d.porque}</span></span>
             </div>
           ))}

@@ -39,7 +39,7 @@ export function Viagens() {
   const ativas = dados?.minhas.filter((v) => v.status === 'ativo') ?? [];
   const Cartao = ({ v, extra }: { v: Viagem; extra?: string }) => (
     <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}`)} style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', textAlign: 'left', padding: '10px 0', borderBottom: '1px solid var(--linha)' }}>
-      <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={v.destino} proporcao="1 / 1" credito={false} /></span>
+      <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={v.destino} proporcao="1 / 1" credito={false} compacto /></span>
       <span>
         <span style={{ display: 'block', font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
         <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{periodo(v.data_ida, v.noites)} · {v.viajantes} {v.viajantes === 1 ? 'pessoa' : 'pessoas'}</span>

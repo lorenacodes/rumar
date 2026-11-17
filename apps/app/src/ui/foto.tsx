@@ -99,16 +99,23 @@ export function temFoto(nome: string): boolean {
  * Foto do lugar com o aviso discreto quando não há foto conferida: nunca imagem
  * aleatória, nunca espaço quebrado.
  */
-export function FotoLugar({ id, proporcao = '16 / 9', credito = true }: { id: string; proporcao?: string; credito?: boolean }) {
+export function FotoLugar({ id, proporcao = '16 / 9', credito = true, compacto = false }: { id: string; proporcao?: string; credito?: boolean; compacto?: boolean }) {
   const tem = temFoto(id);
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: proporcao, overflow: 'hidden', background: tem ? 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' : 'var(--cartao-2)' }}>
       {tem ? (
         <FotoDestino nome={id} credito={credito} />
       ) : (
-        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 13px 'Open Sans'", color: 'var(--texto-sec)', textAlign: 'center', padding: '8px' }}>
-          Sem foto conferida deste lugar
-        </span>
+        compacto ? (
+          // Miniatura: só a inicial, sem texto espremido.
+          <span aria-label="Sem foto conferida" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 22px 'Lexend Exa'", color: 'var(--texto-sec)' }}>
+            {id.replace(/[^\p{L}]/gu, '')[0]?.toUpperCase() ?? '·'}
+          </span>
+        ) : (
+          <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 13px 'Open Sans'", color: 'var(--texto-sec)', textAlign: 'center', padding: '8px' }}>
+            Sem foto conferida deste lugar
+          </span>
+        )
       )}
     </div>
   );

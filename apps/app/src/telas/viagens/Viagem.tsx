@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import CAMBIO from '../../dados/cambio.json';
 import PRECOS from '../../dados/precos-paris.json';
@@ -31,6 +31,7 @@ const temCoord = (l?: Lugar | null): l is Lugar & { lat: number; lon: number } =
 function precoTexto(l: Lugar): { texto: string; reserva: boolean } {
   const p = P.lugares[l.id];
   if (p) return { texto: p.min === 0 ? 'Grátis' : p.min === p.max ? `${euros(p.min)} por pessoa` : `${euros(p.min)} a ${euros(p.max)} por pessoa`, reserva: Boolean(p.reserva) };
+  if ((l as Lugar & { ingresso?: boolean }).ingresso === false) return { texto: 'Sem ingresso (gastos à parte)', reserva: false };
   if (l.custo === 0) return { texto: 'Grátis', reserva: false };
   return { texto: 'Preço não confirmado', reserva: false };
 }
@@ -42,10 +43,20 @@ export function Viagem() {
   const aba = (params.get('aba') ?? 'roteiro') as Aba;
   const [v, setV] = useState<ViagemCompleta | null | undefined>(undefined);
   const [dia, setDia] = useState(1);
+  const local = useLocation();
   const recarregar = useCallback(() => void carregarViagem(id).then(setV), [id]);
+  // Sempre fresco: ao abrir/navegar, ao vivo (Realtime), ao voltar para o app e, por
+  // garantia, a cada 15 s enquanto a tela está visível (se o ao vivo cair, ninguém fica
+  // olhando uma versão velha da viagem).
   useEffect(() => {
     recarregar();
-    return acompanhar(id, recarregar);
+  }, [recarregar, local.key]);
+  useEffect(() => {
+    const parar = acompanhar(id, recarregar);
+    const aoVoltar = () => document.visibilityState === 'visible' && recarregar();
+    document.addEventListener('visibilitychange', aoVoltar);
+    const relogio = setInterval(() => document.visibilityState === 'visible' && recarregar(), 15_000);
+    return () => (parar(), document.removeEventListener('visibilitychange', aoVoltar), clearInterval(relogio));
   }, [id, recarregar]);
 
   const { preferencias } = useViajante();
@@ -153,7 +164,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                 <div>
                   <div style={{ font: "600 14px 'Lexend Exa'", marginBottom: '4px' }}>{HORA[it.periodo]}</div>
                   <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?viagem=${v.viagem.id}`)} aria-label={`${l.nome}: detalhes`} style={{ display: 'block', width: '84px' }}>
-                    <FotoLugar id={l.id} proporcao="1 / 1" credito={false} />
+                    <FotoLugar id={l.id} proporcao="1 / 1" credito={false} compacto />
                   </button>
                 </div>
                 <div style={{ minWidth: 0 }}>

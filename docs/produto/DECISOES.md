@@ -202,3 +202,25 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   menos turísticos, salvos), Lugar, Minha viagem, Roteiro e Perfil. As telas de exemplo do design deixam
   de ser alcançadas por esses caminhos.
 - **Limite atual (sincero):** só Paris tem roteiro; outras cidades precisam de curadoria.
+
+## D-022 — Planejador completo: navegação, viagem colaborativa, mapa, hospedagem e orçamento
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora (reestruturação)
+- **Navegação (5 abas):** Início (próxima viagem, favoritos, sugestões) · Descobrir (lugares, preço,
+  categorias, mapa) · Viagens (minhas, convites, de amigos, nova) · Social (pessoas, pedidos, amigos) ·
+  Perfil. A comparação com o design segue com as 4 abas originais.
+- **Viagem:** destino, datas, viajantes, orçamento; painel com Roteiro (editável: tirar, trocar,
+  subir/descer, mudar de dia, adicionar), Mapa (MapLibre + OpenFreeMap), Hospedagem (LiteAPI via função
+  `hoteis` no Supabase, filtros de diária, comparação, escolha com preço e data guardados), Orçamento e
+  Grupo. Tudo no banco (`trips`, `trip_items`, `trip_lodging`, `trip_expenses`, `trip_events`).
+- **Colaboração:** convite só para amigos; papéis dono / editor / leitor; regras de acesso no banco
+  (funções no esquema `privado`); histórico de quem mudou o quê; atualização ao vivo (Realtime) e a cada
+  15 s; roteiro do grupo junta as preferências (gostos somam, "evitar" vale para todos, orçamento o mais
+  apertado) e diz para quem cada parada foi pensada.
+- **Orçamento:** hospedagem cotada; ingressos com preço oficial para quem é de fora da Europa (fonte e
+  data); refeições pelos restaurantes do roteiro e média dos restaurantes conferidos; metrô por trecho
+  longo e trem do aeroporto (RATP 2026); gastos informados; câmbio PTAX do Banco Central (atualizado
+  todo dia útil). Sem preço confirmado = "sem preço", fora da soma. Alerta de orçamento com trocas
+  sugeridas (mesma categoria, perto, mais barato) que se aplicam com um toque.
+- **Favoritos:** destinos que a pessoa quer conhecer (logo após o cadastro e no perfil); sugestões de
+  destinos parecidos por características em comum.

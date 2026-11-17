@@ -186,7 +186,8 @@
    "local": true,
    "lotado": false,
    "osm": "Rue Montorgueil, Paris",
-   "artigo": null
+   "artigo": null,
+   "ingresso": false
   },
   {
    "id": "aligre",
@@ -207,7 +208,8 @@
    "local": true,
    "lotado": false,
    "osm": "Marché d'Aligre, Paris",
-   "artigo": "Marché d'Aligre"
+   "artigo": "Marché d'Aligre",
+   "ingresso": false
   },
   {
    "id": "enfants-rouges",
@@ -229,7 +231,8 @@
    "local": true,
    "lotado": false,
    "osm": "Marché des Enfants Rouges, Paris",
-   "artigo": null
+   "artigo": null,
+   "ingresso": false
   },
   {
    "id": "mouffetard",
@@ -252,7 +255,8 @@
    "local": true,
    "lotado": false,
    "osm": "Rue Mouffetard, Paris",
-   "artigo": "Rue Mouffetard"
+   "artigo": "Rue Mouffetard",
+   "ingresso": false
   },
   {
    "id": "flore",
@@ -274,7 +278,8 @@
    "local": false,
    "lotado": true,
    "osm": "Café de Flore, Paris",
-   "artigo": "Café de Flore"
+   "artigo": "Café de Flore",
+   "ingresso": false
   },
   {
    "id": "deux-magots",
@@ -296,7 +301,8 @@
    "local": false,
    "lotado": true,
    "osm": "Les Deux Magots, Paris",
-   "artigo": "Les Deux Magots"
+   "artigo": "Les Deux Magots",
+   "ingresso": false
   },
   {
    "id": "pain-idees",
@@ -316,7 +322,8 @@
    "local": true,
    "lotado": false,
    "osm": "Du Pain et des Idées, Paris",
-   "artigo": null
+   "artigo": null,
+   "ingresso": false
   },
   {
    "id": "marais-noite",
@@ -339,7 +346,8 @@
    "lotado": true,
    "osm": "Rue des Archives, Paris",
    "artigo": null,
-   "semFoto": true
+   "semFoto": true,
+   "ingresso": false
   },
   {
    "id": "oberkampf",
@@ -361,7 +369,8 @@
    "local": true,
    "lotado": true,
    "osm": "Rue Oberkampf, Paris",
-   "artigo": "Rue Oberkampf"
+   "artigo": "Rue Oberkampf",
+   "ingresso": false
   },
   {
    "id": "canal-noite",
@@ -383,7 +392,8 @@
    "local": true,
    "lotado": false,
    "osm": "Quai de Valmy, Paris",
-   "artigo": "Canal Saint-Martin"
+   "artigo": "Canal Saint-Martin",
+   "ingresso": false
   },
   {
    "id": "luxembourg",
@@ -499,7 +509,8 @@
    "local": false,
    "lotado": false,
    "osm": "Rue des Francs-Bourgeois, Paris",
-   "artigo": "Le Marais"
+   "artigo": "Le Marais",
+   "ingresso": false
   },
   {
    "id": "lafayette",
@@ -520,7 +531,8 @@
    "local": false,
    "lotado": true,
    "osm": "Galeries Lafayette Haussmann, Paris",
-   "artigo": "Galeries Lafayette"
+   "artigo": "Galeries Lafayette",
+   "ingresso": false
   },
   {
    "id": "bon-marche",
@@ -541,7 +553,8 @@
    "local": false,
    "lotado": false,
    "osm": "Le Bon Marché, Paris",
-   "artigo": "Le Bon Marché"
+   "artigo": "Le Bon Marché",
+   "ingresso": false
   },
   {
    "id": "moulin-rouge",
@@ -696,7 +709,8 @@
    "local": true,
    "lotado": true,
    "osm": "Shakespeare and Company, Paris",
-   "artigo": null
+   "artigo": null,
+   "ingresso": false
   },
   {
    "id": "bouillon-chartier",
