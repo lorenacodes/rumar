@@ -5,7 +5,7 @@
   "louvre": {
    "lat": 48.8611473,
    "lon": 2.3380277,
-   "endereco": "Place du Carrousel · Paris 1er Arrondissement · 75001",
+   "endereco": "Galerie Véro-Dodat · Paris 1er Arrondissement · 75001",
    "horario": "Mo,Th,Sa-Su 09:00-18:00; Tu off; We,Fr 09:00-21:00; Jan 01,May 01,Dec 25 off",
    "site": "https://www.louvre.fr",
    "osm": "https://www.openstreetmap.org/relation/7515426"
@@ -59,36 +59,36 @@
    "osm": "https://www.openstreetmap.org/way/13859706"
   },
   "montorgueil": {
-   "lat": 48.8660976,
-   "lon": 2.3471073,
+   "lat": 48.8653034,
+   "lon": 2.3469346,
    "endereco": "Rue Montorgueil · Paris 2e Arrondissement · 75002",
    "horario": null,
    "site": null,
-   "osm": "https://www.openstreetmap.org/way/171873401"
+   "osm": "https://www.openstreetmap.org/way/181676068"
   },
   "aligre": {
    "lat": 48.8488749,
    "lon": 2.3780461,
-   "endereco": "Place d'Aligre · Paris 12e Arrondissement · 75012",
+   "endereco": "Rue d'Aligre · Paris 12e Arrondissement · 75012",
    "horario": "Tu-Fr 07:30-13:30; Sa-Su 07:30-14:30",
    "site": "https://www.paris.fr/lieux/marche-decouvert-d-aligre-5481",
    "osm": "https://www.openstreetmap.org/way/42558360"
   },
   "enfants-rouges": {
-   "lat": 48.8627659,
-   "lon": 2.3625185,
-   "endereco": "Rue Charlot · Paris 3e Arrondissement · 75003",
+   "lat": 48.8622546,
+   "lon": 2.3666035,
+   "endereco": "Rue Commines · Paris 3e Arrondissement · 75003",
    "horario": null,
    "site": null,
-   "osm": "https://www.openstreetmap.org/node/3200443067"
+   "osm": "https://www.openstreetmap.org/node/10032478445"
   },
   "mouffetard": {
-   "lat": 48.8423013,
-   "lon": 2.3497717,
+   "lat": 48.8440779,
+   "lon": 2.3493378,
    "endereco": "Rue Mouffetard · Paris 5e Arrondissement · 75005",
    "horario": null,
    "site": null,
-   "osm": "https://www.openstreetmap.org/way/164010797"
+   "osm": "https://www.openstreetmap.org/way/1015556772"
   },
   "flore": {
    "lat": 48.8541444,
@@ -141,7 +141,7 @@
   "luxembourg": {
    "lat": 48.8467228,
    "lon": 2.3364148,
-   "endereco": "Rue Royer-Collard · Paris 5e Arrondissement · 75005",
+   "endereco": "Boulevard Saint-Michel · Paris 6e Arrondissement · 75006",
    "horario": "open \"check website https://www.senat.fr/visite/jardin/horaires.html\"; (sunset-00:30)-(sunrise-00:15) closed; Mar01-Sep30 (sunset-00:30)-07:30 closed",
    "site": "https://www.senat.fr/visite/jardin/",
    "osm": "https://www.openstreetmap.org/way/128206209"
@@ -237,7 +237,7 @@
   "palais-royal": {
    "lat": 48.8649078,
    "lon": 2.3377594,
-   "endereco": "Rue de Valois · Paris 1er Arrondissement · 75001",
+   "endereco": "Rue Villedo · Paris 1er Arrondissement · 75001",
    "horario": "Mo-Su 08:00-22:30",
    "site": null,
    "osm": "https://www.openstreetmap.org/way/4263203"
@@ -249,6 +249,30 @@
    "horario": "Mo-Su 10:00-23:00",
    "site": "https://www.shakespeareandcompany.com/",
    "osm": "https://www.openstreetmap.org/node/251373380"
+  },
+  "bouillon-chartier": {
+   "lat": 48.8719356,
+   "lon": 2.3430137,
+   "endereco": "Rue du Faubourg Montmartre, 7 · Paris 9e Arrondissement · 75009",
+   "horario": "Mo-Su 11:30-00:00",
+   "site": "https://www.bouillon-chartier.com/grands-boulevards/",
+   "osm": "https://www.openstreetmap.org/node/10804882603"
+  },
+  "bouillon-pigalle": {
+   "lat": 48.8826186,
+   "lon": 2.3374142,
+   "endereco": "Boulevard de Clichy, 22 · Paris 18e Arrondissement · 75018",
+   "horario": "Mo-Su 12:00-24:00",
+   "site": "https://www.bouillonlesite.com",
+   "osm": "https://www.openstreetmap.org/node/5239464697"
+  },
+  "breizh-cafe": {
+   "lat": 48.8606307,
+   "lon": 2.3618156,
+   "endereco": "Rue Vieille du Temple · Paris 3e Arrondissement · 75003",
+   "horario": "Mo-Fr 11:30-23:00; Sa 10:00-23:00; Su 10:00-22:00",
+   "site": "https://breizhcafe.com/fr",
+   "osm": "https://www.openstreetmap.org/node/2383363288"
   }
  }
 }

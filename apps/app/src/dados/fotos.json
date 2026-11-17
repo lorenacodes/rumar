@@ -416,5 +416,16 @@
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "pagina": "https://commons.wikimedia.org/wiki/File:Shakespeare_and_Company,_Paris.jpg",
   "artigo": "Wikidata Q1503157"
+ },
+ "bouillon-chartier": {
+  "arquivo": "fotos/bouillon-chartier.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Paris_Chartier_1302.jpg/500px-Paris_Chartier_1302.jpg",
+  "largura": 500,
+  "altura": 750,
+  "autor": "Michel wal",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Paris_Chartier_1302.jpg",
+  "artigo": "Wikidata Q1071456"
  }
 }
