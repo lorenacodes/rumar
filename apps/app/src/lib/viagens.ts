@@ -1,0 +1,223 @@
+/**
+ * Viagens no banco (Supabase): criar, carregar, editar o roteiro, hospedagem, gastos,
+ * participantes e histórico. As regras de acesso (RLS) garantem que só participantes veem
+ * e só dono/editores alteram; aqui o app só chama.
+ */
+import { supabase } from './supabase';
+import { LUGARES, lugarPorId } from './catalogo';
+import { mesclar, type Pessoa } from './grupo';
+import { planejar, type Preferencias } from './planejador';
+
+export interface Viagem {
+  id: string;
+  user_id: string;
+  destino: string;
+  data_ida: string;
+  noites: number;
+  viajantes: number;
+  orcamento_centavos: number | null;
+  visibilidade: 'privada' | 'amigos';
+}
+export interface Item { id: string; trip_id: string; dia: number; periodo: string; ordem: number; place_id: string; situacao: string; adicionado_por: string | null }
+export interface Membro { user_id: string; papel: 'dono' | 'editor' | 'leitor'; status: 'convidado' | 'ativo'; nome: string }
+export interface Hospedagem { hotel_id: string; nome: string; endereco: string | null; lat: number | null; lon: number | null; foto: string | null; nota: number | null; checkin: string; checkout: string; total_centavos: number; moeda: string; fonte: string; cotado_em: string }
+export interface Gasto { id: string; categoria: string; descricao: string; valor_centavos: number; moeda: string }
+export interface Evento { id: number; texto: string; created_at: string; autor: string | null }
+
+export interface ViagemCompleta {
+  viagem: Viagem;
+  itens: Item[];
+  membros: Membro[];
+  hospedagem: Hospedagem | null;
+  gastos: Gasto[];
+  eventos: Evento[];
+  papel: 'dono' | 'editor' | 'leitor' | null;
+  pessoas: Pessoa[];
+}
+
+export async function eu(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.id ?? null;
+}
+
+async function registrar(tripId: string, texto: string) {
+  const uid = await eu();
+  if (uid) await supabase.from('trip_events').insert({ trip_id: tripId, autor: uid, texto: texto.slice(0, 200) });
+}
+
+/** Viagens em que participo (dono, editor, leitor ou convite pendente) e as compartilhadas por amigos. */
+export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: string; status: string })[]; deAmigos: Viagem[] }> {
+  const uid = await eu();
+  if (!uid) return { minhas: [], deAmigos: [] };
+  const [membros, todas] = await Promise.all([
+    supabase.from('trip_members').select('trip_id, papel, status').eq('user_id', uid),
+    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade').order('data_ida'),
+  ]);
+  const meu = new Map((membros.data ?? []).map((m) => [m.trip_id as string, m]));
+  const viagens = (todas.data ?? []) as Viagem[];
+  return {
+    minhas: viagens.filter((v) => meu.has(v.id)).map((v) => ({ ...v, papel: meu.get(v.id)!.papel as string, status: meu.get(v.id)!.status as string })),
+    deAmigos: viagens.filter((v) => !meu.has(v.id)),
+  };
+}
+
+/** Preferências de quem está na viagem (para o roteiro do grupo). */
+export async function pessoasDaViagem(tripId: string): Promise<Pessoa[]> {
+  const { data } = await supabase.rpc('preferencias_do_grupo', { t: tripId });
+  return ((data ?? []) as (Record<string, unknown> & { display_name: string; estilo: string | null })[]).map((r) => ({
+    nome: r.display_name,
+    preferencias: r.estilo ? ({ estilo: r.estilo, gostos: r.gostos, ritmo: r.ritmo, evitar: r.evitar, orcamento: r.orcamento, gratuitos: r.gratuitos, periodo: r.periodo, local: r.local, deslocamento: r.deslocamento } as unknown as Preferencias) : null,
+  }));
+}
+
+/** Gera (ou refaz) o roteiro com as preferências de todos os participantes. */
+export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Preferencias | null): Promise<void> {
+  const prefs = mesclar(pessoas) ?? reserva;
+  if (!prefs) return;
+  const dias = planejar(LUGARES, prefs, { destino: v.destino, dataIda: v.data_ida, noites: v.noites });
+  const uid = await eu();
+  const linhas = dias.flatMap((d) => d.paradas.filter((p) => p.lugar).map((p, i) => ({ trip_id: v.id, dia: d.numero, periodo: p.periodo, ordem: i, place_id: p.lugar!.id, adicionado_por: uid })));
+  await supabase.from('trip_items').delete().eq('trip_id', v.id);
+  if (linhas.length) await supabase.from('trip_items').insert(linhas);
+  await registrar(v.id, pessoas.length > 1 ? `Roteiro refeito com as preferências de ${pessoas.length} pessoas.` : 'Roteiro montado com o seu jeito de viajar.');
+}
+
+export async function criarViagem(dados: { destino: string; dataIda: string; noites: number; viajantes: number; orcamento: number | null }, prefs: Preferencias | null): Promise<string | null> {
+  const uid = await eu();
+  if (!uid) return null;
+  const { data, error } = await supabase
+    .from('trips')
+    .insert({ user_id: uid, destino: dados.destino, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: dados.orcamento })
+    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade')
+    .single();
+  if (error || !data) return null;
+  await registrar(data.id as string, 'Viagem criada.');
+  await montarRoteiro(data as Viagem, await pessoasDaViagem(data.id as string), prefs);
+  return data.id as string;
+}
+
+export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
+  const uid = await eu();
+  const [v, itens, membros, hosp, gastos, eventos] = await Promise.all([
+    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade').eq('id', id).maybeSingle(),
+    supabase.from('trip_items').select('*').eq('trip_id', id).order('dia').order('ordem'),
+    supabase.from('trip_members').select('user_id, papel, status').eq('trip_id', id),
+    supabase.from('trip_lodging').select('*').eq('trip_id', id).maybeSingle(),
+    supabase.from('trip_expenses').select('id, categoria, descricao, valor_centavos, moeda').eq('trip_id', id).order('created_at'),
+    supabase.from('trip_events').select('id, texto, created_at, autor').eq('trip_id', id).order('created_at', { ascending: false }).limit(30),
+  ]);
+  if (!v.data) return null;
+  const nomes = await Promise.all(
+    (membros.data ?? []).map(async (m) => {
+      const { data } = await supabase.rpc('perfil_publico', { alvo: m.user_id });
+      return { ...(m as Omit<Membro, 'nome'>), nome: ((data as { display_name: string }[] | null)?.[0]?.display_name ?? 'Participante') as string };
+    }),
+  );
+  const meu = nomes.find((m) => m.user_id === uid && m.status === 'ativo');
+  return {
+    viagem: v.data as Viagem,
+    itens: (itens.data ?? []) as Item[],
+    membros: nomes as Membro[],
+    hospedagem: (hosp.data as Hospedagem | null) ?? null,
+    gastos: (gastos.data ?? []) as Gasto[],
+    eventos: (eventos.data ?? []) as Evento[],
+    papel: (meu?.papel as ViagemCompleta['papel']) ?? null,
+    pessoas: await pessoasDaViagem(id),
+  };
+}
+
+// ---------------------------------------------------------------- edição do roteiro
+const nome = (placeId: string) => lugarPorId(placeId)?.nome ?? placeId;
+
+export async function removerItem(it: Item) {
+  await supabase.from('trip_items').delete().eq('id', it.id);
+  await registrar(it.trip_id, `Tirou ${nome(it.place_id)} do dia ${it.dia}.`);
+}
+export async function adicionarItem(tripId: string, placeId: string, dia: number, periodo: string, sugestao = false) {
+  const uid = await eu();
+  const { data: ult } = await supabase.from('trip_items').select('ordem').eq('trip_id', tripId).eq('dia', dia).order('ordem', { ascending: false }).limit(1);
+  const ordem = ((ult?.[0]?.ordem as number | undefined) ?? -1) + 1;
+  const { error } = await supabase.from('trip_items').insert({ trip_id: tripId, dia, periodo, ordem, place_id: placeId, adicionado_por: uid, situacao: sugestao ? 'sugerido' : 'confirmado' });
+  if (!error) await registrar(tripId, `${sugestao ? 'Sugeriu' : 'Adicionou'} ${nome(placeId)} no dia ${dia}.`);
+  return !error;
+}
+export async function moverItem(it: Item, dia: number, ordem: number) {
+  await supabase.from('trip_items').update({ dia, ordem }).eq('id', it.id);
+  if (dia !== it.dia) await registrar(it.trip_id, `Mudou ${nome(it.place_id)} para o dia ${dia}.`);
+}
+export async function trocarItem(it: Item, novoPlaceId: string) {
+  await supabase.from('trip_items').update({ place_id: novoPlaceId }).eq('id', it.id);
+  await registrar(it.trip_id, `Trocou ${nome(it.place_id)} por ${nome(novoPlaceId)} no dia ${it.dia}.`);
+}
+export async function confirmarSugestao(it: Item) {
+  await supabase.from('trip_items').update({ situacao: 'confirmado' }).eq('id', it.id);
+  await registrar(it.trip_id, `Confirmou ${nome(it.place_id)}.`);
+}
+
+// ---------------------------------------------------------------- viagem, hospedagem e gastos
+export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 'data_ida' | 'noites' | 'viajantes' | 'orcamento_centavos' | 'visibilidade'>>) {
+  await supabase.from('trips').update({ ...parcial, updated_at: new Date().toISOString() }).eq('id', id);
+  await registrar(id, parcial.visibilidade ? (parcial.visibilidade === 'amigos' ? 'Compartilhou a viagem com os amigos.' : 'Deixou a viagem privada.') : 'Atualizou os dados da viagem.');
+}
+
+export interface Hotel { id: string; nome: string; foto: string | null; endereco: string; lat: number; lon: number; estrelas: number | null; nota: number | null; avaliacoes: number | null; comodidades: string[]; total: number; porNoite: number }
+export interface Busca { fonte: string; cotadoEm: string; moeda: string; noites: number; hoteis: Hotel[] }
+
+export async function buscarHoteis(p: { lat: number; lon: number; checkin: string; checkout: string; adultos: number }): Promise<{ ok: true; dados: Busca } | { ok: false; mensagem: string }> {
+  const { data, error } = await supabase.functions.invoke('hoteis', { body: p });
+  if (error) {
+    let mensagem = 'Não conseguimos buscar hotéis agora. Tente de novo.';
+    try {
+      const corpo = await (error as { context?: Response }).context?.json();
+      if (corpo?.mensagem) mensagem = corpo.mensagem;
+    } catch {
+      /* resposta sem corpo */
+    }
+    return { ok: false, mensagem };
+  }
+  return { ok: true, dados: data as Busca };
+}
+export async function escolherHotel(tripId: string, h: Hotel, busca: Busca, checkin: string, checkout: string) {
+  const uid = await eu();
+  await supabase.from('trip_lodging').upsert({ trip_id: tripId, hotel_id: h.id, nome: h.nome, endereco: h.endereco, lat: h.lat, lon: h.lon, foto: h.foto, nota: h.nota, checkin, checkout, total_centavos: h.total, moeda: busca.moeda, fonte: busca.fonte, cotado_em: busca.cotadoEm, escolhido_por: uid });
+  await registrar(tripId, `Escolheu a hospedagem ${h.nome}.`);
+}
+export async function adicionarGasto(tripId: string, g: { categoria: string; descricao: string; valor: number }) {
+  const uid = await eu();
+  await supabase.from('trip_expenses').insert({ trip_id: tripId, categoria: g.categoria, descricao: g.descricao, valor_centavos: g.valor, moeda: 'BRL', pago_por: uid });
+  await registrar(tripId, `Informou um gasto: ${g.descricao}.`);
+}
+export async function removerGasto(tripId: string, id: string) {
+  await supabase.from('trip_expenses').delete().eq('id', id);
+  await registrar(tripId, 'Removeu um gasto informado.');
+}
+
+// ---------------------------------------------------------------- participantes
+export async function convidar(tripId: string, userId: string, papel: 'editor' | 'leitor') {
+  const uid = await eu();
+  const { error } = await supabase.from('trip_members').insert({ trip_id: tripId, user_id: userId, papel, status: 'convidado', convidado_por: uid });
+  if (!error) await registrar(tripId, 'Convidou um amigo para a viagem.');
+  return !error;
+}
+export async function aceitarConvite(tripId: string) {
+  const uid = await eu();
+  await supabase.from('trip_members').update({ status: 'ativo' }).eq('trip_id', tripId).eq('user_id', uid);
+  await registrar(tripId, 'Entrou na viagem.');
+}
+export async function sairDaViagem(tripId: string) {
+  const uid = await eu();
+  await supabase.from('trip_members').delete().eq('trip_id', tripId).eq('user_id', uid);
+}
+export async function mudarPapel(tripId: string, userId: string, papel: 'editor' | 'leitor') {
+  await supabase.from('trip_members').update({ papel }).eq('trip_id', tripId).eq('user_id', userId);
+}
+
+/** Atualiza ao vivo quando outro participante muda algo. */
+export function acompanhar(tripId: string, aoMudar: () => void): () => void {
+  const canal = supabase.channel(`viagem-${tripId}`);
+  for (const tabela of ['trip_items', 'trip_events', 'trip_lodging', 'trip_members', 'trip_expenses']) {
+    canal.on('postgres_changes' as never, { event: '*', schema: 'public', table: tabela, filter: `trip_id=eq.${tripId}` } as never, aoMudar as never);
+  }
+  canal.subscribe();
+  return () => void supabase.removeChannel(canal);
+}

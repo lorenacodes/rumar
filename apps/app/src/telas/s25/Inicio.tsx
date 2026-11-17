@@ -5,8 +5,84 @@ import { carregarDaConta, carregarPerfil, useSessao } from '../../conta/servico'
 import { usePlano } from '../../state/plano';
 import { Abas } from '../../ui/abas';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
+import DESTINOS from '../../dados/destinos.json';
+import { meusFavoritos, type Favorito } from '../../lib/social';
+import { listarViagens, type Viagem } from '../../lib/viagens';
+import { FotoLugar } from '../../ui/foto';
 
 const reais = (centavos: number) => `R$ ${(centavos / 100).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+
+/** Destinos parecidos com os favoritos (características em comum, dados/destinos.json). */
+function parecidos(favoritos: Favorito[]): { nome: string; pais: string; foto?: string; porque: string }[] {
+  const lista = (DESTINOS as { destinos: { nome: string; pais: string; foto?: string; tracos: string[] }[] }).destinos;
+  const favs = lista.filter((d) => favoritos.some((f) => f.nome === d.nome));
+  const tracos = new Map<string, string>();
+  for (const f of favs) for (const t of f.tracos) if (!tracos.has(t)) tracos.set(t, f.nome);
+  return lista
+    .filter((d) => !favoritos.some((f) => f.nome === d.nome))
+    .map((d) => ({ d, comuns: d.tracos.filter((t) => tracos.has(t)) }))
+    .filter((x) => x.comuns.length >= 2)
+    .sort((a, b) => b.comuns.length - a.comuns.length)
+    .slice(0, 6)
+    .map(({ d, comuns }) => ({ nome: d.nome, pais: d.pais, foto: d.foto, porque: `Parecido com ${tracos.get(comuns[0]!)}: ${comuns.slice(0, 2).map((t) => t.replace('-', ' ')).join(' e ')}` }));
+}
+
+/** Parte do Início para quem tem conta: próxima viagem, favoritos e sugestões. */
+function ParaVoce() {
+  const navegar = useNavigate();
+  const [favs, setFavs] = useState<Favorito[]>([]);
+  const [viagem, setViagem] = useState<Viagem | null | undefined>(undefined);
+  useEffect(() => {
+    void meusFavoritos().then(setFavs);
+    void listarViagens().then((v) => setViagem(v.minhas.filter((x) => x.status === 'ativo' && x.data_ida >= new Date().toISOString().slice(0, 10))[0] ?? null));
+  }, []);
+  const sugestoes = parecidos(favs);
+  const Rot = ({ t }: { t: string }) => <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '18px 0 6px' }}>{t}</div>;
+  return (
+    <>
+      <Rot t="Próxima viagem" />
+      {viagem ? (
+        <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', textAlign: 'left', border: '2px solid var(--texto)', padding: '10px' }}>
+          <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={viagem.destino} proporcao="1 / 1" credito={false} /></span>
+          <span><b style={{ font: "600 18px 'Lexend Exa'" }}>{viagem.destino}</b><span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>Roteiro, hospedagem e orçamento ›</span></span>
+        </button>
+      ) : viagem === null ? (
+        <BotaoContorno onClick={() => navegar('/viagens/nova')}>Planejar uma viagem ↗</BotaoContorno>
+      ) : null}
+      <Rot t="Seus destinos favoritos" />
+      {favs.length ? (
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 4px' }}>
+          {favs.map((f) => (
+            <div key={f.chave} style={{ flex: 'none', width: '120px' }}>
+              <FotoLugar id={f.nome} proporcao="4 / 3" credito={false} />
+              <b style={{ display: 'block', fontSize: '14px', marginTop: '4px' }}>{f.nome}</b>
+              <span style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>{f.pais}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <button type="button" className="r-btn" onClick={() => navegar('/destinos')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>{favs.length ? 'Mudar favoritos' : 'Escolher destinos que quero conhecer ↗'}</button>
+      {sugestoes.length ? (
+        <>
+          <Rot t="Você também pode gostar" />
+          {sugestoes.map((d) => (
+            <div key={d.nome} style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--linha)' }}>
+              <span style={{ width: '56px', flex: 'none' }}><FotoLugar id={d.foto ?? d.nome} proporcao="1 / 1" credito={false} /></span>
+              <span style={{ flex: 1 }}><b>{d.nome}</b> <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>· {d.pais}</span><span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{d.porque}</span></span>
+            </div>
+          ))}
+        </>
+      ) : null}
+      {favs.some((f) => f.nome === 'Paris') ? (
+        <>
+          <Rot t="Experiências em Paris" />
+          <BotaoContorno onClick={() => navegar('/descobrir')}>Ver lugares, preços e mapa ↗</BotaoContorno>
+        </>
+      ) : null}
+      <div style={{ height: '16px' }} />
+    </>
+  );
+}
 
 /**
  * Início com os dados REAIS da pessoa (plano do aparelho ou da conta no Supabase).
@@ -74,19 +150,7 @@ export function Inicio() {
             </ol>
           </>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: '8px', marginTop: '14px' }}>
-            {[
-              ['Minha viagem', 'Datas, roteiro e salvos', '/minha-viagem'],
-              ['Roteiro', 'Dia a dia, do seu jeito', '/roteiro'],
-              ['Descobrir', 'Lugares por categoria', '/descobrir'],
-              ['Meu jeito de viajar', 'Estilo, ritmo e gostos', '/perfil-viajante'],
-            ].map(([t, d, rota]) => (
-              <button key={t} type="button" className="r-btn" onClick={() => navegar(rota!)} style={{ textAlign: 'left', background: 'var(--cartao-2)', padding: '12px', minHeight: '76px', boxSizing: 'border-box' }}>
-                <span style={{ display: 'block', font: "600 16px 'Open Sans'" }}>{t}</span>
-                <span style={{ display: 'block', fontSize: '14px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '4px' }}>{d}</span>
-              </button>
-            ))}
-          </div>
+          <ParaVoce />
         )}
       </div>
 

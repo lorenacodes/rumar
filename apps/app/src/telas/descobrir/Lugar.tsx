@@ -1,4 +1,9 @@
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
+import PRECOS from '../../dados/precos-paris.json';
+import type { Precos } from '../../lib/orcamento';
+import { adicionarItem, listarViagens, type Viagem } from '../../lib/viagens';
 
 import { CATEGORIAS, enderecoCurto, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
 import { afinidade } from '../../lib/planejador';
@@ -7,6 +12,46 @@ import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
 
 /** Detalhe do lugar: foto, categoria, endereço, horário com fonte, mapa e salvar. */
+function AdicionarAViagem({ placeId, slots }: { placeId: string; slots: string[] }) {
+  const navegar = useNavigate();
+  const [params] = useSearchParams();
+  const [viagens, setViagens] = useState<Viagem[]>([]);
+  const [viagem, setViagem] = useState(params.get('viagem') ?? '');
+  const [dia, setDia] = useState(Number(params.get('dia') ?? 1));
+  const [periodo, setPeriodo] = useState(slots[0] ?? 'afternoon');
+  const [msg, setMsg] = useState<string | null>(null);
+  useEffect(() => {
+    void listarViagens().then((v) => {
+      const editaveis = v.minhas.filter((x) => x.status === 'ativo' && x.papel !== 'leitor');
+      setViagens(editaveis);
+      if (!params.get('viagem') && editaveis[0]) setViagem(editaveis[0].id);
+    });
+  }, [params]);
+  if (!viagens.length) return null;
+  const v = viagens.find((x) => x.id === viagem);
+  const NOMES: Record<string, string> = { morning: 'Manhã', afternoon: 'Tarde', evening: 'Fim de tarde', night: 'Noite' };
+  const sel = { ...{ display: 'block', width: '100%', boxSizing: 'border-box' as const, borderBottom: '2px solid var(--texto)', padding: '8px 0', font: "500 16px 'Open Sans'", background: 'transparent', color: 'var(--texto)' } };
+  return (
+    <div style={{ marginTop: '16px', padding: '12px', border: '2px solid var(--texto)' }}>
+      <b style={{ font: "600 16px 'Lexend Exa'" }}>Adicionar à viagem</b>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '6px' }}>
+        <label style={{ gridColumn: '1 / -1', fontSize: '13px', color: 'var(--texto-sec)' }}>Viagem
+          <select value={viagem} onChange={(e) => setViagem(e.target.value)} style={sel}>{viagens.map((x) => <option key={x.id} value={x.id}>{x.destino} · {x.data_ida.split('-').reverse().join('/')}</option>)}</select>
+        </label>
+        <label style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Dia
+          <select value={dia} onChange={(e) => setDia(Number(e.target.value))} style={sel}>{Array.from({ length: (v?.noites ?? 0) + 1 }, (_, i) => <option key={i} value={i + 1}>Dia {i + 1}</option>)}</select>
+        </label>
+        <label style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Quando
+          <select value={periodo} onChange={(e) => setPeriodo(e.target.value)} style={sel}>{slots.map((s) => <option key={s} value={s}>{NOMES[s]}</option>)}</select>
+        </label>
+      </div>
+      <button type="button" className="r-btn" onClick={() => void adicionarItem(viagem, placeId, dia, periodo).then((ok) => setMsg(ok ? 'Adicionado. O orçamento e o mapa já consideram este lugar.' : 'Não deu para adicionar. Confira se você pode editar esta viagem.'))}
+        style={{ width: '100%', height: '48px', marginTop: '10px', background: 'var(--amarelo)', font: "600 15px 'Open Sans'" }}>Adicionar no dia {dia}</button>
+      {msg ? <div role="status" style={{ fontSize: '14px', marginTop: '6px', color: msg.startsWith('Adicionado') ? 'var(--verde)' : 'var(--vermelho)' }}>{msg} {msg.startsWith('Adicionado') ? <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem}`)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Ver a viagem</button> : null}</div> : null}
+    </div>
+  );
+}
+
 export function Lugar() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
@@ -14,6 +59,7 @@ export function Lugar() {
   const { salvos, alternarSalvo, preferencias } = useViajante();
   if (!l) return <Navigate to="/descobrir" replace />;
   const salvo = salvos.includes(l.id);
+  const preco = (PRECOS as unknown as Precos).lugares[l.id];
   const motivos = preferencias ? afinidade(l, preferencias).motivos : [];
   const mapa = typeof l.lat === 'number' ? `https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.nome}, Paris`)}`;
   return (
@@ -35,7 +81,7 @@ export function Lugar() {
           <dt style={{ fontWeight: 600 }}>Horário</dt>
           <dd style={{ margin: 0 }}>{l.horario ? horarioLegivel(l.horario) : 'Não confirmado. Confira no site oficial antes de ir.'}</dd>
           <dt style={{ fontWeight: 600 }}>Preço</dt>
-          <dd style={{ margin: 0 }}>{['Grátis', 'Barato', 'Médio', 'Caro'][l.custo]}</dd>
+          <dd style={{ margin: 0 }}>{preco ? (preco.min === 0 ? 'Grátis' : `${(preco.min / 100).toLocaleString('pt-BR')}${preco.max !== preco.min ? ` a ${(preco.max / 100).toLocaleString('pt-BR')}` : ''} € por pessoa`) : l.custo === 0 ? 'Grátis' : 'Não confirmado'}{preco ? <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{preco.selo === 'referencia' ? '▤ Referência' : '≈ Estimativa'} · <a href={preco.url} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{preco.fonte}</a>{preco.reserva ? ' · compre o ingresso antes' : ''}</span> : null}</dd>
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <a href={mapa} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
@@ -43,6 +89,7 @@ export function Lugar() {
             {salvo ? '♥ Salvo' : '♡ Salvar'}
           </button>
         </div>
+        <AdicionarAViagem placeId={l.id} slots={l.slots} />
         {l.site ? <a href={l.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site oficial ↗</a> : null}
         <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>
           {l.osm ? <>Endereço e horário: <a href={l.osm} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a>{OSM_ATUALIZADO_EM ? `, ${OSM_ATUALIZADO_EM.split('-').reverse().join('/')}` : ''}. </> : null}

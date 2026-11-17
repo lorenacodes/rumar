@@ -4,6 +4,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CATEGORIAS, CIDADE, LUGARES } from '../../lib/catalogo';
 import { afinidade, type Categoria, type Lugar } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
+import PRECOS from '../../dados/precos-paris.json';
+import type { Precos } from '../../lib/orcamento';
+import { Mapa } from '../../ui/Mapa';
+
+const P = PRECOS as unknown as Precos;
 import { Abas } from '../../ui/abas';
 import { FotoLugar, temFoto } from '../../ui/foto';
 
@@ -46,6 +51,10 @@ export function Descobrir() {
   const [params, setParams] = useSearchParams();
   const filtro = (params.get('ver') ?? 'para-voce') as 'para-voce' | 'populares' | 'locais' | 'salvos' | Categoria;
   const { preferencias, salvos } = useViajante();
+  const [preco, setPreco] = useState<'todos' | 'gratis' | 'ate20' | '20a40' | 'mais40'>('todos');
+  const [mapa, setMapa] = useState(false);
+  const viagem = params.get('viagem');
+  const precoDe = (l: Lugar) => (P.lugares[l.id] ? (P.lugares[l.id]!.min + P.lugares[l.id]!.max) / 200 : l.custo === 0 ? 0 : null);
 
   const lista = useMemo(() => {
     let r = LUGARES;
@@ -56,11 +65,18 @@ export function Descobrir() {
     else if (filtro === 'locais') r = r.filter((l) => l.local);
     else if (filtro === 'salvos') r = r.filter((l) => salvos.includes(l.id));
     else if (filtro !== 'para-voce') r = r.filter((l) => l.categoria === filtro);
+    if (preco !== 'todos') {
+      r = r.filter((l) => {
+        const v = precoDe(l);
+        if (v === null) return false;
+        return preco === 'gratis' ? v === 0 : preco === 'ate20' ? v > 0 && v <= 20 : preco === '20a40' ? v > 20 && v <= 40 : v > 40;
+      });
+    }
     if (filtro === 'para-voce' && preferencias && !busca.trim()) {
       r = [...r].sort((a, b) => afinidade(b, preferencias).pontos - afinidade(a, preferencias).pontos).slice(0, 12);
     }
     return r;
-  }, [busca, filtro, preferencias, salvos]);
+  }, [busca, filtro, preferencias, salvos, preco]);
 
   const chips: { id: string; nome: string }[] = [
     { id: 'para-voce', nome: 'Para você' },
@@ -89,6 +105,21 @@ export function Descobrir() {
             );
           })}
         </div>
+        <div role="group" aria-label="Preço por pessoa" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '8px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
+          {([['todos', 'Qualquer preço'], ['gratis', 'Grátis'], ['ate20', 'Até 20 €'], ['20a40', '20 a 40 €'], ['mais40', 'Mais de 40 €']] as const).map(([id, nome]) => (
+            <button key={id} type="button" role="radio" aria-checked={preco === id} className="r-btn" onClick={() => setPreco(id)}
+              style={{ flex: 'none', height: '40px', padding: '0 12px', whiteSpace: 'nowrap', font: `${preco === id ? 600 : 500} 13px 'Open Sans'`, ...(preco === id ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>{nome}</button>
+          ))}
+          <button type="button" className="r-btn" aria-pressed={mapa} onClick={() => setMapa(!mapa)} style={{ flex: 'none', height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{mapa ? 'Ver lista' : 'Ver no mapa'}</button>
+        </div>
+        {preco !== 'todos' ? <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Preço médio por pessoa com fonte; lugares sem preço confirmado ficam de fora deste filtro.</p> : null}
+        {viagem ? <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--azul)', margin: '8px 0 0' }}>Escolha um lugar para adicionar à sua viagem.</p> : null}
+        {mapa ? (
+          <div style={{ marginTop: '10px' }}>
+            <Mapa pontos={lista.filter((l) => typeof l.lat === 'number').map((l) => ({ id: l.id, lat: l.lat!, lon: l.lon!, rotulo: CATEGORIAS[l.categoria][0]!, titulo: l.nome, tipo: 'lugar' as const }))} altura="min(55vh, 420px)" aoEscolher={(id) => navegar(`/lugar/${id}${viagem ? `?viagem=${viagem}&dia=${params.get('dia') ?? 1}` : ''}`)} />
+            <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>Mapa © OpenStreetMap · OpenFreeMap. Toque num ponto para ver o lugar.</div>
+          </div>
+        ) : null}
         {filtro === 'para-voce' && !busca ? (
           <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '12px 0 0' }}>
             {preferencias ? 'Em ordem do que mais combina com o seu jeito de viajar.' : 'Conte seu jeito de viajar para ver primeiro o que combina com você.'}
@@ -98,7 +129,7 @@ export function Descobrir() {
           </p>
         ) : null}
         <ul style={{ listStyle: 'none', margin: '6px 0 24px', padding: 0 }}>
-          {lista.map((l) => <LinhaLugar key={l.id} l={l} aoAbrir={() => navegar(`/lugar/${l.id}`)} />)}
+          {!mapa ? lista.map((l) => <LinhaLugar key={l.id} l={l} aoAbrir={() => navegar(`/lugar/${l.id}${viagem ? `?viagem=${viagem}&dia=${params.get('dia') ?? 1}` : ''}`)} />) : null}
         </ul>
         {!lista.length ? (
           <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{filtro === 'salvos' ? 'Toque no ♡ de um lugar para guardar aqui.' : 'Nada encontrado. Tente outra palavra.'}</p>

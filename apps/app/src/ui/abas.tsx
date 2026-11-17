@@ -1,18 +1,32 @@
 import { useNavigate } from 'react-router-dom';
 
-export type Aba = 'inicio' | 'descobrir' | 'viagem' | 'passaporte';
+import { useDemo } from '../dev/demo';
 
-const ABAS: { id: Aba; nome: string; rota: string }[] = [
+export type Aba = 'inicio' | 'descobrir' | 'viagem' | 'social' | 'passaporte';
+
+/** Desenho original (4 abas): usado só na comparação com o design (/dev/telas). */
+const ABAS_DESIGN: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
   { id: 'descobrir', nome: 'Descobrir', rota: '/descobrir' },
-  { id: 'viagem', nome: 'Minha viagem', rota: '/minha-viagem' },
-  // Perfil de verdade (5.13, dados do banco). Sem conta, a 5.13 leva a Entrar/Criar conta.
+  { id: 'viagem', nome: 'Minha viagem', rota: '/viagens' },
+  { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
+];
+/**
+ * Navegação do app (D-022): a jornada de quem viaja em 5 lugares claros — começar (Início),
+ * explorar (Descobrir), planejar e acompanhar (Viagens), viajar junto (Social) e eu (Perfil).
+ */
+const ABAS_APP: { id: Aba; nome: string; rota: string }[] = [
+  { id: 'inicio', nome: 'Início', rota: '/inicio' },
+  { id: 'descobrir', nome: 'Descobrir', rota: '/descobrir' },
+  { id: 'viagem', nome: 'Viagens', rota: '/viagens' },
+  { id: 'social', nome: 'Social', rota: '/social' },
   { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
 ];
 
 /** Barra de abas fixa, 64 px, quatro abas (igual em todas as telas do design). */
 export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRodape?: boolean }) {
   const navegar = useNavigate();
+  const ABAS = useDemo() ? ABAS_DESIGN : ABAS_APP;
   return (
     <nav
       aria-label="Abas"
@@ -26,7 +40,7 @@ export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRo
         background: 'var(--fundo)',
         borderTop: '1px solid var(--linha)',
         display: 'grid',
-        gridTemplateColumns: 'repeat(4,1fr)',
+        gridTemplateColumns: `repeat(${ABAS.length},1fr)`,
         // 14 px no tamanho do design (390 px); diminui um pouco em telas estreitas para
         // "Minha viagem" caber numa linha só.
         font: "500 clamp(12px, 3.6vw, 14px) 'Open Sans'",

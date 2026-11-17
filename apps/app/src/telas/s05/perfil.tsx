@@ -71,13 +71,14 @@ function useExigirSessao(): 'carregando' | 'ok' | 'sem' {
 /** Perfil de viajante, viagens e salvos da pessoa (dados do aparelho e do banco). */
 function SecaoViajante() {
   const navegar = useNavigate();
-  const { preferencias, viagem, salvos } = useViajante();
+  const { preferencias, salvos } = useViajante();
   const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
   return (
     <div style={{ marginTop: '10px' }}>
       <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '8px 0 2px' }}>Viagens</div>
       <Linha minHeight="44px" titulo="Meu jeito de viajar" detalhe={preferencias ? `Estilo ${NOME_ESTILO[preferencias.estilo]} · ritmo ${RITMO[preferencias.ritmo]}` : 'Responder em 1 minuto'} onClick={() => navegar('/perfil-viajante')} />
-      <Linha minHeight="44px" titulo="Minhas viagens" detalhe={viagem ? `${viagem.destino} · ${viagem.dataIda.split('-').reverse().join('/')} · ${viagem.noites} noites` : 'Nenhuma ainda'} onClick={() => navegar('/minha-viagem')} />
+      <Linha minHeight="44px" titulo="Minhas viagens" detalhe="Roteiros, hospedagem e orçamento" onClick={() => navegar('/viagens')} />
+      <Linha minHeight="44px" titulo="Destinos favoritos" detalhe="Lugares que quero conhecer" onClick={() => navegar('/destinos')} />
       <Linha minHeight="44px" titulo="Lugares salvos" detalhe={salvos.length ? `${salvos.length} ${salvos.length === 1 ? 'lugar' : 'lugares'}` : 'Nenhum ainda'} onClick={() => navegar('/descobrir?ver=salvos')} />
     </div>
   );

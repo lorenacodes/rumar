@@ -66,7 +66,7 @@ export function Tela5_5() {
     setEnviando(true);
     const r = await confirmarCodigo(email, codigo, tipoCodigo);
     setEnviando(false);
-    if (r.ok) return navegar(tipoCodigo === 'signup' ? '/inicio' : '/perfil', { replace: true });
+    if (r.ok) return navegar(tipoCodigo === 'signup' ? '/bem-vindo' : '/perfil', { replace: true });
     if (r.motivo === 'menor') return navegar('/', { replace: true });
     setErro(MENSAGEM[r.motivo]);
     setCodigo('');

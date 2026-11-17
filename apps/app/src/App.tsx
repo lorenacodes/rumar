@@ -28,9 +28,13 @@ import { Tela28_7 } from './telas/s28/Tela28_7';
 import { AvisoAtualizar } from './ui/atualizar';
 import { Descobrir } from './telas/descobrir/Descobrir';
 import { Lugar } from './telas/descobrir/Lugar';
-import { MinhaViagemReal } from './telas/viagem/MinhaViagemReal';
+import { Destinos } from './telas/destinos/Destinos';
+import { Pessoa } from './telas/social/Pessoa';
+import { Social } from './telas/social/Social';
+import { NovaViagem } from './telas/viagens/NovaViagem';
+import { Viagem } from './telas/viagens/Viagem';
+import { Viagens } from './telas/viagens/Viagens';
 import { Montar } from './telas/viagem/Montar';
-import { Roteiro } from './telas/s06/Roteiro';
 import { Inicio } from './telas/s25/Inicio';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
@@ -40,7 +44,7 @@ function Raiz() {
   // Regra 16.6: o voltar do Android faz o mesmo que a seta ← e nunca fecha o app sem querer.
   useEffect(() => {
     const ouvinte = CapApp.addListener('backButton', () => {
-      const raiz = ['/', '/inicio', '/tela/2.1', '/minha-viagem', '/tela/25.2'].includes(window.location.hash.slice(1) || '/');
+      const raiz = ['/', '/inicio', '/descobrir', '/viagens', '/social', '/perfil'].includes(window.location.hash.slice(1) || '/');
       if (window.history.state?.idx > 0) navegar(-1);
       else if (!raiz) navegar('/inicio');
       else void CapApp.minimizeApp();
@@ -104,12 +108,19 @@ const filhos: RouteObject[] = [
   { path: '/conta/indisponivel/:tela', element: <EmBreve /> },
   { path: '/em-breve/:tela', element: <EmBreve /> },
   { path: '/tela/:id', element: <TelaPorId /> },
-  { path: '/minha-viagem', element: <MinhaViagemReal /> },
-  { path: '/montar', element: <Montar /> },
+  { path: '/minha-viagem', element: <Navigate to="/viagens" replace /> },
+  { path: '/viagens', element: <Viagens /> },
+  { path: '/viagens/nova', element: <NovaViagem /> },
+  { path: '/viagem/:id', element: <Viagem /> },
+  { path: '/social', element: <Social /> },
+  { path: '/pessoa/:id', element: <Pessoa /> },
+  { path: '/destinos', element: <Destinos /> },
+  { path: '/bem-vindo', element: <Destinos primeiraVez /> },
+  { path: '/montar', element: <Navigate to="/viagens/nova" replace /> },
   { path: '/perfil-viajante', element: <Montar soPerfil /> },
   { path: '/descobrir', element: <Descobrir /> },
   { path: '/lugar/:id', element: <Lugar /> },
-  { path: '/roteiro', element: <Roteiro /> },
+  { path: '/roteiro', element: <Navigate to="/viagens" replace /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];
 

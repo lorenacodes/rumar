@@ -105,7 +105,7 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
     if (!soPerfil) await definirViagem({ destino: CIDADE, dataIda, noites });
     setSalvando(false);
     if (soPerfil) navegar(-1);
-    else navegar('/roteiro', { replace: true });
+    else navegar('/viagens/nova', { replace: true });
   };
 
   return (

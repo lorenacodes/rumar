@@ -27,10 +27,10 @@ const ROTAS: Record<string, string> = {
   '5.18': '/conta/saiu',
   '28.7': '/sessao-terminou',
   // 15.1 e 16.1 viraram uma tela só (D-017).
-  '15.1': '/minha-viagem',
-  '16.1': '/minha-viagem',
+  '15.1': '/viagens',
+  '16.1': '/viagens',
   // Roteiro de verdade, montado pelas escolhas da 6.1.
-  '6.3': '/roteiro',
+  '6.3': '/viagens',
   // Telas reais que substituem as de exemplo no caminho do usuário.
   '6.1': '/perfil-viajante',
   '2.1': '/descobrir',
