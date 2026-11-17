@@ -697,6 +697,96 @@
    "lotado": true,
    "osm": "Shakespeare and Company, Paris",
    "artigo": null
+  },
+  {
+   "id": "bouillon-chartier",
+   "nome": "Bouillon Chartier",
+   "descricao": "Salão de 1896 com pratos franceses clássicos a preço baixo.",
+   "categoria": "gastronomia",
+   "area": "Ópera",
+   "tags": [
+    "food_drink",
+    "history_culture"
+   ],
+   "slots": [
+    "afternoon",
+    "evening"
+   ],
+   "energia": 2,
+   "caminhada": "low",
+   "custo": 1,
+   "local": false,
+   "lotado": true,
+   "osm": "Bouillon Chartier, 7 Rue du Faubourg Montmartre, Paris",
+   "artigo": "Bouillon Chartier",
+   "refeicao": true
+  },
+  {
+   "id": "bouillon-pigalle",
+   "nome": "Bouillon Pigalle",
+   "descricao": "Cozinha francesa tradicional e barata, em Pigalle.",
+   "categoria": "gastronomia",
+   "area": "Montmartre",
+   "tags": [
+    "food_drink"
+   ],
+   "slots": [
+    "afternoon",
+    "evening"
+   ],
+   "energia": 2,
+   "caminhada": "low",
+   "custo": 1,
+   "local": true,
+   "lotado": true,
+   "osm": "Bouillon Pigalle, 22 Boulevard de Clichy, Paris",
+   "artigo": null,
+   "refeicao": true
+  },
+  {
+   "id": "as-du-fallafel",
+   "nome": "L'As du Fallafel",
+   "descricao": "O falafel mais famoso do Marais, para comer na rua.",
+   "categoria": "gastronomia",
+   "area": "Marais",
+   "tags": [
+    "food_drink",
+    "local_markets"
+   ],
+   "slots": [
+    "afternoon",
+    "evening"
+   ],
+   "energia": 2,
+   "caminhada": "low",
+   "custo": 1,
+   "local": false,
+   "lotado": true,
+   "osm": "L'As du Fallafel, 34 Rue des Rosiers, Paris",
+   "artigo": null,
+   "refeicao": true
+  },
+  {
+   "id": "breizh-cafe",
+   "nome": "Breizh Café",
+   "descricao": "Crepes e galettes bretãs feitas com farinha de trigo-sarraceno.",
+   "categoria": "gastronomia",
+   "area": "Marais",
+   "tags": [
+    "food_drink"
+   ],
+   "slots": [
+    "afternoon",
+    "evening"
+   ],
+   "energia": 1,
+   "caminhada": "low",
+   "custo": 2,
+   "local": false,
+   "lotado": false,
+   "osm": "Breizh Café, 109 Rue Vieille du Temple, Paris",
+   "artigo": null,
+   "refeicao": true
   }
  ]
 }

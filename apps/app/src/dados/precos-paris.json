@@ -1,0 +1,25 @@
+{
+ "moeda": "EUR",
+ "consultadoEm": "2026-11-17",
+ "nota": "Preço para quem mora fora da Europa (brasileiros), por pessoa adulta. ▤ Referência = fonte oficial; ≈ Estimativa = fontes divergem, usamos a faixa.",
+ "lugares": {
+  "louvre": { "min": 3200, "max": 3200, "selo": "referencia", "fonte": "Museu do Louvre (tarifa fora do Espaço Econômico Europeu, desde 14/01/2026)", "url": "https://www.louvre.fr/en/hours-admission-directions/admission", "reserva": true },
+  "orsay": { "min": 1600, "max": 1600, "selo": "referencia", "fonte": "Musée d'Orsay, venda on-line", "url": "https://www.musee-orsay.fr/fr/visite/tarifs", "reserva": true },
+  "sainte-chapelle": { "min": 2200, "max": 2200, "selo": "referencia", "fonte": "Centre des monuments nationaux (fora do EEE, desde 12/01/2026)", "url": "https://www.sainte-chapelle.fr/", "reserva": true },
+  "arco": { "min": 1600, "max": 2200, "selo": "estimativa", "fonte": "Centre des monuments nationaux (16 € ou 22 € conforme a época)", "url": "https://www.paris-arc-de-triomphe.fr/", "reserva": true },
+  "opera": { "min": 1500, "max": 2600, "selo": "estimativa", "fonte": "Revendedores (o site oficial não mostrou a visita livre)", "url": "https://www.operadeparis.fr/visites/palais-garnier", "reserva": true },
+  "torre": { "min": 2350, "max": 3670, "selo": "referencia", "fonte": "Torre Eiffel, tarifas desde 12/01/2026 (2º andar a topo, elevador)", "url": "https://www.toureiffel.paris/fr/tarifs-janv-2026", "reserva": true },
+  "sena": { "min": 1800, "max": 1935, "selo": "estimativa", "fonte": "Bateaux Parisiens, cruzeiro de 1 hora", "url": "https://www.bateauxparisiens.com/", "reserva": false },
+  "notre-dame": { "min": 0, "max": 0, "selo": "referencia", "fonte": "Catedral de Notre-Dame: entrada gratuita", "url": "https://www.notredamedeparis.fr/", "reserva": false },
+  "bouillon-chartier": { "min": 1500, "max": 3000, "selo": "estimativa", "fonte": "Paris je t'aime e Sortir à Paris (prato a partir de ~13 €; refeição de 15 a 30 €)", "url": "https://www.bouillon-chartier.com/", "reserva": false },
+  "bouillon-pigalle": { "min": 1200, "max": 2200, "selo": "estimativa", "fonte": "Gault&Millau 2026 (bœuf bourguignon 12,20 €) e Yonder (pratos a partir de 9,20 €)", "url": "https://fr.gaultmillau.com/fr/restaurants/bouillon-pigalle", "reserva": false },
+  "as-du-fallafel": { "min": 1000, "max": 1200, "selo": "estimativa", "fonte": "Loja on-line oficial via Rankeat (falafel especial 10 €, set/2026)", "url": "https://rankeat.fr/restaurants/las-du-fallafel-paris-4e", "reserva": false },
+  "breizh-cafe": { "min": 2000, "max": 4000, "selo": "estimativa", "fonte": "Paris je t'aime (preço médio à la carte)", "url": "https://parisjetaime.com/restaurant/breizh-cafe-p414", "reserva": false }
+ },
+ "transporte": {
+  "metro": { "valor": 255, "selo": "referencia", "fonte": "RATP, Ticket Métro-Train-RER (01/01/2026)", "url": "https://www.ratp.fr/titres-et-tarifs/ticket-metro-train-rer" },
+  "aeroporto-trem": { "valor": 1400, "selo": "referencia", "fonte": "RATP, Ticket Paris Région ⇄ Aéroports (por trecho)", "url": "https://www.ratp.fr/titres-et-tarifs/ticket-paris-region-aeroports" },
+  "taxi-cdg-direita": { "valor": 5600, "selo": "referencia", "fonte": "Service-public.gouv.fr: tarifa fixa de táxi CDG ⇄ margem direita (2026)", "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34349" },
+  "taxi-cdg-esquerda": { "valor": 6500, "selo": "referencia", "fonte": "Service-public.gouv.fr: tarifa fixa de táxi CDG ⇄ margem esquerda (2026)", "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34349" }
+ }
+}
