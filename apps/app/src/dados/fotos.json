@@ -350,5 +350,71 @@
   "licencaUrl": null,
   "pagina": "https://commons.wikimedia.org/wiki/File:Conseil_d%27Etat_Paris_WA.jpg",
   "artigo": "Palais-Royal"
+ },
+ "louvre": {
+  "arquivo": "fotos/louvre.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Cour_Napol%C3%A9on_at_night_-_Louvre.jpg/500px-Cour_Napol%C3%A9on_at_night_-_Louvre.jpg",
+  "largura": 500,
+  "altura": 198,
+  "autor": "Benh LIEU SONG",
+  "licenca": "CC BY 2.5",
+  "licencaUrl": "https://creativecommons.org/licenses/by/2.5",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cour_Napol%C3%A9on_at_night_-_Louvre.jpg",
+  "artigo": "Wikidata Q19675"
+ },
+ "aligre": {
+  "arquivo": "fotos/aligre.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/March%C3%A9_dAligre_4.jpg/500px-March%C3%A9_dAligre_4.jpg",
+  "largura": 500,
+  "altura": 332,
+  "autor": "Jesús Gorriti from Madrid, Spain",
+  "licenca": "CC BY-SA 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:March%C3%A9_dAligre_4.jpg",
+  "artigo": "Wikidata Q3289864"
+ },
+ "deux-magots": {
+  "arquivo": "fotos/deux-magots.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Les_Deux_Magots%2C_25_September_2019.jpg/500px-Les_Deux_Magots%2C_25_September_2019.jpg",
+  "largura": 500,
+  "altura": 333,
+  "autor": "Cheng-en Cheng from Taichung City, Taiwan",
+  "licenca": "CC BY-SA 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Les_Deux_Magots,_25_September_2019.jpg",
+  "artigo": "Wikidata Q1147912"
+ },
+ "buttes-chaumont": {
+  "arquivo": "fotos/buttes-chaumont.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Paris_Buttes-Chaumont_005.jpg/500px-Paris_Buttes-Chaumont_005.jpg",
+  "largura": 500,
+  "altura": 375,
+  "autor": "M.Minderhoud",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Paris_Buttes-Chaumont_005.jpg",
+  "artigo": "Wikidata Q532113"
+ },
+ "arco": {
+  "arquivo": "fotos/arco.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Arc_de_Triomphe_-_Ao%C3%BBt_2026.jpg/500px-Arc_de_Triomphe_-_Ao%C3%BBt_2026.jpg",
+  "largura": 500,
+  "altura": 334,
+  "autor": "ZeusUpsistos",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Arc_de_Triomphe_-_Ao%C3%BBt_2026.jpg",
+  "artigo": "Wikidata Q64436"
+ },
+ "shakespeare": {
+  "arquivo": "fotos/shakespeare.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Shakespeare_and_Company%2C_Paris.jpg/500px-Shakespeare_and_Company%2C_Paris.jpg",
+  "largura": 500,
+  "altura": 333,
+  "autor": "Photograph by Mike Peel (www.mikepeel.net).",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Shakespeare_and_Company,_Paris.jpg",
+  "artigo": "Wikidata Q1503157"
  }
 }
