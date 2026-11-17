@@ -197,6 +197,18 @@ export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 
 export interface Hotel { id: string; nome: string; foto: string | null; endereco: string; lat: number; lon: number; estrelas: number | null; nota: number | null; avaliacoes: number | null; comodidades: string[]; total: number; porNoite: number }
 export interface Busca { fonte: string; cotadoEm: string; moeda: string; noites: number; hoteis: Hotel[] }
 
+/** A busca de hotéis está ligada? (a função responde 503 "nao_configurado" sem a chave) */
+export async function hoteisLigados(): Promise<boolean> {
+  const { error } = await supabase.functions.invoke('hoteis', { body: {} });
+  if (!error) return true;
+  try {
+    const corpo = await (error as { context?: Response }).context?.json();
+    return corpo?.erro !== 'nao_configurado';
+  } catch {
+    return true;
+  }
+}
+
 export async function buscarHoteis(p: { lat: number; lon: number; checkin: string; checkout: string; adultos: number }): Promise<{ ok: true; dados: Busca } | { ok: false; mensagem: string }> {
   const { data, error } = await supabase.functions.invoke('hoteis', { body: p });
   if (error) {

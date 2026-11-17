@@ -310,3 +310,26 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Escolha logo depois de criar a conta (com "Agora não"), troca no Perfil, lembrete no Social.
   Disponibilidade ao vivo sem revelar quem usa o nome; sugestões livres quando está em uso.
 - Busca de pessoas aceita "@nome": nome exato primeiro, depois começo do @, depois nome.
+
+## D-028 — Revisão de experiência: o que não funciona sai, Início vende viagem, LGPD de verdade
+- **Data:** 17/11/2026
+- **Status:** ✅ Aprovado pela fundadora ("Sim" à análise de UX). Telas do design alteradas mantêm o
+  original no modo de comparação (teste visual 159/159).
+- **Saem do app (até existirem de verdade):** "Continuar com Google" e "com o celular" (5.1 e nota da
+  5.4); Perfil: duas etapas, aparelhos conectados, idioma e avisos; tela de avisos no começo (prometia
+  notificações que não existem); tarefa "roteiro sem internet" (vira "Salvar o essencial fora do app").
+- **"Em breve" sem jargão:** nunca mais "tela 30.3 do design" na frente de quem usa.
+- **5.7 (plano deste aparelho):** depois de entrar, o plano do aparelho vai para a conta sem perguntar
+  quando a conta não tem plano (não há o que perder). Texto da 5.7 corrigido ("Que bom ver você de novo";
+  "ainda não tem um plano de economia").
+- **Onboarding:** idade → Início. Cidade, dinheiro e sonho são perguntados quando fazem diferença
+  (nova viagem, Descobrir), não antes de a pessoa ver qualquer viagem.
+- **Início:** carrossel de fotos de destinos (ordem pelos favoritos), "No Brasil" e "Lá fora", próxima
+  viagem com foto e contagem de dias, convite discreto para criar conta, aviso de exclusão pendente.
+- **LGPD:** Privacidade (baixar meus dados em JSON; excluir conta com senha e 14 dias para desistir;
+  remoção diária pela função `remover-contas` + workflow "Remover contas"); Aviso de privacidade; Ajuda;
+  Sobre. Contato de privacidade por configuração (`VITE_CONTATO_PRIVACIDADE`), nunca no código.
+- **Viagem:** sem "meta atingida" com R$ 0; sem R$ 0 e câmbio do euro onde não há preço; ações da parada
+  num "Editar"; Nova viagem com opcionais recolhidos; Hospedagem avisa antes quando a busca não está ligada;
+  Viagens com "Faltam N dias / Acontecendo agora / Viagem feita". Descobrir: "Planejar viagem para X",
+  filtro de preço recolhido.

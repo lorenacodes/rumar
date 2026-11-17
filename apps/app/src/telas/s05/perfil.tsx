@@ -120,12 +120,17 @@ export function Tela5_13() {
           <Linha minHeight="44px" titulo="Cidade de onde saio" detalhe={p.origin_city ?? 'Escolher'} onClick={() => navegar('/perfil/nome')} />
           <Linha titulo="E-mail" onClick={() => navegar('/perfil/email')} />
           <Linha titulo="Senha" detalhe="Trocar" onClick={() => navegar('/perfil/senha')} />
-          <Linha titulo="Verificação em duas etapas" detalhe="Desligada" onClick={emBreve('5.20')} />
-          <Linha titulo="Aparelhos conectados" onClick={emBreve('5.19')} />
-          <Linha titulo="Idioma e avisos" onClick={emBreve('30.1')} />
-          <Linha minHeight="44px" titulo="Privacidade" detalhe="Dados, encontros e conta" onClick={emBreve('30.3')} />
-          <Linha titulo="Ajuda e contato" onClick={emBreve('29.1')} />
-          <Linha minHeight="44px" titulo="Sobre o Bo Vair" detalhe="Termos, privacidade e versão" onClick={emBreve('30.12')} />
+          {/* Itens que ainda não existem (duas etapas, aparelhos, avisos) saem do app (D-028); a comparação com o design mantém a 5.13 original. */}
+          {demo ? (
+            <>
+              <Linha titulo="Verificação em duas etapas" detalhe="Desligada" onClick={emBreve('5.20')} />
+              <Linha titulo="Aparelhos conectados" onClick={emBreve('5.19')} />
+              <Linha titulo="Idioma e avisos" onClick={emBreve('30.1')} />
+            </>
+          ) : null}
+          <Linha minHeight="44px" titulo="Privacidade" detalhe={demo ? 'Dados, encontros e conta' : 'Baixar dados e excluir a conta'} onClick={demo ? emBreve('30.3') : () => navegar('/perfil/privacidade')} />
+          <Linha titulo="Ajuda e contato" onClick={demo ? emBreve('29.1') : () => navegar('/perfil/ajuda')} />
+          <Linha minHeight="44px" titulo="Sobre o Bo Vair" detalhe="Termos, privacidade e versão" onClick={demo ? emBreve('30.12') : () => navegar('/perfil/sobre')} />
         </div>
         <button type="button" className="r-btn" onClick={() => navegar('/perfil/sair')} style={{ width: '100%', height: '48px', marginTop: '0px', font: "600 15px 'Open Sans'", color: 'var(--vermelho)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           Sair da conta

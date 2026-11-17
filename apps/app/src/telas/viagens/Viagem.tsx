@@ -10,7 +10,7 @@ import { calcular, sugerirAjustes, type Precos } from '../../lib/orcamento';
 import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type Gosto, type Lugar, type Periodo } from '../../lib/planejador';
 import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
-  acompanhar, adicionarGasto, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
+  acompanhar, adicionarGasto, hoteisLigados, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
   marcarFeito, montarRoteiro, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
 } from '../../lib/viagens';
 import { converter, taxa } from '../../lib/moedas';
@@ -165,6 +165,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
   const navegar = useNavigate();
   const { alternarSalvo, salvos } = useViajante();
   const [trocando, setTrocando] = useState<string | null>(null);
+  const [editando, setEditando] = useState<string | null>(null);
   const doDia = itens.filter((x) => x.it.dia === dia).sort((a, b) => a.it.ordem - b.it.ordem);
   const usados = new Set(itens.map((x) => x.l.id));
   const faixas = ['Manhã', 'Tarde', 'Noite'].map((f) => ({ f, lista: doDia.filter((x) => FAIXA[x.it.periodo] === f) })).filter((x) => x.lista.length);
@@ -216,6 +217,12 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                   {pode ? (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
                       {it.situacao === 'sugerido' ? <button type="button" className="r-btn" onClick={() => void executar(confirmarSugestao(it))} style={acao}>Confirmar</button> : null}
+                      <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? '✓ Feito' : 'Marcar feito'}</button>
+                      <button type="button" className="r-btn" aria-expanded={editando === it.id} onClick={() => setEditando(editando === it.id ? null : it.id)} style={acao}>{editando === it.id ? 'Fechar ▴' : 'Editar ▾'}</button>
+                    </div>
+                  ) : null}
+                  {pode && editando === it.id ? (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px', padding: '6px', background: 'var(--cartao-2)' }}>
                       <button type="button" className="r-btn" disabled={i === 0} aria-label="Subir" onClick={() => void executar(Promise.all([moverItem(it, dia, doDia[i - 1]!.it.ordem), moverItem(doDia[i - 1]!.it, dia, it.ordem)]))} style={acao}>↑</button>
                       <button type="button" className="r-btn" disabled={i === doDia.length - 1} aria-label="Descer" onClick={() => void executar(Promise.all([moverItem(it, dia, doDia[i + 1]!.it.ordem), moverItem(doDia[i + 1]!.it, dia, it.ordem)]))} style={acao}>↓</button>
                       <label style={{ ...acao, display: 'inline-flex', alignItems: 'center' }}>
@@ -225,16 +232,16 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                         </select>
                       </label>
                       <button type="button" className="r-btn" onClick={() => setTrocando(trocando === it.id ? null : it.id)} style={acao}>Trocar</button>
-                      <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? '✓ Feito' : 'Marcar feito'}</button>
                       <label style={{ ...acao, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         <span className="visualmente-oculto">Horário de {l.nome}</span>
                         <input type="time" defaultValue={it.hora?.slice(0, 5) ?? ''} onBlur={(e) => { const h = e.target.value; if (h !== (it.hora?.slice(0, 5) ?? '')) void executar(mudarHora(it, h || null)); }} style={{ border: 0, background: 'transparent', font: "600 13px 'Open Sans'", color: 'var(--texto)', width: '88px' }} />
                       </label>
                       <button type="button" className="r-btn" aria-label={`Tirar ${l.nome}`} onClick={() => void executar(removerItem(it))} style={{ ...acao, color: 'var(--vermelho)' }}>Tirar</button>
                     </div>
-                  ) : (
+                  ) : null}
+                  {!pode ? (
                     <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={{ ...acao, marginTop: '4px' }}>{salvos.includes(l.id) ? '♥ Salvo nos meus lugares' : '♡ Salvar como inspiração'}</button>
-                  )}
+                  ) : null}
                   {trocando === it.id ? (
                     <div style={{ marginTop: '6px', borderLeft: '3px solid var(--amarelo)', paddingLeft: '8px' }}>
                       <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Mesma categoria, mais perto primeiro:</div>
@@ -311,6 +318,11 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
   const [comparar, setComparar] = useState<string[]>([]);
+  // Pergunta à função se a busca está ligada antes de oferecer o botão (sem chave → 503 na hora).
+  const [ligada, setLigada] = useState<boolean | null>(null);
+  useEffect(() => {
+    void hoteisLigados().then(setLigada);
+  }, []);
   const comCoord = itens.map((x) => x.l).filter(temCoord);
   const centro = comCoord.length ? { lat: comCoord.reduce((s, l) => s + l.lat, 0) / comCoord.length, lon: comCoord.reduce((s, l) => s + l.lon, 0) / comCoord.length } : destino ? { lat: destino.lat, lon: destino.lon } : { lat: 48.8566, lon: 2.3522 };
   const euro = EURO?.venda ?? null;
@@ -340,7 +352,12 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
           <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>{v.hospedagem.fonte}, cotado em {new Date(v.hospedagem.cotado_em).toLocaleDateString('pt-BR')}. Preços mudam até a reserva.</div>
         </div>
       ) : <p style={{ fontSize: '15px', lineHeight: '22px', margin: 0 }}>Sem hospedagem a viagem não está planejada no bolso. Busque perto do seu roteiro:</p>}
-      {pode ? (
+      {ligada === false ? (
+        <div style={{ marginTop: '10px', padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '14px', lineHeight: '20px' }}>
+          A busca de hotéis com preço ainda não está ligada nesta versão. Enquanto isso, informe o valor da hospedagem em <b>Dinheiro → Custos → Informar um gasto</b>, e veja hotéis e pousadas da cidade no Descobrir.
+        </div>
+      ) : null}
+      {pode && ligada !== false ? (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px' }}>
             <label style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Entrada<input type="date" className="r-input" value={checkin} onChange={(e) => setCheckin(e.target.value)} style={campo} /></label>
@@ -425,9 +442,17 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCom
   };
   return (
     <section style={{ marginTop: '14px' }}>
-      <div style={{ font: "600 26px 'Lexend Exa'" }}>{reais(o.provavelBRL)}</div>
-      <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Faixa: {reais(o.minBRL)} a {reais(o.maxBRL)} · {reais(o.porPessoaBRL)} por pessoa ({v.viagem.viajantes})</div>
-      {EURO ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Euro a R$ {EURO.venda.toFixed(4).replace('.', ',')} (Banco Central, PTAX de {EURO.data.split('-').reverse().join('/')})</div> : <Aviso cor="var(--ambar)">Câmbio do Banco Central ainda não carregado: os valores em euro não entram no total em reais.</Aviso>}
+      {o.provavelBRL > 0 ? (
+        <>
+          <div style={{ font: "600 26px 'Lexend Exa'" }}>{reais(o.provavelBRL)}</div>
+          <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Faixa: {reais(o.minBRL)} a {reais(o.maxBRL)} · {reais(o.porPessoaBRL)} por pessoa ({v.viagem.viajantes})</div>
+        </>
+      ) : (
+        <div style={{ padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '15px', lineHeight: '22px' }}>
+          <b>Ainda sem preços com fonte para esta viagem.</b> Escolha a hospedagem ou informe gastos (passagem, por exemplo) logo abaixo para começar a somar.
+        </div>
+      )}
+      {!o.categorias.some((c) => c.linhas.some((l) => l.moeda === 'EUR' && !l.semPreco && l.max > 0)) ? null : EURO ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Euro a R$ {EURO.venda.toFixed(4).replace('.', ',')} (Banco Central, PTAX de {EURO.data.split('-').reverse().join('/')})</div> : <Aviso cor="var(--ambar)">Câmbio do Banco Central ainda não carregado: os valores em euro não entram no total em reais.</Aviso>}
       {limiteC ? (
         <div style={{ marginTop: '10px', padding: '10px 12px', background: o.provavelBRL > limiteC ? 'var(--cartao-1)' : 'var(--cartao-2)' }}>
           <b>{o.provavelBRL > limiteC ? `Passa ${reais(o.provavelBRL - limiteC)} do orçamento de ${reais(limiteC)}.` : `Dentro do orçamento de ${reais(limiteC)} (sobram ${reais(limiteC - o.provavelBRL)}).`}</b>

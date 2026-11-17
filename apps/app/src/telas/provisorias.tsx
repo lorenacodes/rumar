@@ -60,7 +60,8 @@ const MOTIVOS: Record<string, string> = {
 export function EmBreve() {
   const { tela = '' } = useParams();
   const aba = tela === 'descobrir' ? 'descobrir' : tela === 'minha-viagem' ? 'viagem' : null;
-  const texto = MOTIVOS[tela] ?? `Esta parte (tela ${tela} do design) entra numa próxima versão.`;
+  // Sem jargão interno (números de tela do design) na frente de quem usa o app.
+  const texto = MOTIVOS[tela] ?? 'Esta parte ainda não está disponível nesta versão do app.';
   return (
     <main className="tela" data-provisoria="em-breve">
       <div style={{ padding: 'calc(22px + env(safe-area-inset-top)) 20px 0' }}>

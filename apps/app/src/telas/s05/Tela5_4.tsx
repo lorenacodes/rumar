@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 
 import { useFluxoConta } from '../../conta/fluxo';
-import { ANA, useValorInicial } from '../../dev/demo';
+import { ANA, useDemo, useValorInicial } from '../../dev/demo';
 import { BotaoPrincipal, BotaoTexto, Rodape, Voltar } from '../../ui/pecas';
 import { Nota } from '../../ui/textos';
 
 /** 5.4 E-mail já tem conta. */
 export function Tela5_4() {
   const navegar = useNavigate();
+  const demo = useDemo();
   const email = useValorInicial<string>(ANA.email, useFluxoConta((s) => s.email));
   return (
     <main className="tela" data-tela="5.4">
@@ -18,7 +19,7 @@ export function Tela5_4() {
         <p style={{ margin: 0, fontSize: '15px', lineHeight: '22px', color: 'var(--texto-sec)', marginTop: '8px' }}>
           Achamos uma conta com {email}. Entre nela e escolha o que fazer com o plano deste aparelho.
         </p>
-        <Nota marginTop="14px">Criou com o Google? Toque em “Continuar com Google” na tela de entrar.</Nota>
+        {demo ? <Nota marginTop="14px">Criou com o Google? Toque em “Continuar com Google” na tela de entrar.</Nota> : null}
       </div>
       <Rodape padding="10px 20px 14px">
         <BotaoPrincipal onClick={() => navegar('/entrar')}>Entrar nessa conta ↗</BotaoPrincipal>

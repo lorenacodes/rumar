@@ -20,7 +20,8 @@ export function Tela1_1() {
     // A data não é guardada: só o resultado "maior de 18" segue adiante.
     const maior = maiorDe18(nascimento, new Date());
     atualizar({ maior18: maior });
-    navegar(maior ? '/boas-vindas' : '/menor-de-18', { replace: true });
+    // Depois da idade, direto para o Início com os destinos (D-028): o resto se pergunta quando precisar.
+    navegar(maior ? '/inicio' : '/menor-de-18', { replace: true });
   };
 
   return (
@@ -64,7 +65,7 @@ export function Tela1_1() {
             <br />
             Você vê, corrige, baixa e apaga quando quiser.
           </div>
-          <button type="button" className="link-acao" style={{ marginTop: 6 }} onClick={() => navegar('/em-breve/aviso-de-privacidade')}>
+          <button type="button" className="link-acao" style={{ marginTop: 6 }} onClick={() => navegar('/privacidade')}>
             Ler o aviso completo ›
           </button>
         </div>

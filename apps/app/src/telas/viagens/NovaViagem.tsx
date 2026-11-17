@@ -98,6 +98,9 @@ export function NovaViagem() {
         <Passo valor={noites} menor={1} maior={14} aoMudar={setNoites} rotulo="uma noite" />
         <Rotulo>Quantas pessoas viajam</Rotulo>
         <Passo valor={viajantes} menor={1} maior={10} aoMudar={setViajantes} rotulo="uma pessoa" />
+        <details style={{ marginTop: '18px', borderTop: '1px solid var(--linha)', borderBottom: '1px solid var(--linha)' }}>
+          <summary style={{ minHeight: '52px', display: 'flex', alignItems: 'center', cursor: 'pointer', font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Mais detalhes (opcional): orçamento, economia e documentos</summary>
+          <div style={{ paddingBottom: '12px' }}>
         <Rotulo><label htmlFor="orc">Orçamento total (opcional, em {moedaReferencia})</label></Rotulo>
         <input id="orc" className="r-input" inputMode="decimal" placeholder={`Ex.: ${dinheiro(1_500_000, moedaReferencia)}`} value={orcamento} onChange={(e) => setOrcamento(e.target.value.replace(/[^\d.,]/g, ''))} style={campo} />
         <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>Avisamos se o roteiro passar desse valor e sugerimos trocas.</div>
@@ -122,7 +125,9 @@ export function NovaViagem() {
         ) : null}
         <Rotulo>Já comprou a passagem?</Rotulo>
         <Segmentos rotulo="Já comprou a passagem?" valor={(diag.passagem ?? '') as 'sim'} aoMudar={(x) => setDiag({ ...diag, passagem: x as 'sim' | 'nao' })} opcoes={[{ id: 'sim', nome: 'Já comprei' }, { id: 'nao', nome: 'Ainda não' }]} />
-        <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>Pode pular: as perguntas também ficam em Etapas, e as tarefas mostram só o que vale para o seu caso.</div>
+        <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>Tudo aqui pode ficar para depois: as mesmas perguntas estão em Etapas, e as tarefas mostram só o que vale para o seu caso.</div>
+          </div>
+        </details>
         {!preferencias ? <p style={{ fontSize: '14px', color: 'var(--azul)', fontWeight: 600 }}>Antes, conte seu jeito de viajar (1 minuto): o roteiro nasce dele.</p> : null}
         {erro ? <Aviso>{erro}</Aviso> : null}
         <div style={{ height: '16px' }} />

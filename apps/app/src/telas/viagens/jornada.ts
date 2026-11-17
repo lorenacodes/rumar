@@ -54,7 +54,8 @@ export function montarJornada(v: ViagemCompleta, provavelBRL: number | null, per
   const moedaPlano = vg.moeda_planejamento ?? 'BRL';
   const diag = vg.diagnostico ?? {};
   const guardado = (vg.guardado_centavos ?? 0) + v.aportes.reduce((s, a) => s + a.valor_centavos, 0);
-  const estimativa = provavelBRL === null ? null : converter(provavelBRL, taxa('BRL', moedaPlano));
+  // Sem nenhum preço com fonte (custo 0), não há meta: nunca dizer "meta atingida" com R$ 0.
+  const estimativa = !provavelBRL ? null : converter(provavelBRL, taxa('BRL', moedaPlano));
   const atracoes = [...new Set(v.itens.filter((i) => reservaveis.has(i.place_id)).map((i) => lugarPorId(i.place_id)?.nome).filter(Boolean) as string[])];
 
   const base: Omit<Contexto, 'meta'> = {

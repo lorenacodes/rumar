@@ -1,0 +1,22 @@
+name: Remover contas
+
+# Remove de vez as contas com exclusão pedida há mais de 14 dias (LGPD). Uma vez por dia.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 6 * * *'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  remover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar a função remover-contas
+        run: |
+          TOKEN=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=bovair-remover-contas" | jq -r .value)
+          RESPOSTA=$(curl -sS -X POST -H "Authorization: Bearer $TOKEN" https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/remover-contas)
+          echo "$RESPOSTA"
+          echo "$RESPOSTA" | jq -e '.ok == true' > /dev/null

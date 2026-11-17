@@ -13,6 +13,15 @@
 - [ ] **B. Chave da LiteAPI no Supabase** — Edge Functions → Secrets → `LITEAPI_KEY` = a chave (hoje a de teste; depois a de produção, nova, porque a de teste apareceu num print). Liga a busca de hotéis.
 - [ ] **C. Chave de produção da LiteAPI** — quando quiser preços para reservar de verdade (a de teste mostra "ambiente de teste").
 
+## LGPD e Google Play — antes de publicar
+- [ ] **E-mail de contato de privacidade (encarregado):** criar um e-mail (ex.: privacidade@ seu domínio ou
+      um Gmail só para isso) e me passar para eu colocar em `VITE_CONTATO_PRIVACIDADE` (é público, não é segredo).
+      Hoje o app mostra o Instagram @bovair.app como contato.
+- [ ] **Página web para pedir exclusão de conta** (exigência da Google Play para apps com conta): uma página
+      pública simples com "como excluir sua conta" e o contato. Posso montar; precisa de um endereço público.
+- [ ] **Revisão por advogado(a)** do Aviso de privacidade (Perfil → Sobre → Aviso de privacidade) antes do lançamento.
+- [ ] **Aprovar no Supabase** as mudanças de banco que pedem confirmação (nome de usuário) e a exclusão dos usuários de teste.
+
 ## Aulas de idioma específicas — chave gratuita do YouTube (5 minutos, R$ 0)
 - [ ] Criar a chave: console.cloud.google.com → criar projeto "Bo Vair" → APIs e serviços → Biblioteca →
       "YouTube Data API v3" → Ativar → Credenciais → Criar credenciais → Chave de API → em "Restrições

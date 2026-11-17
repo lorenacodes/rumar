@@ -64,8 +64,9 @@ export async function sugerir(nome: string, tentativa: string): Promise<string[]
 export async function meuUsuario(): Promise<{ username: string | null; alteradoEm: string | null; nome: string } | null> {
   const { data: u } = await supabase.auth.getUser();
   if (!u.user) return null;
-  const { data } = await supabase.from('profiles').select('username, username_alterado_em, display_name').eq('user_id', u.user.id).maybeSingle();
-  return data ? { username: (data.username as string | null) ?? null, alteradoEm: (data.username_alterado_em as string | null) ?? null, nome: data.display_name as string } : null;
+  // select('*'): funciona antes e depois da migração do @ (coluna username_alterado_em).
+  const { data } = await supabase.from('profiles').select('*').eq('user_id', u.user.id).maybeSingle();
+  return data ? { username: (data.username as string | null) ?? null, alteradoEm: ((data as { username_alterado_em?: string | null }).username_alterado_em ?? null), nome: data.display_name as string } : null;
 }
 
 export type ErroUsuario = 'em_uso' | 'reservado' | 'troca_recente' | 'invalido' | 'rede';

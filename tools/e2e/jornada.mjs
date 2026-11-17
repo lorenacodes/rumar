@@ -40,6 +40,7 @@ console.log('— Nova viagem: previsão, guardado, capacidade, diagnóstico');
 await p.goto(URL + '#/viagens/nova?d=fr-paris'); await p.waitForTimeout(1500);
 await p.getByRole('tab', { name: 'Ainda é uma previsão' }).click();
 await p.locator('#ida').fill(mais(75));
+await p.getByText('Mais detalhes (opcional)').click();
 await p.locator('#orc').fill('9000');
 await p.locator('#guardado').fill('2000');
 await p.locator('#mensal').fill('300');
@@ -132,6 +133,7 @@ await p.getByRole('tab', { name: 'Roteiro' }).click(); await p.waitForTimeout(80
 const marcar = p.getByRole('button', { name: 'Marcar feito' }).first();
 if (await marcar.count()) { await marcar.click(); await p.waitForTimeout(2500); confere('item marcado como feito', (await p.getByText('✓ Feito').count()) > 0); }
 else console.log('   (dia 1 sem itens)');
+await p.getByRole('button', { name: 'Editar ▾' }).first().click().catch(() => {}); await p.waitForTimeout(300);
 const hora = p.locator('input[type="time"]').first();
 if (await hora.count()) { await hora.fill('10:15'); await hora.blur(); await p.waitForTimeout(2500); confere('horário alterado', /10h15/.test(await texto())); }
 

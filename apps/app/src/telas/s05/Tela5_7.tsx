@@ -23,10 +23,10 @@ export function Tela5_7() {
   return (
     <main className="tela" data-tela="5.7">
       <div style={{ padding: '22px 20px 0' }}>
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Bem-vinda de volta</div>
+        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>{demo ? 'Bem-vinda de volta' : 'Que bom ver você de novo'}</div>
         <h1 style={{ margin: 0, font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Achamos um plano aqui.</h1>
         <p style={{ margin: 0, fontSize: '15px', lineHeight: '22px', color: 'var(--texto-sec)', marginTop: '8px' }}>
-          Esta conta ainda não tem viagens. Quer guardar o plano deste aparelho nela?
+          {demo ? 'Esta conta ainda não tem viagens. Quer guardar o plano deste aparelho nela?' : 'Esta conta ainda não tem um plano de economia. Quer guardar o plano deste aparelho nela?'}
         </p>
         <div style={{ marginTop: '14px', border: '2px solid var(--texto)', padding: '12px 14px' }}>
           {demo ? (

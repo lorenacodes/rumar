@@ -35,6 +35,14 @@ export function Viagens() {
     );
   }
 
+  const situacao = (v: Viagem): { texto: string; cor: string } => {
+    const hoje = new Date().toISOString().slice(0, 10);
+    const fim = new Date(Date.parse(`${v.data_ida}T12:00:00Z`) + v.noites * 86_400_000).toISOString().slice(0, 10);
+    if (hoje > fim) return { texto: 'Viagem feita', cor: 'var(--texto-sec)' };
+    if (hoje >= v.data_ida) return { texto: 'Acontecendo agora', cor: 'var(--verde)' };
+    const d = Math.round((Date.parse(`${v.data_ida}T12:00:00Z`) - Date.parse(`${hoje}T12:00:00Z`)) / 86_400_000);
+    return { texto: d === 1 ? 'Falta 1 dia' : `Faltam ${d} dias`, cor: 'var(--azul)' };
+  };
   const convites = dados?.minhas.filter((v) => v.status === 'convidado') ?? [];
   const ativas = dados?.minhas.filter((v) => v.status === 'ativo') ?? [];
   const Cartao = ({ v, extra }: { v: Viagem; extra?: string }) => (
@@ -43,7 +51,7 @@ export function Viagens() {
       <span>
         <span style={{ display: 'block', font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
         <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{periodo(v.data_ida, v.noites)} · {v.viajantes} {v.viajantes === 1 ? 'pessoa' : 'pessoas'}</span>
-        {extra ? <span style={{ display: 'block', fontSize: '13px', color: 'var(--azul)', fontWeight: 600 }}>{extra}</span> : null}
+        <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: situacao(v).cor }}>{extra ?? situacao(v).texto}</span>
       </span>
     </button>
   );

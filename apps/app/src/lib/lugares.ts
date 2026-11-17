@@ -81,7 +81,7 @@ const TIPO: Record<string, string> = {
   museum: 'Museu', park: 'Parque', garden: 'Jardim', nature_reserve: 'Reserva natural', national_park: 'Parque nacional', beach: 'Praia', attraction: 'Atração', viewpoint: 'Mirante',
   theatre: 'Teatro', arts_centre: 'Centro cultural', cinema: 'Cinema', gallery: 'Galeria', mall: 'Shopping', department_store: 'Loja de departamentos', gift: 'Presentes', craft: 'Artesanato', art: 'Arte',
   souvenir: 'Lembranças', marketplace: 'Mercado', farm: 'Produtos da roça', nightclub: 'Balada', events_venue: 'Casa de eventos', music_venue: 'Casa de shows', zoo: 'Zoológico', aquarium: 'Aquário',
-  theme_park: 'Parque temático', water_park: 'Parque aquático', marina: 'Marina', station: 'Estação', bus_station: 'Rodoviária', ferry_terminal: 'Terminal de barcos', aerodrome: 'Aeroporto',
+  theme_park: 'Parque temático', artwork: 'Obra de arte', water_park: 'Parque aquático', marina: 'Marina', station: 'Estação', bus_station: 'Rodoviária', ferry_terminal: 'Terminal de barcos', aerodrome: 'Aeroporto',
   historic_monument: 'Monumento', historic_castle: 'Castelo', historic_fort: 'Forte', historic_ruins: 'Ruínas', historic_church: 'Igreja histórica', historic_building: 'Prédio histórico',
   historic_archaeological_site: 'Sítio arqueológico', historic_city_gate: 'Portão histórico', historic_manor: 'Solar', historic_monastery: 'Mosteiro', historic_palace: 'Palácio',
 };

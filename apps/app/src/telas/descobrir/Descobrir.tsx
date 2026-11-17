@@ -67,6 +67,7 @@ export function Descobrir() {
   const [max, setMax] = useState('');
   const [gratis, setGratis] = useState(false);
   const [mapa, setMapa] = useState(false);
+  const [verPreco, setVerPreco] = useState(false);
   const [pagina, setPagina] = useState(0);
   const [itens, setItens] = useState<Item[]>([]);
   const [total, setTotal] = useState(0);
@@ -155,6 +156,9 @@ export function Descobrir() {
           {destino ? <button type="button" className="r-btn" onClick={() => setTrocando(!trocando)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>{trocando ? 'Cancelar' : 'Trocar cidade'}</button> : null}
         </div>
         <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{destino ? `O que viver em ${destino.nome}.` : 'Para onde você quer ir?'}</h1>
+        {destino && !trocando && !viagem ? (
+          <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destino.id}`)} style={{ marginTop: '10px', height: '44px', padding: '0 14px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Planejar viagem para {destino.nome} ↗</button>
+        ) : null}
         {!destino || trocando ? (
           <div style={{ marginTop: '10px' }}>
             <EscolherDestino autoFoco={trocando} aoEscolher={(d) => (setDestino(d), setTrocando(false), setTermo(''), setParams((p) => { const n = new URLSearchParams(p); n.set('d', d.id); return n; }, { replace: true }))} />
@@ -176,12 +180,17 @@ export function Descobrir() {
                 );
               })}
             </div>
-            <div role="group" aria-label="Preço e mapa" style={{ display: 'flex', gap: '6px', alignItems: 'flex-end', marginTop: '8px', flexWrap: 'wrap' }}>
-              <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '88px' }}>Preço mín. ({moeda})<input inputMode="decimal" className="r-input" value={min} onChange={(e) => setMin(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
-              <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '88px' }}>Preço máx. ({moeda})<input inputMode="decimal" className="r-input" value={max} onChange={(e) => setMax(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
-              <button type="button" className="r-btn" aria-pressed={gratis} onClick={() => setGratis(!gratis)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(gratis ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Grátis</button>
+            <div role="group" aria-label="Mapa e filtros" style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
               <button type="button" className="r-btn" aria-pressed={mapa} onClick={() => setMapa(!mapa)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{mapa ? 'Ver lista' : 'Ver no mapa'}</button>
+              <button type="button" className="r-btn" aria-pressed={gratis} onClick={() => setGratis(!gratis)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(gratis ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Grátis</button>
+              <button type="button" className="r-btn" aria-expanded={verPreco || comPreco} onClick={() => setVerPreco(!verPreco)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(comPreco ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Preço {verPreco || comPreco ? '▴' : '▾'}</button>
             </div>
+            {verPreco || comPreco ? (
+              <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '110px' }}>Mínimo ({moeda})<input inputMode="decimal" className="r-input" value={min} onChange={(e) => setMin(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
+                <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '110px' }}>Máximo ({moeda})<input inputMode="decimal" className="r-input" value={max} onChange={(e) => setMax(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
+              </div>
+            ) : null}
             {comPreco || gratis ? <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Só entram lugares com preço ou gratuidade informados por uma fonte. A maioria dos estabelecimentos não publica preço em bases abertas: eles ficam de fora deste filtro, não somem do app.</p> : null}
             {viagem ? <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--azul)', margin: '8px 0 0' }}>Escolha um lugar para adicionar à sua viagem.</p> : null}
 

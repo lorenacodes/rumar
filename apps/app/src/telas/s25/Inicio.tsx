@@ -1,172 +1,159 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { carregarDaConta, carregarPerfil, useSessao } from '../../conta/servico';
-import { usePlano } from '../../state/plano';
-import { Abas } from '../../ui/abas';
-import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 import DESTINOS from '../../dados/destinos.json';
+import { destinoPorNome } from '../../lib/lugares';
+import { cancelarExclusao, estadoExclusao } from '../../lib/privacidade';
 import { meusFavoritos, type Favorito } from '../../lib/social';
 import { listarViagens, type Viagem } from '../../lib/viagens';
-import { FotoLugar } from '../../ui/foto';
+import { Abas } from '../../ui/abas';
+import { DESTINOS_COM_FOTO, FotoDestino } from '../../ui/foto';
+import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 
-const reais = (centavos: number) => `R$ ${(centavos / 100).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+interface DestinoCartao { nome: string; pais: string; foto?: string | null; tracos: string[] }
+const TODOS = (DESTINOS as { destinos: DestinoCartao[] }).destinos;
+const COM_FOTO = TODOS.filter((d) => d.foto && DESTINOS_COM_FOTO.includes(d.foto));
+const TRACO: Record<string, string> = { cultura: 'cultura', museus: 'museus', gastronomia: 'comida boa', romantico: 'romântico', compras: 'compras', 'cidade-grande': 'cidade grande', historia: 'história', mirantes: 'mirantes', litoral: 'litoral', praia: 'praia', natureza: 'natureza', aventura: 'aventura', vinhos: 'vinhos', serra: 'serra', frio: 'clima de serra', festa: 'festa', noite: 'vida noturna', arquitetura: 'arquitetura', 'historia-colonial': 'história colonial', ecoturismo: 'ecoturismo', mergulho: 'mergulho' };
+const chamada = (d: DestinoCartao) => d.tracos.slice(0, 3).map((t) => TRACO[t] ?? t.replace('-', ' ')).join(' · ');
 
-/** Destinos parecidos com os favoritos (características em comum, dados/destinos.json). */
-function parecidos(favoritos: Favorito[]): { nome: string; pais: string; foto?: string; porque: string }[] {
-  const lista = (DESTINOS as { destinos: { nome: string; pais: string; foto?: string; tracos: string[] }[] }).destinos;
-  const favs = lista.filter((d) => favoritos.some((f) => f.nome === d.nome));
-  const tracos = new Map<string, string>();
-  for (const f of favs) for (const t of f.tracos) if (!tracos.has(t)) tracos.set(t, f.nome);
-  return lista
-    .filter((d) => !favoritos.some((f) => f.nome === d.nome))
-    .map((d) => ({ d, comuns: d.tracos.filter((t) => tracos.has(t)) }))
-    .filter((x) => x.comuns.length >= 2)
-    .sort((a, b) => b.comuns.length - a.comuns.length)
-    .slice(0, 6)
-    .map(({ d, comuns }) => ({ nome: d.nome, pais: d.pais, foto: d.foto, porque: `Parecido com ${tracos.get(comuns[0]!)}: ${comuns.slice(0, 2).map((t) => t.replace('-', ' ')).join(' e ')}` }));
+/** Destinos parecidos com os favoritos (características em comum). */
+function ordenar(favs: Favorito[]): DestinoCartao[] {
+  if (!favs.length) {
+    // Sem favoritos: alterna Brasil e exterior para mostrar as duas possibilidades.
+    const br = COM_FOTO.filter((d) => d.pais === 'Brasil');
+    const fora = COM_FOTO.filter((d) => d.pais !== 'Brasil');
+    return Array.from({ length: Math.max(br.length, fora.length) }, (_, i) => [fora[i], br[i]]).flat().filter((x): x is DestinoCartao => Boolean(x));
+  }
+  const tracos = new Set(TODOS.filter((d) => favs.some((f) => f.nome === d.nome)).flatMap((d) => d.tracos));
+  return [...COM_FOTO].sort((a, b) => {
+    const fa = favs.some((f) => f.nome === a.nome) ? 10 : 0;
+    const fb = favs.some((f) => f.nome === b.nome) ? 10 : 0;
+    return fb + b.tracos.filter((t) => tracos.has(t)).length - (fa + a.tracos.filter((t) => tracos.has(t)).length);
+  });
 }
 
-/** Parte do Início para quem tem conta: próxima viagem, favoritos e sugestões. */
-function ParaVoce() {
+function useAbrirDestino() {
   const navegar = useNavigate();
-  const [favs, setFavs] = useState<Favorito[]>([]);
-  const [viagem, setViagem] = useState<Viagem | null | undefined>(undefined);
-  useEffect(() => {
-    void meusFavoritos().then(setFavs);
-    void listarViagens().then((v) => setViagem(v.minhas.filter((x) => x.status === 'ativo' && x.data_ida >= new Date().toISOString().slice(0, 10))[0] ?? null));
-  }, []);
-  const sugestoes = parecidos(favs);
-  const Rot = ({ t }: { t: string }) => <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '18px 0 6px' }}>{t}</div>;
+  return async (d: DestinoCartao) => {
+    const achado = await destinoPorNome(d.nome);
+    navegar(achado ? `/descobrir?d=${achado.id}` : '/descobrir');
+  };
+}
+
+/** Cartão grande com foto, para o carrossel principal. */
+function CartaoGrande({ d, favorito }: { d: DestinoCartao; favorito: boolean }) {
+  const abrir = useAbrirDestino();
   return (
-    <>
-      <Rot t="Próxima viagem" />
-      {viagem ? (
-        <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', textAlign: 'left', border: '2px solid var(--texto)', padding: '10px' }}>
-          <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={viagem.destino} proporcao="1 / 1" credito={false} compacto /></span>
-          <span><b style={{ font: "600 18px 'Lexend Exa'" }}>{viagem.destino}</b><span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>Roteiro, hospedagem e orçamento ›</span></span>
-        </button>
-      ) : viagem === null ? (
-        <BotaoContorno onClick={() => navegar('/viagens/nova')}>Planejar uma viagem ↗</BotaoContorno>
-      ) : null}
-      <Rot t="Seus destinos favoritos" />
-      {favs.length ? (
-        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 4px' }}>
-          {favs.map((f) => (
-            <div key={f.chave} style={{ flex: 'none', width: '120px' }}>
-              <FotoLugar id={f.nome} proporcao="4 / 3" credito={false} compacto />
-              <b style={{ display: 'block', fontSize: '14px', marginTop: '4px' }}>{f.nome}</b>
-              <span style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>{f.pais}</span>
-            </div>
-          ))}
-        </div>
-      ) : null}
-      <button type="button" className="r-btn" onClick={() => navegar('/destinos')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>{favs.length ? 'Mudar favoritos' : 'Escolher destinos que quero conhecer ↗'}</button>
-      {sugestoes.length ? (
-        <>
-          <Rot t="Você também pode gostar" />
-          {sugestoes.map((d) => (
-            <div key={d.nome} style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--linha)' }}>
-              <span style={{ width: '56px', flex: 'none' }}><FotoLugar id={d.foto ?? d.nome} proporcao="1 / 1" credito={false} compacto /></span>
-              <span style={{ flex: 1 }}><b>{d.nome}</b> <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>· {d.pais}</span><span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{d.porque}</span></span>
-            </div>
-          ))}
-        </>
-      ) : null}
-      {favs.some((f) => f.nome === 'Paris') ? (
-        <>
-          <Rot t="Experiências em Paris" />
-          <BotaoContorno onClick={() => navegar('/descobrir')}>Ver lugares, preços e mapa ↗</BotaoContorno>
-        </>
-      ) : null}
-      <div style={{ height: '16px' }} />
-    </>
+    <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}, ${d.pais}: ver o que viver lá`}
+      style={{ position: 'relative', flex: 'none', width: '78%', maxWidth: '320px', aspectRatio: '4 / 5', overflow: 'hidden', scrollSnapAlign: 'start', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))', textAlign: 'left' }}>
+      <FotoDestino nome={d.foto ?? d.nome} credito={false} />
+      <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.72) 100%)' }} />
+      <span style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 2, color: '#fff' }}>
+        {favorito ? <span style={{ display: 'inline-block', font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', padding: '2px 6px', marginBottom: '6px' }}>♥ Seu favorito</span> : null}
+        <span style={{ display: 'block', font: "600 26px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{d.nome}</span>
+        <span style={{ display: 'block', fontSize: '14px', opacity: 0.92 }}>{d.pais} · {chamada(d)}</span>
+      </span>
+    </button>
   );
 }
 
+function CartaoPequeno({ d }: { d: DestinoCartao }) {
+  const abrir = useAbrirDestino();
+  return (
+    <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}: ver o que viver lá`} style={{ flex: 'none', width: '148px', textAlign: 'left' }}>
+      <span style={{ position: 'relative', display: 'block', width: '148px', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}><FotoDestino nome={d.foto ?? d.nome} credito={false} /></span>
+      <b style={{ display: 'block', font: "600 15px/20px 'Lexend Exa'", marginTop: '6px' }}>{d.nome}</b>
+      <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{chamada(d)}</span>
+    </button>
+  );
+}
+
+const Rot = ({ t }: { t: string }) => <h2 style={{ font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em', margin: '22px 0 8px' }}>{t}</h2>;
+const fileira = { display: 'flex', gap: '10px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 6px', scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
+const diasAte = (iso: string) => Math.round((Date.parse(`${iso}T12:00:00`) - Date.now()) / 86_400_000);
+
 /**
- * Início com os dados REAIS da pessoa (plano do aparelho ou da conta no Supabase).
- * Sem conta: mostra o plano montado e o próximo passo claro, "Criar conta e guardar".
- * Com conta: cumprimenta pelo nome e mostra o plano guardado no banco.
- * (A 25.1 do design, o feed de quem viaja, depende da comunidade, ainda sem dados reais.)
+ * Início: dá vontade de viajar logo na primeira tela (fotos de destinos), mostra a próxima
+ * viagem com contagem regressiva para quem tem conta e convida a criar conta sem bloquear nada.
  */
 export function Inicio() {
   const navegar = useNavigate();
   const sessao = useSessao();
-  const plano = usePlano();
   const [nome, setNome] = useState<string | null>(null);
+  const [favs, setFavs] = useState<Favorito[]>([]);
+  const [viagem, setViagem] = useState<Viagem | null | undefined>(undefined);
+  const [exclusao, setExclusao] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!sessao) return;
     void carregarDaConta();
     void carregarPerfil().then((p) => setNome(p?.display_name ?? null));
+    void meusFavoritos().then(setFavs);
+    void listarViagens().then((v) => setViagem(v.minhas.filter((x) => x.status === 'ativo' && x.data_ida >= new Date().toISOString().slice(0, 10)).sort((a, b) => a.data_ida.localeCompare(b.data_ida))[0] ?? null));
+    void estadoExclusao().then((e) => setExclusao(e?.apagaEm ?? null));
   }, [sessao]);
 
-  const temPlano = plano.mensal > 0;
-  const passos = [
-    { feito: plano.maior18, texto: 'Conferir a idade' },
-    { feito: Boolean(plano.origem), texto: 'Cidade de onde você sai' },
-    { feito: temPlano, texto: 'Quanto você guarda por mês' },
-    { feito: Boolean(sessao), texto: 'Criar conta e guardar o plano' },
-  ];
-  const proximo = passos.find((p) => !p.feito);
+  const destaques = useMemo(() => ordenar(favs), [favs]);
+  const brasil = COM_FOTO.filter((d) => d.pais === 'Brasil');
+  const fora = COM_FOTO.filter((d) => d.pais !== 'Brasil');
+  const primeiroNome = (nome ?? '').split(' ')[0];
+  const dias = viagem ? diasAte(viagem.data_ida) : null;
 
   return (
     <main className="tela" data-tela="inicio" data-real="inicio">
       <div style={{ padding: 'calc(22px + env(safe-area-inset-top)) 20px 0' }}>
         <div style={{ font: "600 20px 'Lexend Exa'", letterSpacing: '-0.04em' }}>bo vair</div>
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '22px' }}>{sessao ? 'Sua conta' : 'Seu plano'}</div>
-        <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
-          {sessao ? `Olá, ${(nome ?? '').split(' ')[0] || 'viajante'}.` : temPlano ? 'Seu plano está pronto.' : 'Vamos montar seu plano.'}
-        </h1>
-
-        {temPlano ? (
-          <div style={{ background: 'var(--fundo-escuro)', color: '#fff', borderTop: '8px solid var(--amarelo)', padding: '14px 18px', marginTop: '14px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <b style={{ font: "600 32px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{reais(plano.mensal)}</b>
-              <span style={{ fontSize: '15px', color: '#AEBBE0' }}>por mês</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '15px', color: '#AEBBE0' }}>
-              <span>Já guardado</span>
-              <b style={{ color: 'var(--amarelo)' }}>{reais(plano.guardado)}</b>
-            </div>
-            {plano.cidade ? <div style={{ fontSize: '14px', color: '#AEBBE0', marginTop: '6px' }}>Saindo de {plano.cidade}</div> : null}
+        {exclusao ? (
+          <div role="status" style={{ marginTop: '12px', padding: '10px 12px', background: 'var(--cartao-1)', fontSize: '14px', lineHeight: '20px' }}>
+            Sua conta será apagada em <b>{exclusao.toLocaleDateString('pt-BR')}</b>.{' '}
+            <button type="button" className="r-btn" onClick={() => void cancelarExclusao().then(() => setExclusao(null))} style={{ color: 'var(--azul)', fontWeight: 600, minHeight: '36px' }}>Desistir da exclusão</button>
           </div>
         ) : null}
+        <h1 style={{ margin: '14px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
+          {sessao && primeiroNome ? `Olá, ${primeiroNome}. Para onde agora?` : 'Para onde você quer ir?'}
+        </h1>
 
-        {!sessao ? (
-          <>
-            <div style={{ font: "600 17px 'Lexend Exa'", letterSpacing: '-0.02em', margin: '18px 0 4px' }}>Passo a passo</div>
-            <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {passos.map((p, i) => (
-                <li key={p.texto} style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '8px 0', borderBottom: '1px dashed var(--linha)' }}>
-                  <span aria-hidden style={{ width: '24px', height: '24px', flex: 'none', boxSizing: 'border-box', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 13px 'Open Sans'", ...(p.feito ? { background: 'var(--fundo-escuro)', color: '#fff' } : p === proximo ? { background: 'var(--amarelo)', border: '2px solid var(--texto)' } : { border: '2px solid var(--linha)' }) }}>
-                    {p.feito ? '✓' : i + 1}
-                  </span>
-                  <span style={{ flex: 1, font: "600 15px/20px 'Open Sans'", color: p.feito ? 'var(--texto-sec)' : 'var(--texto)', textDecoration: p.feito ? 'line-through' : 'none' }}>{p.texto}</span>
-                  <span className="visualmente-oculto">{p.feito ? 'feito' : p === proximo ? 'próximo passo' : 'a fazer'}</span>
-                </li>
-              ))}
-            </ol>
-          </>
-        ) : (
-          <ParaVoce />
-        )}
+        {sessao && viagem ? (
+          <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} aria-label={`Próxima viagem: ${viagem.destino}`}
+            style={{ position: 'relative', display: 'block', width: '100%', height: '150px', marginTop: '14px', overflow: 'hidden', textAlign: 'left', background: 'var(--fundo-escuro)' }}>
+            {DESTINOS_COM_FOTO.includes(viagem.destino) ? <FotoDestino nome={viagem.destino} credito={false} /> : null}
+            <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(90deg, rgba(11,31,75,.88) 0%, rgba(11,31,75,.35) 75%)' }} />
+            <span style={{ position: 'absolute', left: 16, top: 14, right: 16, zIndex: 2, color: '#fff' }}>
+              <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Sua próxima viagem</span>
+              <span style={{ display: 'block', font: "600 26px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>{viagem.destino}</span>
+              <span style={{ display: 'block', font: "600 16px 'Open Sans'", marginTop: '2px' }}>{dias === 0 ? 'É hoje!' : dias === 1 ? 'Falta 1 dia' : `Faltam ${dias} dias`}</span>
+              <span style={{ display: 'block', fontSize: '13px', opacity: 0.85, marginTop: '6px' }}>Etapas, roteiro e dinheiro ›</span>
+            </span>
+          </button>
+        ) : null}
+
+        <div role="list" aria-label="Destinos em destaque" style={{ ...fileira, marginTop: '14px' }}>
+          {destaques.slice(0, 10).map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoGrande d={d} favorito={favs.some((f) => f.nome === d.nome)} /></div>)}
+        </div>
+        <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Toque num destino para ver o que viver lá. Fotos: Wikimedia Commons (créditos em cada destino).</p>
+
+        {sessao && viagem === null ? (
+          <div style={{ marginTop: '14px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Planejar uma viagem ↗</BotaoPrincipal></div>
+        ) : null}
+
+        <Rot t="No Brasil" />
+        <div role="list" aria-label="Destinos no Brasil" style={fileira}>{brasil.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+        <Rot t="Lá fora" />
+        <div role="list" aria-label="Destinos no exterior" style={fileira}>{fora.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+
+        <button type="button" className="r-btn" onClick={() => navegar(sessao ? '/destinos' : '/descobrir')} style={{ minHeight: '44px', marginTop: '10px', color: 'var(--azul)', fontWeight: 600 }}>
+          {sessao ? (favs.length ? 'Mudar meus destinos favoritos' : 'Marcar destinos que quero conhecer ↗') : 'Buscar qualquer cidade do Brasil ou do mundo ↗'}
+        </button>
+        <div style={{ height: sessao ? '24px' : '110px' }} />
       </div>
 
       {!sessao && sessao !== undefined ? (
         <div className="rodape" style={{ padding: '10px 20px 10px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)', bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-          {!plano.maior18 ? (
-            <BotaoPrincipal onClick={() => navegar('/')}>Começar ↗</BotaoPrincipal>
-          ) : !plano.origem ? (
-            <BotaoPrincipal onClick={() => navegar('/boas-vindas')}>Escolher minha cidade ↗</BotaoPrincipal>
-          ) : !temPlano ? (
-            <BotaoPrincipal onClick={() => navegar('/seu-plano')}>Dizer quanto guardo ↗</BotaoPrincipal>
-          ) : (
-            <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta e guardar ↗</BotaoPrincipal>
-          )}
-          <div style={{ marginTop: '8px' }}>
-            <BotaoContorno onClick={() => navegar('/entrar')}>Já tenho conta · Entrar</BotaoContorno>
+          <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)', marginBottom: '8px' }}>Conta grátis: roteiros, dinheiro e amigos num lugar só.</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '8px' }}>
+            <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta ↗</BotaoPrincipal>
+            <BotaoContorno onClick={() => navegar('/entrar')}>Entrar</BotaoContorno>
           </div>
         </div>
       ) : null}

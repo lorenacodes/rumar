@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { contaTemPlano, emailValido, entrar, reenviarCodigo } from '../../conta/servico';
+import { contaTemPlano, emailValido, entrar, guardarPlanoNaConta, reenviarCodigo } from '../../conta/servico';
 import { useFluxoConta } from '../../conta/fluxo';
-import { useValorInicial, ANA } from '../../dev/demo';
+import { useDemo, useValorInicial, ANA } from '../../dev/demo';
 import { supabase } from '../../lib/supabase';
 import { usePlano } from '../../state/plano';
 import { Aviso, BotaoContorno, BotaoPrincipal, Campo, Voltar } from '../../ui/pecas';
@@ -20,17 +20,19 @@ export function MarcaQuadrada() {
   );
 }
 
-/** Para onde ir depois de entrar: oferecer o plano deste aparelho (5.7) ou o perfil. */
+/** Depois de entrar: se a conta não tem plano e o aparelho tem, guarda sem perguntar (não há o que
+ * perder, D-028) e vai para o Início. A 5.7 ficava no caminho com texto que confundia. */
 export async function destinoDepoisDeEntrar(): Promise<string> {
   const { data } = await supabase.auth.getUser();
   const temPlanoLocal = usePlano.getState().mensal > 0;
-  if (data.user && temPlanoLocal && !(await contaTemPlano(data.user.id))) return '/conta/plano-deste-aparelho';
+  if (data.user && temPlanoLocal && !(await contaTemPlano(data.user.id))) await guardarPlanoNaConta(data.user.id);
   return '/inicio';
 }
 
 /** 5.1 Entrar (com o estado de senha incorreta da 5.2). */
 export function Tela5_1() {
   const navegar = useNavigate();
+  const demo = useDemo();
   const setFluxo = useFluxoConta((s) => s.set);
   const [email, setEmail] = useState(useValorInicial<string>(ANA.email, useFluxoConta.getState().email));
   const [senha, setSenha] = useState('');
@@ -77,15 +79,20 @@ export function Tela5_1() {
         <BotaoPrincipal type="submit" disabled={enviando || !email || !senha}>
           Entrar ↗
         </BotaoPrincipal>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '18px 0', color: 'var(--texto-sec)', fontSize: '14px' }}>
-          <i style={{ flex: '1', height: '1px', background: 'var(--linha)' }} />
-          ou
-          <i style={{ flex: '1', height: '1px', background: 'var(--linha)' }} />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <BotaoContorno onClick={() => navegar('/conta/indisponivel/google')}>Continuar com Google</BotaoContorno>
-          <BotaoContorno onClick={() => navegar('/conta/indisponivel/celular')}>Continuar com o celular</BotaoContorno>
-        </div>
+        {/* Google e celular ainda não estão ligados: só aparecem na comparação com o design (D-028). */}
+        {demo ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '18px 0', color: 'var(--texto-sec)', fontSize: '14px' }}>
+              <i style={{ flex: '1', height: '1px', background: 'var(--linha)' }} />
+              ou
+              <i style={{ flex: '1', height: '1px', background: 'var(--linha)' }} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <BotaoContorno onClick={() => navegar('/conta/indisponivel/google')}>Continuar com Google</BotaoContorno>
+              <BotaoContorno onClick={() => navegar('/conta/indisponivel/celular')}>Continuar com o celular</BotaoContorno>
+            </div>
+          </>
+        ) : null}
         </div>
       </form>
       <div style={{ position: 'sticky', bottom: '0', marginTop: 'auto', zIndex: 1, padding: '10px 20px 22px', borderTop: '1px solid var(--linha)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--fundo)' }}>

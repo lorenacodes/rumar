@@ -24,7 +24,7 @@ export function AbaDinheiro({ v, j, orc, resumo, pode, recarregar }: { v: Viagem
       <Segmentos rotulo="Partes do dinheiro" valor={sub} aoMudar={setSub}
         opcoes={[{ id: 'resumo', nome: 'Custos' }, { id: 'economia', nome: 'Economia' }, { id: 'levar', nome: 'Como levar' }, { id: 'viagem', nome: 'Na viagem' }]} />
       {sub === 'resumo' ? <><TabelaMoedas j={j} orc={orc} />{resumo}</> : null}
-      {sub === 'economia' ? <Economia v={v} j={j} pode={pode} recarregar={recarregar} /> : null}
+      {sub === 'economia' ? <Economia v={v} j={j} pode={pode} recarregar={recarregar} semPrecos={orc.provavelBRL === 0} /> : null}
       {sub === 'levar' ? <ComoLevar v={v} j={j} orc={orc} /> : null}
       {sub === 'viagem' ? <NaViagem v={v} j={j} orc={orc} pode={pode} recarregar={recarregar} /> : null}
     </section>
@@ -84,7 +84,7 @@ function TabelaMoedas({ j, orc }: { j: Jornada; orc: Orcamento }) {
 }
 
 // ---------------------------------------------------------------- economia
-function Economia({ v, j, pode, recarregar }: { v: ViagemCompleta; j: Jornada; pode: boolean; recarregar: () => void }) {
+function Economia({ v, j, pode, recarregar, semPrecos }: { v: ViagemCompleta; j: Jornada; pode: boolean; recarregar: () => void; semPrecos: boolean }) {
   const [valor, setValor] = useState('');
   const [nota, setNota] = useState('');
   const [retirada, setRetirada] = useState(false);
@@ -94,7 +94,7 @@ function Economia({ v, j, pode, recarregar }: { v: ViagemCompleta; j: Jornada; p
   const f = (c: number) => dinheiro(c, m);
   const p = j.plano;
   const temPassagem = v.gastos.some((g) => g.categoria === 'passagem');
-  if (!p) return <Aviso cor="var(--ambar)">Sem a cotação do Banco Central, não dá para calcular a meta em {m} ainda.</Aviso>;
+  if (!p) return <Aviso cor="var(--ambar)">{semPrecos ? 'Ainda não dá para calcular a meta: esta viagem não tem nenhum custo com fonte. Escolha a hospedagem ou informe gastos em Custos.' : `Sem a cotação do Banco Central, não dá para calcular a meta em ${m} ainda.`}</Aviso>;
   return (
     <div style={{ marginTop: '12px' }}>
       <div style={{ font: "600 24px 'Lexend Exa'" }}>{p.falta ? `Faltam ${f(p.falta)}` : 'Meta atingida'}</div>
