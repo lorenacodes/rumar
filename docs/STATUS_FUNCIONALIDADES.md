@@ -9,7 +9,7 @@
 |---|---|---|
 | Criar conta (nome, e-mail, senha) e confirmar com código de 8 números | ✅ 🔧 | Envio de e-mail depende do SMTP no Supabase |
 | Entrar, esqueci a senha, sessão expirada, sair | ✅ | |
-| Nome de usuário (@) único, troca a cada 14 dias | 🟡 🔧 | Telas prontas; migração aguarda sua aprovação no Supabase |
+| Nome de usuário (@) único, troca a cada 14 dias | ✅ | Regras valem no banco (testado com duas contas e por fora do app) |
 | Foto de perfil, nome, cidade, e-mail, senha | ✅ | |
 | País, moeda de referência e passaporte | ✅ | |
 | Baixar meus dados (LGPD) | ✅ | |

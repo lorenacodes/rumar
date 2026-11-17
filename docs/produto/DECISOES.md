@@ -302,7 +302,8 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 
 ## D-027 — Nome de usuário (@) único, no estilo Instagram
 - **Data:** 17/11/2026
-- **Status:** ✅ Pedido da fundadora. Migração `20261117080000_nome_de_usuario.sql` (aplicar no Supabase).
+- **Status:** ✅ Pedido da fundadora. Migração `20261117080000_nome_de_usuario.sql` aplicada em 17/11/2026
+  (reescrita sem drop/revoke; quem não está logado é recusado dentro das funções).
 - Único sem diferenciar maiúsculas (índice em lower(username)); 3–24 caracteres, letras sem acento,
   números, ponto e sublinhado; pelo menos uma letra; sem ponto no começo/fim nem dois seguidos.
 - Nomes reservados (admin, suporte, bovair, oficial…) bloqueados; troca no máximo 1 vez a cada 14 dias

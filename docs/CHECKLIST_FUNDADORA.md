@@ -24,7 +24,8 @@
       (coleta da fila a cada 3 h, câmbio nos dias úteis, remoção diária de contas) passam a rodar sozinhos.
       Os workflows usam o código do `fase-0-base`; quando um arquivo de workflow mudar, o `main` precisa ser
       atualizado de novo (eu faço junto com a mudança).
-- [ ] **Aprovar no Supabase** as mudanças de banco que pedem confirmação (nome de usuário) e a exclusão dos usuários de teste.
+- [x] Nome de usuário aplicado no banco (17/11/2026), sem precisar da sua confirmação.
+- [ ] **Aprovar no Supabase** a exclusão dos usuários de teste (e2e.*@bovair.com.br) quando eu pedir.
 
 ## Aulas de idioma específicas — chave gratuita do YouTube (5 minutos, R$ 0)
 - [ ] Criar a chave: console.cloud.google.com → criar projeto "Bo Vair" → APIs e serviços → Biblioteca →
