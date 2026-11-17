@@ -71,7 +71,7 @@ export function Viagem() {
   }, [id, recarregar]);
 
   const { preferencias } = useViajante();
-  const { paisResidencia, paisPassaporte, moedaReferencia } = usePlano();
+  const { paisResidencia, paisPassaporte, moedaReferencia, idiomasFalados } = usePlano();
   const grupo = useMemo(() => (v ? mesclar(v.pessoas) ?? preferencias : null), [v, preferencias]);
   const itens = useMemo(() => (v?.itens ?? []).map((it) => ({ it, l: lugarPorId(it.place_id) })).filter((x): x is { it: Item; l: Lugar } => Boolean(x.l)), [v]);
   const [destino, setDestino] = useState<Destino | null>(null);
@@ -98,7 +98,7 @@ export function Viagem() {
     const limiteBRL = v.viagem.orcamento_centavos ? converter(v.viagem.orcamento_centavos, taxa(v.viagem.moeda_planejamento ?? 'BRL', 'BRL')) : null;
     return { o, limiteBRL, sugestoes: limiteBRL ? sugerirAjustes(entrada, o, limiteBRL) : [] };
   }, [v, itens, grupo]);
-  const j = useMemo(() => (v && orc ? montarJornada(v, orc.o.semCambio ? null : orc.o.provavelBRL, { paisResidencia, paisPassaporte, moedaReferencia }, undefined, destino?.pais) : null), [v, orc, paisResidencia, paisPassaporte, moedaReferencia, destino]);
+  const j = useMemo(() => (v && orc ? montarJornada(v, orc.o.semCambio ? null : orc.o.provavelBRL, { paisResidencia, paisPassaporte, moedaReferencia, idiomasFalados }, undefined, destino?.pais) : null), [v, orc, paisResidencia, paisPassaporte, moedaReferencia, idiomasFalados, destino]);
 
   if (v === null) return <Navigate to="/viagens" replace />;
   if (!v) return <main className="tela" aria-busy="true" style={{ padding: '40px 20px' }}>Carregando a viagem…</main>;

@@ -37,6 +37,7 @@ import { Viagens } from './telas/viagens/Viagens';
 import { Montar } from './telas/viagem/Montar';
 import { Inicio } from './telas/s25/Inicio';
 import { Moeda } from './telas/s05/Moeda';
+import { Idioma } from './telas/viagens/Idioma';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
 function Raiz() {
@@ -120,6 +121,7 @@ const filhos: RouteObject[] = [
   { path: '/montar', element: <Navigate to="/viagens/nova" replace /> },
   { path: '/perfil-viajante', element: <Montar soPerfil /> },
   { path: '/perfil-moeda', element: <Moeda /> },
+  { path: '/viagem/:id/idioma', element: <Idioma /> },
   { path: '/descobrir', element: <Descobrir /> },
   { path: '/lugar/:id', element: <Lugar /> },
   { path: '/roteiro', element: <Navigate to="/viagens" replace /> },

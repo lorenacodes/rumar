@@ -78,3 +78,15 @@ describe('linha do tempo', () => {
     expect(etapaAtual(base, (e) => (e === 'documentos' ? 1 : 0))).toBe('documentos');
   });
 });
+
+describe('idioma do destino', () => {
+  it('sugere aprender frases quando a pessoa não fala o idioma', () => {
+    const t = gerarTarefas({ ...base, idioma: { nome: 'francês', jaFala: false } }).find((x) => x.chave === 'idioma');
+    expect(t?.titulo).toBe('Aprender frases básicas em francês');
+    expect(t?.ir).toBe('idioma');
+  });
+  it('quem já fala só revisa; sem idioma estrangeiro não há tarefa', () => {
+    expect(gerarTarefas({ ...base, idioma: { nome: 'inglês', jaFala: true } }).find((x) => x.chave === 'idioma')?.titulo).toBe('Revisar o inglês de viagem');
+    expect(gerarTarefas({ ...base, idioma: null }).some((x) => x.chave === 'idioma')).toBe(false);
+  });
+});

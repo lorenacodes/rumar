@@ -13,6 +13,14 @@
 - [ ] **B. Chave da LiteAPI no Supabase** — Edge Functions → Secrets → `LITEAPI_KEY` = a chave (hoje a de teste; depois a de produção, nova, porque a de teste apareceu num print). Liga a busca de hotéis.
 - [ ] **C. Chave de produção da LiteAPI** — quando quiser preços para reservar de verdade (a de teste mostra "ambiente de teste").
 
+## Aulas de idioma específicas — chave gratuita do YouTube (5 minutos, R$ 0)
+- [ ] Criar a chave: console.cloud.google.com → criar projeto "Bo Vair" → APIs e serviços → Biblioteca →
+      "YouTube Data API v3" → Ativar → Credenciais → Criar credenciais → Chave de API → em "Restrições
+      de API", marcar só "YouTube Data API v3" → copiar.
+- [ ] Colocar no Supabase: Edge Functions → Secrets → Add new secret → nome `YOUTUBE_API_KEY`, valor = a chave.
+      Não precisa de cartão: a cota gratuita é de 10.000 unidades por dia; cada idioma atualizado gasta
+      ~810 e fica guardado por 14 dias. Não cole a chave em chat nem no código.
+
 ## Fotos e avaliações de restaurantes, bares, baladas e hotéis — DECISÃO SUA (custo)
 - [ ] Escolher se liga uma fonte paga/parceira de fotos e avaliações de estabelecimentos. Sem isso, essas
       categorias aparecem sem foto (só museus, monumentos, praias e parques conhecidos têm foto livre).

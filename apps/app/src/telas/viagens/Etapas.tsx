@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ETAPAS, dataBR, internacional, type Diagnostico, type Etapa, type TipoPrazo } from '../../lib/linhaDoTempo';
 import { dinheiro } from '../../lib/moedas';
@@ -16,6 +17,7 @@ type Painel = null | 'diagnostico' | 'editar' | 'encerrar';
 export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: ViagemCompleta; j: Jornada; pode: boolean; recarregar: () => void; irPara: (aba: string) => void; resumoFinal: ReactNode }) {
   const [vista, setVista] = useState<Etapa>(j.etapa);
   const [painel, setPainel] = useState<Painel>(null);
+  const navegar = useNavigate();
   const tarefas = j.tarefas;
   const acionaveis = tarefas.filter((t) => !t.informativa);
   const feitas = acionaveis.filter((t) => t.feita).length;
@@ -25,7 +27,8 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
   const idxAtual = ETAPAS.findIndex((e) => e.id === j.etapa);
 
   const abrir = (t: TarefaVista) => {
-    if (t.ir === 'diagnostico' || t.ir === 'editar' || t.ir === 'encerrar') setPainel(t.ir);
+    if (t.ir === 'idioma') navegar(`/viagem/${v.viagem.id}/idioma`);
+    else if (t.ir === 'diagnostico' || t.ir === 'editar' || t.ir === 'encerrar') setPainel(t.ir);
     else if (t.ir) irPara(t.ir);
   };
   const marcar = async (t: TarefaVista, feita: boolean) => {
@@ -141,7 +144,7 @@ function LinhaTarefa({ t, pode, hoje, aoMarcar, aoAbrir, compacta }: { t: Tarefa
             {t.orientacao ? <div style={{ color: 'var(--texto-sec)', marginTop: '4px' }}>{t.orientacao}</div> : null}
             {t.prazoTexto ? <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>Prazo: {t.prazoTexto}.</div> : null}
             {t.fonte ? <div style={{ fontSize: '13px', marginTop: '4px' }}>Fonte: <a href={t.fonte.url} target="_blank" rel="noreferrer" style={{ color: 'var(--azul)' }}>{t.fonte.nome}</a> <span style={{ color: 'var(--texto-sec)' }}>(conferido em {dataBR(t.fonte.consultadoEm)})</span></div> : null}
-            {t.ir && !t.feita ? <button type="button" className="r-btn" onClick={() => aoAbrir(t)} style={botaoTexto}>{t.ir === 'diagnostico' ? 'Responder ↗' : t.ir === 'editar' ? 'Mudar a data ↗' : t.ir === 'encerrar' ? 'Encerrar ↗' : 'Abrir ↗'}</button> : null}
+            {t.ir && !t.feita ? <button type="button" className="r-btn" onClick={() => aoAbrir(t)} style={botaoTexto}>{t.ir === 'diagnostico' ? 'Responder ↗' : t.ir === 'editar' ? 'Mudar a data ↗' : t.ir === 'encerrar' ? 'Encerrar ↗' : t.ir === 'idioma' ? 'Ver as aulas ↗' : 'Abrir ↗'}</button> : null}
           </div>
         ) : null}
       </div>

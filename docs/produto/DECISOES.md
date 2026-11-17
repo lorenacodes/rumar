@@ -289,3 +289,13 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   para encantar (ex.: Paris → Torre Eiffel à noite). Destino sem foto aprovada fica sem foto: melhor do que
   foto errada. Crédito do autor e licença sempre visíveis.
 - Realce leve na exibição (saturação +15%, contraste +5%), sem alterar o arquivo.
+
+## D-026 — Aulas de idioma específicas (não busca genérica)
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora. A tela 15.x do design continua como exemplo; a tela real é /viagem/:id/idioma.
+- Idioma pelo país do destino; quem já fala (perfil) recebe "revisar". Tarefa na linha do tempo
+  (Antes de partir) e plano até a data da viagem (temas por semana; 15 min/dia é sugestão).
+- 8 temas de viagem com até 3 vídeos cada, escolhidos pela API oficial do YouTube na função `aulas`:
+  aula em português, 3 a 25 minutos, idioma no título, busca segura, relevância + visualizações.
+  Cache de 14 dias no banco (`aulas_video`). Chave só no Supabase (`YOUTUBE_API_KEY`).
+- Sem a chave, a tela diz isso e oferece a busca por tema, sem fingir que é sugestão específica.

@@ -7,10 +7,11 @@ import { etapaAtual, gerarTarefas, internacional, TAXA_PASSAPORTE, type Contexto
 import { converter, paisPorCodigo, paisPorNome, taxa, type Pais } from '../../lib/moedas';
 import { diasEntre, planejarPoupanca, type Plano } from '../../lib/poupanca';
 import { lugarPorId } from '../../lib/catalogo';
+import { IDIOMA_DO_PAIS } from '../../lib/aulas';
 import type { TarefaSalva, ViagemCompleta } from '../../lib/viagens';
 import PRECOS from '../../dados/precos-paris.json';
 
-export interface Perfil { paisResidencia: string; paisPassaporte: string; moedaReferencia: string }
+export interface Perfil { paisResidencia: string; paisPassaporte: string; moedaReferencia: string; idiomasFalados?: string[] }
 
 export interface TarefaVista extends Tarefa {
   feita: boolean;
@@ -61,6 +62,7 @@ export function montarJornada(v: ViagemCompleta, provavelBRL: number | null, per
     destino: { nome: vg.destino, pais: paisDestino }, residencia, passaporte: perfil.paisPassaporte, diagnostico: diag,
     temOrcamento: Boolean(vg.orcamento_centavos), temHospedagem: Boolean(v.hospedagem), atracoesComReserva: atracoes,
     guardado, encerrada: Boolean(vg.encerrada_em),
+    idioma: paisDestino && IDIOMA_DO_PAIS[paisDestino.codigo] ? { nome: IDIOMA_DO_PAIS[paisDestino.codigo]!.nome, jaFala: (perfil.idiomasFalados ?? []).includes(IDIOMA_DO_PAIS[paisDestino.codigo]!.falado) } : null,
   };
   // Taxa do passaporte entra na meta só se a tarefa de passaporte existir (sem passaporte válido).
   const precisaPassaporte = gerarTarefas({ ...base, meta: 0 }).some((t) => t.chave === 'passaporte');

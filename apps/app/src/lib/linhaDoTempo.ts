@@ -70,6 +70,8 @@ export interface Contexto {
   meta: number;
   guardado: number;
   encerrada: boolean;
+  /** Idioma do destino quando a pessoa não o fala (ou só revisa). */
+  idioma?: { nome: string; jaFala: boolean } | null;
 }
 
 const C = '2026-11-17';
@@ -187,6 +189,7 @@ export function gerarTarefas(c: Contexto): Tarefa[] {
   if (intl) t.push({ chave: 'cartao', etapa: 'antes', titulo: 'Habilitar o cartão para uso no exterior', descricao: 'Alguns bancos pedem para avisar ou liberar compras internacionais no aplicativo.', prioridade: 'media', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Antes da ida' });
   t.push({ chave: 'docs-mao', etapa: 'antes', titulo: 'Separar documentos e reservas', descricao: intl ? 'Passaporte, seguro, passagens, reserva da hospedagem e comprovante de volta, em papel e no celular.' : 'Documento com foto, passagens e reserva da hospedagem.', prioridade: 'alta', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Até a véspera' });
   t.push({ chave: 'checkin', etapa: 'antes', titulo: 'Fazer o check-in do voo', descricao: 'A janela de check-in on-line e a antecedência para chegar ao aeroporto são definidas pela companhia aérea.', prioridade: 'alta', tipoPrazo: 'a_confirmar', prazoTexto: 'Confira na sua companhia aérea' });
+  if (c.idioma) t.push({ chave: 'idioma', etapa: 'antes', titulo: c.idioma.jaFala ? `Revisar o ${c.idioma.nome} de viagem` : `Aprender frases básicas em ${c.idioma.nome}`, descricao: 'Aulas curtas por tema: cumprimentar, pedir comida, perguntar o caminho, números, transporte, hotel, compras e emergência.', prioridade: c.idioma.jaFala ? 'baixa' : 'media', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Comece já: 15 minutos por dia até a viagem (sugestão)', ir: 'idioma' });
   t.push({ chave: 'offline', etapa: 'antes', titulo: 'Deixar o roteiro e o mapa à mão sem internet', descricao: 'Abra a viagem no app com internet antes de sair; anote o endereço da hospedagem.', prioridade: 'baixa', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Até a véspera' });
 
   // ---- Durante
