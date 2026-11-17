@@ -4,9 +4,8 @@ export type Aba = 'inicio' | 'descobrir' | 'viagem' | 'passaporte';
 
 const ABAS: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
-  { id: 'descobrir', nome: 'Descobrir', rota: '/tela/2.1' },
-  // Ainda não há viagem escolhida guardada: mostra o estado "Ainda sem viagem" (28.5).
-  { id: 'viagem', nome: 'Minha viagem', rota: '/tela/28.5' },
+  { id: 'descobrir', nome: 'Descobrir', rota: '/descobrir' },
+  { id: 'viagem', nome: 'Minha viagem', rota: '/minha-viagem' },
   // Perfil de verdade (5.13, dados do banco). Sem conta, a 5.13 leva a Entrar/Criar conta.
   { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
 ];
@@ -28,7 +27,9 @@ export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRo
         borderTop: '1px solid var(--linha)',
         display: 'grid',
         gridTemplateColumns: 'repeat(4,1fr)',
-        font: "500 14px 'Open Sans'",
+        // 14 px no tamanho do design (390 px); diminui um pouco em telas estreitas para
+        // "Minha viagem" caber numa linha só.
+        font: "500 clamp(12px, 3.6vw, 14px) 'Open Sans'",
         color: 'var(--texto-sec)',
       }}>
       {ABAS.map((a) => {
@@ -39,11 +40,12 @@ export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRo
             type="button"
             className="r-btn"
             aria-current={ativo ? 'page' : undefined}
-            onClick={() => navegar(a.rota)}
+            // Regra 16.6: tocar na aba ativa leva ao topo da tela.
+            onClick={(e) => (ativo ? (e.currentTarget.closest('.tela') as HTMLElement | null)?.scrollTo({ top: 0, behavior: 'smooth' }) : navegar(a.rota))}
             style={
               ativo
-                ? { display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--texto)', fontWeight: '600', boxShadow: 'inset 0 3px 0 var(--amarelo)', textAlign: 'center' }
-                : { display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }
+                ? { display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--texto)', fontWeight: '600', boxShadow: 'inset 0 3px 0 var(--amarelo)', textAlign: 'center', whiteSpace: 'nowrap', minWidth: 0, padding: '0 2px' }
+                : { display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', whiteSpace: 'nowrap', minWidth: 0, padding: '0 2px' }
             }>
             {a.nome}
           </button>

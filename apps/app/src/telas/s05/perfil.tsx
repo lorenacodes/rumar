@@ -5,6 +5,8 @@ import { carregarPerfil, emailValido, conferirSenhaAtual, enviarFoto, iniciais, 
 import { useFluxoConta } from '../../conta/fluxo';
 import { ANA, useDemo, useValorInicial } from '../../dev/demo';
 import { ORIGEM_ANA } from '../../state/plano';
+import { NOME_ESTILO } from '../../lib/planejador';
+import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
 import { Aviso, BotaoPrincipal, Campo, Rodape, Voltar } from '../../ui/pecas';
 import { SugestoesCidade, useCampoCidade } from '../../ui/sugestoesCidade';
@@ -66,9 +68,25 @@ function useExigirSessao(): 'carregando' | 'ok' | 'sem' {
   return sessao ? 'ok' : 'sem';
 }
 
+/** Perfil de viajante, viagens e salvos da pessoa (dados do aparelho e do banco). */
+function SecaoViajante() {
+  const navegar = useNavigate();
+  const { preferencias, viagem, salvos } = useViajante();
+  const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
+  return (
+    <div style={{ marginTop: '10px' }}>
+      <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '8px 0 2px' }}>Viagens</div>
+      <Linha minHeight="44px" titulo="Meu jeito de viajar" detalhe={preferencias ? `Estilo ${NOME_ESTILO[preferencias.estilo]} · ritmo ${RITMO[preferencias.ritmo]}` : 'Responder em 1 minuto'} onClick={() => navegar('/perfil-viajante')} />
+      <Linha minHeight="44px" titulo="Minhas viagens" detalhe={viagem ? `${viagem.destino} · ${viagem.dataIda.split('-').reverse().join('/')} · ${viagem.noites} noites` : 'Nenhuma ainda'} onClick={() => navegar('/minha-viagem')} />
+      <Linha minHeight="44px" titulo="Lugares salvos" detalhe={salvos.length ? `${salvos.length} ${salvos.length === 1 ? 'lugar' : 'lugares'}` : 'Nenhum ainda'} onClick={() => navegar('/descobrir?ver=salvos')} />
+    </div>
+  );
+}
+
 /** 5.13 Meu perfil. */
 export function Tela5_13() {
   const navegar = useNavigate();
+  const demo = useDemo();
   const estado = useExigirSessao();
   const perfil = usePerfil();
   if (estado === 'sem') return <Navigate to="/entrar" replace />;
@@ -86,7 +104,10 @@ export function Tela5_13() {
             <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{p.email}</div>
           </div>
         </div>
+        {/* Viagem e preferências da pessoa (no app; a comparação com o design mostra só a 5.13 original). */}
+        {!demo ? <SecaoViajante /> : null}
         <div style={{ marginTop: '6px' }}>
+          {!demo ? <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '14px 0 2px' }}>Conta</div> : null}
           <Linha titulo="Nome e foto" onClick={() => navegar('/perfil/nome')} />
           <Linha minHeight="44px" titulo="Cidade de onde saio" detalhe={p.origin_city ?? 'Escolher'} onClick={() => navegar('/perfil/nome')} />
           <Linha titulo="E-mail" onClick={() => navegar('/perfil/email')} />

@@ -31,6 +31,10 @@ const ROTAS: Record<string, string> = {
   '16.1': '/minha-viagem',
   // Roteiro de verdade, montado pelas escolhas da 6.1.
   '6.3': '/roteiro',
+  // Telas reais que substituem as de exemplo no caminho do usuário.
+  '6.1': '/perfil-viajante',
+  '2.1': '/descobrir',
+  '4.1': '/descobrir',
 };
 
 export function rotaDaTela(destino: string): string {

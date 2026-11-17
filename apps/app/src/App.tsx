@@ -26,7 +26,10 @@ import { Tela5_13, Tela5_14, Tela5_15, Tela5_17, Tela5_18 } from './telas/s05/pe
 import { Tela5_10, Tela5_11, Tela5_12, Tela5_16, Tela5_8, Tela5_9 } from './telas/s05/senha';
 import { Tela28_7 } from './telas/s28/Tela28_7';
 import { AvisoAtualizar } from './ui/atualizar';
-import { MinhaViagem } from './telas/s16/MinhaViagem';
+import { Descobrir } from './telas/descobrir/Descobrir';
+import { Lugar } from './telas/descobrir/Lugar';
+import { MinhaViagemReal } from './telas/viagem/MinhaViagemReal';
+import { Montar } from './telas/viagem/Montar';
 import { Roteiro } from './telas/s06/Roteiro';
 import { Inicio } from './telas/s25/Inicio';
 
@@ -101,7 +104,11 @@ const filhos: RouteObject[] = [
   { path: '/conta/indisponivel/:tela', element: <EmBreve /> },
   { path: '/em-breve/:tela', element: <EmBreve /> },
   { path: '/tela/:id', element: <TelaPorId /> },
-  { path: '/minha-viagem', element: <MinhaViagem /> },
+  { path: '/minha-viagem', element: <MinhaViagemReal /> },
+  { path: '/montar', element: <Montar /> },
+  { path: '/perfil-viajante', element: <Montar soPerfil /> },
+  { path: '/descobrir', element: <Descobrir /> },
+  { path: '/lugar/:id', element: <Lugar /> },
   { path: '/roteiro', element: <Roteiro /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];

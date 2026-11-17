@@ -1,155 +1,138 @@
-import { buildItinerary, INTEREST_LABEL_PT, PACE_LABEL_PT, SLOT_LABEL_PT, type InterestTag, type Pace, type TravelNeed } from '@rumar/core';
 import { useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { LUGARES_PARIS } from '../../dados/lugares';
-import { useEscolhas } from '../../state/escolhas';
+import { horarioLegivel, LUGARES, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
+import { NOME_CATEGORIA, NOME_ESTILO, planejar, textoDistancia, type Parada, type Periodo } from '../../lib/planejador';
+import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
 import { FotoDestino } from '../../ui/foto';
-import { BotaoPrincipal, Rodape, Voltar } from '../../ui/pecas';
+import { Voltar } from '../../ui/pecas';
 
-/** Opções da 6.1 → jeito de viajar usado pelo motor de roteiro (packages/core). */
-const MOTIVO: Record<string, InterestTag[]> = {
-  Lazer: ['photography', 'wellness'],
-  'Networking e trabalho': ['meet_people'],
-  Estudo: ['history_culture', 'museums_art'],
-  Evento: ['meet_people'],
-  Família: ['family_kids'],
-  Celebrar: ['food_drink', 'nightlife'],
-};
-const VIVER: Record<string, InterestTag[]> = {
-  Comida: ['food_drink', 'local_markets'],
-  Museus: ['museums_art', 'history_culture'],
-  'Vida noturna': ['nightlife'],
-  'Conhecer gente': ['meet_people'],
-  Natureza: ['nature_outdoors'],
-  Compras: ['shopping'],
-};
-const RITMO: Record<string, Pace> = { Tranquilo: 'calm', Equilibrado: 'balanced', Intenso: 'intense' };
-const NECESSIDADE: Record<string, TravelNeed> = {
-  'Acesso sem degraus': 'step_free',
-  'Pouca caminhada': 'low_walking',
-  'Lugares calmos': 'quiet',
-};
+const NOME_PERIODO: Record<Periodo, string> = { morning: 'Manhã', afternoon: 'Tarde', evening: 'Fim de tarde', night: 'Noite' };
+const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
+const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
-const NOITES = 6;
+function periodoDaFaixa(p: Periodo): 'Manhã' | 'Tarde' | 'Noite' {
+  return p === 'morning' ? 'Manhã' : p === 'afternoon' ? 'Tarde' : 'Noite';
+}
 
-/** 6.3 Roteiro de verdade: montado pelas escolhas da 6.1, com lugares reais curados. */
+/** Linha do tempo de uma parada. */
+function ItemDoDia({ parada, ultimo, aoAbrir }: { parada: Parada; ultimo: boolean; aoAbrir: (id: string) => void }) {
+  const l = parada.lugar;
+  return (
+    <li style={{ display: 'grid', gridTemplateColumns: '52px 1fr', columnGap: '10px' }}>
+      <div style={{ position: 'relative' }}>
+        <div style={{ font: "600 14px 'Lexend Exa'", paddingTop: '2px' }}>{parada.horario}</div>
+        <div style={{ font: "500 12px 'Open Sans'", color: 'var(--texto-sec)' }}>{NOME_PERIODO[parada.periodo]}</div>
+        {/* Trilho da linha do tempo */}
+        <span aria-hidden style={{ position: 'absolute', right: '-6px', top: '6px', width: '10px', height: '10px', background: l ? 'var(--amarelo)' : 'var(--fundo)', border: '2px solid var(--texto)', boxSizing: 'border-box' }} />
+        {!ultimo ? <span aria-hidden style={{ position: 'absolute', right: '-2px', top: '18px', bottom: '-6px', width: '2px', background: 'var(--linha)' }} /> : null}
+      </div>
+      <div style={{ paddingBottom: ultimo ? '4px' : '18px', minWidth: 0 }}>
+        {l ? (
+          <>
+            <button type="button" className="r-btn" onClick={() => aoAbrir(l.id)} style={{ display: 'block', width: '100%', textAlign: 'left' }} aria-label={`${l.nome}: ver detalhes`}>
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' }}>
+                <FotoDestino nome={l.id} />
+              </div>
+              <div style={{ font: "700 12px/16px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)', marginTop: '8px' }}>{NOME_CATEGORIA[l.categoria]}</div>
+              <div style={{ font: "600 18px/23px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '2px' }}>{l.nome}</div>
+            </button>
+            <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '2px' }}>
+              {l.endereco ?? l.area}
+            </div>
+            {l.horario ? (
+              <div style={{ fontSize: '14px', lineHeight: '20px', marginTop: '2px' }}>
+                <span style={{ fontWeight: 600 }}>Horário:</span> {horarioLegivel(l.horario)} <span style={{ color: 'var(--texto-sec)' }}>· OpenStreetMap</span>
+              </div>
+            ) : (
+              <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '2px' }}>Horário não confirmado: confira antes de ir.</div>
+            )}
+            <p style={{ margin: '6px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--verde)', fontWeight: 600 }}>{parada.motivo}</p>
+            {parada.proximo ? (
+              <a href={parada.proximo.rota} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', minHeight: '40px', marginTop: '4px', fontSize: '14px', color: 'var(--texto-sec)', textDecoration: 'none' }}>
+                <span aria-hidden>↓</span> {textoDistancia(parada.proximo.km)} até a próxima · <span style={{ color: 'var(--azul)', fontWeight: 600 }}>Ver rota</span>
+              </a>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <div style={{ font: "600 16px 'Lexend Exa'" }}>Tempo livre</div>
+            <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)' }}>{parada.motivo}</div>
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
+
+/** 6.3 Roteiro de verdade, montado pelo perfil de viajante e pela viagem. */
 export function Roteiro() {
   const navegar = useNavigate();
-  const valores = useEscolhas((s) => s.valores);
-  const consentiu = useEscolhas((s) => s.consentimentoNecessidades);
+  const { preferencias, viagem } = useViajante();
   const [dia, setDia] = useState(1);
+  const dias = useMemo(() => (preferencias && viagem ? planejar(LUGARES, preferencias, viagem) : []), [preferencias, viagem]);
+  if (!preferencias || !viagem) return <Navigate to="/montar" replace />;
 
-  const motivos = valores['6.1:motivo'] ?? [];
-  const viver = valores['6.1:viver'] ?? [];
-  const ritmo = RITMO[(valores['6.1:ritmo'] ?? [])[0] ?? 'Equilibrado'] ?? 'balanced';
-  const necessidades = (valores['6.1:necessidades'] ?? []).map((n) => NECESSIDADE[n]).filter((n): n is TravelNeed => Boolean(n));
-  const interesses = [...new Set([...motivos.flatMap((m) => MOTIVO[m] ?? []), ...viver.flatMap((v) => VIVER[v] ?? [])])];
-
-  const { roteiro, semVerificacao } = useMemo(() => {
-    if (interesses.length === 0) return { roteiro: null, semVerificacao: false };
-    const montar = (needs: TravelNeed[]) =>
-      buildItinerary({ places: LUGARES_PARIS, persona: { interests: interesses, pace: ritmo, needs }, nights: NOITES, style: 'intermediate' });
-    const usadas = consentiu ? necessidades : [];
-    const comFiltro = montar(usadas);
-    const vazio = comFiltro.days.every((d) => d.items.every((i) => !i.place));
-    // Nenhum lugar com a necessidade CONFERIDA: em vez de um roteiro vazio, mostra o
-    // roteiro sem o filtro, avisando item a item que a acessibilidade não foi verificada.
-    if (vazio && usadas.length) return { roteiro: montar(usadas.filter((n) => n !== 'step_free')), semVerificacao: usadas.includes('step_free') };
-    return { roteiro: comFiltro, semVerificacao: false };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify([interesses, ritmo, necessidades, consentiu])]);
-
-  // Necessidade é dado sensível: só usa depois do aceite específico (6.2).
-  if (necessidades.length > 0 && !consentiu) return <Navigate to="/tela/6.2" replace />;
-
-  const resumo = [...motivos, ...viver].map((t, i) => (i === 0 ? t : t.toLowerCase())).join(', ');
-  const diaAtual = roteiro?.days.find((d) => d.day === dia);
+  const atual = dias.find((d) => d.numero === dia) ?? dias[0]!;
+  const [a, m, d0] = viagem.dataIda.split('-').map(Number);
+  const fim = new Date(Date.UTC(a!, m! - 1, d0! + viagem.noites));
+  const periodo = `${d0} ${MES[m! - 1]} a ${fim.getUTCDate()} ${MES[fim.getUTCMonth()]}`;
+  const faixas = (['Manhã', 'Tarde', 'Noite'] as const).map((f) => ({ f, itens: atual.paradas.filter((p) => periodoDaFaixa(p.periodo) === f) })).filter((x) => x.itens.length);
 
   return (
     <main className="tela" data-tela="6.3" data-real="roteiro">
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
-        <Voltar />
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Roteiro · Paris · {NOITES} noites</div>
-        <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Feito do seu jeito.</h1>
+        <Voltar para="/minha-viagem" />
+        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>{viagem.destino} · {periodo}</div>
+        <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Seu roteiro.</h1>
+        <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '4px' }}>
+          Feito para quem gosta de {NOME_ESTILO[preferencias.estilo]}, no ritmo {RITMO[preferencias.ritmo]}.{' '}
+          <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/perfil-viajante')} style={{ color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>
+            Ajustar
+          </button>
+        </div>
 
-        {!roteiro ? (
-          <>
-            <p style={{ fontSize: '16px', lineHeight: '24px', margin: '12px 0 0' }}>
-              Conte o que te leva até lá e o que você quer viver. O roteiro se monta na hora.
-            </p>
-            <div style={{ marginTop: '16px' }}>
-              <BotaoPrincipal onClick={() => navegar('/tela/6.1')}>Escolher meu jeito de viajar ↗</BotaoPrincipal>
+        <div role="tablist" aria-label="Dias da viagem" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '14px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
+          {dias.map((x) => {
+            const ativo = x.numero === atual.numero;
+            return (
+              <button key={x.numero} type="button" role="tab" aria-selected={ativo} className="r-btn" onClick={() => setDia(x.numero)}
+                style={{ flex: 'none', minWidth: '64px', height: '52px', padding: '0 10px', boxSizing: 'border-box', textAlign: 'center', ...(ativo ? { background: 'var(--fundo-escuro)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>
+                <span style={{ display: 'block', font: "600 14px 'Lexend Exa'" }}>Dia {x.numero}</span>
+                <span style={{ display: 'block', fontSize: '12px', opacity: 0.85 }}>{x.diaSemana.slice(0, 3)} {x.data.slice(0, 2)}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <section aria-labelledby="titulo-dia" style={{ marginTop: '16px' }}>
+          <h2 id="titulo-dia" style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
+            Dia {atual.numero} — {atual.diaSemana[0]!.toUpperCase() + atual.diaSemana.slice(1)}, {atual.data}
+          </h2>
+          <div style={{ font: "600 15px/21px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>{atual.tema}</div>
+          <p style={{ margin: '6px 0 0', fontSize: '15px', lineHeight: '22px', color: 'var(--texto-sec)' }}>{atual.resumo}</p>
+          {atual.mapa ? (
+            <a href={atual.mapa} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '48px', marginTop: '12px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>
+              Ver o dia no mapa ↗
+            </a>
+          ) : null}
+
+          {faixas.map(({ f, itens }) => (
+            <div key={f} style={{ marginTop: '18px' }}>
+              <h3 style={{ margin: '0 0 10px', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', borderBottom: '1px solid var(--linha)', paddingBottom: '6px' }}>{f}</h3>
+              <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                {itens.map((p, i) => <ItemDoDia key={`${p.periodo}-${i}`} parada={p} ultimo={i === itens.length - 1} aoAbrir={(id) => navegar(`/lugar/${id}`)} />)}
+              </ol>
             </div>
-          </>
-        ) : (
-          <>
-            <div style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '6px 0 10px' }}>
-              {resumo} · ritmo {PACE_LABEL_PT[ritmo].toLowerCase()}
-              {consentiu && necessidades.length ? (semVerificacao ? ' · necessidades consideradas, acessibilidade a conferir' : ' · necessidades respeitadas') : ''}
-            </div>
-            {semVerificacao ? (
-              <div role="note" style={{ background: 'var(--cartao-1)', padding: '10px 12px', fontSize: '14px', lineHeight: '20px', marginBottom: '10px' }}>
-                <b>Acesso sem degraus ainda não conferido.</b> Ainda não verificamos a acessibilidade destes lugares nas fontes oficiais. Confira antes de ir.
-              </div>
-            ) : null}
-            <div role="tablist" aria-label="Dias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
-              {roteiro.days.map((d) => {
-                const ativo = d.day === dia;
-                return (
-                  <button
-                    key={d.day}
-                    type="button"
-                    role="tab"
-                    aria-selected={ativo}
-                    className="r-btn"
-                    onClick={() => setDia(d.day)}
-                    style={{ flex: 'none', height: '48px', padding: '0 14px', boxSizing: 'border-box', font: `${ativo ? 600 : 500} 15px 'Open Sans'`, ...(ativo ? { background: 'var(--fundo-escuro)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>
-                    Dia {d.day}
-                  </button>
-                );
-              })}
-            </div>
-            <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '8px' }}>
-              {diaAtual?.kind === 'arrival' ? 'Chegada: só a segunda metade do dia.' : diaAtual?.kind === 'departure' ? 'Partida: só a manhã.' : diaAtual?.area ? `Dia pelo ${diaAtual.area}, para andar menos.` : ''}
-            </div>
-            {diaAtual?.items.map((item, i) => (
-              <div key={i} style={{ display: 'flex', gap: '10px', padding: '10px 0', borderBottom: '1px dashed var(--linha)' }}>
-                <div style={{ width: '56px', flex: 'none', font: "500 13px 'Lexend Exa'", color: 'var(--texto-sec)', paddingTop: '2px' }}>{SLOT_LABEL_PT[item.slot]}</div>
-                {item.place ? (
-                  <div style={{ width: '60px', height: '60px', flex: 'none', position: 'relative', overflow: 'hidden', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' }}>
-                    <FotoDestino nome={item.place.name} />
-                  </div>
-                ) : null}
-                <div style={{ flex: 1 }}>
-                  <div style={{ font: "600 15px/20px 'Open Sans'" }}>{item.place?.name ?? 'Tempo livre'}</div>
-                  {item.place ? <div style={{ fontSize: '14px', lineHeight: '19px', color: 'var(--texto-sec)' }}>{item.place.description}</div> : null}
-                  <div style={{ font: "600 14px/19px 'Open Sans'", color: 'var(--verde)', marginTop: '2px' }}>{item.reasons.join(' · ')}</div>
-                  {semVerificacao && item.place && item.place.stepFree !== true ? (
-                    <div style={{ font: "600 14px/19px 'Open Sans'", color: 'var(--ambar)' }}>{item.place.stepFree === false ? 'Tem degraus' : 'Sem degraus: não verificado'}</div>
-                  ) : null}
-                </div>
-              </div>
-            ))}
-            {roteiro.uncoveredInterests.length ? (
-              <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '10px' }}>
-                Ainda não temos lugares de {roteiro.uncoveredInterests.map((t) => INTEREST_LABEL_PT[t].toLowerCase()).join(', ')} em Paris.
-              </div>
-            ) : null}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', margin: '10px 0 16px' }}>
-              <span style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Lugares de curadoria. Confira horários antes de ir.</span>
-              <span style={{ font: "600 14px 'Open Sans'", border: '1px solid var(--texto)', padding: '1px 6px', whiteSpace: 'nowrap' }}>≈ Estimativa</span>
-            </div>
-          </>
-        )}
+          ))}
+        </section>
+
+        <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', margin: '20px 0 24px' }}>
+          Lugares escolhidos pela curadoria do Bo Vair. Endereços e horários: OpenStreetMap{OSM_ATUALIZADO_EM ? `, ${OSM_ATUALIZADO_EM.split('-').reverse().join('/')}` : ''}. Distâncias em linha reta; o tempo de trajeto aparece em "Ver rota".
+        </p>
       </div>
-      {roteiro ? (
-        <Rodape padding="10px 20px 10px" style={{ bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-          <BotaoPrincipal onClick={() => navegar('/tela/11.1')}>Reservar a viagem ↗</BotaoPrincipal>
-        </Rodape>
-      ) : null}
-      <Abas ativa="viagem" logoAbaixoDoRodape={Boolean(roteiro)} />
+      <Abas ativa="viagem" />
     </main>
   );
 }

@@ -11,6 +11,7 @@ import { supabase } from '../lib/supabase';
 import { rotuloCidade, type Cidade } from '../lib/cidades';
 import { useEscolhas } from '../state/escolhas';
 import { usePlano } from '../state/plano';
+import { sincronizarViajante, useViajante } from '../state/viajante';
 
 export type Resultado<T extends string> = { ok: true } | { ok: false; motivo: T };
 
@@ -179,6 +180,7 @@ export async function carregarDaConta(): Promise<void> {
     parcial.guardado = plano.data.saved_cents as number;
   }
   if (Object.keys(parcial).length) atual.atualizar(parcial);
+  await sincronizarViajante();
 }
 
 /** Cria o perfil e registra os consentimentos da tela 5.3. */
@@ -367,6 +369,7 @@ export async function sair(): Promise<void> {
   // depois neste aparelho (eles continuam guardados no banco e voltam ao entrar).
   usePlano.getState().limpar();
   useEscolhas.setState({ valores: {}, consentimentoNecessidades: false });
+  useViajante.getState().limpar();
   useFluxoConta.getState().set({ email: '', erros: 0, enviadoEm: 0 });
 }
 

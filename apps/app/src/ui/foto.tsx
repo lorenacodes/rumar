@@ -14,6 +14,8 @@ import { supabase } from '../lib/supabase';
  * upload.wikimedia.org. Sem foto ou sem internet: fica o fundo do design, sem quebrar.
  */
 interface Foto {
+  /** Arquivo embutido no app (public/fotos), baixado pela automação. */
+  arquivo?: string;
   url: string;
   autor: string;
   licenca: string;
@@ -42,7 +44,7 @@ function useFoto(nome: string): Foto | null {
     if (demo) return;
     let vivo = true;
     void fotosDoBanco().then((banco) => {
-      if (vivo && banco[nome]) setFoto(banco[nome]);
+      if (vivo && banco[nome]) setFoto({ ...banco[nome], arquivo: embutidas[nome]?.arquivo });
     });
     return () => {
       vivo = false;
@@ -52,26 +54,31 @@ function useFoto(nome: string): Foto | null {
 }
 
 /** Ocupa o espaço da foto do design (o elemento pai precisa ter position). */
-export function FotoDestino({ nome }: { nome: string }) {
+export function FotoDestino({ nome, credito = true }: { nome: string; credito?: boolean }) {
   const foto = useFoto(nome);
-  const [falhou, setFalhou] = useState(false);
-  if (!foto || falhou) return null;
+  // 1º o arquivo embutido; se faltar, o CDN da Wikimedia; se falhar, fica o fundo do design.
+  const fontes = foto ? [foto.arquivo ? `${import.meta.env.BASE_URL}${foto.arquivo}` : null, foto.url].filter((x): x is string => Boolean(x)) : [];
+  const [tentativa, setTentativa] = useState(0);
+  const src = fontes[tentativa];
+  if (!foto || !src) return null;
   return (
     <>
       <img
-        src={foto.url}
+        src={src}
         alt={`Foto de ${nome}`}
         loading="lazy"
         decoding="async"
         referrerPolicy="no-referrer"
-        onError={() => setFalhou(true)}
+        onError={() => setTentativa((t) => t + 1)}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
       />
+      {credito ? (
       <span
         title={`${foto.autor} · ${foto.licenca}`}
         style={{ position: 'absolute', left: 6, bottom: 4, right: 6, zIndex: 1, font: "400 10px/13px 'Open Sans'", color: '#fff', textShadow: '0 1px 2px rgba(0,0,0,.7)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         Foto: {foto.autor} · {foto.licenca}
       </span>
+      ) : null}
     </>
   );
 }

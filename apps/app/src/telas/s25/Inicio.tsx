@@ -76,10 +76,10 @@ export function Inicio() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: '8px', marginTop: '14px' }}>
             {[
-              ['Roteiro', 'Do seu jeito', '/roteiro'],
-              ['O que cabe hoje', 'Viagens no seu bolso', '/tela/4.1'],
-              ['Descobrir', 'Destinos e preços', '/tela/2.1'],
-              ['Meu perfil', 'Nome, foto e cidade', '/perfil'],
+              ['Minha viagem', 'Datas, roteiro e salvos', '/minha-viagem'],
+              ['Roteiro', 'Dia a dia, do seu jeito', '/roteiro'],
+              ['Descobrir', 'Lugares por categoria', '/descobrir'],
+              ['Meu jeito de viajar', 'Estilo, ritmo e gostos', '/perfil-viajante'],
             ].map(([t, d, rota]) => (
               <button key={t} type="button" className="r-btn" onClick={() => navegar(rota!)} style={{ textAlign: 'left', background: 'var(--cartao-2)', padding: '12px', minHeight: '76px', boxSizing: 'border-box' }}>
                 <span style={{ display: 'block', font: "600 16px 'Open Sans'" }}>{t}</span>
