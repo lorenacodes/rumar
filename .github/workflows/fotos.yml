@@ -9,6 +9,7 @@ on:
     branches: [fase-0-base]
     paths:
       - tools/dados/fotos.mjs
+      - apps/app/src/dados/catalogo.json
 
 permissions:
   contents: write
@@ -26,6 +27,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/app/src/dados/fotos.json tools/dados/out/fotos.sql
-          git diff --cached --quiet || git commit -m "Fotos dos lugares atualizadas (Wikimedia Commons)"
+          git add apps/app/src/dados/fotos.json apps/app/src/dados/lugares-osm.json apps/app/public/fotos tools/dados/out/fotos.sql
+          git diff --cached --quiet || git commit -m "Fotos e localização dos lugares atualizadas (Wikimedia Commons e OpenStreetMap)"
+          git pull --rebase origin fase-0-base
           git push
