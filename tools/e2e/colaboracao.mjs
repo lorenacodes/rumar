@@ -37,6 +37,7 @@ console.log('   ', (await texto(ana, 1200)).match(/VOCÊ TAMBÉM PODE GOSTAR.*/i
 console.log('— 3-4. Nova viagem: datas, 2 viajantes, orçamento');
 await ana.getByRole('button', { name: 'Viagens', exact: true }).click(); await ana.waitForTimeout(1500);
 await ana.getByRole('button', { name: /Nova viagem/ }).click(); await ana.waitForTimeout(600);
+await ana.locator('#busca-destino-geral').fill('Paris'); await ana.waitForTimeout(1200); await ana.getByRole('button', { name: /^Paris/ }).first().click();
 await ana.getByRole('button', { name: 'Mais uma pessoa' }).click();
 await ana.locator('#orc').fill('12000'); await foto(ana, 'nova-viagem');
 await ana.getByRole('button', { name: /Criar viagem/ }).click(); await ana.waitForTimeout(6000); await foto(ana, 'viagem-roteiro');

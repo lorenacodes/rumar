@@ -29,13 +29,30 @@ export function enderecoCurto(e: string | null | undefined): string | null {
 /** Horário do OpenStreetMap só vale se estiver no formato padrão (às vezes vem um aviso em texto). */
 const horarioValido = (h: string | null | undefined) => (h && !/["]|check|website/i.test(h) ? h : null);
 
+/** Curadoria de Paris (preços conferidos, descrições escritas). */
 export const LUGARES: Lugar[] = (CATALOGO.lugares as unknown as Lugar[]).map((l) => {
   const o = osm[l.id];
-  return o ? { ...l, ...o, horario: horarioValido(o.horario) } : l;
+  return { ...(o ? { ...l, ...o, horario: horarioValido(o.horario) } : l), destino: 'fr-paris' } as Lugar;
 });
+/** Id do destino da curadoria e endereços OSM já cobertos por ela (para não repetir lugares). */
+export const DESTINO_CURADORIA = 'fr-paris';
+export const OSM_DA_CURADORIA = new Set(LUGARES.map((l) => l.osm).filter(Boolean) as string[]);
+
+/** Lugares de outras cidades, trazidos do banco conforme o app precisa (lib/lugares.ts). */
+const extras = new Map<string, Lugar>();
+export function registrarLugares(lista: Lugar[]) {
+  for (const l of lista) extras.set(l.id, l);
+}
 
 export function lugarPorId(id: string): Lugar | undefined {
-  return LUGARES.find((l) => l.id === id);
+  return LUGARES.find((l) => l.id === id) ?? extras.get(id);
+}
+
+/** Todos os lugares conhecidos de um destino (curadoria + os já carregados do banco). */
+export function lugaresDoDestino(destino: string | null | undefined): Lugar[] {
+  if (!destino) return LUGARES;
+  const daBase = [...extras.values()].filter((l) => (l as Lugar & { destino?: string }).destino === destino && !OSM_DA_CURADORIA.has(l.osm ?? ''));
+  return destino === DESTINO_CURADORIA ? [...LUGARES, ...daBase] : daBase;
 }
 
 const DIAS: Record<string, string> = { Mo: 'seg', Tu: 'ter', We: 'qua', Th: 'qui', Fr: 'sex', Sa: 'sáb', Su: 'dom', PH: 'feriados' };

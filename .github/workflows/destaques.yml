@@ -1,0 +1,42 @@
+name: Fotos dos destinos
+
+# Fotos de destaque dos destinos (Wikimedia Commons: em destaque > qualidade > alta resolução).
+# Manual; destinos opcionais separados por vírgula (vazio = todos).
+on:
+  workflow_dispatch:
+    inputs:
+      destinos:
+        description: 'Destinos (ex.: Paris,Gramado). Vazio = todos.'
+        default: ''
+  push:
+    branches: [fase-0-base]
+    paths:
+      - tools/dados/destaques.mjs
+
+permissions:
+  contents: write
+
+jobs:
+  destaques:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fase-0-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Escolher fotos
+        env:
+          DESTINOS: ${{ inputs.destinos }}
+        run: |
+          IFS=',' read -ra LISTA <<< "$DESTINOS"
+          node tools/dados/destaques.mjs "${LISTA[@]}"
+      - name: Guardar
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/app/public/fotos apps/app/src/dados/fotos.json apps/app/src/dados/destinos.json
+          git diff --cached --quiet || git commit -m "Fotos de destaque dos destinos (Wikimedia Commons)"
+          git pull --rebase origin fase-0-base
+          git push

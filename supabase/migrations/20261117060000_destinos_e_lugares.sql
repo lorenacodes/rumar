@@ -113,3 +113,6 @@ grant execute on function public.pedir_cidade(text) to anon, authenticated;
 alter table public.favorite_destinations add column if not exists destino_id text references public.destinos (id) on delete set null;
 alter table public.trips add column if not exists destino_id text references public.destinos (id) on delete set null;
 -- place_id dos itens e salvos agora aceita ids da base de lugares (osm-n123…).
+
+-- A coleta grava pela função importar-lugares com o papel de serviço.
+grant select, insert, update, delete on public.destinos, public.lugares, public.cobertura, public.cidades_pedidas to service_role;

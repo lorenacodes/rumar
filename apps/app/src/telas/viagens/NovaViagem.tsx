@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { CIDADE } from '../../lib/catalogo';
+import { cobertura, destinoPorId, pedirCidade, rotuloDestino, type Destino } from '../../lib/lugares';
+import { paisPorCodigo } from '../../lib/moedas';
+import { useDestinoAtual } from '../../state/destino';
+import { EscolherDestino } from '../../ui/escolherDestino';
 import { criarViagem } from '../../lib/viagens';
 import type { Diagnostico } from '../../lib/linhaDoTempo';
 import { dinheiro, NOME_MOEDA } from '../../lib/moedas';
@@ -9,7 +12,6 @@ import { usePlano } from '../../state/plano';
 import { useViajante } from '../../state/viajante';
 import { Aviso, BotaoPrincipal, Rodape, Voltar } from '../../ui/pecas';
 import { campo, Rotulo, Segmentos } from './comum';
-import { paisDoDestino } from './jornada';
 
 const hoje = (dias = 0) => new Date(Date.now() + dias * 86_400_000).toISOString().slice(0, 10);
 
@@ -28,21 +30,36 @@ export function NovaViagem() {
   const [mensal, setMensal] = useState('');
   const [diag, setDiag] = useState<Diagnostico>({});
   const { moedaReferencia, paisResidencia } = usePlano();
-  const paisDestino = paisDoDestino(CIDADE);
+  const [params] = useSearchParams();
+  const ultimo = useDestinoAtual((x) => x.destino);
+  const [destino, setDestino] = useState<Destino | null>(null);
+  const [lugaresNaBase, setLugaresNaBase] = useState<number | null>(null);
+  useEffect(() => {
+    const d = params.get('d');
+    if (d) void destinoPorId(d).then(setDestino);
+    else if (ultimo) setDestino(ultimo);
+  }, [params, ultimo]);
+  useEffect(() => {
+    setLugaresNaBase(null);
+    if (destino) void cobertura(destino.id).then((c) => setLugaresNaBase(c.reduce((s, x) => s + x.quantidade, 0)));
+  }, [destino]);
+  const paisDestino = destino ? paisPorCodigo(destino.pais) : null;
   const intl = (paisDestino?.codigo ?? paisResidencia) !== paisResidencia;
   const num = (t: string) => (t ? Math.round(Number(t.replace(/\./g, '').replace(',', '.')) * 100) : 0);
 
   const criar = async () => {
+    if (!destino) return setErro('Escolha o destino.');
     if (dataIda < hoje()) return setErro('Escolha uma data a partir de hoje.');
     if (!preferencias) return navegar('/perfil-viajante');
     setCriando(true);
     const valor = num(orcamento);
     const id = await criarViagem({
-      destino: CIDADE, dataIda, noites, viajantes, orcamento: valor || null, dataDefinida: definida === 'sim', moedaDestino: paisDestino?.moeda ?? null,
+      destino: destino.nome, destinoId: destino.id, dataIda, noites, viajantes, orcamento: valor || null, dataDefinida: definida === 'sim', moedaDestino: paisDestino?.moeda ?? null,
       guardado: num(guardado), capacidadeMensal: mensal ? num(mensal) : null, diagnostico: diag, moedaPlanejamento: moedaReferencia,
     }, preferencias);
     setCriando(false);
     if (!id) return setErro('Não conseguimos criar a viagem. Confira a internet e tente de novo.');
+    if (!lugaresNaBase) void pedirCidade(destino.id);
     navegar(`/viagem/${id}`, { replace: true });
   };
 
@@ -61,8 +78,17 @@ export function NovaViagem() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Nova viagem</div>
         <h1 style={{ margin: '6px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Para onde e quando?</h1>
         <Rotulo>Destino</Rotulo>
-        <div style={{ font: "600 22px 'Lexend Exa'" }}>{CIDADE}</div>
-        <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)' }}>Por enquanto, a cidade com lugares, preços e mapa conferidos. Outras chegam com a curadoria.</div>
+        {destino ? (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ font: "600 22px 'Lexend Exa'" }}>{rotuloDestino(destino)}</div>
+            <button type="button" className="r-btn" onClick={() => setDestino(null)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Trocar</button>
+          </div>
+        ) : <EscolherDestino aoEscolher={setDestino} placeholder="Qualquer cidade: Aracaju, Gramado, Lisboa…" />}
+        {destino && lugaresNaBase !== null ? (
+          <div style={{ fontSize: '14px', lineHeight: '20px', color: lugaresNaBase ? 'var(--texto-sec)' : 'var(--ambar)' }}>
+            {lugaresNaBase ? `${lugaresNaBase} lugares já coletados nesta cidade: o roteiro nasce deles e do seu jeito de viajar.` : 'Ainda não coletamos lugares desta cidade: a viagem é criada com o roteiro vazio, pedimos a coleta e você pode montar os dias depois.'}
+          </div>
+        ) : null}
         {paisDestino ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{paisDestino.nome} · moeda: {NOME_MOEDA[paisDestino.moeda] ?? paisDestino.moeda} · viagem {intl ? 'internacional' : 'nacional'}</div> : null}
         <Rotulo>A data já está fechada?</Rotulo>
         <Segmentos rotulo="A data já está fechada?" valor={definida} aoMudar={setDefinida} opcoes={[{ id: 'sim', nome: 'Sim, data fechada' }, { id: 'nao', nome: 'Ainda é uma previsão' }]} />

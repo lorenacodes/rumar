@@ -6,7 +6,7 @@ import DESTINOS from '../../dados/destinos.json';
 import { etapaAtual, gerarTarefas, internacional, TAXA_PASSAPORTE, type Contexto, type Etapa, type Tarefa } from '../../lib/linhaDoTempo';
 import { converter, paisPorCodigo, paisPorNome, taxa, type Pais } from '../../lib/moedas';
 import { diasEntre, planejarPoupanca, type Plano } from '../../lib/poupanca';
-import { LUGARES } from '../../lib/catalogo';
+import { lugarPorId } from '../../lib/catalogo';
 import type { TarefaSalva, ViagemCompleta } from '../../lib/viagens';
 import PRECOS from '../../dados/precos-paris.json';
 
@@ -45,16 +45,16 @@ export function paisDoDestino(nome: string): Pais | null {
 
 const reservaveis = new Set(Object.entries((PRECOS as { lugares: Record<string, { reserva?: boolean }> }).lugares).filter(([, p]) => p.reserva).map(([id]) => id));
 
-export function montarJornada(v: ViagemCompleta, provavelBRL: number | null, perfil: Perfil, hoje = hojeISO()): Jornada {
+export function montarJornada(v: ViagemCompleta, provavelBRL: number | null, perfil: Perfil, hoje = hojeISO(), paisCodigo?: string): Jornada {
   const vg = v.viagem;
-  const paisDestino = paisDoDestino(vg.destino);
+  const paisDestino = (paisCodigo ? paisPorCodigo(paisCodigo) : null) ?? paisDoDestino(vg.destino);
   const residencia = paisPorCodigo(perfil.paisResidencia) ?? paisPorCodigo('BR')!;
   const moedaDestino = vg.moeda_destino ?? paisDestino?.moeda ?? 'BRL';
   const moedaPlano = vg.moeda_planejamento ?? 'BRL';
   const diag = vg.diagnostico ?? {};
   const guardado = (vg.guardado_centavos ?? 0) + v.aportes.reduce((s, a) => s + a.valor_centavos, 0);
   const estimativa = provavelBRL === null ? null : converter(provavelBRL, taxa('BRL', moedaPlano));
-  const atracoes = [...new Set(v.itens.filter((i) => reservaveis.has(i.place_id)).map((i) => LUGARES.find((l) => l.id === i.place_id)?.nome).filter(Boolean) as string[])];
+  const atracoes = [...new Set(v.itens.filter((i) => reservaveis.has(i.place_id)).map((i) => lugarPorId(i.place_id)?.nome).filter(Boolean) as string[])];
 
   const base: Omit<Contexto, 'meta'> = {
     hoje, dataIda: vg.data_ida, noites: vg.noites, dataDefinida: vg.data_definida ?? true,

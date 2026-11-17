@@ -4,7 +4,8 @@
  * e só dono/editores alteram; aqui o app só chama.
  */
 import { supabase } from './supabase';
-import { LUGARES, lugarPorId } from './catalogo';
+import { lugarPorId, LUGARES, DESTINO_CURADORIA } from './catalogo';
+import { candidatosRoteiro, lugaresPorIds } from './lugares';
 import { mesclar, type Pessoa } from './grupo';
 import { planejar, type Preferencias } from './planejador';
 import type { Diagnostico } from './linhaDoTempo';
@@ -28,6 +29,7 @@ export interface Viagem {
   avaliacao?: number | null;
   comentario?: string | null;
   moeda_planejamento?: string;
+  destino_id?: string | null;
 }
 export interface TarefaSalva { id: string; chave: string | null; etapa: string; titulo: string | null; descricao: string | null; prazo: string | null; ordem: number; feita: boolean }
 export interface Aporte { id: string; valor_centavos: number; data: string; nota: string | null }
@@ -68,7 +70,7 @@ export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: stri
   if (!uid) return { minhas: [], deAmigos: [] };
   const [membros, todas] = await Promise.all([
     supabase.from('trip_members').select('trip_id, papel, status').eq('user_id', uid),
-    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade').order('data_ida'),
+    supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade').order('data_ida'),
   ]);
   const meu = new Map((membros.data ?? []).map((m) => [m.trip_id as string, m]));
   const viagens = (todas.data ?? []) as Viagem[];
@@ -91,7 +93,14 @@ export async function pessoasDaViagem(tripId: string): Promise<Pessoa[]> {
 export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Preferencias | null): Promise<void> {
   const prefs = mesclar(pessoas) ?? reserva;
   if (!prefs) return;
-  const dias = planejar(LUGARES, prefs, { destino: v.destino, dataIda: v.data_ida, noites: v.noites });
+  // Paris tem curadoria; as demais cidades usam os lugares já coletados da base.
+  const destinoId = v.destino_id ?? (v.destino === 'Paris' ? DESTINO_CURADORIA : null);
+  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId);
+  if (!candidatos.length) {
+    await registrar(v.id, 'Roteiro vazio: ainda não há lugares coletados nesta cidade (pedido de coleta registrado).');
+    return;
+  }
+  const dias = planejar(candidatos, prefs, { destino: v.destino, dataIda: v.data_ida, noites: v.noites });
   const uid = await eu();
   const linhas = dias.flatMap((d) => d.paradas.filter((p) => p.lugar).map((p, i) => ({ trip_id: v.id, dia: d.numero, periodo: p.periodo, ordem: i, place_id: p.lugar!.id, adicionado_por: uid })));
   await supabase.from('trip_items').delete().eq('trip_id', v.id);
@@ -99,13 +108,13 @@ export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Prefe
   await registrar(v.id, pessoas.length > 1 ? `Roteiro refeito com as preferências de ${pessoas.length} pessoas.` : 'Roteiro montado com o seu jeito de viajar.');
 }
 
-export async function criarViagem(dados: { destino: string; dataIda: string; noites: number; viajantes: number; orcamento: number | null; dataDefinida?: boolean; moedaDestino?: string | null; guardado?: number; capacidadeMensal?: number | null; diagnostico?: Diagnostico; moedaPlanejamento?: string }, prefs: Preferencias | null): Promise<string | null> {
+export async function criarViagem(dados: { destino: string; destinoId?: string | null; dataIda: string; noites: number; viajantes: number; orcamento: number | null; dataDefinida?: boolean; moedaDestino?: string | null; guardado?: number; capacidadeMensal?: number | null; diagnostico?: Diagnostico; moedaPlanejamento?: string }, prefs: Preferencias | null): Promise<string | null> {
   const uid = await eu();
   if (!uid) return null;
   const { data, error } = await supabase
     .from('trips')
-    .insert({ user_id: uid, destino: dados.destino, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: dados.orcamento, data_definida: dados.dataDefinida ?? true, moeda_destino: dados.moedaDestino ?? null, guardado_centavos: dados.guardado ?? 0, capacidade_mensal_centavos: dados.capacidadeMensal ?? null, diagnostico: dados.diagnostico ?? {}, moeda_planejamento: dados.moedaPlanejamento ?? 'BRL' })
-    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento')
+    .insert({ user_id: uid, destino: dados.destino, destino_id: dados.destinoId ?? null, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: dados.orcamento, data_definida: dados.dataDefinida ?? true, moeda_destino: dados.moedaDestino ?? null, guardado_centavos: dados.guardado ?? 0, capacidade_mensal_centavos: dados.capacidadeMensal ?? null, diagnostico: dados.diagnostico ?? {}, moeda_planejamento: dados.moedaPlanejamento ?? 'BRL' })
+    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id')
     .single();
   if (error || !data) return null;
   await registrar(data.id as string, 'Viagem criada.');
@@ -116,7 +125,7 @@ export async function criarViagem(dados: { destino: string; dataIda: string; noi
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
   const [v, itens, membros, hosp, gastos, eventos, tarefas, aportes, reais] = await Promise.all([
-    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento').eq('id', id).maybeSingle(),
+    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id').eq('id', id).maybeSingle(),
     supabase.from('trip_items').select('*').eq('trip_id', id).order('dia').order('ordem'),
     supabase.from('trip_members').select('user_id, papel, status').eq('trip_id', id),
     supabase.from('trip_lodging').select('*').eq('trip_id', id).maybeSingle(),
@@ -127,6 +136,8 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     supabase.from('trip_spend').select('id, data, categoria, descricao, valor_centavos, moeda, forma, taxa, taxa_fonte, valor_ref_centavos, moeda_ref').eq('trip_id', id).order('data').order('created_at'),
   ]);
   if (!v.data) return null;
+  // Lugares da base (outras cidades) usados no roteiro: traz os dados para o app.
+  await lugaresPorIds(((itens.data ?? []) as Item[]).map((i) => i.place_id));
   const nomes = await Promise.all(
     (membros.data ?? []).map(async (m) => {
       const { data } = await supabase.rpc('perfil_publico', { alvo: m.user_id });

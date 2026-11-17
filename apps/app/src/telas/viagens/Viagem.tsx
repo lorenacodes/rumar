@@ -3,7 +3,8 @@ import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from '
 
 import CAMBIO from '../../dados/cambio.json';
 import PRECOS from '../../dados/precos-paris.json';
-import { enderecoCurto, LUGARES, lugarPorId } from '../../lib/catalogo';
+import { DESTINO_CURADORIA, enderecoCurto, lugarPorId, lugaresDoDestino } from '../../lib/catalogo';
+import { candidatosRoteiro, destinoPorId, type Destino } from '../../lib/lugares';
 import { mesclar, paraQuem } from '../../lib/grupo';
 import { calcular, sugerirAjustes, type Precos } from '../../lib/orcamento';
 import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type Gosto, type Lugar, type Periodo } from '../../lib/planejador';
@@ -27,7 +28,11 @@ import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rot
 type Aba = 'etapas' | 'roteiro' | 'mapa' | 'hospedagem' | 'dinheiro' | 'grupo';
 const HORA: Record<string, string> = { morning: '9h30', afternoon: '14h', evening: '18h30', night: '21h30' };
 const FAIXA: Record<string, string> = { morning: 'Manhã', afternoon: 'Tarde', evening: 'Noite', night: 'Noite' };
-const P = PRECOS as unknown as Precos;
+const P_PARIS = PRECOS as unknown as Precos;
+const SEM_PRECOS: Precos = { lugares: {}, transporte: {} };
+// Preços conferidos existem só para a curadoria de Paris; nas outras cidades, nada é estimado sem fonte.
+let P: Precos = P_PARIS;
+const destinoDe = (v: ViagemCompleta) => v.viagem.destino_id ?? (v.viagem.destino === 'Paris' ? DESTINO_CURADORIA : null);
 const EURO = (CAMBIO as { moedas: Record<string, { venda: number; data: string }> }).moedas.EUR ?? null;
 const SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 const GOSTO_TAG: Record<Gosto, string[]> = { museus: ['museums_art', 'history_culture'], comer: ['food_drink'], cafes: ['food_drink'], noite: ['nightlife'], parques: ['nature_outdoors'], compras: ['shopping'], fotos: ['photography'], feiras: ['local_markets'], gente: ['meet_people'], lgbt: ['lgbtqia'] };
@@ -69,11 +74,21 @@ export function Viagem() {
   const { paisResidencia, paisPassaporte, moedaReferencia } = usePlano();
   const grupo = useMemo(() => (v ? mesclar(v.pessoas) ?? preferencias : null), [v, preferencias]);
   const itens = useMemo(() => (v?.itens ?? []).map((it) => ({ it, l: lugarPorId(it.place_id) })).filter((x): x is { it: Item; l: Lugar } => Boolean(x.l)), [v]);
+  const [destino, setDestino] = useState<Destino | null>(null);
+  const [, setPool] = useState(0);
+  const destinoId = v ? destinoDe(v) : null;
+  useEffect(() => {
+    if (!destinoId) return;
+    void destinoPorId(destinoId).then(setDestino);
+    // Lugares da cidade para trocar paradas e ver no mapa.
+    if (destinoId !== DESTINO_CURADORIA) void candidatosRoteiro(destinoId).then(() => setPool((n) => n + 1));
+  }, [destinoId]);
+  P = destinoId === DESTINO_CURADORIA ? P_PARIS : SEM_PRECOS;
   const orc = useMemo(() => {
     if (!v) return null;
     const entrada = {
       itens: itens.filter((x) => x.it.situacao === 'confirmado').map((x) => ({ dia: x.it.dia, periodo: x.it.periodo, ordem: x.it.ordem, lugar: x.l })),
-      precos: P, catalogo: LUGARES,
+      precos: P, catalogo: lugaresDoDestino(destinoId),
       hospedagem: v.hospedagem ? { nome: v.hospedagem.nome, total: v.hospedagem.total_centavos, moeda: v.hospedagem.moeda, fonte: v.hospedagem.fonte, cotadoEm: v.hospedagem.cotado_em, lat: v.hospedagem.lat, lon: v.hospedagem.lon } : null,
       gastos: v.gastos.map((g) => ({ categoria: g.categoria, descricao: g.descricao, valor: g.valor_centavos, moeda: g.moeda })),
       viajantes: v.viagem.viajantes, noites: v.viagem.noites, euroEmReais: EURO?.venda ?? null, prefereTransporte: grupo?.deslocamento === 'transporte',
@@ -83,7 +98,7 @@ export function Viagem() {
     const limiteBRL = v.viagem.orcamento_centavos ? converter(v.viagem.orcamento_centavos, taxa(v.viagem.moeda_planejamento ?? 'BRL', 'BRL')) : null;
     return { o, limiteBRL, sugestoes: limiteBRL ? sugerirAjustes(entrada, o, limiteBRL) : [] };
   }, [v, itens, grupo]);
-  const j = useMemo(() => (v && orc ? montarJornada(v, orc.o.semCambio ? null : orc.o.provavelBRL, { paisResidencia, paisPassaporte, moedaReferencia }) : null), [v, orc, paisResidencia, paisPassaporte, moedaReferencia]);
+  const j = useMemo(() => (v && orc ? montarJornada(v, orc.o.semCambio ? null : orc.o.provavelBRL, { paisResidencia, paisPassaporte, moedaReferencia }, undefined, destino?.pais) : null), [v, orc, paisResidencia, paisPassaporte, moedaReferencia, destino]);
 
   if (v === null) return <Navigate to="/viagens" replace />;
   if (!v) return <main className="tela" aria-busy="true" style={{ padding: '40px 20px' }}>Carregando a viagem…</main>;
@@ -133,7 +148,7 @@ export function Viagem() {
         {aba === 'etapas' && j && orc ? <AbaEtapas v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} resumoFinal={<PlanejadoReal v={v} j={j} orc={orc.o} comCompartilhar />} /> : null}
         {aba === 'roteiro' ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} /> : null}
         {aba === 'mapa' ? <AbaMapa v={v} dia={dia} itens={itens} /> : null}
-        {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} /> : null}
+        {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} destino={destino} /> : null}
         {aba === 'dinheiro' && orc && j ? <AbaDinheiro v={v} j={j} orc={orc.o} pode={pode} recarregar={recarregar} resumo={<AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} moeda={j.moedaPlano} />} /> : null}
         {aba === 'grupo' ? <AbaGrupo v={v} pode={pode} recarregar={recarregar} /> : null}
         <div style={{ height: '24px' }} />
@@ -169,7 +184,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
             const preco = precoTexto(l);
             const motivos = grupo ? afinidade(l, grupo).motivos : [];
             const quem = paraQuem(v.pessoas, (Object.keys(GOSTO_TAG) as Gosto[]).filter((g) => GOSTO_TAG[g].some((t) => l.tags.includes(t))));
-            const alternativas = LUGARES.filter((o) => !usados.has(o.id) && o.categoria === l.categoria && o.slots.includes(it.periodo as Periodo))
+            const alternativas = lugaresDoDestino(destinoDe(v)).filter((o) => !usados.has(o.id) && o.categoria === l.categoria && o.slots.includes(it.periodo as Periodo))
               .map((o) => ({ o, km: temCoord(o) && temCoord(l) ? distanciaKm(o, l) : 9 })).sort((a, b) => a.km - b.km).slice(0, 4);
             return (
               <article key={it.id} style={{ display: 'grid', gridTemplateColumns: '84px 1fr', gap: '10px', padding: '10px 0', borderBottom: '1px dashed var(--linha)' }}>
@@ -192,7 +207,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                   {quem ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)' }}>{quem}</div> : null}
                   {km !== null && prox ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>
-                      <span>↓ {textoDistancia(km)} · {km <= 1.5 ? 'dá para ir a pé' : `metrô: 1 bilhete (${euros(P.transporte.metro!.valor)})`}</span>
+                      <span>↓ {textoDistancia(km)} · {km <= 1.5 ? 'dá para ir a pé' : (P.transporte.metro ? `metrô: 1 bilhete (${euros(P.transporte.metro.valor)})` : 'transporte (veja a rota)')}</span>
                       <a href={rotaMapa(l as { lat: number; lon: number }, prox as { lat: number; lon: number }, km <= 1.5 ? 'walking' : 'transit')} target="_blank" rel="noreferrer" style={{ color: 'var(--azul)', fontWeight: 600, minHeight: '40px', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>Rota ↗</a>
                     </div>
                   ) : null}
@@ -236,7 +251,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
       ))}
       {pode ? (
         <div style={{ marginTop: '12px' }}>
-          <BotaoContorno onClick={() => navegar(`/descobrir?viagem=${v.viagem.id}&dia=${dia}`)}>+ Adicionar lugar no dia {dia}</BotaoContorno>
+          <BotaoContorno onClick={() => navegar(`/descobrir?d=${destinoDe(v) ?? ""}&viagem=${v.viagem.id}&dia=${dia}`)}>+ Adicionar lugar no dia {dia}</BotaoContorno>
         </div>
       ) : null}
     </section>
@@ -252,7 +267,7 @@ function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { i
   const doDia = itens.filter((x) => x.it.dia === dia).sort((a, b) => a.it.ordem - b.it.ordem);
   const pontos: Ponto[] = [
     ...(todos
-      ? LUGARES.filter(temCoord).map((l) => ({ id: l.id, lat: l.lat!, lon: l.lon!, rotulo: itens.some((x) => x.l.id === l.id) ? '★' : '·', titulo: l.nome, tipo: 'lugar' as const }))
+      ? lugaresDoDestino(destinoDe(v)).filter(temCoord).map((l) => ({ id: l.id, lat: l.lat!, lon: l.lon!, rotulo: itens.some((x) => x.l.id === l.id) ? '★' : '·', titulo: l.nome, tipo: 'lugar' as const }))
       : doDia.filter((x) => temCoord(x.l)).map((x, i) => ({ id: x.l.id, lat: x.l.lat!, lon: x.l.lon!, rotulo: String(i + 1), titulo: x.l.nome, tipo: x.it.situacao === 'sugerido' ? ('sugerido' as const) : ('parada' as const) }))),
     ...(v.hospedagem?.lat && v.hospedagem.lon ? [{ id: 'hotel', lat: v.hospedagem.lat, lon: v.hospedagem.lon, rotulo: 'H', titulo: v.hospedagem.nome, tipo: 'hotel' as const }] : []),
   ];
@@ -284,7 +299,7 @@ function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { i
 }
 
 // ---------------------------------------------------------------- Hospedagem
-function AbaHospedagem({ v, itens, pode, recarregar }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[]; pode: boolean; recarregar: () => void }) {
+function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[]; pode: boolean; recarregar: () => void; destino: Destino | null }) {
   const [checkin, setCheckin] = useState(v.viagem.data_ida);
   const [checkout, setCheckout] = useState(dataMais(v.viagem.data_ida, v.viagem.noites));
   const [min, setMin] = useState('');
@@ -295,7 +310,7 @@ function AbaHospedagem({ v, itens, pode, recarregar }: { v: ViagemCompleta; iten
   const [carregando, setCarregando] = useState(false);
   const [comparar, setComparar] = useState<string[]>([]);
   const comCoord = itens.map((x) => x.l).filter(temCoord);
-  const centro = comCoord.length ? { lat: comCoord.reduce((s, l) => s + l.lat, 0) / comCoord.length, lon: comCoord.reduce((s, l) => s + l.lon, 0) / comCoord.length } : { lat: 48.8566, lon: 2.3522 };
+  const centro = comCoord.length ? { lat: comCoord.reduce((s, l) => s + l.lat, 0) / comCoord.length, lon: comCoord.reduce((s, l) => s + l.lon, 0) / comCoord.length } : destino ? { lat: destino.lat, lon: destino.lon } : { lat: 48.8566, lon: 2.3522 };
   const euro = EURO?.venda ?? null;
 
   const procurar = async () => {

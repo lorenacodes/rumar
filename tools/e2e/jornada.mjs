@@ -37,7 +37,7 @@ await foto('pais-e-moeda');
 await p.getByRole('button', { name: /^Salvar/ }).click(); await p.waitForTimeout(1500);
 
 console.log('— Nova viagem: previsão, guardado, capacidade, diagnóstico');
-await p.goto(URL + '#/viagens/nova'); await p.waitForTimeout(800);
+await p.goto(URL + '#/viagens/nova?d=fr-paris'); await p.waitForTimeout(1500);
 await p.getByRole('tab', { name: 'Ainda é uma previsão' }).click();
 await p.locator('#ida').fill(mais(75));
 await p.locator('#orc').fill('9000');

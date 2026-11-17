@@ -40,6 +40,8 @@ export interface Lugar {
   horario?: string | null;
   site?: string | null;
   osm?: string;
+  /** Destino (id da tabela destinos). */
+  destino?: string;
 }
 
 export type Estilo = 'cultural' | 'gastronomico' | 'agitado' | 'relaxante' | 'aventureiro' | 'compras' | 'equilibrado';

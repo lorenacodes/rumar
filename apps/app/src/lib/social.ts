@@ -45,10 +45,10 @@ export async function desfazerAmizade(id: string) {
 }
 
 // ---------------------------------------------------------------- destinos favoritos
-export interface Favorito { chave: string; nome: string; regiao: string | null; pais: string }
+export interface Favorito { chave: string; nome: string; regiao: string | null; pais: string; destino_id?: string | null }
 
 export async function meusFavoritos(): Promise<Favorito[]> {
-  const { data } = await supabase.from('favorite_destinations').select('chave, nome, regiao, pais').order('created_at');
+  const { data } = await supabase.from('favorite_destinations').select('chave, nome, regiao, pais, destino_id').order('created_at');
   return (data ?? []) as Favorito[];
 }
 export async function favoritar(f: Favorito, sim: boolean) {
