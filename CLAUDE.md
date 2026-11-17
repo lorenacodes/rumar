@@ -19,4 +19,5 @@
 - **Dinheiro sem ilusão.** Dizer se algo tende a dar dinheiro ou não, com premissas explícitas; nunca inventar números de mercado.
 - **Velocidade.** Ela quer lançar o quanto antes para não ser copiada: priorizar o que leva ao lançamento e avisar quando algo atrasa.
 - **Orçamento.** Investimento disponível hoje: até R$ 500. Qualquer custo novo precisa ser mostrado antes, em reais.
+- **Experiência de quem já tem conta (17/11/2026).** Toda mudança precisa pensar também em quem está logado: o que espera resposta (convites, pedidos), o que está acontecendo agora (viagem em andamento), o que falta para aproveitar o app. Testar os dois caminhos: sem conta e com conta.
 - Plano vigente: `docs/PLANO_DE_ACAO.md`.

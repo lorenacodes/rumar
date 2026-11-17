@@ -5,8 +5,12 @@ import { carregarDaConta, carregarPerfil, useSessao } from '../../conta/servico'
 import DESTINOS from '../../dados/destinos.json';
 import { destinoPorNome } from '../../lib/lugares';
 import { cancelarExclusao, estadoExclusao } from '../../lib/privacidade';
-import { meusFavoritos, type Favorito } from '../../lib/social';
-import { listarViagens, type Viagem } from '../../lib/viagens';
+import { meusFavoritos, minhasAmizades, type Favorito } from '../../lib/social';
+import { meuUsuario } from '../../lib/usuario';
+import { lugarPorId } from '../../lib/catalogo';
+import { useViajante } from '../../state/viajante';
+import { hojeISO } from '../viagens/jornada';
+import { carregarViagem, listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
 import { DESTINOS_COM_FOTO, FotoDestino } from '../../ui/foto';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
@@ -71,6 +75,28 @@ function CartaoPequeno({ d }: { d: DestinoCartao }) {
 
 const Rot = ({ t }: { t: string }) => <h2 style={{ font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em', margin: '22px 0 8px' }}>{t}</h2>;
 const fileira = { display: 'flex', gap: '10px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 6px', scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
+/** Avisos de quem tem conta: o que espera resposta e o que falta para aproveitar o app. */
+function Pendencias({ convites, pedidos, semUsuario, semJeito }: { convites: number; pedidos: number; semUsuario: boolean; semJeito: boolean }) {
+  const navegar = useNavigate();
+  const itens: { texto: string; ir: string; destaque?: boolean }[] = [];
+  if (convites) itens.push({ texto: convites === 1 ? 'Você tem 1 convite para uma viagem' : `Você tem ${convites} convites para viagens`, ir: '/viagens', destaque: true });
+  if (pedidos) itens.push({ texto: pedidos === 1 ? '1 pedido de amizade esperando resposta' : `${pedidos} pedidos de amizade esperando resposta`, ir: '/social', destaque: true });
+  if (semJeito) itens.push({ texto: 'Conte seu jeito de viajar (1 minuto): os roteiros nascem dele', ir: '/perfil-viajante' });
+  if (semUsuario) itens.push({ texto: 'Escolha seu @ para seus amigos te acharem', ir: '/perfil/usuario' });
+  if (!itens.length) return null;
+  return (
+    <ul aria-label="Avisos" style={{ listStyle: 'none', margin: '14px 0 0', padding: 0, border: '1px solid var(--linha)' }}>
+      {itens.map((x, i) => (
+        <li key={x.ir + i} style={{ borderTop: i ? '1px solid var(--linha)' : 0 }}>
+          <button type="button" className="r-btn" onClick={() => navegar(x.ir)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', width: '100%', minHeight: '52px', padding: '0 12px', textAlign: 'left', font: `${x.destaque ? 700 : 600} 15px/20px 'Open Sans'`, background: x.destaque ? 'var(--cartao-1)' : 'transparent' }}>
+            <span>{x.destaque ? '● ' : ''}{x.texto}</span><span aria-hidden="true">›</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 const diasAte = (iso: string) => Math.round((Date.parse(`${iso}T12:00:00`) - Date.now()) / 86_400_000);
 
 /**
@@ -84,13 +110,30 @@ export function Inicio() {
   const [favs, setFavs] = useState<Favorito[]>([]);
   const [viagem, setViagem] = useState<Viagem | null | undefined>(undefined);
   const [exclusao, setExclusao] = useState<Date | null>(null);
+  const { preferencias } = useViajante();
+  const [pend, setPend] = useState<{ convites: number; pedidos: number; semUsuario: boolean } | null>(null);
+  const [hoje, setHoje] = useState<{ dia: number; total: number; paradas: string[] } | null>(null);
 
   useEffect(() => {
     if (!sessao) return;
     void carregarDaConta();
     void carregarPerfil().then((p) => setNome(p?.display_name ?? null));
     void meusFavoritos().then(setFavs);
-    void listarViagens().then((v) => setViagem(v.minhas.filter((x) => x.status === 'ativo' && x.data_ida >= new Date().toISOString().slice(0, 10)).sort((a, b) => a.data_ida.localeCompare(b.data_ida))[0] ?? null));
+    void (async () => {
+      const [v, amizades, usuario] = await Promise.all([listarViagens(), minhasAmizades(), meuUsuario()]);
+      const agora = hojeISO();
+      const fim = (x: Viagem) => new Date(Date.parse(`${x.data_ida}T12:00:00Z`) + x.noites * 86_400_000).toISOString().slice(0, 10);
+      // Próxima viagem = a que ainda não terminou (inclui a que está acontecendo agora).
+      const proxima = v.minhas.filter((x) => x.status === 'ativo' && fim(x) >= agora).sort((a, b) => a.data_ida.localeCompare(b.data_ida))[0] ?? null;
+      setViagem(proxima);
+      setPend({ convites: v.minhas.filter((x) => x.status === 'convidado').length, pedidos: amizades.filter((a) => a.status === 'pendente' && !a.enviadaPorMim).length, semUsuario: !usuario?.username });
+      if (proxima && proxima.data_ida <= agora) {
+        const dia = Math.round((Date.parse(`${agora}T12:00:00Z`) - Date.parse(`${proxima.data_ida}T12:00:00Z`)) / 86_400_000) + 1;
+        const completa = await carregarViagem(proxima.id);
+        const paradas = (completa?.itens ?? []).filter((i) => i.dia === dia).sort((a, b) => a.ordem - b.ordem).map((i) => lugarPorId(i.place_id)?.nome).filter(Boolean) as string[];
+        setHoje({ dia, total: proxima.noites + 1, paradas });
+      } else setHoje(null);
+    })();
     void estadoExclusao().then((e) => setExclusao(e?.apagaEm ?? null));
   }, [sessao]);
 
@@ -111,10 +154,25 @@ export function Inicio() {
           </div>
         ) : null}
         <h1 style={{ margin: '14px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
-          {sessao && primeiroNome ? `Olá, ${primeiroNome}. Para onde agora?` : 'Para onde você quer ir?'}
+          {sessao && hoje ? `Boa viagem${primeiroNome ? `, ${primeiroNome}` : ''}!` : sessao && primeiroNome ? `Olá, ${primeiroNome}. Para onde agora?` : 'Para onde você quer ir?'}
         </h1>
 
-        {sessao && viagem ? (
+        {sessao && pend ? (
+          <Pendencias convites={pend.convites} pedidos={pend.pedidos} semUsuario={pend.semUsuario} semJeito={!preferencias} />
+        ) : null}
+
+        {sessao && viagem && hoje ? (
+          <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}?aba=roteiro`)} aria-label={`Hoje em ${viagem.destino}: ver o roteiro do dia`}
+            style={{ display: 'block', width: '100%', marginTop: '14px', padding: '14px 16px', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
+            <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Você está viajando</span>
+            <span style={{ display: 'block', font: "600 24px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>Hoje em {viagem.destino}</span>
+            <span style={{ display: 'block', fontSize: '14px', color: 'var(--sobre-escuro-sec)' }}>Dia {Math.min(hoje.dia, hoje.total)} de {hoje.total}</span>
+            {hoje.paradas.length ? (
+              <span style={{ display: 'block', marginTop: '8px', fontSize: '15px', lineHeight: '22px' }}>{hoje.paradas.slice(0, 4).map((n, i) => <span key={n} style={{ display: 'block' }}>{i + 1}. {n}</span>)}</span>
+            ) : <span style={{ display: 'block', marginTop: '8px', fontSize: '14px' }}>Dia livre no roteiro. Toque para adicionar lugares.</span>}
+            <span style={{ display: 'block', fontSize: '13px', marginTop: '8px', color: 'var(--sobre-escuro-sec)' }}>Ver o roteiro, marcar o que fez e anotar gastos ›</span>
+          </button>
+        ) : sessao && viagem ? (
           <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} aria-label={`Próxima viagem: ${viagem.destino}`}
             style={{ position: 'relative', display: 'block', width: '100%', height: '150px', marginTop: '14px', overflow: 'hidden', textAlign: 'left', background: 'var(--fundo-escuro)' }}>
             {DESTINOS_COM_FOTO.includes(viagem.destino) ? <FotoDestino nome={viagem.destino} credito={false} /> : null}
