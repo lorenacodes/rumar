@@ -299,3 +299,14 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   aula em português, 3 a 25 minutos, idioma no título, busca segura, relevância + visualizações.
   Cache de 14 dias no banco (`aulas_video`). Chave só no Supabase (`YOUTUBE_API_KEY`).
 - Sem a chave, a tela diz isso e oferece a busca por tema, sem fingir que é sugestão específica.
+
+## D-027 — Nome de usuário (@) único, no estilo Instagram
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora. Migração `20261117080000_nome_de_usuario.sql` (aplicar no Supabase).
+- Único sem diferenciar maiúsculas (índice em lower(username)); 3–24 caracteres, letras sem acento,
+  números, ponto e sublinhado; pelo menos uma letra; sem ponto no começo/fim nem dois seguidos.
+- Nomes reservados (admin, suporte, bovair, oficial…) bloqueados; troca no máximo 1 vez a cada 14 dias
+  (evita "pegar e soltar" nomes). Regras valem no banco, por qualquer caminho.
+- Escolha logo depois de criar a conta (com "Agora não"), troca no Perfil, lembrete no Social.
+  Disponibilidade ao vivo sem revelar quem usa o nome; sugestões livres quando está em uso.
+- Busca de pessoas aceita "@nome": nome exato primeiro, depois começo do @, depois nome.
