@@ -29,19 +29,19 @@ const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().rep
 /** Destino → buscas, da cena preferida para a mais genérica. */
 const BUSCAS = {
   Paris: ['Eiffel Tower night', 'Eiffel Tower Trocadero', 'Paris skyline'],
-  Lisboa: ['Lisbon tram Alfama', 'Lisbon sunset', 'Lisbon'],
+  Lisboa: ['Praça do Comércio Lisboa', 'Alfama Lisboa', 'Lisbon tram 28'],
   Roma: ['Colosseum night', 'Colosseum Rome', 'Rome skyline'],
   'Buenos Aires': ['Puerto Madero Buenos Aires night', 'Obelisco Buenos Aires', 'Caminito La Boca'],
   Barcelona: ['Sagrada Familia exterior', 'Park Güell Barcelona', 'Barcelona skyline'],
-  Madri: ['Gran Via Madrid night', 'Madrid Palacio Real', 'Madrid'],
+  Madri: ['Palacio Real de Madrid', 'Gran Vía Madrid', 'Almudena Cathedral Madrid'],
   Londres: ['Tower Bridge night', 'Westminster Big Ben night', 'London skyline'],
   'Nova York': ['Manhattan skyline night', 'Manhattan skyline', 'New York City'],
-  Santiago: ['Santiago de Chile skyline Andes', 'Santiago de Chile Andes snow', 'Cerro San Cristóbal Santiago'],
+  Santiago: ['Santiago de Chile skyline', 'Gran Torre Santiago Andes', 'Santiago de Chile cityscape'],
   Montevidéu: ['Montevideo Rambla', 'Montevideo skyline', 'Montevideo'],
-  Cascais: ['Cascais beach', 'Cascais', 'Boca do Inferno Cascais'],
+  Cascais: ['Farol de Santa Marta Cascais', 'Cascais Bay', 'Praia da Rainha Cascais'],
   'Rio de Janeiro': ['Rio de Janeiro Sugarloaf Mountain', 'Rio de Janeiro Christ the Redeemer', 'Copacabana Rio de Janeiro'],
   Gramado: ['Gramado Rio Grande do Sul', 'Lago Negro Gramado', 'Gramado'],
-  'Campos do Jordão': ['Campos do Jordão Serra da Mantiqueira', 'Campos do Jordão Capivari', 'Campos do Jordão'],
+  'Campos do Jordão': ['Campos do Jordão Capivari', 'Campos do Jordão Serra da Mantiqueira', 'Horto Florestal Campos do Jordão'],
   Salvador: ['Pelourinho Salvador', 'Salvador Bahia Elevador Lacerda', 'Salvador Bahia'],
   Recife: ['Recife Marco Zero', 'Recife Boa Viagem', 'Recife'],
   Maceió: ['Maceió beach', 'Pajuçara Maceió', 'Maceió'],
@@ -50,7 +50,7 @@ const BUSCAS = {
   Florianópolis: ['Florianópolis Lagoa da Conceição', 'Florianópolis beach', 'Florianópolis'],
   Bonito: ['Rio da Prata Bonito', 'Gruta do Lago Azul Bonito', 'Bonito Mato Grosso do Sul rio'],
   'Foz do Iguaçu': ['Iguazu Falls', 'Iguaçu Falls Devil\'s Throat', 'Cataratas do Iguaçu'],
-  'Fernando de Noronha': ['Baía do Sancho', 'Fernando de Noronha praia', 'Fernando de Noronha'],
+  'Fernando de Noronha': ['Baía do Sancho', 'Praia do Sancho', 'Morro Dois Irmãos Fernando de Noronha'],
   'São Paulo': ['São Paulo skyline night', 'Avenida Paulista', 'São Paulo city'],
   Aracaju: ['Orla de Atalaia Aracaju', 'Aracaju praia', 'Aracaju Rio Sergipe'],
   Lagos: ['Ponta da Piedade Lagos', 'Lagos Algarve beach'],
@@ -67,7 +67,7 @@ const LOCAL = {
   'São Paulo': [-23.551, -46.633, 35], Aracaju: [-10.947, -37.073, 25], Lagos: [37.102, -8.673, 15],
 };
 /** Títulos que não mostram o destino de um jeito que dê vontade de ir. */
-const REJEITAR = /interior|inside|indoor|terminal|airport|aeroporto|aeropuerto|shopping|mall|cinema|car\b|carro|auto|rally|painting|pintura|mural|graffiti|grafite|map\b|mapa|museum interior|ceiling|teto|portrait|retrato|bus\b|ônibus|train station|estação|hospital|stadium interior/i;
+const REJEITAR = /gallus|rooster|galo|chicken|bird|\bave\b|gull|gaivota|sterna|tennis|tênis|player|jogador|football|futebol|match|plaque|placa|\bsign\b|insect|butterfly|borboleta|flower|\bflor\b|\bdog\b|\bcat\b|horse|cavalo|interior|inside|indoor|terminal|airport|aeroporto|aeropuerto|shopping|mall|cinema|car\b|carro|auto|rally|painting|pintura|mural|graffiti|grafite|map\b|mapa|museum interior|ceiling|teto|portrait|retrato|bus\b|ônibus|train station|estação|hospital|stadium interior/i;
 const km = (a, b, c, d) => { const r = Math.PI / 180; const x = Math.sin(((c - a) * r) / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin(((d - b) * r) / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); };
 
 async function pedir(params) {
