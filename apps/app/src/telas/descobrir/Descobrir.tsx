@@ -5,7 +5,7 @@ import { CATEGORIAS, CIDADE, LUGARES } from '../../lib/catalogo';
 import { afinidade, type Categoria, type Lugar } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
-import { FotoDestino } from '../../ui/foto';
+import { FotoLugar, temFoto } from '../../ui/foto';
 
 const normal = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -16,8 +16,10 @@ export function LinhaLugar({ l, aoAbrir }: { l: Lugar; aoAbrir: () => void }) {
   return (
     <li style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--linha)' }}>
       <button type="button" className="r-btn" onClick={aoAbrir} style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, minWidth: 0, textAlign: 'left' }}>
-        <span style={{ position: 'relative', width: '72px', height: '72px', flex: 'none', overflow: 'hidden', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' }}>
-          <FotoDestino nome={l.id} credito={false} />
+        <span style={{ width: '72px', flex: 'none' }}>
+          {temFoto(l.id) ? <FotoLugar id={l.id} proporcao="1 / 1" credito={false} /> : (
+            <span aria-hidden style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'var(--cartao-2)', font: "600 22px 'Lexend Exa'", color: 'var(--texto-sec)' }}>{l.nome[0]}</span>
+          )}
         </span>
         <span style={{ minWidth: 0 }}>
           <span style={{ display: 'block', font: "700 11px/15px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS[l.categoria]}</span>

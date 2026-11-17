@@ -338,7 +338,8 @@
    "local": false,
    "lotado": true,
    "osm": "Rue des Archives, Paris",
-   "artigo": null
+   "artigo": null,
+   "semFoto": true
   },
   {
    "id": "oberkampf",

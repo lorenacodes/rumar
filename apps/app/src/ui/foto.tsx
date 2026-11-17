@@ -89,3 +89,27 @@ export function RotuloFoto({ nome, style }: { nome: string; style?: CSSPropertie
   if (foto) return null;
   return <span style={style}>Foto de {nome}</span>;
 }
+
+/** Existe foto para esta chave? (para mostrar o aviso "sem foto" em vez de um bloco vazio) */
+export function temFoto(nome: string): boolean {
+  return Boolean(embutidas[nome]);
+}
+
+/**
+ * Foto do lugar com o aviso discreto quando não há foto conferida: nunca imagem
+ * aleatória, nunca espaço quebrado.
+ */
+export function FotoLugar({ id, proporcao = '16 / 9', credito = true }: { id: string; proporcao?: string; credito?: boolean }) {
+  const tem = temFoto(id);
+  return (
+    <div style={{ position: 'relative', width: '100%', aspectRatio: proporcao, overflow: 'hidden', background: tem ? 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' : 'var(--cartao-2)' }}>
+      {tem ? (
+        <FotoDestino nome={id} credito={credito} />
+      ) : (
+        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', font: "500 13px 'Open Sans'", color: 'var(--texto-sec)', textAlign: 'center', padding: '8px' }}>
+          Sem foto conferida deste lugar
+        </span>
+      )}
+    </div>
+  );
+}

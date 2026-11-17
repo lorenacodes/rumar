@@ -43,6 +43,30 @@ async function pedir(url, tipo = 'json') {
 }
 const semHtml = (s) => (s ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 
+// ---------------------------------------------------------------- 2. localização
+const wikidata = {};
+const osm = { fonte: 'OpenStreetMap (ODbL) via Nominatim', atualizadoEm: HOJE, lugares: {} };
+for (const l of catalogo.lugares) {
+  const r = await pedir(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&extratags=1&accept-language=pt-BR&q=${encodeURIComponent(l.osm)}`);
+  const hit = r?.[0];
+  if (!hit) { console.log(`sem localização: ${l.id}`); await esperar(1100); continue; }
+  const a = hit.address ?? {};
+  const rua = [a.road ?? a.pedestrian ?? a.square ?? a.park, a.house_number].filter(Boolean).join(', ');
+  osm.lugares[l.id] = {
+    lat: Number(hit.lat),
+    lon: Number(hit.lon),
+    endereco: [rua, a.suburb ?? a.city_district, a.postcode].filter(Boolean).join(' · ') || null,
+    horario: hit.extratags?.opening_hours ?? null,
+    site: hit.extratags?.website ?? hit.extratags?.['contact:website'] ?? null,
+    osm: `https://www.openstreetmap.org/${hit.osm_type}/${hit.osm_id}`,
+  };
+  if (hit.extratags?.wikidata) wikidata[l.id] = hit.extratags.wikidata;
+  console.log(`local ok ${l.id}: ${osm.lugares[l.id].endereco ?? '—'} ${osm.lugares[l.id].horario ? '· horário' : ''}`);
+  await esperar(1100); // política de uso do Nominatim: no máximo 1 pedido por segundo
+}
+writeFileSync(join(ROOT, 'apps/app/src/dados/lugares-osm.json'), JSON.stringify(osm, null, 1));
+
+
 // ---------------------------------------------------------------- 1. fotos
 const artigos = [...new Set(Object.values(ARTIGOS))];
 const paginas = {};
@@ -96,26 +120,34 @@ for (const [chave, artigo] of Object.entries(ARTIGOS)) {
 }
 writeFileSync(join(ROOT, 'apps/app/src/dados/fotos.json'), JSON.stringify(fotos, null, 1));
 
-// ---------------------------------------------------------------- 2. localização
-const osm = { fonte: 'OpenStreetMap (ODbL) via Nominatim', atualizadoEm: HOJE, lugares: {} };
+
+// Lugares ainda sem foto: a imagem oficial do próprio lugar no Wikidata (P18), ligada pelo
+// OpenStreetMap ao lugar exato (não a um artigo parecido).
 for (const l of catalogo.lugares) {
-  const r = await pedir(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&extratags=1&accept-language=pt-BR&q=${encodeURIComponent(l.osm)}`);
-  const hit = r?.[0];
-  if (!hit) { console.log(`sem localização: ${l.id}`); await esperar(1100); continue; }
-  const a = hit.address ?? {};
-  const rua = [a.road ?? a.pedestrian ?? a.square ?? a.park, a.house_number].filter(Boolean).join(', ');
-  osm.lugares[l.id] = {
-    lat: Number(hit.lat),
-    lon: Number(hit.lon),
-    endereco: [rua, a.suburb ?? a.city_district, a.postcode].filter(Boolean).join(' · ') || null,
-    horario: hit.extratags?.opening_hours ?? null,
-    site: hit.extratags?.website ?? hit.extratags?.['contact:website'] ?? null,
-    osm: `https://www.openstreetmap.org/${hit.osm_type}/${hit.osm_id}`,
+  if (fotos[l.id] || !wikidata[l.id] || l.artigo === null && l.semFoto) continue;
+  const ent = await pedir(`https://www.wikidata.org/wiki/Special:EntityData/${wikidata[l.id]}.json`);
+  const arquivoCommons = ent?.entities?.[wikidata[l.id]]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+  if (!arquivoCommons) { console.log(`sem imagem no Wikidata: ${l.id}`); await esperar(800); continue; }
+  const inf = await pedir(`https://pt.wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=extmetadata|url&iiurlwidth=500&titles=${encodeURIComponent('File:' + arquivoCommons)}`);
+  const ii = Object.values(inf?.query?.pages ?? {})[0]?.imageinfo?.[0];
+  if (!ii?.thumburl) { await esperar(800); continue; }
+  const url = ii.thumburl.split('?')[0];
+  const bytes = await pedir(url, 'bin');
+  if (!bytes || bytes.length < 2000) { await esperar(800); continue; }
+  const arquivo = `fotos/${slug(l.id)}.${/\.png$/i.test(url) ? 'png' : 'jpg'}`;
+  writeFileSync(join(ROOT, 'apps/app/public', arquivo), bytes);
+  const m = ii.extmetadata ?? {};
+  fotos[l.id] = {
+    arquivo, url, largura: ii.thumbwidth ?? null, altura: ii.thumbheight ?? null,
+    autor: semHtml(m.Artist?.value) || 'Autor no Wikimedia Commons',
+    licenca: semHtml(m.LicenseShortName?.value) || 'ver página',
+    licencaUrl: m.LicenseUrl?.value ?? null,
+    pagina: ii.descriptionurl, artigo: `Wikidata ${wikidata[l.id]}`,
   };
-  console.log(`local ok ${l.id}: ${osm.lugares[l.id].endereco ?? '—'} ${osm.lugares[l.id].horario ? '· horário' : ''}`);
-  await esperar(1100); // política de uso do Nominatim: no máximo 1 pedido por segundo
+  console.log(`foto (Wikidata) ok ${l.id}`);
+  await esperar(1000);
 }
-writeFileSync(join(ROOT, 'apps/app/src/dados/lugares-osm.json'), JSON.stringify(osm, null, 1));
+writeFileSync(join(ROOT, 'apps/app/src/dados/fotos.json'), JSON.stringify(fotos, null, 1));
 
 // ---------------------------------------------------------------- 3. SQL da tabela fotos_lugares
 const q = (v) => (v === null || v === undefined ? 'null' : `'${String(v).replace(/'/g, "''")}'`);

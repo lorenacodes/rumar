@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { horarioLegivel, LUGARES, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
+import { enderecoCurto, horarioLegivel, LUGARES, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
 import { NOME_CATEGORIA, NOME_ESTILO, planejar, textoDistancia, type Parada, type Periodo } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
-import { FotoDestino } from '../../ui/foto';
+import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
 
-const NOME_PERIODO: Record<Periodo, string> = { morning: 'Manhã', afternoon: 'Tarde', evening: 'Fim de tarde', night: 'Noite' };
 const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
 const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
@@ -23,7 +22,6 @@ function ItemDoDia({ parada, ultimo, aoAbrir }: { parada: Parada; ultimo: boolea
     <li style={{ display: 'grid', gridTemplateColumns: '52px 1fr', columnGap: '10px' }}>
       <div style={{ position: 'relative' }}>
         <div style={{ font: "600 14px 'Lexend Exa'", paddingTop: '2px' }}>{parada.horario}</div>
-        <div style={{ font: "500 12px 'Open Sans'", color: 'var(--texto-sec)' }}>{NOME_PERIODO[parada.periodo]}</div>
         {/* Trilho da linha do tempo */}
         <span aria-hidden style={{ position: 'absolute', right: '-6px', top: '6px', width: '10px', height: '10px', background: l ? 'var(--amarelo)' : 'var(--fundo)', border: '2px solid var(--texto)', boxSizing: 'border-box' }} />
         {!ultimo ? <span aria-hidden style={{ position: 'absolute', right: '-2px', top: '18px', bottom: '-6px', width: '2px', background: 'var(--linha)' }} /> : null}
@@ -32,14 +30,12 @@ function ItemDoDia({ parada, ultimo, aoAbrir }: { parada: Parada; ultimo: boolea
         {l ? (
           <>
             <button type="button" className="r-btn" onClick={() => aoAbrir(l.id)} style={{ display: 'block', width: '100%', textAlign: 'left' }} aria-label={`${l.nome}: ver detalhes`}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' }}>
-                <FotoDestino nome={l.id} />
-              </div>
+              <FotoLugar id={l.id} />
               <div style={{ font: "700 12px/16px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)', marginTop: '8px' }}>{NOME_CATEGORIA[l.categoria]}</div>
               <div style={{ font: "600 18px/23px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '2px' }}>{l.nome}</div>
             </button>
             <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '2px' }}>
-              {l.endereco ?? l.area}
+              {enderecoCurto(l.endereco) ?? l.area}
             </div>
             {l.horario ? (
               <div style={{ fontSize: '14px', lineHeight: '20px', marginTop: '2px' }}>
@@ -50,9 +46,14 @@ function ItemDoDia({ parada, ultimo, aoAbrir }: { parada: Parada; ultimo: boolea
             )}
             <p style={{ margin: '6px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--verde)', fontWeight: 600 }}>{parada.motivo}</p>
             {parada.proximo ? (
-              <a href={parada.proximo.rota} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', minHeight: '40px', marginTop: '4px', fontSize: '14px', color: 'var(--texto-sec)', textDecoration: 'none' }}>
-                <span aria-hidden>↓</span> {textoDistancia(parada.proximo.km)} até a próxima · <span style={{ color: 'var(--azul)', fontWeight: 600 }}>Ver rota</span>
-              </a>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginTop: '8px', padding: '6px 0', borderTop: '1px dashed var(--linha)', fontSize: '14px', lineHeight: '19px', color: 'var(--texto-sec)' }}>
+                <span>
+                  <span aria-hidden>↓ </span>Próxima parada a {textoDistancia(parada.proximo.km)}
+                </span>
+                <a href={parada.proximo.rota} target="_blank" rel="noreferrer" style={{ flex: 'none', display: 'inline-flex', alignItems: 'center', minHeight: '40px', color: 'var(--azul)', fontWeight: 600, textDecoration: 'none' }}>
+                  Ver rota ↗
+                </a>
+              </div>
             ) : null}
           </>
         ) : (

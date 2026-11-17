@@ -1,9 +1,9 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
-import { CATEGORIAS, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
+import { CATEGORIAS, enderecoCurto, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
 import { afinidade } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
-import { FotoDestino } from '../../ui/foto';
+import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
 
 /** Detalhe do lugar: foto, categoria, endereço, horário com fonte, mapa e salvar. */
@@ -18,8 +18,8 @@ export function Lugar() {
   const mapa = typeof l.lat === 'number' ? `https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.nome}, Paris`)}`;
   return (
     <main className="tela" data-tela="lugar" data-real="lugar">
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: '320px', overflow: 'hidden', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' }}>
-        <FotoDestino nome={l.id} />
+      <div style={{ position: 'relative', maxHeight: '320px', overflow: 'hidden' }}>
+        <FotoLugar id={l.id} proporcao="4 / 3" />
         <div style={{ position: 'absolute', top: 'calc(8px + env(safe-area-inset-top))', left: '12px', background: 'var(--fundo)', zIndex: 2 }}>
           <Voltar />
         </div>
@@ -31,7 +31,7 @@ export function Lugar() {
         {motivos.length ? <p style={{ margin: '8px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--verde)', fontWeight: 600 }}>Combina com você: {motivos.join(', ')}.</p> : null}
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
           <dt style={{ fontWeight: 600 }}>Onde</dt>
-          <dd style={{ margin: 0 }}>{l.endereco ?? l.area}</dd>
+          <dd style={{ margin: 0 }}>{enderecoCurto(l.endereco) ?? l.area}</dd>
           <dt style={{ fontWeight: 600 }}>Horário</dt>
           <dd style={{ margin: 0 }}>{l.horario ? horarioLegivel(l.horario) : 'Não confirmado. Confira no site oficial antes de ir.'}</dd>
           <dt style={{ fontWeight: 600 }}>Preço</dt>

@@ -20,6 +20,12 @@ export const OSM_ATUALIZADO_EM = (OSM as { atualizadoEm: string | null }).atuali
 export const CIDADE = CATALOGO.cidade;
 export const CATEGORIAS = CATALOGO.categorias as Record<Categoria, string>;
 
+/** "Place d'Aligre · Paris 12e Arrondissement · 75012" → "Place d'Aligre · Paris 12e". */
+export function enderecoCurto(e: string | null | undefined): string | null {
+  if (!e) return null;
+  return e.replace(/\s*·\s*\d{5}\s*$/, '').replace(/ Arrondissement/g, '').replace(/^Quartier de /, '');
+}
+
 /** Horário do OpenStreetMap só vale se estiver no formato padrão (às vezes vem um aviso em texto). */
 const horarioValido = (h: string | null | undefined) => (h && !/["]|check|website/i.test(h) ? h : null);
 

@@ -259,7 +259,7 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
       : null;
 
     const categorias = [...new Set(comLugar.map((x) => x.lugar!.categoria))];
-    const tema = categorias.length ? juntar(categorias.slice(0, 3).map((c, i) => (i === 0 ? NOME_CATEGORIA[c] : NOME_CATEGORIA[c].toLowerCase()))) : 'Dia livre';
+    const tema = categorias.length ? categorias.slice(0, 3).map((c) => NOME_CATEGORIA[c]).join(' · ') : 'Dia livre';
     const bairros = [...new Set(comLugar.map((x) => x.lugar!.area))];
     const resumo = comLugar.length
       ? `${tipo === 'chegada' ? 'Chegada com calma: ' : tipo === 'partida' ? 'Última manhã: ' : ''}${comLugar.length} ${comLugar.length === 1 ? 'parada' : 'paradas'} ${bairros.length === 1 ? `no bairro ${bairros[0]}` : `entre ${juntar(bairros)}`}, começando por ${comLugar[0]!.lugar!.nome}.`
