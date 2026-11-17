@@ -31,31 +31,44 @@ const BUSCAS = {
   Paris: ['Eiffel Tower night', 'Eiffel Tower Trocadero', 'Paris skyline'],
   Lisboa: ['Lisbon tram Alfama', 'Lisbon sunset', 'Lisbon'],
   Roma: ['Colosseum night', 'Colosseum Rome', 'Rome skyline'],
-  'Buenos Aires': ['Buenos Aires Obelisco night', 'Caminito La Boca', 'Buenos Aires'],
-  Barcelona: ['Sagrada Familia', 'Barcelona skyline', 'Barcelona'],
+  'Buenos Aires': ['Puerto Madero Buenos Aires night', 'Obelisco Buenos Aires', 'Caminito La Boca'],
+  Barcelona: ['Sagrada Familia exterior', 'Park Güell Barcelona', 'Barcelona skyline'],
   Madri: ['Gran Via Madrid night', 'Madrid Palacio Real', 'Madrid'],
   Londres: ['Tower Bridge night', 'Westminster Big Ben night', 'London skyline'],
   'Nova York': ['Manhattan skyline night', 'Manhattan skyline', 'New York City'],
-  Santiago: ['Santiago de Chile Andes skyline', 'Santiago Chile skyline', 'Santiago de Chile'],
+  Santiago: ['Santiago de Chile skyline Andes', 'Santiago de Chile Andes snow', 'Cerro San Cristóbal Santiago'],
   Montevidéu: ['Montevideo Rambla', 'Montevideo skyline', 'Montevideo'],
   Cascais: ['Cascais beach', 'Cascais', 'Boca do Inferno Cascais'],
   'Rio de Janeiro': ['Rio de Janeiro Sugarloaf Mountain', 'Rio de Janeiro Christ the Redeemer', 'Copacabana Rio de Janeiro'],
   Gramado: ['Gramado Rio Grande do Sul', 'Lago Negro Gramado', 'Gramado'],
-  'Campos do Jordão': ['Campos do Jordão', 'Campos do Jordão Capivari'],
+  'Campos do Jordão': ['Campos do Jordão Serra da Mantiqueira', 'Campos do Jordão Capivari', 'Campos do Jordão'],
   Salvador: ['Pelourinho Salvador', 'Salvador Bahia Elevador Lacerda', 'Salvador Bahia'],
   Recife: ['Recife Marco Zero', 'Recife Boa Viagem', 'Recife'],
   Maceió: ['Maceió beach', 'Pajuçara Maceió', 'Maceió'],
-  Penedo: ['Penedo Alagoas', 'Penedo São Francisco river'],
-  'Ouro Preto': ['Ouro Preto', 'Ouro Preto Minas Gerais church'],
+  Penedo: ['Penedo Alagoas Rio São Francisco', 'Penedo Alagoas', 'Penedo AL igreja'],
+  'Ouro Preto': ['Ouro Preto panorama', 'Igreja de São Francisco de Assis Ouro Preto', 'Ouro Preto Minas Gerais'],
   Florianópolis: ['Florianópolis Lagoa da Conceição', 'Florianópolis beach', 'Florianópolis'],
-  Bonito: ['Bonito Mato Grosso do Sul', 'Rio da Prata Bonito', 'Gruta do Lago Azul'],
+  Bonito: ['Rio da Prata Bonito', 'Gruta do Lago Azul Bonito', 'Bonito Mato Grosso do Sul rio'],
   'Foz do Iguaçu': ['Iguazu Falls', 'Iguaçu Falls Devil\'s Throat', 'Cataratas do Iguaçu'],
-  'Fernando de Noronha': ['Fernando de Noronha Baía do Sancho', 'Morro Dois Irmãos', 'Fernando de Noronha'],
+  'Fernando de Noronha': ['Baía do Sancho', 'Fernando de Noronha praia', 'Fernando de Noronha'],
   'São Paulo': ['São Paulo skyline night', 'Avenida Paulista', 'São Paulo city'],
-  Aracaju: ['Aracaju', 'Orla de Atalaia Aracaju'],
+  Aracaju: ['Orla de Atalaia Aracaju', 'Aracaju praia', 'Aracaju Rio Sergipe'],
   Lagos: ['Ponta da Piedade Lagos', 'Lagos Algarve beach'],
 };
 const CATEGORIAS = ['Featured_pictures_on_Wikimedia_Commons', 'Quality_images', null];
+
+/** Centro de cada destino e raio (km): a foto precisa ter sido tirada ali (coordenadas do Commons). */
+const LOCAL = {
+  Paris: [48.857, 2.352, 20], Lisboa: [38.722, -9.139, 25], Roma: [41.903, 12.496, 20], 'Buenos Aires': [-34.604, -58.382, 20], Barcelona: [41.387, 2.169, 20],
+  Madri: [40.417, -3.704, 20], Londres: [51.507, -0.128, 25], 'Nova York': [40.713, -74.006, 25], Santiago: [-33.449, -70.669, 40], Montevidéu: [-34.901, -56.165, 20],
+  Cascais: [38.698, -9.421, 15], 'Rio de Janeiro': [-22.907, -43.173, 35], Gramado: [-29.379, -50.874, 20], 'Campos do Jordão': [-22.739, -45.591, 25],
+  Salvador: [-12.971, -38.501, 30], Recife: [-8.048, -34.877, 25], Maceió: [-9.665, -35.735, 30], Penedo: [-10.290, -36.586, 15], 'Ouro Preto': [-20.386, -43.503, 20],
+  Florianópolis: [-27.595, -48.548, 40], Bonito: [-21.127, -56.482, 60], 'Foz do Iguaçu': [-25.547, -54.588, 40], 'Fernando de Noronha': [-3.854, -32.424, 15],
+  'São Paulo': [-23.551, -46.633, 35], Aracaju: [-10.947, -37.073, 25], Lagos: [37.102, -8.673, 15],
+};
+/** Títulos que não mostram o destino de um jeito que dê vontade de ir. */
+const REJEITAR = /interior|inside|indoor|terminal|airport|aeroporto|aeropuerto|shopping|mall|cinema|car\b|carro|auto|rally|painting|pintura|mural|graffiti|grafite|map\b|mapa|museum interior|ceiling|teto|portrait|retrato|bus\b|ônibus|train station|estação|hospital|stadium interior/i;
+const km = (a, b, c, d) => { const r = Math.PI / 180; const x = Math.sin(((c - a) * r) / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin(((d - b) * r) / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); };
 
 async function pedir(params) {
   const url = `${API}?${new URLSearchParams({ format: 'json', ...params })}`;
@@ -67,13 +80,16 @@ async function pedir(params) {
   return null;
 }
 
-async function candidatos(busca, categoria) {
+async function candidatos(busca, categoria, destino) {
   const srsearch = `${busca} filetype:bitmap${categoria ? ` incategory:${categoria}` : ''}`;
-  const d = await pedir({ action: 'query', generator: 'search', gsrsearch: srsearch, gsrnamespace: '6', gsrlimit: '20', prop: 'imageinfo', iiprop: 'url|size|mime|extmetadata', iiurlwidth: '1280' });
+  const d = await pedir({ action: 'query', generator: 'search', gsrsearch: srsearch, gsrnamespace: '6', gsrlimit: '30', prop: 'imageinfo|coordinates', iiprop: 'url|size|mime|extmetadata', iiurlwidth: '1280', colimit: 'max' });
+  const [lat, lon, raio] = LOCAL[destino] ?? [null, null, null];
   const paginas = Object.values(d?.query?.pages ?? {}).sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
   return paginas
-    .map((p) => ({ titulo: p.title, ii: p.imageinfo?.[0] }))
-    .filter(({ ii }) => ii && ii.mime === 'image/jpeg' && ii.width >= 1600 && ii.width >= ii.height * 1.3 && ii.thumburl);
+    .map((p) => ({ titulo: p.title, ii: p.imageinfo?.[0], coord: p.coordinates?.[0] }))
+    .filter(({ ii, titulo }) => ii && ii.mime === 'image/jpeg' && ii.width >= 1600 && ii.width >= ii.height * 1.3 && ii.thumburl && !REJEITAR.test(titulo))
+    // Precisa ter coordenadas e estar perto do destino (evita homônimos e fotos de outro lugar).
+    .filter(({ coord }) => lat === null || (coord && km(lat, lon, coord.lat, coord.lon) <= raio));
 }
 
 const fotosJson = join(ROOT, 'apps/app/src/dados/fotos.json');
@@ -88,12 +104,17 @@ for (const [destino, buscas] of Object.entries(BUSCAS)) {
   let escolha = null;
   fora: for (const categoria of CATEGORIAS) {
     for (const busca of buscas) {
-      const c = await candidatos(busca, categoria);
+      const c = await candidatos(busca, categoria, destino);
       await esperar(1500);
       if (c.length) { escolha = { ...c[0], busca, categoria }; break fora; }
     }
   }
-  if (!escolha) { console.log(`${destino}: nenhuma foto passou nos critérios (fica a anterior)`); continue; }
+  if (!escolha) {
+    // Pedido explícito para refazer este destino: a foto antiga foi reprovada, então sai (melhor sem foto que foto errada).
+    if (so.includes(destino) && fotos[destino]?.arquivo?.startsWith('fotos/destaque-')) { delete fotos[destino]; console.log(`${destino}: nenhuma foto passou; a anterior foi retirada`); }
+    else console.log(`${destino}: nenhuma foto passou nos critérios (fica a anterior)`);
+    continue;
+  }
   const r = await fetch(escolha.ii.thumburl, { headers: { 'User-Agent': UA } }).catch(() => null);
   const bytes = r && r.ok ? Buffer.from(await r.arrayBuffer()) : null;
   if (!bytes || bytes.length < 20_000) { console.log(`${destino}: download falhou`); continue; }
@@ -120,6 +141,6 @@ writeFileSync(fotosJson, JSON.stringify(fotos, null, 1));
 // Os cartões de destino passam a apontar para a foto pelo nome do destino.
 const destinosJson = join(ROOT, 'apps/app/src/dados/destinos.json');
 const destinos = JSON.parse(readFileSync(destinosJson, 'utf8'));
-for (const d of destinos.destinos) if (fotos[d.nome]) d.foto = d.nome;
+for (const d of destinos.destinos) d.foto = fotos[d.nome] ? d.nome : null;
 writeFileSync(destinosJson, JSON.stringify(destinos, null, 1));
 console.log(`${trocadas} fotos de destaque atualizadas`);
