@@ -59,17 +59,17 @@
    "osm": "https://www.openstreetmap.org/way/13859706"
   },
   "montorgueil": {
-   "lat": 48.8653034,
-   "lon": 2.3469346,
+   "lat": 48.8660976,
+   "lon": 2.3471073,
    "endereco": "Rue Montorgueil · Paris 2e Arrondissement · 75002",
    "horario": null,
    "site": null,
-   "osm": "https://www.openstreetmap.org/way/181676068"
+   "osm": "https://www.openstreetmap.org/way/171873401"
   },
   "aligre": {
    "lat": 48.8488749,
    "lon": 2.3780461,
-   "endereco": "Rue d'Aligre · Paris 12e Arrondissement · 75012",
+   "endereco": "Place d'Aligre · Paris 12e Arrondissement · 75012",
    "horario": "Tu-Fr 07:30-13:30; Sa-Su 07:30-14:30",
    "site": "https://www.paris.fr/lieux/marche-decouvert-d-aligre-5481",
    "osm": "https://www.openstreetmap.org/way/42558360"
@@ -123,12 +123,12 @@
    "osm": "https://www.openstreetmap.org/way/172312427"
   },
   "oberkampf": {
-   "lat": 48.8646898,
-   "lon": 2.3726564,
+   "lat": 48.8632005,
+   "lon": 2.3687155,
    "endereco": "Rue Oberkampf · Paris 11e Arrondissement · 75011",
    "horario": null,
    "site": null,
-   "osm": "https://www.openstreetmap.org/way/526117138"
+   "osm": "https://www.openstreetmap.org/way/50557198"
   },
   "canal-noite": {
    "lat": 48.8812455,
@@ -141,7 +141,7 @@
   "luxembourg": {
    "lat": 48.8467228,
    "lon": 2.3364148,
-   "endereco": "Boulevard Saint-Michel · Paris 6e Arrondissement · 75006",
+   "endereco": "Rue d'Assas · Paris 6e Arrondissement · 75006",
    "horario": "open \"check website https://www.senat.fr/visite/jardin/horaires.html\"; (sunset-00:30)-(sunrise-00:15) closed; Mar01-Sep30 (sunset-00:30)-07:30 closed",
    "site": "https://www.senat.fr/visite/jardin/",
    "osm": "https://www.openstreetmap.org/way/128206209"
@@ -171,12 +171,12 @@
    "osm": "https://www.openstreetmap.org/relation/18047835"
   },
   "marais": {
-   "lat": 48.8563655,
-   "lon": 2.3647259,
-   "endereco": "Rue des Francs Bourgeois · Paris 3e Arrondissement · 75003",
+   "lat": 48.8566804,
+   "lon": 2.3635619,
+   "endereco": "Rue des Francs Bourgeois · Paris 4e Arrondissement · 75004",
    "horario": null,
    "site": null,
-   "osm": "https://www.openstreetmap.org/way/45828501"
+   "osm": "https://www.openstreetmap.org/way/390298282"
   },
   "lafayette": {
    "lat": 48.8736459,
@@ -237,7 +237,7 @@
   "palais-royal": {
    "lat": 48.8649078,
    "lon": 2.3377594,
-   "endereco": "Rue Villedo · Paris 1er Arrondissement · 75001",
+   "endereco": "Rue du Colonel Driant · Paris 1er Arrondissement · 75001",
    "horario": "Mo-Su 08:00-22:30",
    "site": null,
    "osm": "https://www.openstreetmap.org/way/4263203"
