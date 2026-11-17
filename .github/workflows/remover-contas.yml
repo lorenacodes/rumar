@@ -1,10 +1,16 @@
 name: Remover contas
 
 # Remove de vez as contas com exclusão pedida há mais de 14 dias (LGPD). Uma vez por dia.
+# Atenção: o GitHub só dispara o agendamento a partir do ramo principal (main).
 on:
   workflow_dispatch:
   schedule:
     - cron: '23 6 * * *'
+  # Roda também quando este arquivo muda (registra o workflow e testa a autenticação).
+  push:
+    branches: [fase-0-base]
+    paths:
+      - .github/workflows/remover-contas.yml
 
 permissions:
   contents: read
