@@ -9,6 +9,7 @@
  *   node tools/dados/lugares.mjs --cidades br-2800308,fr-paris
  *   node tools/dados/lugares.mjs --fila 5                   # cidades que alguém pediu no app
  *   node tools/dados/lugares.mjs --padrao                   # lista inicial (capitais, testes, exterior)
+ *   node tools/dados/lugares.mjs --turisticos 40            # capitais e destinos turísticos ainda sem coleta
  *
  * Fontes: OpenStreetMap (ODbL, © colaboradores do OpenStreetMap) e fotos do Wikimedia Commons
  * (pela etiqueta wikimedia_commons ou pela imagem P18 do Wikidata). Preço e avaliação: o OSM
@@ -261,9 +262,13 @@ let alvo = [];
 if (arg('--cidades')) alvo = arg('--cidades').split(',').map((s) => s.trim()).filter(Boolean);
 if (args.includes('--padrao')) alvo = [...alvo, ...PADRAO];
 const destinos = alvo.length ? (await banco({ acao: 'destino', ids: alvo })).destinos : [];
+if (arg('--turisticos') !== null) destinos.push(...(await banco({ acao: 'pendentes', limite: Number(arg('--turisticos')) || 40 })).destinos);
 if (arg('--fila') !== null) destinos.push(...(await banco({ acao: 'fila', limite: Number(arg('--fila')) || 5 })).destinos);
 const falhas = [];
+const LIMITE_MS = 4.5 * 3600_000; // para antes do limite de 5 h do job; o resto fica para a próxima
+const comeco = Date.now();
 for (const d of destinos) {
+  if (Date.now() - comeco > LIMITE_MS) { console.log('Tempo do lote esgotado: o restante fica para a próxima execução.'); break; }
   try {
     const r = await coletar(d);
     await banco({ acao: 'concluir', destino_id: d.id, erro: r.some((x) => x.endsWith('=erro')) ? 'algumas categorias falharam' : null });

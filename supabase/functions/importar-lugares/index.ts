@@ -53,6 +53,15 @@ Deno.serve(async (req) => {
     return json({ destinos: dest ?? [] });
   }
 
+  if (p.acao === 'pendentes') {
+    // Capitais e destinos turísticos (peso ≥ 2) que ainda não têm nenhuma coleta.
+    const { data: feitos } = await db.from('cobertura').select('destino_id').eq('categoria', 'restaurantes').limit(5000); // uma linha por cidade coletada
+    const ja = new Set((feitos ?? []).map((c) => c.destino_id));
+    const { data, error } = await db.from('destinos').select('*').gte('peso', 2).order('peso', { ascending: false }).order('nome').limit(400);
+    if (error) return json({ erro: error.message }, 400);
+    return json({ destinos: (data ?? []).filter((d) => !ja.has(d.id)).slice(0, Math.min(80, Number(p.limite) || 40)) });
+  }
+
   if (p.acao === 'destino') {
     const { data, error } = await db.from('destinos').select('*').in('id', (p.ids ?? []).slice(0, 200));
     return error ? json({ erro: error.message }, 400) : json({ destinos: data });
