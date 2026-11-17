@@ -29,15 +29,19 @@ const texto = async (p, max = 300) => (await p.locator('main').first().innerText
 const ana = await pessoa('Ana', 'e2e.ana@bovair.com.br');
 console.log('— 1-2. Favoritos e recomendações');
 await ana.goto(URL + '#/destinos'); await ana.waitForTimeout(1000);
-for (const d of ['Paris', 'Gramado', 'Buenos Aires']) await ana.getByRole('checkbox', { name: d, exact: true }).click();
-await ana.locator('#busca-destino').fill('lisbo'); await ana.waitForTimeout(500); await ana.locator('main ul button').first().click();
+for (const d of ['Paris', 'Gramado', 'Buenos Aires']) {
+  const c = ana.getByRole('checkbox', { name: new RegExp(`^(♥ )?${d}$`) });
+  if ((await c.getAttribute('aria-checked')) !== 'true') await c.click();
+}
+await ana.locator('#busca-destino-geral').fill('Lisboa'); await ana.waitForTimeout(1500); await ana.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: /Portugal/ }).first().click(); await ana.waitForTimeout(800);
 await foto(ana, 'favoritos');
 await ana.goto(URL + '#/inicio'); await ana.waitForTimeout(2500); await foto(ana, 'inicio-recomendacoes');
 console.log('   ', (await texto(ana, 1200)).match(/VOCÊ TAMBÉM PODE GOSTAR.*/i)?.[0]?.slice(0, 260));
 console.log('— 3-4. Nova viagem: datas, 2 viajantes, orçamento');
 await ana.getByRole('button', { name: 'Viagens', exact: true }).click(); await ana.waitForTimeout(1500);
 await ana.getByRole('button', { name: /Nova viagem/ }).click(); await ana.waitForTimeout(600);
-await ana.locator('#busca-destino-geral').fill('Paris'); await ana.waitForTimeout(1200); await ana.getByRole('button', { name: /^Paris/ }).first().click();
+if (await ana.getByRole('button', { name: 'Trocar', exact: true }).count()) await ana.getByRole('button', { name: 'Trocar', exact: true }).click();
+await ana.locator('#busca-destino-geral').fill('Paris'); await ana.waitForTimeout(1500); await ana.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: /França/ }).first().click(); await ana.waitForTimeout(800);
 await ana.getByRole('button', { name: 'Mais uma pessoa' }).click();
 await ana.locator('#orc').fill('12000'); await foto(ana, 'nova-viagem');
 await ana.getByRole('button', { name: /Criar viagem/ }).click(); await ana.waitForTimeout(6000); await foto(ana, 'viagem-roteiro');

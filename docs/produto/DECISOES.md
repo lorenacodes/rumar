@@ -259,6 +259,10 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   Paris). Tipos (praia, histórica, natureza, gastronomia, cultural, rural, aventura, diversão) para 181
   destinos turísticos, por curadoria (não é lista oficial; próximo passo: Mapa do Turismo Brasileiro).
   Nova cidade no exterior = uma linha em `tools/dados/destinos-turisticos.json`.
+  Sobre a fonte oficial: o Mapa do Turismo Brasileiro (MTur) mudou em 2025 para três categorias
+  (municípios turísticos, de oferta complementar e de apoio), que medem o nível de turismo, não o tema
+  (praia, histórica…). Não achei download aberto da lista. Quando houver, serve para marcar quais
+  municípios são oficialmente turísticos; os temas continuam sendo curadoria.
 - **Lugares:** tabela `lugares` (15 categorias: restaurantes, bares, cafés, hospedagem, museus, parques,
   praias, pontos turísticos, histórico, cultura, compras, mercados, vida noturna, lazer, transporte), com
   fonte, id na fonte, data da base, "verificado" (curadoria) ou não, ativo/inativo (o que some da fonte
