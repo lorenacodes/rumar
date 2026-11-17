@@ -12,14 +12,14 @@
  },
  "Lisboa": {
   "arquivo": "fotos/destaque-lisboa.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ponte_Vasco_da_Gama_25.jpg/1280px-Ponte_Vasco_da_Gama_25.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Lisbon_Pra%C3%A7a_do_Com%C3%A9rcio_BW_2018-10-08_17-42-58.jpg/1280px-Lisbon_Pra%C3%A7a_do_Com%C3%A9rcio_BW_2018-10-08_17-42-58.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
-  "altura": 857,
-  "autor": "F Mira from Lisbon, Portugal",
-  "licenca": "CC BY-SA 2.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Ponte_Vasco_da_Gama_25.jpg",
-  "artigo": "Commons: Featured pictures on Wikimedia Commons · \"Lisbon sunset\""
+  "altura": 879,
+  "autor": "Berthold Werner",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Lisbon_Pra%C3%A7a_do_Com%C3%A9rcio_BW_2018-10-08_17-42-58.jpg",
+  "artigo": "Commons: Quality images · \"Praça do Comércio Lisboa\""
  },
  "Penedo": {
   "arquivo": "fotos/destaque-penedo.jpg",
@@ -67,14 +67,14 @@
  },
  "Cascais": {
   "arquivo": "fotos/destaque-cascais.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Junglefowl_on_tree.jpg/1280px-Junglefowl_on_tree.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Farol_de_Santa_Marta_-_Cascais_-_Portugal_%288685958376%29.jpg/1280px-Farol_de_Santa_Marta_-_Cascais_-_Portugal_%288685958376%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
-  "altura": 971,
-  "autor": "Philip Pikart",
-  "licenca": "CC BY-SA 4.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Junglefowl_on_tree.jpg",
-  "artigo": "Commons: Featured pictures on Wikimedia Commons · \"Cascais\""
+  "altura": 943,
+  "autor": "Vitor Oliveira from Torres Vedras, PORTUGAL",
+  "licenca": "CC BY-SA 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Farol_de_Santa_Marta_-_Cascais_-_Portugal_(8685958376).jpg",
+  "artigo": "Commons: busca · \"Farol de Santa Marta Cascais\""
  },
  "Lagos": {
   "arquivo": "fotos/destaque-lagos.jpg",
@@ -452,14 +452,14 @@
  },
  "Madri": {
   "arquivo": "fotos/destaque-madri.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Rich%C3%A8l_Hogenkamp_-_Masters_de_Madrid_2015_-_11.jpg/1280px-Rich%C3%A8l_Hogenkamp_-_Masters_de_Madrid_2015_-_11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Palacio_Real_de_Madrid_-_13.jpg/1280px-Palacio_Real_de_Madrid_-_13.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
   "altura": 853,
   "autor": "Carlos Delgado",
-  "licenca": "CC BY-SA 4.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Rich%C3%A8l_Hogenkamp_-_Masters_de_Madrid_2015_-_11.jpg",
-  "artigo": "Commons: Featured pictures on Wikimedia Commons · \"Madrid\""
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Palacio_Real_de_Madrid_-_13.jpg",
+  "artigo": "Commons: Quality images · \"Palacio Real de Madrid\""
  },
  "Londres": {
   "arquivo": "fotos/destaque-londres.jpg",
@@ -485,14 +485,14 @@
  },
  "Santiago": {
   "arquivo": "fotos/destaque-santiago.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Placa_Cerro_San_Cristobal.jpg/1280px-Placa_Cerro_San_Cristobal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/2013_Santiago_skyline.jpg/1280px-2013_Santiago_skyline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
-  "altura": 823,
-  "autor": "Rjcastillo",
+  "altura": 483,
+  "autor": "WeHaKa",
   "licenca": "CC BY-SA 4.0",
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Placa_Cerro_San_Cristobal.jpg",
-  "artigo": "Commons: Quality images · \"Cerro San Cristóbal Santiago\""
+  "pagina": "https://commons.wikimedia.org/wiki/File:2013_Santiago_skyline.jpg",
+  "artigo": "Commons: busca · \"Santiago de Chile skyline\""
  },
  "Montevidéu": {
   "arquivo": "fotos/destaque-montevideu.jpg",
@@ -529,14 +529,14 @@
  },
  "Campos do Jordão": {
   "arquivo": "fotos/destaque-campos-do-jordao.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/O_turista_que_v%C3%AAm_%C3%A0_Campos_do_Jord%C3%A3o_pela_rodovia_SP-123_depara-se_com_uma_bela_vista_da_Serra_da_Mantiqueira._-_panoramio.jpg/1280px-O_turista_que_v%C3%AAm_%C3%A0_Campos_do_Jord%C3%A3o_pela_rodovia_SP-123_depara-se_com_uma_bela_vista_da_Serra_da_Mantiqueira._-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Vista_%C3%A1rea_da_Vila_Capivari%2C_Campos_do_Jord%C3%A3o.jpg/1280px-Vista_%C3%A1rea_da_Vila_Capivari%2C_Campos_do_Jord%C3%A3o.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
-  "altura": 961,
-  "autor": "joao batista Shimoto",
-  "licenca": "CC BY-SA 3.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:O_turista_que_v%C3%AAm_%C3%A0_Campos_do_Jord%C3%A3o_pela_rodovia_SP-123_depara-se_com_uma_bela_vista_da_Serra_da_Mantiqueira._-_panoramio.jpg",
-  "artigo": "Commons: busca · \"Campos do Jordão Serra da Mantiqueira\""
+  "altura": 959,
+  "autor": "Governo do Estado de São Paulo",
+  "licenca": "CC BY 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Vista_%C3%A1rea_da_Vila_Capivari,_Campos_do_Jord%C3%A3o.jpg",
+  "artigo": "Commons: busca · \"Campos do Jordão Capivari\""
  },
  "Ouro Preto": {
   "arquivo": "fotos/destaque-ouro-preto.jpg",
@@ -573,25 +573,25 @@
  },
  "Foz do Iguaçu": {
   "arquivo": "fotos/destaque-foz-do-iguacu.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Iguaz%C3%BA_Falls_05.jpg/1280px-Iguaz%C3%BA_Falls_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Iguaz%C3%BA_Falls_01.jpg/1280px-Iguaz%C3%BA_Falls_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
-  "altura": 497,
+  "altura": 854,
   "autor": "Bernard Gagnon",
   "licenca": "CC BY-SA 4.0",
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Iguaz%C3%BA_Falls_05.jpg",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Iguaz%C3%BA_Falls_01.jpg",
   "artigo": "Commons: Quality images · \"Iguazu Falls\""
  },
  "Fernando de Noronha": {
   "arquivo": "fotos/destaque-fernando-de-noronha.jpg",
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Parque_Nacional_Marinho_de_Fernando_de_Noronha_-_Atoba_Pardo.jpg/1280px-Parque_Nacional_Marinho_de_Fernando_de_Noronha_-_Atoba_Pardo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Ba%C3%ADa_do_Sancho_-_panoramio.jpg/1280px-Ba%C3%ADa_do_Sancho_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "largura": 1280,
-  "altura": 853,
-  "autor": "André Inidio da Silva",
-  "licenca": "CC BY-SA 4.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Parque_Nacional_Marinho_de_Fernando_de_Noronha_-_Atoba_Pardo.jpg",
-  "artigo": "Commons: Quality images · \"Fernando de Noronha praia\""
+  "altura": 848,
+  "autor": "Elvis Boaventura",
+  "licenca": "CC BY 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by/3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Ba%C3%ADa_do_Sancho_-_panoramio.jpg",
+  "artigo": "Commons: busca · \"Baía do Sancho\""
  },
  "São Paulo": {
   "arquivo": "fotos/destaque-sao-paulo.jpg",
