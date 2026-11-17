@@ -22,7 +22,7 @@
 | Funcionalidade | Situação | Observação |
 |---|---|---|
 | Qualquer município do Brasil (5.570) e destinos no exterior | ✅ | |
-| Lugares por cidade (15 categorias), busca, preço, mapa, salvar | ✅ | ~190 cidades coletadas (capitais, turísticas, exterior); demais sob pedido (fila a cada 3 h) |
+| Lugares por cidade (15 categorias), busca, preço, mapa, salvar | ✅ | 73 cidades coletadas em 17/11; coleta das demais capitais e turísticas (~190 no total) em andamento; outras sob pedido (fila a cada 3 h) |
 | Cobertura transparente por categoria ("parcial", fonte, data) | ✅ | |
 | Fotos de lugares | 🟡 | Só lugares conhecidos têm foto livre; restaurantes/bares/hotéis dependem de serviço pago (decisão sua) |
 | Avaliações de clientes | ⏳ | Sem fonte gratuita; ver opções no checklist |
