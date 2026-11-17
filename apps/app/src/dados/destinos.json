@@ -1,29 +1,273 @@
 {
  "nota": "Características gerais de cada destino, usadas só para sugerir destinos parecidos com os favoritos.",
  "destinos": [
-  { "nome": "Paris", "pais": "França", "foto": "Paris", "tracos": ["cultura", "museus", "gastronomia", "romantico", "compras", "cidade-grande"], "roteiro": true },
-  { "nome": "Lisboa", "pais": "Portugal", "foto": "Lisboa", "tracos": ["cultura", "gastronomia", "historia", "mirantes", "litoral"] },
-  { "nome": "Roma", "pais": "Itália", "foto": "Roma", "tracos": ["historia", "cultura", "gastronomia", "museus", "romantico"] },
-  { "nome": "Buenos Aires", "pais": "Argentina", "tracos": ["gastronomia", "cultura", "vida-noturna", "cidade-grande", "historia"] },
-  { "nome": "Barcelona", "pais": "Espanha", "tracos": ["praia", "arquitetura", "vida-noturna", "gastronomia", "cultura"] },
-  { "nome": "Madri", "pais": "Espanha", "tracos": ["museus", "cultura", "gastronomia", "vida-noturna", "cidade-grande"] },
-  { "nome": "Londres", "pais": "Reino Unido", "tracos": ["museus", "cultura", "compras", "cidade-grande", "historia"] },
-  { "nome": "Nova York", "pais": "Estados Unidos", "tracos": ["cidade-grande", "compras", "museus", "vida-noturna", "gastronomia"] },
-  { "nome": "Santiago", "pais": "Chile", "tracos": ["montanha", "gastronomia", "vinho", "cidade-grande"] },
-  { "nome": "Montevidéu", "pais": "Uruguai", "tracos": ["litoral", "historia", "gastronomia", "tranquilo"] },
-  { "nome": "Cascais", "pais": "Portugal", "foto": "Cascais", "tracos": ["praia", "litoral", "tranquilo", "romantico"] },
-  { "nome": "Rio de Janeiro", "pais": "Brasil", "tracos": ["praia", "natureza", "vida-noturna", "cidade-grande", "mirantes"] },
-  { "nome": "Gramado", "pais": "Brasil", "tracos": ["serra", "frio", "gastronomia", "romantico", "tranquilo"] },
-  { "nome": "Campos do Jordão", "pais": "Brasil", "tracos": ["serra", "frio", "romantico", "tranquilo"] },
-  { "nome": "Salvador", "pais": "Brasil", "foto": "Salvador", "tracos": ["praia", "historia", "cultura", "gastronomia"] },
-  { "nome": "Recife", "pais": "Brasil", "foto": "Recife", "tracos": ["praia", "historia", "cultura"] },
-  { "nome": "Maceió", "pais": "Brasil", "foto": "Maceió", "tracos": ["praia", "natureza", "tranquilo"] },
-  { "nome": "Penedo", "pais": "Brasil", "foto": "Penedo", "tracos": ["historia", "tranquilo", "rio"] },
-  { "nome": "Ouro Preto", "pais": "Brasil", "tracos": ["historia", "cultura", "serra"] },
-  { "nome": "Florianópolis", "pais": "Brasil", "tracos": ["praia", "natureza", "vida-noturna"] },
-  { "nome": "Bonito", "pais": "Brasil", "tracos": ["natureza", "aventura", "rio"] },
-  { "nome": "Foz do Iguaçu", "pais": "Brasil", "tracos": ["natureza", "aventura"] },
-  { "nome": "Fernando de Noronha", "pais": "Brasil", "tracos": ["praia", "natureza", "aventura"] },
-  { "nome": "São Paulo", "pais": "Brasil", "tracos": ["cidade-grande", "gastronomia", "museus", "vida-noturna", "compras"] }
+  {
+   "nome": "Paris",
+   "pais": "França",
+   "foto": "Paris",
+   "tracos": [
+    "cultura",
+    "museus",
+    "gastronomia",
+    "romantico",
+    "compras",
+    "cidade-grande"
+   ],
+   "roteiro": true
+  },
+  {
+   "nome": "Lisboa",
+   "pais": "Portugal",
+   "foto": "Lisboa",
+   "tracos": [
+    "cultura",
+    "gastronomia",
+    "historia",
+    "mirantes",
+    "litoral"
+   ]
+  },
+  {
+   "nome": "Roma",
+   "pais": "Itália",
+   "foto": "Roma",
+   "tracos": [
+    "historia",
+    "cultura",
+    "gastronomia",
+    "museus",
+    "romantico"
+   ]
+  },
+  {
+   "nome": "Buenos Aires",
+   "pais": "Argentina",
+   "tracos": [
+    "gastronomia",
+    "cultura",
+    "vida-noturna",
+    "cidade-grande",
+    "historia"
+   ],
+   "foto": "Buenos Aires"
+  },
+  {
+   "nome": "Barcelona",
+   "pais": "Espanha",
+   "tracos": [
+    "praia",
+    "arquitetura",
+    "vida-noturna",
+    "gastronomia",
+    "cultura"
+   ],
+   "foto": "Barcelona"
+  },
+  {
+   "nome": "Madri",
+   "pais": "Espanha",
+   "tracos": [
+    "museus",
+    "cultura",
+    "gastronomia",
+    "vida-noturna",
+    "cidade-grande"
+   ],
+   "foto": "Madri"
+  },
+  {
+   "nome": "Londres",
+   "pais": "Reino Unido",
+   "tracos": [
+    "museus",
+    "cultura",
+    "compras",
+    "cidade-grande",
+    "historia"
+   ],
+   "foto": "Londres"
+  },
+  {
+   "nome": "Nova York",
+   "pais": "Estados Unidos",
+   "tracos": [
+    "cidade-grande",
+    "compras",
+    "museus",
+    "vida-noturna",
+    "gastronomia"
+   ],
+   "foto": "Nova York"
+  },
+  {
+   "nome": "Santiago",
+   "pais": "Chile",
+   "tracos": [
+    "montanha",
+    "gastronomia",
+    "vinho",
+    "cidade-grande"
+   ],
+   "foto": "Santiago"
+  },
+  {
+   "nome": "Montevidéu",
+   "pais": "Uruguai",
+   "tracos": [
+    "litoral",
+    "historia",
+    "gastronomia",
+    "tranquilo"
+   ],
+   "foto": "Montevidéu"
+  },
+  {
+   "nome": "Cascais",
+   "pais": "Portugal",
+   "foto": "Cascais",
+   "tracos": [
+    "praia",
+    "litoral",
+    "tranquilo",
+    "romantico"
+   ]
+  },
+  {
+   "nome": "Rio de Janeiro",
+   "pais": "Brasil",
+   "tracos": [
+    "praia",
+    "natureza",
+    "vida-noturna",
+    "cidade-grande",
+    "mirantes"
+   ],
+   "foto": "Rio de Janeiro"
+  },
+  {
+   "nome": "Gramado",
+   "pais": "Brasil",
+   "tracos": [
+    "serra",
+    "frio",
+    "gastronomia",
+    "romantico",
+    "tranquilo"
+   ],
+   "foto": "Gramado"
+  },
+  {
+   "nome": "Campos do Jordão",
+   "pais": "Brasil",
+   "tracos": [
+    "serra",
+    "frio",
+    "romantico",
+    "tranquilo"
+   ],
+   "foto": "Campos do Jordão"
+  },
+  {
+   "nome": "Salvador",
+   "pais": "Brasil",
+   "foto": "Salvador",
+   "tracos": [
+    "praia",
+    "historia",
+    "cultura",
+    "gastronomia"
+   ]
+  },
+  {
+   "nome": "Recife",
+   "pais": "Brasil",
+   "foto": "Recife",
+   "tracos": [
+    "praia",
+    "historia",
+    "cultura"
+   ]
+  },
+  {
+   "nome": "Maceió",
+   "pais": "Brasil",
+   "foto": "Maceió",
+   "tracos": [
+    "praia",
+    "natureza",
+    "tranquilo"
+   ]
+  },
+  {
+   "nome": "Penedo",
+   "pais": "Brasil",
+   "foto": "Penedo",
+   "tracos": [
+    "historia",
+    "tranquilo",
+    "rio"
+   ]
+  },
+  {
+   "nome": "Ouro Preto",
+   "pais": "Brasil",
+   "tracos": [
+    "historia",
+    "cultura",
+    "serra"
+   ],
+   "foto": "Ouro Preto"
+  },
+  {
+   "nome": "Florianópolis",
+   "pais": "Brasil",
+   "tracos": [
+    "praia",
+    "natureza",
+    "vida-noturna"
+   ],
+   "foto": "Florianópolis"
+  },
+  {
+   "nome": "Bonito",
+   "pais": "Brasil",
+   "tracos": [
+    "natureza",
+    "aventura",
+    "rio"
+   ],
+   "foto": "Bonito"
+  },
+  {
+   "nome": "Foz do Iguaçu",
+   "pais": "Brasil",
+   "tracos": [
+    "natureza",
+    "aventura"
+   ],
+   "foto": "Foz do Iguaçu"
+  },
+  {
+   "nome": "Fernando de Noronha",
+   "pais": "Brasil",
+   "tracos": [
+    "praia",
+    "natureza",
+    "aventura"
+   ],
+   "foto": "Fernando de Noronha"
+  },
+  {
+   "nome": "São Paulo",
+   "pais": "Brasil",
+   "tracos": [
+    "cidade-grande",
+    "gastronomia",
+    "museus",
+    "vida-noturna",
+    "compras"
+   ],
+   "foto": "São Paulo"
+  }
  ]
 }
