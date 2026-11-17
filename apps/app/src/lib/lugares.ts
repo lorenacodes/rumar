@@ -131,7 +131,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
@@ -189,7 +189,8 @@ export async function candidatosRoteiro(destino: string): Promise<Lugar[]> {
   const res = await Promise.all(cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20)));
   const todos = res.flatMap((r) => (r.data ?? []) as LugarBase[]);
   guardar(todos);
-  return todos.map(paraLugar).filter((l) => l !== null) as Lugar[];
+  // Sem categoria de roteiro (cinema, teatro, balada, rede): fica no Descobrir, fora do roteiro automático.
+  return todos.filter((b) => !FORA_DO_ROTEIRO.has(b.tipo)).map(paraLugar).filter((l) => l !== null) as Lugar[];
 }
 
 function guardar(lista: LugarBase[]) {
@@ -198,8 +199,11 @@ function guardar(lista: LugarBase[]) {
 }
 
 /** Converte um lugar da base no formato do planejador (roteiro, mapa, orçamento). */
-export function paraLugar(b: LugarBase): (Lugar & { destino: string; ingresso?: boolean; foto?: string | null; base: true }) | null {
-  const r = CATEGORIAS_LUGAR[b.categoria]?.roteiro;
+/** Tipos que não entram no roteiro automático: dependem de ingresso para um show/sessão ou são redes. */
+const FORA_DO_ROTEIRO = new Set(['cinema', 'theatre', 'nightclub', 'events_venue', 'music_venue', 'fast_food', 'food_court', 'department_store']);
+
+export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { destino: string; ingresso?: boolean; foto?: string | null; base: true; destaque: boolean }) | null {
+  const r = FORA_DO_ROTEIRO.has(b.tipo) ? null : CATEGORIAS_LUGAR[b.categoria]?.roteiro;
   const descricao = [nomeTipo(b.tipo), b.cozinha].filter(Boolean).join(' · ');
   return {
     id: b.id, nome: b.nome, descricao, categoria: r?.categoria ?? 'passeios', area: b.bairro ?? '',
@@ -208,5 +212,7 @@ export function paraLugar(b: LugarBase): (Lugar & { destino: string; ingresso?: 
     custo: b.gratuito ? 0 : 1, local: false, lotado: false, lat: b.lat, lon: b.lon,
     endereco: b.endereco, horario: b.horario, site: b.site, osm: b.fonte === 'osm' ? `https://www.openstreetmap.org/${b.fonte_id}` : undefined,
     destino: b.destino_id, ...(r?.ingresso === false ? { ingresso: false } : {}), foto: b.foto, base: true,
+    // Lugar bem documentado (foto/Wikidata/horário): tende a ser um dos mais conhecidos.
+    destaque: (b.relevancia ?? 0) >= 3,
   };
 }

@@ -212,6 +212,8 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
     .map((l) => ({ l, ...afinidade(l, p) }))
     .sort((a, b) => b.pontos - a.pontos || a.l.id.localeCompare(b.l.id));
   const usados = new Set<string>();
+  // Variedade: repetir a mesma categoria no dia (e, menos, na viagem) perde pontos.
+  const naViagem = new Map<string, number>();
   const dias: Dia[] = [];
   const total = viagem.noites + 1;
   const modo = p.deslocamento === 'transporte' ? 'transit' : 'walking';
@@ -223,13 +225,16 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
     const paradas: Parada[] = [];
     let anterior: (Lugar & { lat?: number; lon?: number }) | null = null;
     let bairro: string | null = null;
+    const noDia = new Map<string, number>();
 
     for (const per of periodos) {
       const opcoes = candidatos
         .filter((c) => !usados.has(c.l.id) && c.l.slots.includes(per) && c.pontos > 0)
         .map((c) => {
           const km = temCoord(anterior) && temCoord(c.l) ? distanciaKm(anterior, c.l) : null;
-          const ajuste = (km !== null ? -km * pesoDistancia : 0) + (bairro && c.l.area === bairro ? 2 : 0);
+          const ajuste = (km !== null ? -km * pesoDistancia : 0) + (bairro && c.l.area === bairro ? 2 : 0)
+            - 4 * (noDia.get(c.l.categoria) ?? 0) - 1 * (naViagem.get(c.l.categoria) ?? 0)
+            + ((c.l as Lugar & { destaque?: boolean }).destaque ? 2 : 0);
           return { ...c, km, total: c.pontos + ajuste };
         })
         .sort((a, b) => b.total - a.total || a.l.id.localeCompare(b.l.id));
@@ -239,7 +244,9 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
         continue;
       }
       usados.add(escolha.l.id);
-      bairro ??= escolha.l.area;
+      noDia.set(escolha.l.categoria, (noDia.get(escolha.l.categoria) ?? 0) + 1);
+      naViagem.set(escolha.l.categoria, (naViagem.get(escolha.l.categoria) ?? 0) + 1);
+      bairro ??= escolha.l.area || null;
       const motivos = [...escolha.motivos];
       if (escolha.km !== null && escolha.km <= 1.5 && anterior) motivos.push(`fica a ${fmtKm(escolha.km)} da parada anterior`);
       else if (anterior && escolha.l.area === anterior.area) motivos.push('fica no mesmo bairro da parada anterior');

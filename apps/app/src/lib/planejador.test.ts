@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { LUGARES } from './catalogo';
-import { afinidade, distanciaKm, filtrar, planejar, type Preferencias } from './planejador';
+import { afinidade, distanciaKm, filtrar, planejar, type Lugar, type Preferencias } from './planejador';
 
 const base: Preferencias = {
   estilo: 'equilibrado', gostos: [], ritmo: 'balanced', evitar: [], orcamento: 'intermediario',
@@ -61,5 +61,19 @@ describe('planejador', () => {
   it('distância por coordenadas', () => {
     // Torre Eiffel → Louvre: cerca de 3,4 km em linha reta.
     expect(distanciaKm({ lat: 48.8584, lon: 2.2945 }, { lat: 48.8606, lon: 2.3376 })).toBeCloseTo(3.2, 0);
+  });
+});
+
+describe('variedade no roteiro (cidades da base)', () => {
+  it('não enche o dia de uma categoria só quando há outras opções', () => {
+    const mk = (id: string, categoria: Lugar['categoria'], slots: Lugar['slots'], lat: number): Lugar => ({ id, nome: id, descricao: '', categoria, area: '', tags: categoria === 'cultura' ? ['museums_art'] : ['food_drink'], slots, energia: 1, caminhada: 'low', custo: 1, local: false, lotado: false, lat, lon: -38.5 });
+    const cat: Lugar[] = [
+      ...Array.from({ length: 8 }, (_, i) => mk(`museu-${i}`, 'cultura', ['morning', 'afternoon', 'evening'], -12.97 + i * 0.001)),
+      mk('restaurante', 'gastronomia', ['afternoon', 'evening'], -12.972),
+      mk('praia', 'natureza', ['morning', 'afternoon'], -12.973),
+    ];
+    const dias = planejar(cat, { ...base, estilo: 'cultural', gostos: ['museus', 'comer', 'parques'] }, { destino: 'Salvador', dataIda: '2027-07-12', noites: 2 });
+    const dia2 = dias[1]!.paradas.map((p) => p.lugar?.categoria);
+    expect(new Set(dia2).size).toBeGreaterThan(1);
   });
 });

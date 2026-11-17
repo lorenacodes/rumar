@@ -30,6 +30,7 @@ const CIDADES = [['Aracaju', 'SE'], ['Salvador', 'BA'], ['Recife', 'PE'], ['São
 const resumo = [];
 const SO = process.env.CIDADES?.split(',');
 for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
+  if (SO?.includes('nenhuma')) break;
   console.log(`— ${cidade}${uf ? ` (${uf})` : ''}`);
   await p.goto(URL + '#/descobrir'); await p.waitForTimeout(1500);
   const trocar = p.getByRole('button', { name: 'Trocar cidade' });
@@ -86,7 +87,8 @@ let t = await texto();
 confere('favoritos com Bonito (MS) e Lisboa', /Bonito — MS/.test(t) && /Lisboa, Portugal/.test(t));
 
 console.log('— Viagem para Salvador com roteiro da base');
-await p.goto(URL + '#/viagens/nova'); await p.waitForTimeout(1200);
+await p.goto(URL + '#/viagens/nova'); await p.waitForTimeout(1500);
+if (await p.getByRole('button', { name: 'Trocar', exact: true }).count()) await p.getByRole('button', { name: 'Trocar', exact: true }).click();
 await p.locator('#busca-destino-geral').fill('Salvador'); await p.waitForTimeout(1500);
 await p.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: /BA\b/ }).first().click(); await p.waitForTimeout(2000);
 t = await texto();
