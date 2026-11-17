@@ -15,7 +15,6 @@ export function Tela3_2() {
     <main className="tela" data-tela="3.2">
       <AvisoExemplo />
       <div style={{ padding: "22px 20px 0" }}>
-        <FotoDestino nome="MaceióMaceió3 noites · ônibus ~5 hR$ 1.150Folgadosobram R$ 850" />
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--azul)" }}>
           Saindo de Aracaju · 1 pessoa
         </div>
@@ -37,9 +36,7 @@ export function Tela3_2() {
           <Chip grupo="3.2:g2" valor="Feriado" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
-          <FotoDestino nome="Maceió" />
           <div>
-            <FotoDestino nome="Maceió" />
             <div style={{ height: "80px", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
               <FotoDestino nome="Maceió" />
               <RotuloFoto nome="Maceió" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
@@ -68,9 +65,7 @@ export function Tela3_2() {
           </div>
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
-          <FotoDestino nome="Salvador" />
           <div>
-            <FotoDestino nome="Salvador" />
             <div style={{ height: "80px", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
               <FotoDestino nome="Salvador" />
               <RotuloFoto nome="Salvador" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
@@ -99,9 +94,7 @@ export function Tela3_2() {
           </div>
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }}>
-          <FotoDestino nome="Recife" />
           <div>
-            <FotoDestino nome="Recife" />
             <div style={{ height: "80px", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
               <FotoDestino nome="Recife" />
               <RotuloFoto nome="Recife" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
@@ -142,7 +135,6 @@ export function Tela3_3() {
     <main className="tela" data-tela="3.3">
       <AvisoExemplo />
       <div style={{ position: "relative" }}>
-        <FotoDestino nome="Maceió" />
         <div style={{ height: "190px", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
           <FotoDestino nome="Maceió" />
           <RotuloFoto nome="Maceió" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />

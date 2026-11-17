@@ -53,13 +53,13 @@ export function Tela26_1() {
           <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
             <div style={{ width: "130px", flex: "none", height: "80px", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
-                <FotoDestino nome="Aracaju" />
+                <FotoDestino nome="Montmartre" />
               </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ width: "130px", flex: "none", height: "80px", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
-                <FotoDestino nome="Aracaju" />
+                <FotoDestino nome="Montmartre" />
               </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>

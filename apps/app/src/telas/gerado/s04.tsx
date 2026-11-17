@@ -14,7 +14,6 @@ export function Tela4_1() {
     <main className="tela" data-tela="4.1">
       <AvisoExemplo />
       <div style={{ padding: "20px 20px 0" }}>
-        <FotoDestino nome="PenedoPenedo2 noites · ônibus ~3 hR$ 630Folgadosobram R$ 1.370" />
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--azul)" }}>
           Saindo de Aracaju
         </div>
@@ -41,9 +40,7 @@ export function Tela4_1() {
           <Chip grupo="4.1:g2" valor="Até 6 h" modo="varios" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("4.2")}>
-          <FotoDestino nome="Penedo" />
           <div style={{ position: "relative" }}>
-            <FotoDestino nome="Penedo" />
             <div style={{ height: "92px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
               <FotoDestino nome="Penedo" />
               <RotuloFoto nome="Penedo" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
@@ -72,9 +69,7 @@ export function Tela4_1() {
           </div>
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px" }} {...toque("4.2")}>
-          <FotoDestino nome="Maceió" />
           <div style={{ position: "relative" }}>
-            <FotoDestino nome="Maceió" />
             <div style={{ height: "92px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
               <FotoDestino nome="Maceió" />
               <RotuloFoto nome="Maceió" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
@@ -115,7 +110,6 @@ export function Tela4_2() {
     <main className="tela" data-tela="4.2">
       <AvisoExemplo />
       <div style={{ position: "relative" }}>
-        <FotoDestino nome="Maceió" />
         <div style={{ height: "200px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
           <FotoDestino nome="Maceió" />
           <RotuloFoto nome="Maceió" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />
@@ -333,7 +327,6 @@ export function Tela4_4() {
     <main className="tela" data-tela="4.4">
       <AvisoExemplo />
       <div style={{ padding: "20px 20px 0" }}>
-        <FotoDestino nome="PenedoPenedo, bate-voltaÔnibus ~3 h · R$ 150 com comidaFolgado" />
         <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", fontSize: "24px", marginLeft: "-4px" }} {...toque('voltar')}>
           ←
         </div>
@@ -366,9 +359,7 @@ export function Tela4_4() {
           </div>
         </div>
         <div style={{ border: "1px solid var(--linha)", marginTop: "10px", display: "flex", gap: "12px" }}>
-          <FotoDestino nome="Penedo" />
           <div style={{ width: "96px", flex: "none" }}>
-            <FotoDestino nome="Penedo" />
             <div style={{ height: "84px", position: "relative", background: "linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", padding: "8px 10px", boxSizing: "border-box" }}>
               <FotoDestino nome="Penedo" />
               <RotuloFoto nome="Penedo" style={{ font: "600 13px 'Open Sans'", background: "var(--fundo)", padding: "2px 8px" }} />

@@ -19,16 +19,16 @@ const UA = 'BoVairApp/0.1 (https://instagram.com/bovair.app) fotos-de-destinos';
 /** chave usada no app → artigo da Wikipédia em português. */
 const ARTIGOS = {
   Paris: 'Paris', Lisboa: 'Lisboa', Penedo: 'Penedo (Alagoas)', Maceió: 'Maceió', Salvador: 'Salvador (Bahia)',
-  Recife: 'Recife', Cascais: 'Cascais', Lagos: 'Lagos (Portugal)', Itália: 'Itália', Roma: 'Roma', Aracaju: 'Aracaju',
+  Recife: 'Recife', Cascais: 'Cascais', Lagos: 'Lagos (Portugal)', Itália: 'Coliseu', Roma: 'Roma', Aracaju: 'Aracaju',
   Montmartre: 'Montmartre',
-  'Museu do Louvre': 'Museu do Louvre', "Museu d'Orsay": "Museu d'Orsay", 'Centro Pompidou': 'Centro Georges Pompidou',
-  'Montmartre e Sacré-Cœur': 'Basílica de Sacré-Cœur', 'Museu de Montmartre': 'Museu de Montmartre',
-  'Mercado dos Enfants Rouges': 'Marché des Enfants Rouges', 'Ruas do Marais': 'Le Marais', 'Bares do Marais': 'Le Marais',
-  'Jardim de Luxemburgo': 'Jardim de Luxemburgo', 'Cafés de Saint-Germain': 'Saint-Germain-des-Prés',
+  'Museu do Louvre': 'Pirâmide do Louvre', "Museu d'Orsay": "Museu d'Orsay", 'Centro Pompidou': 'Beaubourg',
+  'Montmartre e Sacré-Cœur': 'Basílica do Sagrado Coração (Paris)', 'Museu de Montmartre': 'Montmartre',
+  'Mercado dos Enfants Rouges': 'Le Marais', 'Ruas do Marais': 'Le Marais', 'Bares do Marais': 'Le Marais',
+  'Jardim de Luxemburgo': 'Jardim de Luxemburgo', 'Cafés de Saint-Germain': 'Café de Flore',
   'Canal Saint-Martin': 'Canal Saint-Martin', 'Rua Oberkampf': 'Rue Oberkampf', 'Torre Eiffel e Campo de Marte': 'Torre Eiffel',
-  'Passeio de barco no Sena': 'Sena', 'Rua Montorgueil': 'Rue Montorgueil', 'Galerias Lafayette': 'Galeries Lafayette',
+  'Passeio de barco no Sena': 'Rio Sena', 'Rua Montorgueil': 'Les Halles', 'Galerias Lafayette': 'Galeries Lafayette',
   'Cemitério Père-Lachaise': 'Cemitério do Père-Lachaise', 'Bosque de Vincennes': 'Bosque de Vincennes',
-  'Livraria Shakespeare and Company': 'Shakespeare and Company', 'Catedral de Notre-Dame': 'Catedral de Notre-Dame de Paris',
+  'Livraria Shakespeare and Company': 'Shakespeare and Company (livraria)', 'Catedral de Notre-Dame': 'Catedral de Notre-Dame de Paris',
 };
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -63,6 +63,8 @@ for (const p of Object.values(inf?.query?.pages ?? {})) {
 for (const [chave, artigo] of Object.entries(ARTIGOS)) {
   const p = paginaDe(artigo);
   if (!p?.thumbnail?.source || !p.pageimage) { console.log(`sem foto: ${chave}`); continue; }
+  // Desenhos (mapas, bandeiras, logotipos) não servem como foto do lugar.
+  if (/\.svg$/i.test(p.pageimage)) { console.log(`só desenho, sem foto: ${chave}`); continue; }
   const ii = metaPorArquivo[p.pageimage.replace(/ /g, '_')];
   const meta = ii?.extmetadata ?? {};
   fotos[chave] = {

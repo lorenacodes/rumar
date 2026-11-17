@@ -50,6 +50,8 @@ function parse(html) {
 function decode(s) {
   return s.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
+/** Texto com espaço entre elementos ("FR" + "Paris" não vira "FRParis"). */
+const textoSeparado = (no) => (no.texto !== undefined ? no.texto : no.filhos.map(textoSeparado).join(' ')).replace(/\s+/g, ' ').trim();
 const textoDe = (no) => (no.texto !== undefined ? no.texto : no.filhos.map(textoDe).join('')).replace(/\s+/g, ' ').trim();
 
 // ---------------------------------------------------------------- estilos
@@ -112,12 +114,13 @@ function pareceLinha(no) {
   return Boolean(caixa) && variosTextos && !d.position?.includes('absolute') && textoDe(no).length < 160;
 }
 
-const DESTINOS = ['Paris', 'Lisboa', 'Penedo', 'Maceió', 'Salvador', 'Recife', 'Cascais', 'Lagos', 'Itália', 'Roma', 'Aracaju', 'Montmartre'];
+// Aracaju fica de fora: no design é a cidade de ONDE a Ana sai, não o destino da foto.
+const DESTINOS = ['Paris', 'Lisboa', 'Penedo', 'Maceió', 'Salvador', 'Recife', 'Cascais', 'Lagos', 'Itália', 'Roma', 'Montmartre'];
 /** Destino da foto: o primeiro nome de lugar no cartão em volta (sobe até 4 níveis). */
 function destinoPerto(no, ctx) {
   let atual = no;
   for (let i = 0; i < 5 && atual; i++) {
-    const tx = textoDe(atual);
+    const tx = textoSeparado(atual);
     const achado = DESTINOS.find((d) => new RegExp(`(^|[^\\p{L}])${d}([^\\p{L}]|$)`, 'u').test(tx));
     if (achado) return achado;
     atual = atual.pai;
@@ -231,7 +234,8 @@ function render(no, ctx, nivel) {
     toque = ` {...toque(${destino === 'voltar' ? "'voltar'" : JSON.stringify(destino)})}`;
   }
   const tag = no.tag === 'raiz' ? 'div' : no.tag;
-  const rotulo = no.filhos.find((f) => f.tag && /^Foto de /.test(textoDe(f)));
+  // Só o pai imediato do rótulo "Foto de X" (o rótulo tem o texto direto, sem filhos).
+  const rotulo = no.filhos.find((f) => f.tag && f.filhos.length === 1 && f.filhos[0].texto !== undefined && /^Foto de /.test(textoDe(f)));
   const nomeFoto = no.foto ? destinoPerto(no, ctx) : rotulo ? textoDe(rotulo).slice(8) : null;
   if (nomeFoto) ctx.usa.add('foto');
   const fotoJsx = nomeFoto ? `${pad}  <FotoDestino nome=${JSON.stringify(nomeFoto)} />\n` : '';

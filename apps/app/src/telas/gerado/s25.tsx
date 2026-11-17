@@ -113,7 +113,7 @@ export function Tela25_2() {
         <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px" }} {...toque("/minha-viagem")}>
           <div style={{ width: "84px", flex: "none", height: "64px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
-              <FotoDestino nome="Aracaju" />
+              <FotoDestino nome="Paris" />
             </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
@@ -132,7 +132,7 @@ export function Tela25_2() {
         <div style={{ display: "flex", gap: "10px", border: "1px solid var(--linha)", padding: "8px", marginTop: "8px" }} {...toque("16.2")}>
           <div style={{ width: "84px", flex: "none", height: "64px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
-              <FotoDestino nome="Aracaju" />
+              <FotoDestino nome="Maceió" />
             </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>

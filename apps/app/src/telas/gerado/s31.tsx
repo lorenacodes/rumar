@@ -21,7 +21,7 @@ export function Tela31_1() {
         <div style={{ marginTop: "14px", border: "2px solid var(--texto)" }}>
           <div style={{ height: "120px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
-              <FotoDestino nome="Aracaju" />
+              <FotoDestino nome="Paris" />
             </div>
             <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
           </div>
@@ -170,7 +170,7 @@ export function Tela31_3() {
           <div style={{ position: "relative" }}>
             <div style={{ height: "150px", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", inset: "0", background: "transparent", filter: "saturate(.9)" }}>
-                <FotoDestino nome="Aracaju" />
+                <FotoDestino nome="Paris" />
               </div>
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#8FB0FF,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>

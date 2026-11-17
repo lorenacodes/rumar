@@ -154,3 +154,33 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **O que muda:** a aba "Minha viagem" abre a 16.1 com a lista "Seu plano até o embarque" da 15.1
   logo abaixo do cartão (`telas/s16/MinhaViagem.tsx`, rota `/minha-viagem`). Todos os links para a
   15.1 ou a 16.1 levam a ela. As telas originais seguem no teste visual como referência do design.
+
+## D-018 — Código de confirmação com 8 números (como o Supabase gera)
+- **Data:** 17/11/2026
+- **Status:** ✅ Corrigido (problema que impedia novas contas)
+- **Causa:** o projeto no Supabase gera códigos de **8** números ("Email OTP Length"); o app só
+  aceitava 6. Conferido pelo resumo do código guardado no banco (sem ver o código).
+- **Decisão:** o app usa `CODIGO_DIGITOS` (config.ts, hoje 8), igual ao painel. O design mostra 6
+  caixas; no app aparecem tantas caixas quantos números o servidor gera.
+- **Se mudar no painel para 6:** trocar `CODIGO_DIGITOS` para 6 (as duas coisas precisam bater).
+- **Junto:** mensagens separadas para código incorreto, vencido (vale 60 min) e muitas tentativas;
+  bloqueio após 5 erros até pedir código novo; espera do reenvio vinda do servidor; cadastro em
+  andamento salvo no aparelho (o Android pode fechar o app enquanto a pessoa abre o e-mail).
+
+## D-019 — Sem dados de exemplo no caminho da conta
+- **Data:** 17/11/2026
+- **Status:** ✅ Pedido da fundadora
+- **Causa da "Ana" no perfil:** a aba Perfil abria a tela 25.2 gerada do design (dados de exemplo).
+- **Decisão:** aba Perfil → 5.13 (dados do banco); Início → tela própria com o plano e o nome da
+  conta e o passo a passo do cadastro; aba Minha viagem → 28.5 "Ainda sem viagem" até existir viagem
+  guardada. Ao entrar, perfil e plano vêm do banco; ao sair, somem do aparelho.
+- As demais telas geradas continuam com a faixa "△ Exemplo" até ganharem dados reais.
+
+## D-020 — Fotos guardadas, não buscadas a cada uso
+- **Data:** 17/11/2026
+- **Status:** ✅ Corrigido
+- **Causa:** o app pedia a foto à API da Wikipédia em cada celular; a Wikimedia limita esses pedidos
+  (erro 429) e as fotos não apareciam.
+- **Decisão:** a automação "Fotos dos lugares" (GitHub Actions) resolve as fotos com autor e licença e
+  grava em `dados/fotos.json` (embutido) e na tabela `fotos_lugares` (Supabase, leitura pública). O app
+  só carrega a imagem do CDN da Wikimedia e mostra o crédito; sem foto, fica o fundo do design.

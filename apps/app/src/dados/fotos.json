@@ -1,6 +1,6 @@
 {
  "Paris": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/The_Eiffel_Tower%2C_viewed_from_Tour_Montparnasse%2C_25_July_2022_%28cropped%29.jpg/960px-The_Eiffel_Tower%2C_viewed_from_Tour_Montparnasse%2C_25_July_2022_%28cropped%29.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/The_Eiffel_Tower%2C_viewed_from_Tour_Montparnasse%2C_25_July_2022_%28cropped%29.jpg/960px-The_Eiffel_Tower%2C_viewed_from_Tour_Montparnasse%2C_25_July_2022_%28cropped%29.jpg",
   "largura": 800,
   "altura": 473,
   "autor": "Jeremy Segrott from Cardiff, Wales, UK",
@@ -10,7 +10,7 @@
   "artigo": "Paris"
  },
  "Lisboa": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Lisbon_%2836831596786%29_%28cropped%29.jpg/960px-Lisbon_%2836831596786%29_%28cropped%29.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Lisbon_%2836831596786%29_%28cropped%29.jpg/960px-Lisbon_%2836831596786%29_%28cropped%29.jpg",
   "largura": 800,
   "altura": 414,
   "autor": "Deensel",
@@ -20,7 +20,7 @@
   "artigo": "Lisboa"
  },
  "Penedo": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Penedo_-_Alagoas.jpg/960px-Penedo_-_Alagoas.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Penedo_-_Alagoas.jpg/960px-Penedo_-_Alagoas.jpg",
   "largura": 800,
   "altura": 533,
   "autor": "Caioviniciuscosta",
@@ -30,7 +30,7 @@
   "artigo": "Penedo (Alagoas)"
  },
  "Maceió": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Ponta_Verde_Lighthouse_landscape_-_Macei%C3%B3%2C_Brazil_%28edited%29.jpg/960px-Ponta_Verde_Lighthouse_landscape_-_Macei%C3%B3%2C_Brazil_%28edited%29.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Ponta_Verde_Lighthouse_landscape_-_Macei%C3%B3%2C_Brazil_%28edited%29.jpg/960px-Ponta_Verde_Lighthouse_landscape_-_Macei%C3%B3%2C_Brazil_%28edited%29.jpg",
   "largura": 800,
   "altura": 531,
   "autor": "Original: André Lage Freitas Obra derivada: Wilfredor Obra derivada: Aristeas",
@@ -40,7 +40,7 @@
   "artigo": "Maceió"
  },
  "Salvador": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Salvador_BA_%28cropped%29_2.jpg/960px-Salvador_BA_%28cropped%29_2.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Salvador_BA_%28cropped%29_2.jpg/960px-Salvador_BA_%28cropped%29_2.jpg",
   "largura": 800,
   "altura": 357,
   "autor": "Fotos Gov/Ba",
@@ -50,7 +50,7 @@
   "artigo": "Salvador (Bahia)"
  },
  "Recife": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Antonio_Vaz_island_-_Recife%2C_Pernambuco%2C_Brazil_%28cropped%29.jpg/960px-Antonio_Vaz_island_-_Recife%2C_Pernambuco%2C_Brazil_%28cropped%29.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Antonio_Vaz_island_-_Recife%2C_Pernambuco%2C_Brazil_%28cropped%29.jpg/960px-Antonio_Vaz_island_-_Recife%2C_Pernambuco%2C_Brazil_%28cropped%29.jpg",
   "largura": 800,
   "altura": 410,
   "autor": "Portal da Copa/ME",
@@ -60,7 +60,7 @@
   "artigo": "Recife"
  },
  "Cascais": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Cascais_%2820909928930%29.jpg/960px-Cascais_%2820909928930%29.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Cascais_%2820909928930%29.jpg/960px-Cascais_%2820909928930%29.jpg",
   "largura": 800,
   "altura": 531,
   "autor": "pedrik",
@@ -70,7 +70,7 @@
   "artigo": "Cascais"
  },
  "Lagos": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/Centro_de_Lagos.png/960px-Centro_de_Lagos.png?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/Centro_de_Lagos.png/960px-Centro_de_Lagos.png",
   "largura": 800,
   "altura": 600,
   "autor": "Lacobrigo",
@@ -79,18 +79,8 @@
   "pagina": "https://commons.wikimedia.org/wiki/File:Centro_de_Lagos.png",
   "artigo": "Lagos (Portugal)"
  },
- "Itália": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/960px-Flag_of_Italy.svg.png?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-  "largura": 800,
-  "altura": 533,
-  "autor": "See below.",
-  "licenca": "Public domain",
-  "licencaUrl": null,
-  "pagina": "https://commons.wikimedia.org/wiki/File:Flag_of_Italy.svg",
-  "artigo": "Itália"
- },
  "Roma": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Trevi-Brunnen_abends.jpg/960px-Trevi-Brunnen_abends.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Trevi-Brunnen_abends.jpg/960px-Trevi-Brunnen_abends.jpg",
   "largura": 800,
   "altura": 588,
   "autor": "Thomas Wolf, www.foto-tw.de",
@@ -100,7 +90,7 @@
   "artigo": "Roma"
  },
  "Aracaju": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Ponte_tobias_barreto2.jpg/960px-Ponte_tobias_barreto2.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Ponte_tobias_barreto2.jpg/960px-Ponte_tobias_barreto2.jpg",
   "largura": 800,
   "altura": 782,
   "autor": "Roseane Botelho",
@@ -110,7 +100,7 @@
   "artigo": "Aracaju"
  },
  "Montmartre": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Sacrecoeur_stadedefrance.JPG/960px-Sacrecoeur_stadedefrance.JPG?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Sacrecoeur_stadedefrance.JPG/960px-Sacrecoeur_stadedefrance.JPG",
   "largura": 800,
   "altura": 500,
   "autor": "Kirua",
@@ -119,18 +109,8 @@
   "pagina": "https://commons.wikimedia.org/wiki/File:Sacrecoeur_stadedefrance.JPG",
   "artigo": "Montmartre"
  },
- "Museu do Louvre": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/France_location_map-Regions_and_departements-2016.svg/960px-France_location_map-Regions_and_departements-2016.svg.png?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-  "largura": 800,
-  "altura": 769,
-  "autor": "Superbenjamin",
-  "licenca": "CC BY-SA 4.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:France_location_map-Regions_and_departements-2016.svg",
-  "artigo": "Museu do Louvre"
- },
  "Museu d'Orsay": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Gare_d%27Orsay_%2849570190081%29.jpg/960px-Gare_d%27Orsay_%2849570190081%29.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Gare_d%27Orsay_%2849570190081%29.jpg/960px-Gare_d%27Orsay_%2849570190081%29.jpg",
   "largura": 800,
   "altura": 533,
   "autor": "Cheng-en Cheng from Taichung City, Taiwan",
@@ -139,18 +119,8 @@
   "pagina": "https://commons.wikimedia.org/wiki/File:Gare_d%27Orsay_(49570190081).jpg",
   "artigo": "Museu d'Orsay"
  },
- "Centro Pompidou": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Le_logo_du_Centre_Pompidou_redessin%C3%A9_en_2019_%285_bandes%29.svg/960px-Le_logo_du_Centre_Pompidou_redessin%C3%A9_en_2019_%285_bandes%29.svg.png?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-  "largura": 800,
-  "altura": 565,
-  "autor": "Jean Widmer",
-  "licenca": "CC BY-SA 4.0",
-  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "pagina": "https://commons.wikimedia.org/wiki/File:Le_logo_du_Centre_Pompidou_redessin%C3%A9_en_2019_(5_bandes).svg",
-  "artigo": "Centro Georges Pompidou"
- },
  "Ruas do Marais": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Paris_Hotel_de_Sens_dsc04028.jpg/960px-Paris_Hotel_de_Sens_dsc04028.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Paris_Hotel_de_Sens_dsc04028.jpg/960px-Paris_Hotel_de_Sens_dsc04028.jpg",
   "largura": 800,
   "altura": 1067,
   "autor": "Autor no Wikimedia Commons",
@@ -160,7 +130,7 @@
   "artigo": "Le Marais"
  },
  "Bares do Marais": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Paris_Hotel_de_Sens_dsc04028.jpg/960px-Paris_Hotel_de_Sens_dsc04028.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Paris_Hotel_de_Sens_dsc04028.jpg/960px-Paris_Hotel_de_Sens_dsc04028.jpg",
   "largura": 800,
   "altura": 1067,
   "autor": "Autor no Wikimedia Commons",
@@ -170,7 +140,7 @@
   "artigo": "Le Marais"
  },
  "Jardim de Luxemburgo": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Jardin_du_Luxembourg.JPG/960px-Jardin_du_Luxembourg.JPG?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Jardin_du_Luxembourg.JPG/960px-Jardin_du_Luxembourg.JPG",
   "largura": 800,
   "altura": 600,
   "autor": "Rdevany em Wikipédia em inglês",
@@ -180,7 +150,7 @@
   "artigo": "Jardim de Luxemburgo"
  },
  "Canal Saint-Martin": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Canal_saint_martin.jpg/960px-Canal_saint_martin.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Canal_saint_martin.jpg/960px-Canal_saint_martin.jpg",
   "largura": 800,
   "altura": 534,
   "autor": "Emmanuel LEGRAND",
@@ -190,7 +160,7 @@
   "artigo": "Canal Saint-Martin"
  },
  "Rua Oberkampf": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Rue_Oberkampf.jpg/960px-Rue_Oberkampf.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Rue_Oberkampf.jpg/960px-Rue_Oberkampf.jpg",
   "largura": 800,
   "altura": 600,
   "autor": "Philipp Hertzog",
@@ -200,7 +170,7 @@
   "artigo": "Rue Oberkampf"
  },
  "Torre Eiffel e Campo de Marte": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Eiffel_Tower_from_Champ-de-Mars%2C_7_August_2017.jpg/960px-Eiffel_Tower_from_Champ-de-Mars%2C_7_August_2017.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Eiffel_Tower_from_Champ-de-Mars%2C_7_August_2017.jpg/960px-Eiffel_Tower_from_Champ-de-Mars%2C_7_August_2017.jpg",
   "largura": 800,
   "altura": 1211,
   "autor": "Gordon Gartrell",
@@ -210,7 +180,7 @@
   "artigo": "Torre Eiffel"
  },
  "Galerias Lafayette": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Galeries_Lafayette_Haussmann_1.jpg/960px-Galeries_Lafayette_Haussmann_1.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Galeries_Lafayette_Haussmann_1.jpg/960px-Galeries_Lafayette_Haussmann_1.jpg",
   "largura": 800,
   "altura": 533,
   "autor": "Arthur Weidmann",
@@ -220,7 +190,7 @@
   "artigo": "Galeries Lafayette"
  },
  "Cemitério Père-Lachaise": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/P%C3%A8re-Lachaise_-_entr%C3%A9e_principale_01.jpg/960px-P%C3%A8re-Lachaise_-_entr%C3%A9e_principale_01.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/P%C3%A8re-Lachaise_-_entr%C3%A9e_principale_01.jpg/960px-P%C3%A8re-Lachaise_-_entr%C3%A9e_principale_01.jpg",
   "largura": 800,
   "altura": 533,
   "autor": "Coyau",
@@ -230,7 +200,7 @@
   "artigo": "Cemitério do Père-Lachaise"
  },
  "Bosque de Vincennes": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Bois_de_Vincennes_DSC03761.JPG/960px-Bois_de_Vincennes_DSC03761.JPG?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Bois_de_Vincennes_DSC03761.JPG/960px-Bois_de_Vincennes_DSC03761.JPG",
   "largura": 800,
   "altura": 600,
   "autor": "Autor no Wikimedia Commons",
@@ -240,7 +210,7 @@
   "artigo": "Bosque de Vincennes"
  },
  "Catedral de Notre-Dame": {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Notre-Dame_de_Paris%2C_4_October_2017.jpg/960px-Notre-Dame_de_Paris%2C_4_October_2017.jpg?utm_source=pt.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Notre-Dame_de_Paris%2C_4_October_2017.jpg/960px-Notre-Dame_de_Paris%2C_4_October_2017.jpg",
   "largura": 800,
   "altura": 528,
   "autor": "Ali Sabbagh",

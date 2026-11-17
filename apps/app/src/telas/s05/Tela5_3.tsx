@@ -122,11 +122,16 @@ export function Tela5_3() {
             </Caixa>
           </div>
           <div style={{ fontSize: '14px', lineHeight: '18px', color: 'var(--texto-sec)' }}>O Bo Vair não guarda nem movimenta seu dinheiro.</div>
-          {erro ? <Aviso>{erro}</Aviso> : null}
         </div>
         <Rodape>
+          {/* Aviso logo acima do botão: sempre à vista, sem precisar rolar. */}
+          {erro ? (
+            <div style={{ marginBottom: '8px', marginTop: '-8px' }}>
+              <Aviso>{erro}</Aviso>
+            </div>
+          ) : null}
           <BotaoPrincipal type="submit" disabled={enviando}>
-            Criar conta e guardar ↗
+            {enviando ? 'Criando sua conta…' : 'Criar conta e guardar ↗'}
           </BotaoPrincipal>
         </Rodape>
       </form>
