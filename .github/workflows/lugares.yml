@@ -1,0 +1,53 @@
+name: Lugares
+
+# Coleta de lugares por cidade (OpenStreetMap + fotos do Wikimedia) → banco do Bo Vair.
+# - A cada 3 horas: cidades que alguém pediu no app (fila), no máximo 5 por vez.
+# - Manual: escolher o modo (padrão = cidades de teste e Paris; destinos = recarregar a lista
+#   de municípios; cidades = ids separados por vírgula, ex.: br-2800308,pt-lisboa).
+# Autenticação com o banco pelo token OIDC do GitHub (id-token: write). Nenhuma chave guardada.
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'padrao | fila | destinos | cidades'
+        default: padrao
+      cidades:
+        description: 'ids (só no modo cidades), separados por vírgula'
+        default: ''
+  schedule:
+    - cron: '41 */3 * * *'
+  push:
+    branches: [fase-0-base]
+    paths:
+      - tools/dados/destinos-turisticos.json
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: lugares
+  cancel-in-progress: false
+
+jobs:
+  lugares:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fase-0-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Coletar
+        env:
+          MODO: ${{ github.event_name == 'schedule' && 'fila' || github.event_name == 'push' && 'destinos' || inputs.modo }}
+          CIDADES: ${{ inputs.cidades }}
+        run: |
+          case "$MODO" in
+            fila) node tools/dados/lugares.mjs --fila 5 ;;
+            destinos) node tools/dados/lugares.mjs --destinos ;;
+            cidades) node tools/dados/lugares.mjs --cidades "$CIDADES" ;;
+            *) node tools/dados/lugares.mjs --destinos --padrao ;;
+          esac
