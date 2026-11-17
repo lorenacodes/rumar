@@ -79,6 +79,16 @@
   "pagina": "https://commons.wikimedia.org/wiki/File:Centro_de_Lagos.png",
   "artigo": "Lagos (Portugal)"
  },
+ "Itália": {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/960px-Colosseo_2020.jpg",
+  "largura": 800,
+  "altura": 560,
+  "autor": "FeaturedPics",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Colosseo_2020.jpg",
+  "artigo": "Coliseu"
+ },
  "Roma": {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Trevi-Brunnen_abends.jpg/960px-Trevi-Brunnen_abends.jpg",
   "largura": 800,
@@ -119,6 +129,26 @@
   "pagina": "https://commons.wikimedia.org/wiki/File:Gare_d%27Orsay_(49570190081).jpg",
   "artigo": "Museu d'Orsay"
  },
+ "Museu de Montmartre": {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Sacrecoeur_stadedefrance.JPG/960px-Sacrecoeur_stadedefrance.JPG",
+  "largura": 800,
+  "altura": 500,
+  "autor": "Kirua",
+  "licenca": "Public domain",
+  "licencaUrl": null,
+  "pagina": "https://commons.wikimedia.org/wiki/File:Sacrecoeur_stadedefrance.JPG",
+  "artigo": "Montmartre"
+ },
+ "Mercado dos Enfants Rouges": {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Paris_Hotel_de_Sens_dsc04028.jpg/960px-Paris_Hotel_de_Sens_dsc04028.jpg",
+  "largura": 800,
+  "altura": 1067,
+  "autor": "Autor no Wikimedia Commons",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Paris_Hotel_de_Sens_dsc04028.jpg",
+  "artigo": "Le Marais"
+ },
  "Ruas do Marais": {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Paris_Hotel_de_Sens_dsc04028.jpg/960px-Paris_Hotel_de_Sens_dsc04028.jpg",
   "largura": 800,
@@ -149,6 +179,16 @@
   "pagina": "https://commons.wikimedia.org/wiki/File:Jardin_du_Luxembourg.JPG",
   "artigo": "Jardim de Luxemburgo"
  },
+ "Cafés de Saint-Germain": {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/P1240303_Paris_VI_bd_Saint-Germain_caf%C3%A9_de_Flore_rwk.jpg/960px-P1240303_Paris_VI_bd_Saint-Germain_caf%C3%A9_de_Flore_rwk.jpg",
+  "largura": 800,
+  "altura": 630,
+  "autor": "Mbzt",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:P1240303_Paris_VI_bd_Saint-Germain_caf%C3%A9_de_Flore_rwk.jpg",
+  "artigo": "Café de Flore"
+ },
  "Canal Saint-Martin": {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Canal_saint_martin.jpg/960px-Canal_saint_martin.jpg",
   "largura": 800,
@@ -178,6 +218,26 @@
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
   "pagina": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_from_Champ-de-Mars,_7_August_2017.jpg",
   "artigo": "Torre Eiffel"
+ },
+ "Passeio de barco no Sena": {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Pont_au_Change_and_Palais_de_justice%2C_Paris_20_April_2021_001.jpg/960px-Pont_au_Change_and_Palais_de_justice%2C_Paris_20_April_2021_001.jpg",
+  "largura": 800,
+  "altura": 533,
+  "autor": "Ilan Costica",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Pont_au_Change_and_Palais_de_justice,_Paris_20_April_2021_001.jpg",
+  "artigo": "Rio Sena"
+ },
+ "Rua Montorgueil": {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Les_Halles_%28Rh%C3%B4ne%29.jpg/960px-Les_Halles_%28Rh%C3%B4ne%29.jpg",
+  "largura": 800,
+  "altura": 536,
+  "autor": "Montromant",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Les_Halles_(Rh%C3%B4ne).jpg",
+  "artigo": "Les Halles"
  },
  "Galerias Lafayette": {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Galeries_Lafayette_Haussmann_1.jpg/960px-Galeries_Lafayette_Haussmann_1.jpg",
