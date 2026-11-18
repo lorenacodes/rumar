@@ -23,6 +23,7 @@ function Ficha({ c, n, primeira }: { c: Curiosidade; n: number; primeira: boolea
         <div className="ficha-numero"><span>Nº {String(n).padStart(4, '0')}</span><span>{c.pais ?? ''}</span></div>
         <h2 className="ficha-nome">{c.nome}</h2>
         {c.descricao ? <div className="ficha-desc">{c.descricao}</div> : null}
+        {c.porque ? <p className="ficha-porque"><span>Por que visitam</span>{c.porque}</p> : null}
         {c.resumo ? (
           <p className="ficha-sabia"><b>Você sabia?</b> {c.resumo}{' '}
             {c.resumo_url ? <a href={c.resumo_url} target="_blank" rel="noreferrer" style={{ fontSize: '11px', color: 'var(--texto-sec)' }}>Wikipédia</a> : null}

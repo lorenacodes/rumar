@@ -47,3 +47,20 @@ language sql stable security invoker set search_path = '' as $$
   offset greatest(pagina, 0) * least(greatest(por_pagina, 1), 30)
   limit least(greatest(por_pagina, 1), 30);
 $$;
+
+-- "Por que visitam" (D-043): frase curta tirada do próprio artigo da Wikipédia ("conhecido por…",
+-- "um dos mais visitados…"). Nula quando o artigo não diz.
+alter table public.curiosidades add column if not exists porque text check (porque is null or length(porque) <= 140);
+
+-- Ordem (revista, D-043): com "por que visitam" primeiro.
+create or replace function public.curiosidades_pagina(pagina integer default 0, por_pagina integer default 10, semente text default '')
+returns setof public.curiosidades
+language sql stable security invoker set search_path = '' as $$
+  select c.* from public.curiosidades c
+  where coalesce(c.descricao, '') !~* '^(uma? )?(cidade|vila|município|aldeia|comuna|povoação|freguesia|bairro)\M'
+  order by (c.porque is not null) desc, (c.resumo is not null) desc,
+    ((lower(c.nome || ' ' || coalesce(c.descricao, '') || ' ' || coalesce(c.resumo, ''))) ~ '(catacumb|cemit|abandon|caverna|gruta|t[uú]nel|ru[ií]na|ossu|cripta|m[uú]mia|mist[eé]ri|estranh|bizarr|perigos|assombr|fantasma|subterr|secret|esquecid|labirint|mais (antig|alt|perigos|pequen|profund|estreit|long)|[uú]nic[oa] no mundo|lend|maldi|naufr|vulc|cratera|esqueleto|ossos|ossada|tumul|mausol|piramid)') desc,
+    md5(c.id || semente)
+  offset greatest(pagina, 0) * least(greatest(por_pagina, 1), 30)
+  limit least(greatest(por_pagina, 1), 30);
+$$;

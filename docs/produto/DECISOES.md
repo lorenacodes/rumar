@@ -556,3 +556,14 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   "tem opção vegetariana"; as cozinhas acima ganham um pouco de prioridade com "costuma ter pratos sem
   carne". Para veganos, opção só vegetariana não basta. A página do lugar mostra "Opções: vegetariana ·
   vegana · sem glúten" quando informado.
+
+## D-043 — "Por que visitam" nas curiosidades
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("numa frase mais curta, dizer por que as pessoas visitam").
+- Cada ficha ganha, em destaque abaixo do nome, a linha "Por que visitam" (até ~125 letras). Ela é tirada
+  do próprio artigo da Wikipédia em português: o trecho que explica a fama ("conhecido por…", "um dos mais
+  visitados…", "guardam os restos de…", "patrimônio mundial…"), cortado numa ideia só. Ex.: Catacumbas de
+  Paris → "Guardam os restos de mais de seis milhões de pessoas." Sem custo e sem inventar.
+- Quando o artigo não diz, a linha não aparece. O "Você sabia?" fica menor (2 linhas). Fichas com
+  "por que visitam" vêm primeiro. O compartilhar usa essa frase.
+- Possível melhoria paga (não feita): resumir com IA para cobrir as fichas sem esse trecho — mostrar custo antes.

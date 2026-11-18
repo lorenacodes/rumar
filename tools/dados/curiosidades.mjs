@@ -60,7 +60,7 @@ for (const l of linhas) {
     lon: Number(m[1]), lat: Number(m[2]),
     foto: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(arquivo)}?width=900`,
     foto_pagina: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(arquivo.replace(/ /g, '_'))}`,
-    fama: Number(l.links.value) || 0, titulo: null, resumo: null, resumo_url: null,
+    fama: Number(l.links.value) || 0, titulo: null, resumo: null, resumo_url: null, porque: null,
   });
   if (porId.size >= LIMITE) break;
 }
@@ -88,6 +88,27 @@ const primeiraFrase = (t) => {
   const f = (m ? m[1] : limpo).trim();
   return f.length > 300 ? `${f.slice(0, 297).replace(/\s+\S*$/, '')}…` : f;
 };
+// "Por que visitam" (D-043): trecho do próprio artigo que explica a fama do lugar, numa frase curta.
+const GANCHO = /(conhecid[oa]s? (?:mundialmente )?(?:por|pel[oa]s?|como)|famos[oa]s? (?:por|pel[oa]s?|em todo)|célebre por|atrai (?:milhares|milhões|turistas|visitantes)|(?:um|uma) d[oa]s [^.,;]{0,40}?(?:mais|maiores|principais|poucos|poucas|melhores) |o maior|a maior|o mais (?:antigo|alto|famoso|profundo|visitado)|a mais (?:antiga|alta|famosa|profunda|visitada)|o único|a única|patrimônio mundial|considerad[oa] (?:o|a|um|uma)|(?:guarda|guardam|abriga|abrigam) (?:os restos|mais de|o maior|a maior|milhares|milhões)|ponto turístico|atração turística|destino turístico)/i;
+function porQueVisitam(texto) {
+  const frases = texto.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').split(/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/);
+  for (const f of frases) {
+    const m = GANCHO.exec(f);
+    if (!m) continue;
+    let trecho = f.slice(m.index).replace(/[;:].*$/, '').trim();
+    // Uma ideia só: corta no "e foi…", "e é…" ou na vírgula seguinte quando a frase passa de ~70 letras.
+    if (trecho.length > 70) {
+      const corte = trecho.slice(40).search(/,\s| e (?:foi|é|são|está|estão|tem|fica|recebe)(?=\s)/);
+      if (corte >= 0) trecho = trecho.slice(0, 40 + corte);
+    }
+    if (trecho.length > 125) trecho = `${trecho.slice(0, 122).replace(/[\s,]+\S*$/, '')}…`;
+    else if (!/[.!?…]$/.test(trecho)) trecho += '.';
+    if (trecho.length < 18) continue;
+    return trecho[0].toUpperCase() + trecho.slice(1);
+  }
+  return null;
+}
+
 let feitos = 0;
 // Em lote: 20 artigos por pedido (limite da API para resumos), 1 pedido por segundo.
 const comTitulo = itens.filter((c) => c.titulo);
@@ -110,12 +131,13 @@ for (let k = 0; k < comTitulo.length; k += 20) {
     const c = lote.find((x) => x.titulo === pedido || x.titulo === pg.title);
     if (!c) continue;
     c.resumo = primeiraFrase(pg.extract);
+    c.porque = porQueVisitam(pg.extract);
     c.resumo_url = `https://pt.wikipedia.org/wiki/${encodeURIComponent(pg.title.replace(/ /g, '_'))}`;
     feitos++;
   }
   await espera(1000);
 }
-console.log(`${feitos} resumos em português`);
+console.log(`${feitos} resumos em português; ${itens.filter((i) => i.porque).length} com "por que visitam"`);
 
 // Grava em lotes.
 let gravados = 0;
