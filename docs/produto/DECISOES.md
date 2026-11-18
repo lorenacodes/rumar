@@ -594,3 +594,8 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   ficam marcados (`sombrio`): não aparecem na faixa do Início nem no convite do Descobrir (1ª impressão);
   na tela "Curiosidades do mundo", o botão "Sem lugares sombrios" deixa cada pessoa escolher (guardado
   no aparelho). A ordem também deixou de puxar esses lugares para a frente.
+
+### D-045 (revisão, mesmo dia)
+- A fundadora achou pouco profissional o botão "Sem lugares sombrios": saiu, e esses lugares voltaram à faixa
+  do Início e ao convite do Descobrir. Fica só a melhoria da descrição (o "por que visitam" evita o lado
+  mórbido) e a ordem que não puxa esses lugares para a frente.

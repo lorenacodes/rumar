@@ -310,7 +310,7 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
 export function ConviteCuriosidades() {
   const navegar = useNavigate();
   const [c, setC] = useState<Curiosidade | null>(null);
-  useEffect(() => void curiosidades(0, 1, true).then((l) => setC(l[0] ?? null)), []);
+  useEffect(() => void curiosidades(0, 1).then((l) => setC(l[0] ?? null)), []);
   if (!c) return null;
   return (
     <button type="button" className="r-btn convite-curiosidades" onClick={() => navegar(`/curiosos?c=${c.id}`)} aria-label={`Curiosidades do mundo: ${c.nome}`}

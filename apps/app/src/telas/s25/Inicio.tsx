@@ -80,7 +80,7 @@ function Curiosos() {
   const navegar = useNavigate();
   const [itens, setItens] = useState<{ id: string; nome: string; foto: string; onde: string; mundo: boolean }[]>([]);
   useEffect(() => {
-    void curiosidades(0, 12, true).then(async (mundo) => {
+    void curiosidades(0, 12).then(async (mundo) => {
       if (mundo.length) { setItens(mundo.map((c) => ({ id: c.id, nome: c.nome, foto: c.foto, onde: c.pais ?? '', mundo: true }))); return; }
       // Antes da 1ª coleta mundial: os curiosos das cidades já coletadas.
       const { itens: l } = await lugaresCuriosos(null, 0, 24);

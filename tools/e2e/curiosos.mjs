@@ -21,8 +21,6 @@ for (const entrar of [false, true]) {
   await p.goto(URL + '#/inicio'); await p.waitForTimeout(4000);
   const faixa = p.getByRole('list', { name: 'Lugares curiosos' });
   confere('Início tem a faixa de curiosidades', (await faixa.getByRole('button').count()) >= 4);
-  const nomesFaixa = (await faixa.getByRole('button').allInnerTexts()).map((t) => t.split('\n')[0]).join(' | ');
-  confere('faixa do Início sem lugares sombrios', !/catacumb|catacomb|ossu|cemit|cimeti|crypt|cripta|múmia|mumm|túmulo|tomb|mausol/i.test(nomesFaixa));
   const primeiro = (await faixa.getByRole('button').first().innerText()).split('\n')[0];
   await faixa.getByRole('button').first().click(); await p.waitForTimeout(3500);
   const fichas = p.locator('article.ficha');
@@ -39,10 +37,6 @@ for (const entrar of [false, true]) {
   const copiado = await p.evaluate(() => navigator.clipboard.readText().catch(() => ''));
   confere('Compartilhar gera o texto com o nome e "Vi no Bo Vair"', copiado.length > 30 && /Vi no Bo Vair/.test(copiado));
   await visivel.getByRole('button', { name: 'Quero ir', exact: true }).click(); await p.waitForTimeout(500);
-  const botao = p.getByRole('button', { name: 'Sem lugares sombrios' });
-  await botao.click(); await p.waitForTimeout(3000);
-  confere('botão "Sem lugares sombrios" liga e recarrega as fichas', (await botao.getAttribute('aria-pressed')) === 'true' && (await fichas.count()) >= 5);
-  await botao.click(); await p.waitForTimeout(1500);
   await p.goto(URL + '#/descobrir'); await p.waitForTimeout(4000);
   confere('Descobrir tem o convite para as curiosidades', (await p.getByRole('button', { name: /^Curiosidades do mundo:/ }).count()) === 1);
 }

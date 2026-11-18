@@ -9,15 +9,15 @@ export interface Curiosidade {
   foto: string; foto_pagina: string | null; resumo: string | null; resumo_url: string | null; fama: number; destino_id: string | null;
   /** Frase curta do artigo que explica por que as pessoas visitam (D-043). */
   porque: string | null;
-  /** Catacumba, ossuário, cripta, cemitério… (D-045): fora da 1ª impressão; a pessoa escolhe ver. */
+  /** Catacumba, ossuário, cripta, cemitério… (D-045): a frase do "por que visitam" evita o lado mórbido. */
   sombrio?: boolean;
 }
 
 /** Semente do dia: a ordem muda todo dia (sempre há algo novo para ver), mas é estável na sessão. */
 export const sementeDoDia = () => new Date().toISOString().slice(0, 10);
 
-export async function curiosidades(pagina: number, porPagina = 10, semSombrios = false): Promise<Curiosidade[]> {
-  const { data } = await supabase.rpc('curiosidades_feed', { pagina, por_pagina: porPagina, semente: sementeDoDia(), sem_sombrios: semSombrios });
+export async function curiosidades(pagina: number, porPagina = 10): Promise<Curiosidade[]> {
+  const { data } = await supabase.rpc('curiosidades_feed', { pagina, por_pagina: porPagina, semente: sementeDoDia(), sem_sombrios: false });
   return (data ?? []) as Curiosidade[];
 }
 
@@ -39,11 +39,3 @@ export async function compartilharCuriosidade(c: Curiosidade): Promise<'ok' | 'c
   }
 }
 
-/** Preferência "Sem lugares sombrios" (só neste aparelho; pode faltar armazenamento). */
-const CHAVE = 'bovair.semSombrios';
-export function lerSemSombrios(): boolean {
-  try { return localStorage.getItem(CHAVE) === '1'; } catch { return false; }
-}
-export function gravarSemSombrios(v: boolean) {
-  try { localStorage.setItem(CHAVE, v ? '1' : '0'); } catch { /* sem armazenamento: vale só nesta sessão */ }
-}
