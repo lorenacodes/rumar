@@ -1,0 +1,33 @@
+name: Curiosidades
+
+# Curiosidades do mundo (D-039): lugares curiosos do planeta (Wikidata com identificador do Atlas
+# Obscura, foto e coordenadas) + 1ª frase da Wikipédia em português. Toda segunda-feira.
+# Autenticação por OIDC do GitHub; nenhuma chave guardada.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 6 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/curiosidades.yml
+      - tools/dados/curiosidades.mjs
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: curiosidades
+  cancel-in-progress: false
+
+jobs:
+  curiosidades:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/dados/curiosidades.mjs --limite 5000

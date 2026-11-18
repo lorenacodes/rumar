@@ -12,6 +12,7 @@
 //   { acao: 'concluir', destino_id, erro? }
 //   { acao: 'fama_pendentes', limite }                         → lugares com Wikidata sem fama recente (30 dias)
 //   { acao: 'fama_gravar', itens: [{ id, fama, curioso? }] }   → grava a fama (nº de Wikipédias) e se é curioso
+//   { acao: 'curiosidades_gravar', itens: Curiosidade[] }      → curiosidades do mundo (D-039)
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -105,6 +106,14 @@ Deno.serve(async (req) => {
       if (!error) ok++;
     }
     return json({ ok });
+  }
+  if (p.acao === 'curiosidades_gravar') {
+    const itens = ((p.itens ?? []) as Record<string, unknown>[]).slice(0, 1000).map((c) => ({ ...c, atualizado_em: new Date().toISOString() }));
+    for (let i = 0; i < itens.length; i += 500) {
+      const { error } = await db.from('curiosidades').upsert(itens.slice(i, i + 500), { onConflict: 'id' });
+      if (error) return json({ erro: error.message, em: i }, 400);
+    }
+    return json({ ok: true, gravados: itens.length });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });
