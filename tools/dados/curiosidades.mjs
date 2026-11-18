@@ -89,7 +89,7 @@ const primeiraFrase = (t) => {
   return f.length > 300 ? `${f.slice(0, 297).replace(/\s+\S*$/, '')}…` : f;
 };
 // "Por que visitam" (D-043): trecho do próprio artigo que explica a fama do lugar, numa frase curta.
-const GANCHO = /(conhecid[oa]s? (?:mundialmente )?(?:por|pel[oa]s?|como)|famos[oa]s? (?:por|pel[oa]s?|em todo)|célebre por|atrai (?:milhares|milhões|turistas|visitantes)|(?:um|uma) d[oa]s [^.,;]{0,40}?(?:mais|maiores|principais|poucos|poucas|melhores) |o maior|a maior|o mais (?:antigo|alto|famoso|profundo|visitado)|a mais (?:antiga|alta|famosa|profunda|visitada)|o único|a única|patrimônio mundial|considerad[oa] (?:o|a|um|uma)|(?:guarda|guardam|abriga|abrigam) (?:os restos|mais de|o maior|a maior|milhares|milhões)|ponto turístico|atração turística|destino turístico)/i;
+const GANCHO = /(conhecid[oa]s? (?:mundialmente )?(?:por|pel[oa]s?|como)|famos[oa]s? (?:por|pel[oa]s?|em todo)|célebre por|atrai (?:milhares|milhões|turistas|visitantes)|(?:um|uma) d[oa]s [^.,;]{0,40}?(?:mais|maiores|principais|poucos|poucas|melhores) |o maior(?![a-zà-ú])|a maior(?![a-zà-ú])|o mais (?:antigo|alto|famoso|profundo|visitado)|a mais (?:antiga|alta|famosa|profunda|visitada)|o único|a única|patrimônio mundial|considerad[oa] (?:o|a|um|uma)|(?:guarda|guardam|abriga|abrigam) (?:os restos|mais de|o maior|a maior|milhares|milhões)|ponto turístico|atração turística|destino turístico)/i;
 function porQueVisitam(texto) {
   const frases = texto.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').split(/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/);
   for (const f of frases) {
