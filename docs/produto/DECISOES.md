@@ -543,3 +543,16 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   a cozinha em português — quase nunca achava.
 - **Limite honesto:** usamos o tipo de cozinha informado no mapa; muitos restaurantes não dizem se têm
   opção vegetariana (dito no app, atrás do "Sobre os restaurantes").
+
+## D-042 — Opções sem carne em restaurantes comuns
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("às vezes o restaurante não é vegetariano mas tem opções, como massas
+  com queijo").
+- **Dois sinais:** (1) o lugar informa no mapa (diet:vegetarian / diet:vegan / diet:gluten_free = yes/only)
+  — nova coluna `dieta_opcoes`, guardada na coleta e buscada nas cidades já coletadas (workflow "Lugares",
+  modo "dietas", consulta leve); (2) cozinhas que costumam ter pratos sem carne: italiana, pizza, indiana,
+  árabe, mexicana, asiáticas, francesa, peruana, doces (para veganos: indiana, árabe, asiáticas, mexicana).
+- **No roteiro:** restaurante que informa opção vegetariana não é descartado (mesmo churrascaria) e mostra
+  "tem opção vegetariana"; as cozinhas acima ganham um pouco de prioridade com "costuma ter pratos sem
+  carne". Para veganos, opção só vegetariana não basta. A página do lugar mostra "Opções: vegetariana ·
+  vegana · sem glúten" quando informado.

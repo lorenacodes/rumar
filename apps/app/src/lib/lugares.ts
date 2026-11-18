@@ -31,6 +31,8 @@ export interface LugarBase {
   fama?: number | null;
   /** Por que é curioso (catacumba, cripta, ruínas…), quando a coleta marcou (D-038). */
   curioso?: string | null;
+  /** Opções de dieta informadas no mapa: vegetariano, vegano, so_vegetariano, so_vegano, sem_gluten (D-042). */
+  dieta_opcoes?: string[] | null;
   destino_id: string;
   fonte: 'osm' | 'curadoria';
   fonte_id: string;
@@ -143,7 +145,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso, dieta_opcoes';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
@@ -260,6 +262,11 @@ export async function candidatosRoteiro(destino: string, nivel?: 'economico' | '
       .or(termos.map((t) => `cozinha.ilike.%${t.replace(/[,()%]/g, '')}%`).join(',')).not('tipo', 'in', '(fast_food,food_court)')
       .gte('relevancia', 0).order('relevancia', { ascending: false }).limit(25));
   }
+  // Quem não come carne: também os lugares que informam opção vegetariana/vegana no mapa (D-042).
+  if (cozinhas.includes('vegetariana')) {
+    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('categoria', ['restaurantes', 'cafes'])
+      .overlaps('dieta_opcoes', ['vegetariano', 'vegano', 'so_vegetariano', 'so_vegano']).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(25));
+  }
   const res = await Promise.all(consultas);
   const vistos = new Set<string>();
   const todos = res.flatMap((r) => (r.data ?? []) as LugarBase[]).filter((b) => (vistos.has(b.id) ? false : (vistos.add(b.id), true)));
@@ -294,6 +301,7 @@ export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { de
     destaque: (b.relevancia ?? 0) >= 3 || (b.fama ?? 0) >= 3,
     fama: b.fama ?? 0,
     cozinhas: gruposDeCozinha(b.cozinha),
+    opcoesDieta: b.dieta_opcoes ?? [],
     pais: b.destino_id.slice(0, 2),
     nivel: sinalNivel(b),
     ...(PONTOS_MENORES.has(b.tipo) ? { menor: true } : {}),

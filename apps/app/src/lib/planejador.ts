@@ -18,7 +18,7 @@
  * (link de rota), nunca de um chute.
  */
 
-import { cozinhaLocal, NOME_COZINHA, regrasDaDieta, type Cozinha, type Dieta } from './comida';
+import { costumaTerSemCarne, cozinhaLocal, informaOpcao, NOME_COZINHA, regrasDaDieta, type Cozinha, type Dieta } from './comida';
 
 export type Categoria = 'cultura' | 'gastronomia' | 'cafes' | 'bares' | 'natureza' | 'compras' | 'entretenimento' | 'passeios' | 'locais';
 export type Periodo = 'morning' | 'afternoon' | 'evening' | 'night';
@@ -51,6 +51,8 @@ export interface Lugar {
   /** Grupos de cozinha (restaurantes, bares, cafés) e país do destino, para a comida (D-041). */
   cozinhas?: Cozinha[];
   pais?: string;
+  /** Opções de dieta que o lugar informa no mapa (D-042). */
+  opcoesDieta?: string[];
   /** Ponto pequeno (estátua, busto, placa, chafariz): bom de ver de passagem, fraco como parada do roteiro. */
   menor?: boolean;
 }
@@ -178,7 +180,7 @@ export function filtrar(lugares: Lugar[], p: Preferencias): Lugar[] {
       if (cz.some((c) => p.cozinhasEvito?.includes(c))) return false;
       const { tira, favorece } = regrasDaDieta(p.dieta);
       // Lugar que é de uma cozinha "proibida" e não tem nada da dieta (ex.: churrascaria para vegetariano).
-      if (cz.some((c) => tira.includes(c)) && !cz.some((c) => favorece.includes(c))) return false;
+      if (cz.some((c) => tira.includes(c)) && !cz.some((c) => favorece.includes(c)) && !informaOpcao(l.opcoesDieta, p.dieta)) return false;
     }
     return true;
   });
@@ -224,6 +226,10 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
   }
   // Comida (D-041): cozinhas favoritas, dieta e comida local.
   const cz = l.cozinhas ?? [];
+  if (!cz.length && informaOpcao(l.opcoesDieta, p.dieta)) {
+    pontos += 4;
+    motivos.push(p.dieta === 'vegana' ? 'tem opção vegana' : 'tem opção vegetariana');
+  }
   if (cz.length) {
     const amo = cz.filter((c) => p.cozinhasAmo?.includes(c));
     if (amo.length) {
@@ -234,6 +240,13 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
     if (p.dieta && p.dieta !== 'tudo' && cz.some((c) => favorece.includes(c))) {
       pontos += 4;
       motivos.push(p.dieta === 'pescetariana' ? 'bom para pescetarianos' : p.dieta === 'vegana' ? 'opção vegana/vegetariana' : 'opção vegetariana');
+    } else if (informaOpcao(l.opcoesDieta, p.dieta)) {
+      // Restaurante comum que informa ter opção vegetariana/vegana (D-042).
+      pontos += 4;
+      motivos.push(p.dieta === 'vegana' ? 'tem opção vegana' : 'tem opção vegetariana');
+    } else if (costumaTerSemCarne(cz, p.dieta)) {
+      pontos += 2;
+      motivos.push('costuma ter pratos sem carne');
     }
     if (p.provar !== false && cz.some((c) => cozinhaLocal(l.pais).includes(c))) {
       pontos += 2;

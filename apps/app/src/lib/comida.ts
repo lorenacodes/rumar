@@ -79,3 +79,17 @@ export const TERMOS_COZINHA: Record<Cozinha, string[]> = {
   mexicana: ['mexic'], francesa: ['frances', 'french', 'crepe'], iberica: ['portugu', 'spanish', 'tapas'], peruana: ['peru'],
   vegetariana: ['vegetarian', 'vegan'], doces: ['sorvete', 'dessert', 'cake'],
 };
+
+/** Cozinhas que costumam ter pratos sem carne (massas, queijos, falafel, curry de legumes…). */
+const SEM_CARNE_VEGETARIANO: Cozinha[] = ['italiana', 'pizza', 'indiana', 'arabe', 'mexicana', 'asiatica', 'francesa', 'peruana', 'doces'];
+const SEM_CARNE_VEGANO: Cozinha[] = ['indiana', 'arabe', 'asiatica', 'mexicana'];
+export const costumaTerSemCarne = (cz: Cozinha[], d: Dieta | undefined) =>
+  (d === 'vegana' ? SEM_CARNE_VEGANO : d === 'vegetariana' ? SEM_CARNE_VEGETARIANO : []).some((c) => cz.includes(c));
+
+/** O lugar informa no mapa uma opção que atende a dieta (diet:vegetarian/vegan = yes/only). */
+export function informaOpcao(opcoes: string[] | undefined, d: Dieta | undefined): boolean {
+  const o = opcoes ?? [];
+  if (d === 'vegana') return o.includes('vegano') || o.includes('so_vegano');
+  if (d === 'vegetariana') return o.some((x) => ['vegetariano', 'so_vegetariano', 'vegano', 'so_vegano'].includes(x));
+  return false;
+}

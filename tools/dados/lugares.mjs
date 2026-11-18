@@ -46,6 +46,15 @@ export const CATEGORIAS = {
 
 const COZINHA = { regional: 'regional', brazilian: 'brasileira', pizza: 'pizza', japanese: 'japonesa', italian: 'italiana', burger: 'hambúrguer', seafood: 'frutos do mar', steak_house: 'churrascaria', barbecue: 'churrasco', sushi: 'sushi', chinese: 'chinesa', french: 'francesa', portuguese: 'portuguesa', vegetarian: 'vegetariana', vegan: 'vegana', arab: 'árabe', mexican: 'mexicana', coffee_shop: 'café', ice_cream: 'sorvete', chicken: 'frango', sandwich: 'sanduíche', fish: 'peixe', international: 'internacional' };
 
+/** Opções de dieta que o lugar informa no mapa (diet:vegetarian/vegan/gluten_free = yes/only). D-042. */
+export function opcoesDeDieta(t) {
+  const o = [];
+  if (t['diet:vegetarian'] === 'only') o.push('so_vegetariano'); else if (t['diet:vegetarian'] === 'yes') o.push('vegetariano');
+  if (t['diet:vegan'] === 'only') o.push('so_vegano'); else if (t['diet:vegan'] === 'yes') o.push('vegano');
+  if (t['diet:gluten_free'] === 'yes' || t['diet:gluten_free'] === 'only') o.push('sem_gluten');
+  return o.length ? o : null;
+}
+
 function tipoDe(t) {
   return t.amenity ?? t.tourism ?? t.leisure ?? (t.natural === 'beach' ? 'beach' : null) ?? (t.historic ? `historic_${t.historic}` : null) ?? t.shop ?? t.railway ?? t.aeroway ?? (t.boundary === 'national_park' ? 'national_park' : 'outro');
 }
@@ -87,6 +96,7 @@ export function normalizarElemento(e, destino, dadosDe) {
     cozinha: t.cuisine ? t.cuisine.split(';').map((c) => COZINHA[c.trim()] ?? c.trim().replace(/_/g, ' ')).join(', ').slice(0, 120) : null,
     estrelas: estrelas >= 1 && estrelas <= 5 ? estrelas : null,
     gratuito: t.fee === 'no' ? true : t.fee === 'yes' ? false : null,
+    dieta_opcoes: opcoesDeDieta(t),
     ...foto,
     wikidata: /^Q\d+$/.test(t.wikidata ?? '') ? t.wikidata : null,
     verificado: false, dados_de: dadosDe,

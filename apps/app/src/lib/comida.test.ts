@@ -52,3 +52,23 @@ describe('comida no roteiro (D-041)', () => {
     expect(g.cozinhasAmo).toEqual(['japonesa']);
   });
 });
+
+describe('opções sem carne em restaurantes comuns (D-042)', () => {
+  const comOpcao = (id: string, cozinha: string, opcoes: string[]) => ({ ...rest(id, cozinha), opcoesDieta: opcoes });
+  it('vegetariano: italiana e pizza "costumam ter pratos sem carne"', () => {
+    const p: Preferencias = { ...base, dieta: 'vegetariana' };
+    expect(afinidade(rest('it', 'italiana'), p).motivos).toContain('costuma ter pratos sem carne');
+    expect(afinidade(rest('it', 'italiana'), p).pontos).toBeGreaterThan(afinidade(rest('hb', 'hambúrguer'), p).pontos);
+  });
+  it('churrascaria que informa opção vegetariana no mapa não é descartada e mostra o motivo', () => {
+    const p: Preferencias = { ...base, dieta: 'vegetariana' };
+    const l = comOpcao('ch', 'churrascaria', ['vegetariano']);
+    expect(filtrar([l], p).length).toBe(1);
+    expect(afinidade(l, p).motivos).toContain('tem opção vegetariana');
+  });
+  it('vegano: opção só vegetariana não basta', () => {
+    const p: Preferencias = { ...base, dieta: 'vegana' };
+    expect(filtrar([comOpcao('ch', 'churrascaria', ['vegetariano'])], p).length).toBe(0);
+    expect(filtrar([comOpcao('ch2', 'churrascaria', ['vegano'])], p).length).toBe(1);
+  });
+});

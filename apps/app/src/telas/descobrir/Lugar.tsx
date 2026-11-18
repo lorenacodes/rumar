@@ -169,6 +169,7 @@ function LugarDaBase() {
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
           {b.endereco ?? b.bairro ? linha('Onde', b.endereco ?? b.bairro) : null}
           {b.cozinha ? linha('Cozinha', b.cozinha) : null}
+          {b.dieta_opcoes?.length ? linha('Opções', b.dieta_opcoes.map((o) => ({ vegetariano: 'vegetariana', vegano: 'vegana', so_vegetariano: 'só vegetariano', so_vegano: 'só vegano', sem_gluten: 'sem glúten' } as Record<string, string>)[o] ?? o).join(' · ')) : null}
           {b.estrelas ? linha('Categoria', `${b.estrelas} estrelas`) : null}
           {b.horario ? linha('Horário', horarioLegivel(b.horario)) : null}
           {preco ? linha('Preço', preco) : null}

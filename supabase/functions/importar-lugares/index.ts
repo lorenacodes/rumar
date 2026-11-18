@@ -13,6 +13,8 @@
 //   { acao: 'fama_pendentes', limite }                         → lugares com Wikidata sem fama recente (30 dias)
 //   { acao: 'fama_gravar', itens: [{ id, fama, curioso? }] }   → grava a fama (nº de Wikipédias) e se é curioso
 //   { acao: 'curiosidades_gravar', itens: Curiosidade[] }      → curiosidades do mundo (D-039)
+//   { acao: 'coletadas' }                                      → cidades com lugares (para as opções de dieta)
+//   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -114,6 +116,27 @@ Deno.serve(async (req) => {
       if (error) return json({ erro: error.message, em: i }, 400);
     }
     return json({ ok: true, gravados: itens.length });
+  }
+  if (p.acao === 'coletadas') {
+    const { data: cob } = await db.from('cobertura').select('destino_id').eq('categoria', 'restaurantes').limit(5000);
+    const ids = [...new Set((cob ?? []).map((c) => c.destino_id))];
+    const destinos: unknown[] = [];
+    for (let i = 0; i < ids.length; i += 200) {
+      const { data } = await db.from('destinos').select('id, nome, lat, lon, raio_km').in('id', ids.slice(i, i + 200));
+      destinos.push(...(data ?? []));
+    }
+    return json({ destinos });
+  }
+  if (p.acao === 'dieta_gravar') {
+    const OK = new Set(['vegetariano', 'vegano', 'so_vegetariano', 'so_vegano', 'sem_gluten']);
+    const itens = ((p.itens ?? []) as { id: string; dieta_opcoes: string[] }[]).slice(0, 1000)
+      .map((i) => ({ id: String(i.id), dieta_opcoes: (i.dieta_opcoes ?? []).filter((o) => OK.has(o)) })).filter((i) => i.dieta_opcoes.length);
+    let ok = 0;
+    for (const i of itens) {
+      const { data } = await db.from('lugares').update({ dieta_opcoes: i.dieta_opcoes }).eq('id', i.id).select('id');
+      if (data?.length) ok++;
+    }
+    return json({ ok });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });
