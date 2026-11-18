@@ -479,3 +479,16 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   design antes de comparar: o limite de 2% continua igual (159/159).
 - Guarda automática: `src/lib/semEmoji.test.ts` reprova qualquer emoji ou símbolo-emoji no código.
   Setas, pontos (· ● ○) e ▾ ▴ continuam (tipografia).
+
+## D-038 — Lugares curiosos
+- **Data:** 18/11/2026
+- **Status:** ✅ Ideia da fundadora ("coisas curiosas, tipo as catacumbas de Paris").
+- **Onde aparece:** selo "Curiosos" no Descobrir (mural geral e de cada cidade) e faixa "Lugares
+  curiosos" no Início. O postal mostra "Curioso · catacumba" (ou cripta, ruínas, gruta…).
+- **Como encontramos (sem inventar):** (1) tipo e nome no OpenStreetMap — ruínas, sítio arqueológico,
+  entrada de gruta, túmulo, e nomes com catacumba, cripta, ossuário, mausoléu, gruta, túnel, cemitério,
+  subterrâneo… — só em categorias de passeio (nunca restaurante, bar ou hotel); (2) pela coleta diária
+  "Fama", no Wikidata: classe do lugar com nome curioso, ou identificador do Atlas Obscura (o script
+  confere pelo nome que a propriedade é mesmo a do Atlas Obscura antes de usar; se não for, ignora).
+- Exemplos já aparecendo: Catacumbas de Paris, Père-Lachaise, cripta de Notre-Dame, catacumbas de Roma,
+  Memorial dos Pretos Novos (Rio).

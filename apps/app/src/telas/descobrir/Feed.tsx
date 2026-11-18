@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import '../../styles/feed.css';
 import { DESTINO_CURADORIA, horarioLegivel, LUGARES } from '../../lib/catalogo';
-import { basePorId, capasPorCategoria, type CategoriaLugar, CATEGORIAS_LUGAR, type Destino, feedLugares, type LugarBase, muralGeral, nomeTipo, ORDEM_CATEGORIAS, paraLugar } from '../../lib/lugares';
+import { basePorId, capasPorCategoria, type CategoriaLugar, CATEGORIAS_LUGAR, type Destino, feedLugares, type LugarBase, lugaresCuriosos, muralGeral, nomeTipo, ORDEM_CATEGORIAS, paraLugar } from '../../lib/lugares';
 import { afinidade, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
 import { listarViagens } from '../../lib/viagens';
 import { fotosAprovadas } from '../../lib/fotosEnviadas';
@@ -19,6 +19,7 @@ interface Post {
   bairro: string | null;
   foto: string | null;
   fotoPagina: string | null;
+  curioso?: string | null;
   /** Crédito de foto enviada por quem foi (@usuario), quando a foto não é do Commons. */
   creditoEnviada?: string | null;
   curadoria: boolean;
@@ -32,7 +33,7 @@ interface Post {
 }
 
 const deBase = (b: LugarBase): Post => ({
-  id: b.id, nome: b.nome, tipo: nomeTipo(b.tipo), bairro: b.bairro, foto: b.foto, fotoPagina: b.foto_pagina, curadoria: false, categoria: b.categoria,
+  id: b.id, nome: b.nome, tipo: nomeTipo(b.tipo), bairro: b.bairro, foto: b.foto, fotoPagina: b.foto_pagina, curioso: b.curioso ?? null, curadoria: false, categoria: b.categoria,
   gratuito: b.gratuito === true, horario: b.horario, cozinha: b.cozinha, lat: b.lat, lon: b.lon, lugar: paraLugar(b),
 });
 const deCuradoria = (l: Lugar): Post => ({
@@ -82,7 +83,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
         {temImagem ? (
           <>
             {p.curadoria ? <FotoLugar id={p.id} proporcao="4 / 3" credito={false} /> : <img src={p.foto!} alt={`Foto de ${p.nome}`} loading="lazy" draggable={false} onError={() => setFotoFalhou(true)} />}
-            <div className="postal-legenda"><small>{cidade} · {p.tipo}</small><b>{p.nome}</b></div>
+            <div className="postal-legenda"><small>{cidade} · {p.curioso ? `Curioso · ${p.curioso}` : p.tipo}</small><b>{p.nome}</b></div>
             <span className="postal-selo" aria-hidden="true"><span><i>{selo[0]}</i>{selo}</span></span>
           </>
         ) : (
@@ -134,7 +135,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
  */
 export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; aoAbrir: (id: string) => void; viagem: string | null }) {
   const { preferencias } = useViajante();
-  const [categoria, setCategoria] = useState<CategoriaLugar | null>(null);
+  const [categoria, setCategoria] = useState<CategoriaLugar | 'curiosos' | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [pagina, setPagina] = useState(0);
   const [fim, setFim] = useState(false);
@@ -160,7 +161,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
     if (fim) return;
     let vivo = true;
     setCarregando(true);
-    void feedLugares(destino.id, pagina, categoria).then(async ({ itens, fim: acabou }) => {
+    void (categoria === 'curiosos' ? lugaresCuriosos([destino.id], pagina) : feedLugares(destino.id, pagina, categoria)).then(async ({ itens, fim: acabou }) => {
       // Sem foto do Commons: usa a foto aprovada de quem foi (D-034).
       const semFoto = itens.filter((i) => !i.foto).map((i) => i.id);
       const enviadas = semFoto.length ? await fotosAprovadas(semFoto) : new Map();
@@ -203,6 +204,9 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
         <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
           <span className="mural-selo-borda"><span style={{ fontSize: '16px' }}>Bo</span></span>Para você
         </button>
+        <button type="button" className="r-btn mural-selo" aria-pressed={categoria === 'curiosos'} onClick={() => setCategoria(categoria === 'curiosos' ? null : 'curiosos')}>
+          <span className="mural-selo-borda"><span style={{ fontSize: '15px' }}>?!</span></span>Curiosos
+        </button>
         {cats.map((c) => {
           const capa = capas.get(c);
           return (
@@ -231,7 +235,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
  */
 export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string; nome: string }[]; aoAbrir: (id: string) => void }) {
   const { preferencias } = useViajante();
-  const [categoria, setCategoria] = useState<CategoriaLugar | null>(null);
+  const [categoria, setCategoria] = useState<CategoriaLugar | 'curiosos' | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [pagina, setPagina] = useState(0);
   const [fim, setFim] = useState(false);
@@ -246,7 +250,7 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
     if (fim || !ids.length) return;
     let vivo = true;
     setCarregando(true);
-    void muralGeral(ids, pagina, categoria).then(({ itens, fim: acabou }) => {
+    void (categoria === 'curiosos' ? lugaresCuriosos(ids, pagina) : muralGeral(ids, pagina, categoria)).then(({ itens, fim: acabou }) => {
       if (!vivo) return;
       let novos = itens.map(deBase);
       if (preferencias) {
@@ -275,6 +279,9 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
       <div className="mural-selos" role="group" aria-label="Selos por categoria">
         <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
           <span className="mural-selo-borda"><span style={{ fontSize: '16px' }}>Bo</span></span>Para você
+        </button>
+        <button type="button" className="r-btn mural-selo" aria-pressed={categoria === 'curiosos'} onClick={() => setCategoria(categoria === 'curiosos' ? null : 'curiosos')}>
+          <span className="mural-selo-borda"><span style={{ fontSize: '15px' }}>?!</span></span>Curiosos
         </button>
         {cats.map((c) => (
           <button key={c} type="button" className="r-btn mural-selo" aria-pressed={categoria === c} onClick={() => setCategoria(categoria === c ? null : c)}>

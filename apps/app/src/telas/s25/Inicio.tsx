@@ -12,6 +12,7 @@ import { useViajante } from '../../state/viajante';
 import { hojeISO } from '../viagens/jornada';
 import { carregarViagem, listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
+import { lugaresCuriosos, nomesDestinos } from '../../lib/lugares';
 import { DESTINOS_COM_FOTO, FotoDestino } from '../../ui/foto';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 
@@ -70,6 +71,38 @@ function CartaoPequeno({ d }: { d: DestinoCartao }) {
       <b style={{ display: 'block', font: "600 15px/20px 'Lexend Exa'", marginTop: '6px' }}>{d.nome}</b>
       <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{chamada(d)}</span>
     </button>
+  );
+}
+
+/** Faixa "Lugares curiosos" (D-038): catacumbas, criptas, ruínas, grutas… de várias cidades. */
+function Curiosos() {
+  const navegar = useNavigate();
+  const [itens, setItens] = useState<{ id: string; nome: string; foto: string; cidade: string }[]>([]);
+  useEffect(() => {
+    void lugaresCuriosos(null, 0, 24).then(async ({ itens: l }) => {
+      const comFoto = l.filter((x) => x.foto).slice(0, 12);
+      const nomes = await nomesDestinos(comFoto.map((x) => x.destino_id));
+      setItens(comFoto.map((x) => ({ id: x.id, nome: x.nome, foto: x.foto!, cidade: nomes.get(x.destino_id) ?? '' })));
+    });
+  }, []);
+  if (!itens.length) return null;
+  return (
+    <>
+      <Rot t="Lugares curiosos" />
+      <div role="list" aria-label="Lugares curiosos" style={fileira}>
+        {itens.map((c) => (
+          <div role="listitem" key={c.id} style={{ display: 'contents' }}>
+            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${c.id}`)} style={{ flex: 'none', width: '148px', textAlign: 'left' }}>
+              <span style={{ display: 'block', width: '148px', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}>
+                <img src={c.foto} alt={`Foto de ${c.nome}`} loading="lazy" onError={() => setItens((l) => l.filter((x) => x.id !== c.id))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(1.1) contrast(1.05)' }} />
+              </span>
+              <b style={{ font: "600 14px/19px 'Lexend Exa'", marginTop: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{c.nome}</b>
+              <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{c.cidade}</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -197,6 +230,7 @@ export function Inicio() {
 
         <Rot t="No Brasil" />
         <div role="list" aria-label="Destinos no Brasil" style={fileira}>{brasil.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+        <Curiosos />
         <Rot t="Lá fora" />
         <div role="list" aria-label="Destinos no exterior" style={fileira}>{fora.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
 

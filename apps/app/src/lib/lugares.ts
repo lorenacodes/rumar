@@ -28,6 +28,8 @@ export interface LugarBase {
   id: string;
   /** Em quantas Wikipédias o lugar tem artigo (D-036); nulo = ainda não medido ou sem Wikidata. */
   fama?: number | null;
+  /** Por que é curioso (catacumba, cripta, ruínas…), quando a coleta marcou (D-038). */
+  curioso?: string | null;
   destino_id: string;
   fonte: 'osm' | 'curadoria';
   fonte_id: string;
@@ -140,7 +142,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
@@ -299,4 +301,20 @@ export async function muralGeral(ids: string[], pagina: number, categoria?: Cate
   const itens = (data ?? []) as ItemFeed[];
   guardar(itens);
   return { itens, fim: itens.length < 12 };
+}
+
+/** Lugares curiosos (catacumbas, criptas, ruínas, grutas…), de algumas cidades ou de todas (D-038). */
+export async function lugaresCuriosos(ids: string[] | null, pagina: number, porPagina = 12): Promise<{ itens: ItemFeed[]; fim: boolean }> {
+  const { data } = await supabase.rpc('lugares_curiosos', { ids, pagina, por_pagina: porPagina });
+  const vistos = new Set<string>();
+  const itens = ((data ?? []) as ItemFeed[]).filter((l) => (vistos.has(l.nome.toLowerCase()) ? false : (vistos.add(l.nome.toLowerCase()), true)));
+  guardar(itens);
+  return { itens, fim: (data ?? []).length < porPagina };
+}
+
+/** Nome das cidades (para mostrar onde fica cada lugar). */
+export async function nomesDestinos(ids: string[]): Promise<Map<string, string>> {
+  if (!ids.length) return new Map();
+  const { data } = await supabase.from('destinos').select('id, nome').in('id', [...new Set(ids)].slice(0, 100));
+  return new Map((data ?? []).map((d) => [d.id as string, d.nome as string]));
 }

@@ -26,6 +26,15 @@ await p.goto(URL + '#/descobrir'); await p.locator('article.postal').first().wai
 const cidadesNoMural = new Set(await p.locator('article.postal .postal-legenda small').allInnerTexts().then((t) => t.map((x) => x.split('·')[0].trim())));
 confere(`Descobrir abre com lugares sem escolher cidade (${[...cidadesNoMural].join(', ')})`, (await p.locator('article.postal').count()) >= 8 && cidadesNoMural.size >= 3);
 await p.screenshot({ path: `${OUT}/00-descobrir-geral.png` });
+await p.locator('.mural-selo', { hasText: 'Curiosos' }).click(); await p.waitForTimeout(3500);
+const curiosos = await p.locator('article.postal').evaluateAll((a) => a.map((x) => x.getAttribute('aria-label')));
+confere(`selo Curiosos mostra lugares curiosos (${curiosos.slice(0, 4).join(', ')})`, curiosos.length >= 6 && curiosos.some((n) => /Catacomb|Lachaise|Crypt|Catacombe/i.test(n ?? '')));
+await p.screenshot({ path: `${OUT}/00b-curiosos.png` });
+await p.locator('.mural-selo', { hasText: 'Curiosos' }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/inicio'); await p.waitForTimeout(4000);
+confere('Início tem a faixa "Lugares curiosos"', (await p.getByRole('list', { name: 'Lugares curiosos' }).getByRole('button').count()) >= 4);
+await p.getByRole('list', { name: 'Lugares curiosos' }).scrollIntoViewIfNeeded(); await p.screenshot({ path: `${OUT}/00c-inicio-curiosos.png` });
+await p.goto(URL + '#/descobrir'); await p.locator('article.postal').first().waitFor({ timeout: 20000 }).catch(() => {}); await p.waitForTimeout(1000);
 await p.getByRole('group', { name: 'Cidades' }).getByRole('button', { name: 'Salvador', exact: true }).click(); await p.waitForTimeout(3000);
 confere('chip de cidade abre a cidade', /d=br-2927408/.test(p.url()) && (await p.getByRole('heading', { name: /Salvador/ }).count()) === 1);
 await p.getByRole('button', { name: '← Todas as cidades' }).click(); await p.waitForTimeout(2500);
