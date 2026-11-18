@@ -139,6 +139,7 @@ export async function criarViagem(dados: { destino: string; destinoId?: string |
 
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
+  if (!uid) return null; // sem conta: nada a buscar (evita 9 pedidos recusados)
   const [v, itens, membros, hosp, gastos, eventos, tarefas, aportes, reais] = await Promise.all([
     supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id, nivel').eq('id', id).maybeSingle(),
     supabase.from('trip_items').select('*').eq('trip_id', id).order('dia').order('ordem'),

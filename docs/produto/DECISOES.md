@@ -403,3 +403,15 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   com "Quero ir · cidade · data". Lugar sem foto livre aparece como o verso do postal, com o espaço do
   selo vazio "sem foto livre ainda". Sem curtidas, sem círculos de stories, sem coração.
 - **Tokens novos:** `--papel` e `--carimbo` (claro e escuro).
+
+## D-033 — Revisão de fluxos (18/11/2026)
+- "Na viagem" no postal levava a uma página sem ação para quem não tem conta ou não tem viagem na
+  cidade. Agora: sem conta → "Montar uma viagem com este lugar" (criar conta / entrar); com conta e sem
+  viagem na cidade → "Planejar viagem para <cidade>". A lista de viagens só mostra viagens da cidade do
+  lugar (antes deixava pôr um lugar do Rio numa viagem para Paris) e que ainda não terminaram.
+- Abrir o link de uma viagem sem conta disparava 9 pedidos recusados; agora não busca nada.
+- Telefone com vários números aparecia como texto cru ("…;…"); agora até dois números, cada um clicável.
+- Fotos de restaurantes: copiar do iFood ou de outros apps está fora (fotos têm direito autoral do
+  restaurante/fotógrafo, Lei 9.610/98). Wikimedia Commons quase não tem restaurante (teste no Rio:
+  0 de 16). Caminhos legais em decisão da fundadora: fotos enviadas por quem foi e pelos restaurantes
+  (grátis, precisa moderação) ou API paga (Google Places Photos: 1.000 grátis/mês, depois US$ 7 por mil).
