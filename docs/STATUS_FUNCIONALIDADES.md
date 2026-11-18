@@ -1,6 +1,6 @@
 # Status das funcionalidades
 
-> Atualizado em 17/11/2026. Decisões: `docs/produto/DECISOES.md` (D-001 a D-029).
+> Atualizado em 17/11/2026. Decisões: `docs/produto/DECISOES.md` (D-001 a D-030).
 > Pendências que dependem da fundadora: `docs/CHECKLIST_FUNDADORA.md`.
 > Legenda: ✅ feito e testado · 🟡 parcial · 🔧 depende de configuração sua · ⏳ ainda não feito
 
@@ -33,6 +33,7 @@
 | Funcionalidade | Situação | Observação |
 |---|---|---|
 | Nova viagem para qualquer destino, roteiro do jeito de viajar | ✅ | |
+| Roteiro no nível do orçamento (Econômico, Intermediário, Conforto), com troca manual | ✅ | Sem preço na fonte: nível pelo tipo de lugar e cozinha (D-030) |
 | Roteiro editável, mapa, marcar feito, horário | ✅ | |
 | Hospedagem com preço | 🔧 | Pronta; liga com a chave `LITEAPI_KEY` no Supabase |
 | Dinheiro: custos em duas moedas, economia, como levar, gastos na viagem | ✅ | Preço conferido só onde há fonte (Paris); nas demais, o que a pessoa informa |
@@ -45,8 +46,8 @@
 | Item | Situação |
 |---|---|
 | Teste visual contra o design (≤ 2%) | ✅ 159/159 |
-| Testes de lógica | ✅ 49 + 49 |
-| Testes ponta a ponta no banco real (cadastro, jornada, colaboração, cidades, idioma, privacidade) | ✅ |
+| Testes de lógica | ✅ 55 + 49 |
+| Testes ponta a ponta no banco real (cadastro, jornada, colaboração, cidades, idioma, privacidade, orçamento) | ✅ |
 | Acessibilidade (axe-core, 12 telas principais) | ✅ sem violações |
 | Aviso de sem internet | ✅ |
 | APK gerado pela CI a cada envio | ✅ |

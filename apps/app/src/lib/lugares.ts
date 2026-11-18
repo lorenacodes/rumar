@@ -5,6 +5,7 @@
  * Nada aqui finge completude: a tabela `cobertura` diz o que já foi buscado em cada cidade,
  * quantos lugares vieram, de quando são os dados e se a busca bateu no limite (parcial).
  */
+import { sinalNivel } from './nivel';
 import { supabase } from './supabase';
 import { registrarLugares } from './catalogo';
 import type { Categoria, Lugar, Periodo } from './planejador';
@@ -184,10 +185,20 @@ export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
 }
 
 /** Candidatos para montar um roteiro automático: os mais documentados de cada categoria. */
-export async function candidatosRoteiro(destino: string): Promise<Lugar[]> {
+export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto'): Promise<Lugar[]> {
   const cats = ORDEM_CATEGORIAS.filter((c) => CATEGORIAS_LUGAR[c].roteiro);
-  const res = await Promise.all(cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20)));
-  const todos = res.flatMap((r) => (r.data ?? []) as LugarBase[]);
+  const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
+  // Viagem de nível conforto: traz também restaurantes de cozinha especial e programas pagos
+  // (parque temático, marina, zoológico…) que podem não estar entre os mais documentados.
+  if (nivel === 'conforto') {
+    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', 'restaurantes').eq('tipo', 'restaurant')
+      .or('cozinha.ilike.%french%,cozinha.ilike.%japanese%,cozinha.ilike.%sushi%,cozinha.ilike.%steak%,cozinha.ilike.%seafood%,cozinha.ilike.%italian%,cozinha.ilike.%portuguese%,cozinha.ilike.%mediterranean%,cozinha.ilike.%peruvian%,cozinha.ilike.%fine_dining%')
+      .not('site', 'is', null).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(30));
+    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('tipo', ['theme_park', 'water_park', 'marina', 'zoo', 'aquarium']).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(15));
+  }
+  const res = await Promise.all(consultas);
+  const vistos = new Set<string>();
+  const todos = res.flatMap((r) => (r.data ?? []) as LugarBase[]).filter((b) => (vistos.has(b.id) ? false : (vistos.add(b.id), true)));
   guardar(todos);
   // Sem categoria de roteiro (cinema, teatro, balada, rede): fica no Descobrir, fora do roteiro automático.
   return todos.filter((b) => !FORA_DO_ROTEIRO.has(b.tipo)).map(paraLugar).filter((l) => l !== null) as Lugar[];
@@ -202,6 +213,9 @@ function guardar(lista: LugarBase[]) {
 /** Tipos que não entram no roteiro automático: dependem de ingresso para um show/sessão ou são redes. */
 const FORA_DO_ROTEIRO = new Set(['cinema', 'theatre', 'nightclub', 'events_venue', 'music_venue', 'fast_food', 'food_court', 'department_store']);
 
+/** Estátuas, bustos, placas, chafarizes, relógios: ficam no Descobrir e perdem força no roteiro. */
+const PONTOS_MENORES = new Set(['historic_monument', 'historic_memorial', 'memorial', 'artwork', 'fountain', 'clock', 'historic_city_gate']);
+
 export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { destino: string; ingresso?: boolean; foto?: string | null; base: true; destaque: boolean }) | null {
   const r = FORA_DO_ROTEIRO.has(b.tipo) ? null : CATEGORIAS_LUGAR[b.categoria]?.roteiro;
   const descricao = [nomeTipo(b.tipo), b.cozinha].filter(Boolean).join(' · ');
@@ -214,5 +228,7 @@ export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { de
     destino: b.destino_id, ...(r?.ingresso === false ? { ingresso: false } : {}), foto: b.foto, base: true,
     // Lugar bem documentado (foto/Wikidata/horário): tende a ser um dos mais conhecidos.
     destaque: (b.relevancia ?? 0) >= 3,
+    nivel: sinalNivel(b),
+    ...(PONTOS_MENORES.has(b.tipo) ? { menor: true } : {}),
   };
 }

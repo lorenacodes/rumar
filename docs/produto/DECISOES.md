@@ -347,3 +347,21 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   nas 12 telas principais.
 - **Loja:** rascunho da ficha da Google Play e respostas de "Segurança dos dados" em
   `docs/LOJA_GOOGLE_PLAY.md`; páginas públicas de privacidade e exclusão de conta em `docs/web/`.
+
+## D-030 — O orçamento da viagem define o nível do roteiro
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("a viagem tem que se adaptar ao perfil e ao orçamento").
+- **Problema:** o orçamento em reais só gerava aviso; o roteiro usava apenas o "jeito de viajar". Com
+  R$ 15.000 o roteiro continuava igual ao de quem tem pouco.
+- **Regra:** valor por pessoa por dia = orçamento ÷ pessoas ÷ (noites + 1). Faixas (regra de produto,
+  não preço de mercado; `apps/app/src/lib/nivel.ts`): nacional — Econômico abaixo de R$ 450,
+  Intermediário até R$ 1.100, Conforto a partir disso; internacional — R$ 800 e R$ 2.000 (a passagem
+  pesa mais). Com orçamento, ele manda; sem orçamento, vale o jeito de viajar. A pessoa pode escolher
+  outro nível na viagem (coluna `trips.nivel`) e voltar a seguir o orçamento.
+- **Sem inventar preço:** o OpenStreetMap quase nunca traz preço (0 de ~104 mil lugares). O nível usa
+  o tipo e a cozinha: parque temático, aquário, zoológico, marina, restaurante de cozinha especial com
+  site/destaque e hotel 4–5★ contam como nível alto; sorveteria, doceria, lanchonete, hambúrguer e pizza
+  como simples. Isso só ordena; nunca aparece como preço. A tela explica o critério.
+- **Junto:** estátuas, bustos, chafarizes e placas perdem força no roteiro (ficam no Descobrir); o campo
+  de orçamento saiu do "Mais detalhes" na Nova viagem e mostra o nível antes de criar; o cartão do topo
+  não diz mais "Dentro do orçamento" quando ainda não há preço com fonte.

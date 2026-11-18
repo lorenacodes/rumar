@@ -3,6 +3,7 @@
  * participantes e histórico. As regras de acesso (RLS) garantem que só participantes veem
  * e só dono/editores alteram; aqui o app só chama.
  */
+import { nivelDoOrcamento, type Nivel, type NivelDoOrcamento } from './nivel';
 import { supabase } from './supabase';
 import { lugarPorId, LUGARES, DESTINO_CURADORIA } from './catalogo';
 import { candidatosRoteiro, lugaresPorIds } from './lugares';
@@ -30,6 +31,8 @@ export interface Viagem {
   comentario?: string | null;
   moeda_planejamento?: string;
   destino_id?: string | null;
+  /** Nível escolhido na viagem; nulo = deduzido do orçamento (lib/nivel). */
+  nivel?: Nivel | null;
 }
 export interface TarefaSalva { id: string; chave: string | null; etapa: string; titulo: string | null; descricao: string | null; prazo: string | null; ordem: number; feita: boolean }
 export interface Aporte { id: string; valor_centavos: number; data: string; nota: string | null }
@@ -89,13 +92,25 @@ export async function pessoasDaViagem(tripId: string): Promise<Pessoa[]> {
   }));
 }
 
+/** Viagem para outro país (moeda diferente da do planejamento): passagem pesa mais no orçamento. */
+export const viagemInternacional = (v: Viagem) => Boolean(v.moeda_destino && v.moeda_destino !== (v.moeda_planejamento ?? 'BRL'));
+
+/** Nível de gasto da viagem: escolhido pela pessoa, ou deduzido do orçamento por pessoa por dia. */
+export function nivelDaViagem(v: Viagem): { nivel: Nivel; escolhido: boolean; calculo: NivelDoOrcamento | null } | null {
+  const calculo = nivelDoOrcamento(v.orcamento_centavos, v.viajantes, v.noites, v.moeda_planejamento ?? 'BRL', viagemInternacional(v));
+  if (v.nivel) return { nivel: v.nivel, escolhido: true, calculo };
+  return calculo ? { nivel: calculo.nivel, escolhido: false, calculo } : null;
+}
+
 /** Gera (ou refaz) o roteiro com as preferências de todos os participantes. */
 export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Preferencias | null): Promise<void> {
-  const prefs = mesclar(pessoas) ?? reserva;
-  if (!prefs) return;
+  const base = mesclar(pessoas) ?? reserva;
+  if (!base) return;
+  // O orçamento da viagem manda no nível de gasto (D-030); sem orçamento, vale o jeito de viajar.
+  const prefs = { ...base, orcamento: nivelDaViagem(v)?.nivel ?? base.orcamento };
   // Paris tem curadoria; as demais cidades usam os lugares já coletados da base.
   const destinoId = v.destino_id ?? (v.destino === 'Paris' ? DESTINO_CURADORIA : null);
-  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId);
+  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId, prefs.orcamento);
   if (!candidatos.length) {
     await registrar(v.id, 'Roteiro vazio: ainda não há lugares coletados nesta cidade (pedido de coleta registrado).');
     return;
@@ -114,7 +129,7 @@ export async function criarViagem(dados: { destino: string; destinoId?: string |
   const { data, error } = await supabase
     .from('trips')
     .insert({ user_id: uid, destino: dados.destino, destino_id: dados.destinoId ?? null, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: dados.orcamento, data_definida: dados.dataDefinida ?? true, moeda_destino: dados.moedaDestino ?? null, guardado_centavos: dados.guardado ?? 0, capacidade_mensal_centavos: dados.capacidadeMensal ?? null, diagnostico: dados.diagnostico ?? {}, moeda_planejamento: dados.moedaPlanejamento ?? 'BRL' })
-    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id')
+    .select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id, nivel')
     .single();
   if (error || !data) return null;
   await registrar(data.id as string, 'Viagem criada.');
@@ -125,7 +140,7 @@ export async function criarViagem(dados: { destino: string; destinoId?: string |
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
   const [v, itens, membros, hosp, gastos, eventos, tarefas, aportes, reais] = await Promise.all([
-    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id').eq('id', id).maybeSingle(),
+    supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id, nivel').eq('id', id).maybeSingle(),
     supabase.from('trip_items').select('*').eq('trip_id', id).order('dia').order('ordem'),
     supabase.from('trip_members').select('user_id, papel, status').eq('trip_id', id),
     supabase.from('trip_lodging').select('*').eq('trip_id', id).maybeSingle(),
@@ -189,7 +204,7 @@ export async function confirmarSugestao(it: Item) {
 }
 
 // ---------------------------------------------------------------- viagem, hospedagem e gastos
-export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 'data_ida' | 'noites' | 'viajantes' | 'orcamento_centavos' | 'visibilidade' | 'data_definida' | 'guardado_centavos' | 'capacidade_mensal_centavos' | 'reserva_pct' | 'diagnostico' | 'encerrada_em' | 'avaliacao' | 'comentario'>>, texto?: string) {
+export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 'data_ida' | 'noites' | 'viajantes' | 'orcamento_centavos' | 'visibilidade' | 'data_definida' | 'guardado_centavos' | 'capacidade_mensal_centavos' | 'reserva_pct' | 'nivel' | 'diagnostico' | 'encerrada_em' | 'avaliacao' | 'comentario'>>, texto?: string) {
   await supabase.from('trips').update({ ...parcial, updated_at: new Date().toISOString() }).eq('id', id);
   await registrar(id, texto ?? (parcial.visibilidade ? (parcial.visibilidade === 'amigos' ? 'Compartilhou a viagem com os amigos.' : 'Deixou a viagem privada.') : 'Atualizou os dados da viagem.'));
 }

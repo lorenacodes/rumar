@@ -11,9 +11,10 @@ import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type 
 import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
   acompanhar, adicionarGasto, hoteisLigados, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
-  marcarFeito, montarRoteiro, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
+  marcarFeito, montarRoteiro, nivelDaViagem, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
 } from '../../lib/viagens';
-import { converter, taxa } from '../../lib/moedas';
+import { converter, dinheiro, taxa } from '../../lib/moedas';
+import { NOME_NIVEL, TEXTO_NIVEL, type Nivel } from '../../lib/nivel';
 import { usePlano } from '../../state/plano';
 import { useViajante } from '../../state/viajante';
 import { AbaDinheiro, PlanejadoReal } from './Dinheiro';
@@ -72,7 +73,11 @@ export function Viagem() {
 
   const { preferencias } = useViajante();
   const { paisResidencia, paisPassaporte, moedaReferencia, idiomasFalados } = usePlano();
-  const grupo = useMemo(() => (v ? mesclar(v.pessoas) ?? preferencias : null), [v, preferencias]);
+  const grupo = useMemo(() => {
+    const base = v ? mesclar(v.pessoas) ?? preferencias : null;
+    // Os motivos do roteiro usam o mesmo nível de gasto que montou o roteiro (orçamento manda).
+    return base && v ? { ...base, orcamento: nivelDaViagem(v.viagem)?.nivel ?? base.orcamento } : base;
+  }, [v, preferencias]);
   const itens = useMemo(() => (v?.itens ?? []).map((it) => ({ it, l: lugarPorId(it.place_id) })).filter((x): x is { it: Item; l: Lugar } => Boolean(x.l)), [v]);
   const [destino, setDestino] = useState<Destino | null>(null);
   const [, setPool] = useState(0);
@@ -123,7 +128,7 @@ export function Viagem() {
             </span>
             <span style={{ textAlign: 'right', fontSize: '13px', color: 'var(--sobre-escuro-sec)', alignSelf: 'center' }}>
               {orc.o.provavelBRL > 0 ? `${reais(orc.o.porPessoaBRL)} por pessoa` : 'Escolha a hospedagem ou informe gastos'}
-              {v.viagem.orcamento_centavos ? <span style={{ display: 'block', color: acima > 0 ? 'var(--amarelo)' : '#9fe0b4', fontWeight: 600 }}>{acima > 0 ? `${reais(acima)} acima do orçamento` : 'Dentro do orçamento'}</span> : null}
+              {v.viagem.orcamento_centavos && orc.o.provavelBRL > 0 ? <span style={{ display: 'block', color: acima > 0 ? 'var(--amarelo)' : '#9fe0b4', fontWeight: 600 }}>{acima > 0 ? `${reais(acima)} acima do orçamento` : 'Dentro do orçamento'}</span> : null}
             </span>
           </button>
         ) : null}
@@ -160,6 +165,59 @@ export function Viagem() {
   );
 }
 
+// ---------------------------------------------------------------- Nível de gasto do roteiro (D-030)
+function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: boolean; recarregar: () => void }) {
+  const { preferencias } = useViajante();
+  const [aberto, setAberto] = useState(false);
+  const [refazendo, setRefazendo] = useState(false);
+  const info = nivelDaViagem(v.viagem);
+  const perfil = (mesclar(v.pessoas) ?? preferencias)?.orcamento ?? 'intermediario';
+  const nivel: Nivel = info?.nivel ?? perfil;
+  const c = info?.calculo;
+  const origem = info?.escolhido
+    ? 'Escolhido por você.'
+    : c
+      ? `Pelo orçamento: ${dinheiro(c.porPessoaDia, c.moeda, 0)} por pessoa por dia (orçamento ÷ ${v.viagem.viajantes} ${v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'} ÷ ${v.viagem.noites + 1} dias).`
+      : 'Pelo seu jeito de viajar. Informe o orçamento em Dinheiro para o roteiro se ajustar a ele.';
+  const refazer = async (novo: Nivel | null) => {
+    if (!window.confirm('Refazer o roteiro neste nível? As mudanças manuais no roteiro serão substituídas.')) return;
+    setRefazendo(true);
+    if (novo !== (v.viagem.nivel ?? null)) await atualizarViagem(v.viagem.id, { nivel: novo }, novo ? `Nível da viagem: ${NOME_NIVEL[novo]}.` : 'Nível da viagem: pelo orçamento.');
+    await montarRoteiro({ ...v.viagem, nivel: novo }, v.pessoas, preferencias);
+    setRefazendo(false);
+    setAberto(false);
+    recarregar();
+  };
+  return (
+    <div data-nivel={nivel} style={{ background: 'var(--cartao-2)', padding: '10px 14px', marginBottom: '14px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+        <div style={{ font: "600 15px 'Open Sans'" }}>Roteiro nível {NOME_NIVEL[nivel]}</div>
+        {pode ? <button type="button" className="r-btn" aria-expanded={aberto} onClick={() => setAberto(!aberto)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Mudar {aberto ? '▴' : '▾'}</button> : null}
+      </div>
+      <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{origem} {TEXTO_NIVEL[nivel]}</div>
+      {aberto ? (
+        <div style={{ marginTop: '6px' }}>
+          {(['economico', 'intermediario', 'conforto'] as Nivel[]).map((n) => (
+            <button key={n} type="button" className="r-btn" disabled={refazendo} onClick={() => void refazer(n)}
+              style={{ display: 'block', width: '100%', textAlign: 'left', minHeight: '48px', borderTop: '1px solid var(--linha)', fontWeight: n === nivel ? 700 : 500 }}>
+              {n === nivel ? '✓ ' : ''}{NOME_NIVEL[n]}{c && c.nivel === n ? ' (o que o orçamento sugere)' : ''}
+            </button>
+          ))}
+          {info?.escolhido && c ? (
+            <button type="button" className="r-btn" disabled={refazendo} onClick={() => void refazer(null)} style={{ display: 'block', width: '100%', textAlign: 'left', minHeight: '48px', borderTop: '1px solid var(--linha)', color: 'var(--azul)', fontWeight: 600 }}>Voltar a seguir o orçamento</button>
+          ) : null}
+          <button type="button" className="r-btn" disabled={refazendo} onClick={() => void refazer(v.viagem.nivel ?? null)} style={{ display: 'block', width: '100%', textAlign: 'left', minHeight: '48px', borderTop: '1px solid var(--linha)', color: 'var(--azul)', fontWeight: 600 }}>
+            {refazendo ? 'Refazendo…' : 'Refazer o roteiro neste nível'}
+          </button>
+          <div style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', paddingTop: '4px' }}>
+            Como decidimos: a fonte dos lugares (OpenStreetMap) quase nunca traz preço. Usamos o tipo de lugar e a cozinha (por exemplo, parque temático e restaurante de cozinha especial contam como programa de nível mais alto; lanchonete e sorveteria, como simples). Confira os preços antes de ir.
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------- Roteiro (lista editável)
 function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[]; pode: boolean; grupo: ReturnType<typeof mesclar>; recarregar: () => void }) {
   const navegar = useNavigate();
@@ -174,6 +232,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
 
   return (
     <section style={{ marginTop: '14px' }}>
+      <NivelDoRoteiro v={v} pode={pode} recarregar={recarregar} />
       <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
       <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{temas || 'Dia livre'}</div>
       {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Nada planejado para este dia.</p> : null}

@@ -6,6 +6,7 @@ import { paisPorCodigo } from '../../lib/moedas';
 import { useDestinoAtual } from '../../state/destino';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { criarViagem } from '../../lib/viagens';
+import { nivelDoOrcamento, NOME_NIVEL, TEXTO_NIVEL } from '../../lib/nivel';
 import type { Diagnostico } from '../../lib/linhaDoTempo';
 import { dinheiro, NOME_MOEDA } from '../../lib/moedas';
 import { usePlano } from '../../state/plano';
@@ -45,6 +46,7 @@ export function NovaViagem() {
   }, [destino]);
   const paisDestino = destino ? paisPorCodigo(destino.pais) : null;
   const intl = (paisDestino?.codigo ?? paisResidencia) !== paisResidencia;
+  const nivelOrc = nivelDoOrcamento(orcamento ? Math.round(Number(orcamento.replace(/\./g, '').replace(',', '.')) * 100) : 0, viajantes, noites, moedaReferencia, intl);
   const num = (t: string) => (t ? Math.round(Number(t.replace(/\./g, '').replace(',', '.')) * 100) : 0);
 
   const criar = async () => {
@@ -98,12 +100,16 @@ export function NovaViagem() {
         <Passo valor={noites} menor={1} maior={14} aoMudar={setNoites} rotulo="uma noite" />
         <Rotulo>Quantas pessoas viajam</Rotulo>
         <Passo valor={viajantes} menor={1} maior={10} aoMudar={setViajantes} rotulo="uma pessoa" />
-        <details style={{ marginTop: '18px', borderTop: '1px solid var(--linha)', borderBottom: '1px solid var(--linha)' }}>
-          <summary style={{ minHeight: '52px', display: 'flex', alignItems: 'center', cursor: 'pointer', font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Mais detalhes (opcional): orçamento, economia e documentos</summary>
-          <div style={{ paddingBottom: '12px' }}>
-        <Rotulo><label htmlFor="orc">Orçamento total (opcional, em {moedaReferencia})</label></Rotulo>
+        <Rotulo><label htmlFor="orc">Quanto quer gastar no total? (opcional, em {moedaReferencia})</label></Rotulo>
         <input id="orc" className="r-input" inputMode="decimal" placeholder={`Ex.: ${dinheiro(1_500_000, moedaReferencia)}`} value={orcamento} onChange={(e) => setOrcamento(e.target.value.replace(/[^\d.,]/g, ''))} style={campo} />
-        <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>Avisamos se o roteiro passar desse valor e sugerimos trocas.</div>
+        <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>
+          {nivelOrc
+            ? <>≈ {dinheiro(nivelOrc.porPessoaDia, moedaReferencia, 0)} por pessoa por dia: o roteiro será de nível <b style={{ color: 'var(--texto)' }}>{NOME_NIVEL[nivelOrc.nivel]}</b>. {TEXTO_NIVEL[nivelOrc.nivel]} Dá para trocar depois no roteiro.</>
+            : 'O roteiro se ajusta a ele (mais simples ou mais sofisticado) e avisamos se o custo passar desse valor.'}
+        </div>
+        <details style={{ marginTop: '18px', borderTop: '1px solid var(--linha)', borderBottom: '1px solid var(--linha)' }}>
+          <summary style={{ minHeight: '52px', display: 'flex', alignItems: 'center', cursor: 'pointer', font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Mais detalhes (opcional): economia e documentos</summary>
+          <div style={{ paddingBottom: '12px' }}>
         <Rotulo><label htmlFor="guardado">Quanto já tem guardado para ela? (opcional)</label></Rotulo>
         <input id="guardado" className="r-input" inputMode="decimal" placeholder="0" value={guardado} onChange={(e) => setGuardado(e.target.value.replace(/[^\d.,]/g, ''))} style={campo} />
         <Rotulo><label htmlFor="mensal">Quanto consegue guardar por mês? (opcional)</label></Rotulo>

@@ -42,6 +42,10 @@ export interface Lugar {
   osm?: string;
   /** Destino (id da tabela destinos). */
   destino?: string;
+  /** Sinal de nível (lugares da base, sem preço): -1 simples, 0 neutro, 1 especial. Só ordena. */
+  nivel?: -1 | 0 | 1;
+  /** Ponto pequeno (estátua, busto, placa, chafariz): bom de ver de passagem, fraco como parada do roteiro. */
+  menor?: boolean;
 }
 
 export type Estilo = 'cultural' | 'gastronomico' | 'agitado' | 'relaxante' | 'aventureiro' | 'compras' | 'equilibrado';
@@ -168,10 +172,28 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
   const gostos = p.gostos.filter((g) => GOSTO[g].categorias?.includes(l.categoria) || GOSTO[g].tags?.some((t) => l.tags.includes(t)));
   pontos += gostos.length * 3;
   if (gostos.length) motivos.push(`você gosta de ${gostos.map((g) => GOSTO[g].nome).join(' e ')}`);
-  if (p.orcamento === 'economico' && l.custo === 2) pontos -= 2;
+  if (l.menor) pontos -= 4;
+  // Nível de gasto: vem do orçamento da viagem (lib/nivel) ou do jeito de viajar.
+  // Paris tem custo conferido (0 a 3); os lugares da base só têm o sinal pelo tipo/cozinha.
+  const especial = l.custo >= 2 || l.nivel === 1;
+  const simples = l.nivel === -1;
+  const destaque = (l as Lugar & { destaque?: boolean }).destaque === true;
+  if (p.orcamento === 'economico') {
+    if (l.custo === 2) pontos -= 2;
+    if (l.nivel === 1) pontos -= 2;
+    if (l.custo === 0) pontos += 1;
+  }
   if (p.orcamento === 'intermediario' && l.custo === 3) pontos -= 2;
+  if (p.orcamento === 'conforto') {
+    if (especial) {
+      pontos += 3;
+      motivos.push('combina com o nível da viagem');
+    }
+    if (simples) pontos -= 3;
+    if (destaque) pontos += 1;
+  }
   if (p.gratuitos && l.custo === 0) {
-    pontos += 3;
+    pontos += p.orcamento === 'conforto' ? 1 : 3;
     motivos.push('é gratuito');
   }
   if (p.local && l.local) {
