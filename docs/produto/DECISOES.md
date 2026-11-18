@@ -365,3 +365,25 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Junto:** estátuas, bustos, chafarizes e placas perdem força no roteiro (ficam no Descobrir); o campo
   de orçamento saiu do "Mais detalhes" na Nova viagem e mostra o nível antes de criar; o cartão do topo
   não diz mais "Dentro do orçamento" quando ainda não há preço com fonte.
+
+## D-031 — Feed de lugares no Descobrir e nada parecendo calculado sem estar
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("lugares mostrados tipo um feed do Instagram" e "muitas coisas
+  aparecem como se estivesse tudo calculado").
+- **Feed:** o Descobrir abre num feed (o design original não tem feed; desvio pedido por ela). Topo com
+  destaques redondos por categoria (foto do lugar mais conhecido de cada uma); posts com foto grande
+  4:5, nome, tipo e bairro; dois toques na foto salvam (coração animado); ♡, "+ Viagem" (ou "No roteiro"
+  para quem já tem viagem na cidade), Mapa e "Ver mais"; legenda "Por que você vai gostar" (jeito de
+  viajar) e fatos com fonte (cozinha, grátis, horário do mapa em português); rolagem sem fim.
+  "Lista e filtros", "Mapa" e "Salvos" continuam a um toque.
+- **Honestidade nas fotos:** só fotos livres do próprio lugar (Wikimedia Commons, com crédito). Hoje 6%
+  dos lugares têm foto: eles vêm primeiro; o resto aparece como cartão de texto colorido com "Ainda sem
+  foto livre deste lugar". Nunca foto de outro lugar, nunca curtidas ou notas inventadas.
+- **Custos:** "Total R$ 0", "Planejado R$ 0" e "Dentro do orçamento (sobram R$ 15.000)" apareciam numa
+  viagem sem nenhum preço. Agora: "—" quando não há valor; "Somado até agora … (parcial)" e "Falta preço
+  de passagem, hospedagem, alimentação e N passeios" quando falta algo; "Dentro do orçamento" só quando
+  passagem, hospedagem e alimentação têm valor e nenhum passeio está sem preço.
+- **Outros:** tipos sem tradução apareciam em inglês ("LIBRARY", "YES"); agora em português, e tipo
+  desconhecido vira "Lugar". Escolas, hospitais, estacionamentos etc. (vieram na coleta) saíram do app.
+  Lugar repetido com o mesmo nome aparece uma vez. "Sem ingresso (gastos à parte)" virou "Preço do
+  consumo não informado".

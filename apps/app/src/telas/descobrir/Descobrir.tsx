@@ -17,6 +17,7 @@ import { Abas } from '../../ui/abas';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa } from '../../ui/Mapa';
+import { FeedLugares } from './Feed';
 
 const P = PRECOS as unknown as Precos;
 const dataBR = (iso?: string | null) => (iso ? iso.slice(0, 10).split('-').reverse().join('/') : '');
@@ -62,6 +63,7 @@ export function Descobrir() {
   const [destino, setDestino] = useState<Destino | null>(guardado);
   const [trocando, setTrocando] = useState(false);
   const filtro = (params.get('ver') ?? 'para-voce') as Filtro;
+  const lista = params.get('modo') === 'lista';
   const [termo, setTermo] = useState('');
   const [min, setMin] = useState('');
   const [max, setMax] = useState('');
@@ -93,6 +95,8 @@ export function Descobrir() {
   const moeda = destino ? paisPorCodigo(destino.pais)?.moeda ?? 'BRL' : 'BRL';
   const centavos = (s: string) => (s ? Math.round(Number(s.replace(',', '.')) * 100) : null);
   const comPreco = Boolean(min || max);
+  // Feed (D-031): o jeito padrão de explorar; lista e mapa continuam a um toque.
+  const feed = filtro === 'para-voce' && !lista && !mapa && !termo.trim() && !comPreco && !gratis;
 
   useEffect(() => {
     if (!destino) return;
@@ -171,6 +175,14 @@ export function Descobrir() {
             <label htmlFor="busca-lugar" className="visualmente-oculto">Buscar lugar pelo nome</label>
             <input id="busca-lugar" className="r-input" type="search" value={termo} placeholder={`Buscar lugar em ${destino.nome}`} onChange={(e) => setTermo(e.target.value)}
               style={{ display: 'block', width: '100%', boxSizing: 'border-box', marginTop: '12px', borderBottom: '2px solid var(--texto)', padding: '10px 0', font: "500 17px 'Open Sans'", color: 'var(--texto)', background: 'transparent' }} />
+            {feed ? (
+              <div role="group" aria-label="Outras formas de ver" style={{ display: 'flex', gap: '16px', marginTop: '8px', fontSize: '14px', fontWeight: 600 }}>
+                <button type="button" className="r-btn alvo-toque" onClick={() => setParams((p) => { const n = new URLSearchParams(p); n.set('modo', 'lista'); return n; }, { replace: true })} style={{ color: 'var(--azul)' }}>Lista e filtros</button>
+                <button type="button" className="r-btn alvo-toque" onClick={() => setMapa(true)} style={{ color: 'var(--azul)' }}>Mapa</button>
+                <button type="button" className="r-btn alvo-toque" onClick={() => mudarFiltro('salvos')} style={{ color: 'var(--azul)' }}>♥ Salvos{salvos.length ? ` (${salvos.length})` : ''}</button>
+              </div>
+            ) : (
+              <>
             <div role="tablist" aria-label="Categorias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '12px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
               {chips.map((c) => {
                 const ativo = filtro === c.id;
@@ -181,10 +193,16 @@ export function Descobrir() {
               })}
             </div>
             <div role="group" aria-label="Mapa e filtros" style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
-              <button type="button" className="r-btn" aria-pressed={mapa} onClick={() => setMapa(!mapa)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{mapa ? 'Ver lista' : 'Ver no mapa'}</button>
+              {filtro === 'para-voce' ? (
+                <button type="button" className="r-btn" aria-pressed={!lista && !mapa} onClick={() => (setMapa(false), setParams((p) => { const n = new URLSearchParams(p); if (lista || mapa) n.delete('modo'); else n.set('modo', 'lista'); return n; }, { replace: true }))}
+                  style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{lista || mapa ? 'Ver feed' : 'Ver em lista'}</button>
+              ) : null}
+              <button type="button" className="r-btn" aria-pressed={mapa} onClick={() => setMapa(!mapa)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{mapa ? 'Fechar mapa' : 'Ver no mapa'}</button>
               <button type="button" className="r-btn" aria-pressed={gratis} onClick={() => setGratis(!gratis)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(gratis ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Grátis</button>
               <button type="button" className="r-btn" aria-expanded={verPreco || comPreco} onClick={() => setVerPreco(!verPreco)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(comPreco ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Preço {verPreco || comPreco ? '▴' : '▾'}</button>
             </div>
+              </>
+            )}
             {verPreco || comPreco ? (
               <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
                 <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '110px' }}>Mínimo ({moeda})<input inputMode="decimal" className="r-input" value={min} onChange={(e) => setMin(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
@@ -202,7 +220,7 @@ export function Descobrir() {
               </div>
             ) : null}
 
-            {cob && cob.length ? (
+            {cob && cob.length && !feed ? (
               <div style={{ marginTop: '10px', borderTop: '1px solid var(--linha)', borderBottom: '1px solid var(--linha)' }}>
                 <button type="button" className="r-btn" aria-expanded={verCobertura} onClick={() => setVerCobertura(!verCobertura)} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', minHeight: '44px', alignItems: 'center', fontSize: '14px', textAlign: 'left' }}>
                   <span>O que já temos em {destino.nome}: <b>{cob.reduce((s, c) => s + c.quantidade, 0)} lugares</b> · cobertura parcial</span><span aria-hidden="true">{verCobertura ? '▴' : '▾'}</span>
@@ -232,7 +250,8 @@ export function Descobrir() {
               </div>
             ) : null}
 
-            {filtro === 'para-voce' && !termo && !comPreco && !gratis && itens.length ? (
+            {feed ? <FeedLugares destino={destino} aoAbrir={abrir} viagem={viagem} /> : null}
+            {!feed && filtro === 'para-voce' && !termo && !comPreco && !gratis && itens.length ? (
               <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '12px 0 0' }}>
                 {preferencias ? 'Em ordem do que mais combina com o seu jeito de viajar.' : 'Conte seu jeito de viajar para ver primeiro o que combina com você.'}
                 {!preferencias ? <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/perfil-viajante')} style={{ color: 'var(--azul)', fontWeight: 600, marginLeft: '4px' }}>Responder ↗</button> : null}
@@ -245,13 +264,13 @@ export function Descobrir() {
               </div>
             ) : null}
             <ul style={{ listStyle: 'none', margin: '6px 0 0', padding: 0 }} aria-busy={carregando}>
-              {!mapa ? itens.map((i) => <LinhaItem key={i.id} it={i} aoAbrir={() => abrir(i.id)} />) : null}
+              {!mapa && !feed ? itens.filter((i, n, todos) => todos.findIndex((x) => x.nome.toLowerCase() === i.nome.toLowerCase()) === n).map((i) => <LinhaItem key={i.id} it={i} aoAbrir={() => abrir(i.id)} />) : null}
             </ul>
-            {carregando ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Carregando…</p> : null}
+            {carregando && !feed ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Carregando…</p> : null}
             {!carregando && !mapa && itens.length < total && filtro !== 'para-voce' && filtro !== 'salvos' ? (
               <button type="button" className="r-btn" onClick={() => setPagina(pagina + 1)} style={{ width: '100%', height: '48px', marginTop: '8px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'" }}>Ver mais ({total - itens.length} restantes)</button>
             ) : null}
-            {!carregando && !itens.length && !semColeta ? (
+            {!feed && !carregando && !itens.length && !semColeta ? (
               <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{filtro === 'salvos' ? 'Toque no ♡ de um lugar para guardar aqui.' : termo ? 'Nada com esse nome nos lugares já coletados.' : 'Nada nesta categoria nos lugares já coletados.'}</p>
             ) : null}
             <div style={{ height: '24px' }} />

@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 
-import type { Orcamento } from '../../lib/orcamento';
+import { faltaNoCusto, textoFalta, type Orcamento } from '../../lib/orcamento';
 import { converter, custo, dataBR, dinheiro, FONTES_CAMBIO, IOF, NOME_MOEDA, taxa } from '../../lib/moedas';
 import { adicionarAporte, adicionarGastoReal, atualizarViagem, removerAporte, removerGastoReal, type ViagemCompleta } from '../../lib/viagens';
 import { Aviso, BotaoContorno } from '../../ui/pecas';
@@ -23,7 +23,7 @@ export function AbaDinheiro({ v, j, orc, resumo, pode, recarregar }: { v: Viagem
     <section style={{ marginTop: '14px' }}>
       <Segmentos rotulo="Partes do dinheiro" valor={sub} aoMudar={setSub}
         opcoes={[{ id: 'resumo', nome: 'Custos' }, { id: 'economia', nome: 'Economia' }, { id: 'levar', nome: 'Como levar' }, { id: 'viagem', nome: 'Na viagem' }]} />
-      {sub === 'resumo' ? <><TabelaMoedas j={j} orc={orc} />{resumo}</> : null}
+      {sub === 'resumo' ? <><TabelaMoedas j={j} orc={orc} gastos={v.gastos} />{resumo}</> : null}
       {sub === 'economia' ? <Economia v={v} j={j} pode={pode} recarregar={recarregar} semPrecos={orc.provavelBRL === 0} /> : null}
       {sub === 'levar' ? <ComoLevar v={v} j={j} orc={orc} /> : null}
       {sub === 'viagem' ? <NaViagem v={v} j={j} orc={orc} pode={pode} recarregar={recarregar} /> : null}
@@ -43,7 +43,8 @@ function Cotacao({ de, para }: { de: string; para: string }) {
   );
 }
 
-function TabelaMoedas({ j, orc }: { j: Jornada; orc: Orcamento }) {
+function TabelaMoedas({ j, orc, gastos }: { j: Jornada; orc: Orcamento; gastos: { categoria: string }[] }) {
+  const falta = textoFalta(faltaNoCusto(orc, gastos));
   const tBRL = taxa('BRL', j.moedaPlano);
   const linhas = orc.categorias.map((c) => {
     const porMoeda = new Map<string, number>();
@@ -73,10 +74,11 @@ function TabelaMoedas({ j, orc }: { j: Jornada; orc: Orcamento }) {
           <tr style={{ borderTop: '2px solid var(--texto)' }}>
             <th scope="row" style={{ padding: '8px 0', textAlign: 'left' }}>Total</th>
             <td />
-            <td style={{ textAlign: 'right', font: "600 16px 'Lexend Exa'" }}>{total !== null ? dinheiro(total, j.moedaPlano) : '—'}</td>
+            <td style={{ textAlign: 'right', font: "600 16px 'Lexend Exa'" }}>{total ? `${dinheiro(total, j.moedaPlano)}${falta ? ' (parcial)' : ''}` : '—'}</td>
           </tr>
         </tbody>
       </table>
+      {total && falta ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--ambar)', fontWeight: 600, marginTop: '6px' }}>Parcial: ainda falta preço de {falta}. O total vai subir.</div> : null}
       <Cotacao de={j.moedaDestino} para={j.moedaPlano} />
       <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>Conversão pela cotação de referência, sem IOF nem taxas do banco (veja "Como levar"). Cada valor original continua com a fonte dele abaixo.</div>
     </div>
@@ -346,7 +348,7 @@ export function planejadoReal(v: ViagemCompleta, j: Jornada, orc: Orcamento) {
 export function PlanejadoReal({ v, j, orc, comCompartilhar }: { v: ViagemCompleta; j: Jornada; orc: Orcamento; comCompartilhar?: boolean }) {
   const r = planejadoReal(v, j, orc);
   const f = (c: number) => dinheiro(c, j.moedaPlano);
-  const texto = `Minha viagem para ${v.viagem.destino} (${v.viagem.noites + 1} dias): planejei ${f(r.plan)} e gastei ${f(r.real)}${v.viagem.avaliacao ? `. Nota do planejamento: ${v.viagem.avaliacao}/5` : ''}. Planejada no Bo Vair.`;
+  const texto = `Minha viagem para ${v.viagem.destino} (${v.viagem.noites + 1} dias): ${r.plan ? `planejei ${f(r.plan)} e ` : ''}gastei ${f(r.real)}${v.viagem.avaliacao ? `. Nota do planejamento: ${v.viagem.avaliacao}/5` : ''}. Planejada no Bo Vair.`;
   return (
     <div style={{ marginTop: '6px' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
@@ -356,14 +358,14 @@ export function PlanejadoReal({ v, j, orc, comCompartilhar }: { v: ViagemComplet
           {r.linhas.map((l) => (
             <tr key={l.id} style={{ borderTop: '1px solid var(--linha)' }}>
               <th scope="row" style={{ textAlign: 'left', fontWeight: 500, padding: '6px 0' }}>{l.nome}</th>
-              <td style={{ textAlign: 'right' }}>{f(l.plan)}</td>
-              <td style={{ textAlign: 'right', fontWeight: 600, color: l.real > l.plan ? 'var(--vermelho)' : 'var(--texto)' }}>{f(l.real)}</td>
+              <td style={{ textAlign: 'right' }}>{l.plan ? f(l.plan) : '—'}</td>
+              <td style={{ textAlign: 'right', fontWeight: 600, color: l.plan && l.real > l.plan ? 'var(--vermelho)' : 'var(--texto)' }}>{l.real ? f(l.real) : '—'}</td>
             </tr>
           ))}
           <tr style={{ borderTop: '2px solid var(--texto)' }}>
             <th scope="row" style={{ textAlign: 'left', padding: '6px 0' }}>Total</th>
-            <td style={{ textAlign: 'right', fontWeight: 700 }}>{f(r.plan)}</td>
-            <td style={{ textAlign: 'right', fontWeight: 700, color: r.real > r.plan ? 'var(--vermelho)' : 'var(--verde)' }}>{f(r.real)}</td>
+            <td style={{ textAlign: 'right', fontWeight: 700 }}>{r.plan ? f(r.plan) : '—'}</td>
+            <td style={{ textAlign: 'right', fontWeight: 700, color: !r.plan ? 'var(--texto)' : r.real > r.plan ? 'var(--vermelho)' : 'var(--verde)' }}>{r.real ? f(r.real) : '—'}</td>
           </tr>
         </tbody>
       </table>

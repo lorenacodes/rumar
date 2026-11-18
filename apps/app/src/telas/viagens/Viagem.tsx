@@ -6,7 +6,7 @@ import PRECOS from '../../dados/precos-paris.json';
 import { DESTINO_CURADORIA, enderecoCurto, lugarPorId, lugaresDoDestino } from '../../lib/catalogo';
 import { candidatosRoteiro, destinoPorId, type Destino } from '../../lib/lugares';
 import { mesclar, paraQuem } from '../../lib/grupo';
-import { calcular, sugerirAjustes, type Precos } from '../../lib/orcamento';
+import { calcular, faltaNoCusto, sugerirAjustes, textoFalta, type Precos } from '../../lib/orcamento';
 import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type Gosto, type Lugar, type Periodo } from '../../lib/planejador';
 import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
@@ -42,7 +42,7 @@ const temCoord = (l?: Lugar | null): l is Lugar & { lat: number; lon: number } =
 function precoTexto(l: Lugar): { texto: string; reserva: boolean } {
   const p = P.lugares[l.id];
   if (p) return { texto: p.min === 0 ? 'Grátis' : p.min === p.max ? `${euros(p.min)} por pessoa` : `${euros(p.min)} a ${euros(p.max)} por pessoa`, reserva: Boolean(p.reserva) };
-  if ((l as Lugar & { ingresso?: boolean }).ingresso === false) return { texto: 'Sem ingresso (gastos à parte)', reserva: false };
+  if ((l as Lugar & { ingresso?: boolean }).ingresso === false) return { texto: 'Preço do consumo não informado', reserva: false };
   if (l.custo === 0) return { texto: 'Grátis', reserva: false };
   return { texto: 'Preço não confirmado', reserva: false };
 }
@@ -110,6 +110,8 @@ export function Viagem() {
   const pode = v.papel === 'dono' || v.papel === 'editor';
   const total = v.viagem.noites + 1;
   const acima = orc?.limiteBRL ? orc.o.provavelBRL - orc.limiteBRL : 0;
+  const falta = orc ? faltaNoCusto(orc.o, v.gastos) : null;
+  const parcial = Boolean(falta && (falta.itens.length || falta.passeiosSemPreco));
   const irPara = (a: string) => setParams({ aba: a }, { replace: true });
 
   return (
@@ -121,14 +123,18 @@ export function Viagem() {
         {orc ? (
           <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>
-              <span style={{ display: 'block', fontSize: '13px', color: 'var(--sobre-escuro-sec)' }}>Custo estimado {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
+              <span style={{ display: 'block', fontSize: '13px', color: 'var(--sobre-escuro-sec)' }}>{orc.o.provavelBRL > 0 && parcial ? 'Somado até agora' : 'Custo estimado'} {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
               {orc.o.provavelBRL > 0
                 ? <b style={{ font: "600 22px 'Lexend Exa'" }}>{reais(orc.o.provavelBRL)}</b>
                 : <b style={{ font: "600 16px/21px 'Lexend Exa'" }}>Ainda sem preços com fonte</b>}
             </span>
             <span style={{ textAlign: 'right', fontSize: '13px', color: 'var(--sobre-escuro-sec)', alignSelf: 'center' }}>
               {orc.o.provavelBRL > 0 ? `${reais(orc.o.porPessoaBRL)} por pessoa` : 'Escolha a hospedagem ou informe gastos'}
-              {v.viagem.orcamento_centavos && orc.o.provavelBRL > 0 ? <span style={{ display: 'block', color: acima > 0 ? 'var(--amarelo)' : '#9fe0b4', fontWeight: 600 }}>{acima > 0 ? `${reais(acima)} acima do orçamento` : 'Dentro do orçamento'}</span> : null}
+              {orc.o.provavelBRL > 0 && v.viagem.orcamento_centavos && acima > 0
+                ? <span style={{ display: 'block', color: 'var(--amarelo)', fontWeight: 600 }}>{reais(acima)} acima do orçamento{parcial ? ' (e ainda falta somar)' : ''}</span>
+                : orc.o.provavelBRL > 0 && parcial
+                  ? <span style={{ display: 'block', color: 'var(--sobre-escuro-sec)', fontWeight: 600 }}>Falta preço de {textoFalta(falta!)}</span>
+                  : orc.o.provavelBRL > 0 && v.viagem.orcamento_centavos ? <span style={{ display: 'block', color: '#9fe0b4', fontWeight: 600 }}>Dentro do orçamento</span> : null}
             </span>
           </button>
         ) : null}
@@ -494,6 +500,7 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCom
   const { o, sugestoes } = orc;
   const ativos = v.membros.filter((m) => m.status === 'ativo');
   const limiteC = orc.limiteBRL;
+  const faltaAqui = textoFalta(faltaNoCusto(o, v.gastos));
   const aplicar = async (de: string, para: string, dia: number) => {
     const it = itens.find((x) => x.l.id === de && x.it.dia === dia)?.it;
     if (it) await trocarItem(it, para);
@@ -514,7 +521,13 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCom
       {!o.categorias.some((c) => c.linhas.some((l) => l.moeda === 'EUR' && !l.semPreco && l.max > 0)) ? null : EURO ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Euro a R$ {EURO.venda.toFixed(4).replace('.', ',')} (Banco Central, PTAX de {EURO.data.split('-').reverse().join('/')})</div> : <Aviso cor="var(--ambar)">Câmbio do Banco Central ainda não carregado: os valores em euro não entram no total em reais.</Aviso>}
       {limiteC ? (
         <div style={{ marginTop: '10px', padding: '10px 12px', background: o.provavelBRL > limiteC ? 'var(--cartao-1)' : 'var(--cartao-2)' }}>
-          <b>{o.provavelBRL > limiteC ? `Passa ${reais(o.provavelBRL - limiteC)} do orçamento de ${reais(limiteC)}.` : `Dentro do orçamento de ${reais(limiteC)} (sobram ${reais(limiteC - o.provavelBRL)}).`}</b>
+          <b>{o.provavelBRL > limiteC
+            ? `Passa ${reais(o.provavelBRL - limiteC)} do orçamento de ${reais(limiteC)}${faltaAqui ? ', e ainda faltam preços.' : '.'}`
+            : o.provavelBRL === 0
+              ? `Ainda não dá para comparar com o orçamento de ${reais(limiteC)}: nenhum custo com preço.`
+              : faltaAqui
+                ? `Somado até agora: ${reais(o.provavelBRL)} do orçamento de ${reais(limiteC)}. Ainda falta preço de ${faltaAqui}, então não dá para dizer se cabe.`
+                : `Dentro do orçamento de ${reais(limiteC)} (sobram ${reais(limiteC - o.provavelBRL)}).`}</b>
           {sugestoes.length ? (
             <ul style={{ margin: '6px 0 0', paddingLeft: '18px', fontSize: '14px', lineHeight: '20px' }}>
               {sugestoes.map((s) => (

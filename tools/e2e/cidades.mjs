@@ -38,6 +38,11 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.locator('#busca-destino-geral').fill(cidade); await p.waitForTimeout(1500);
   await p.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: uf ? new RegExp(`${uf}\\b`) : /França/ }).first().click();
   await p.waitForTimeout(3000);
+  // Feed é o padrão (D-031); cobertura e lista ficam em "Lista e filtros".
+  const posts = await p.locator('article.feed-post').count();
+  const semColeta = /Ainda não coletamos/.test(await texto());
+  if (!semColeta) confere(`${cidade}: feed com lugares (${posts})`, posts > 0);
+  if (!semColeta) { await p.getByRole('button', { name: 'Lista e filtros' }).click(); await p.waitForTimeout(3000); }
   let t = await texto();
   const total = Number(t.match(/O que já temos em [^:]+: (\d+) lugares/)?.[1] ?? 0);
   confere(`${cidade}: cobertura com ${total} lugares e aviso de parcial`, total > 0 && /cobertura parcial/.test(t));
@@ -65,12 +70,14 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   const marcadores = await p.locator('.maplibregl-marker').count();
   confere(`${cidade}: mapa com ${marcadores} marcadores`, marcadores > 0);
   await foto(`${cidade}-mapa`);
-  await p.getByRole('button', { name: 'Ver lista', exact: true }).click(); await p.waitForTimeout(800);
+  await p.getByRole('button', { name: 'Fechar mapa', exact: true }).click(); await p.waitForTimeout(800);
   // Abrir e salvar
   await p.locator('main ul li button').first().click(); await p.waitForTimeout(2500);
   t = await texto();
   confere(`${cidade}: página do lugar com fonte`, /OpenStreetMap|curadoria/.test(t));
   const fotos = await p.locator('main img').count();
+  // Pode já estar salvo (conta de teste reaproveitada): tira e salva de novo.
+  if (await p.getByRole('button', { name: '♥ Salvo' }).count()) { await p.getByRole('button', { name: '♥ Salvo' }).first().click(); await p.waitForTimeout(800); }
   await p.getByRole('button', { name: /Salvar/ }).first().click(); await p.waitForTimeout(1500);
   confere(`${cidade}: salvar lugar`, /♥ Salvo/.test(await texto()));
   await foto(`${cidade}-lugar`);

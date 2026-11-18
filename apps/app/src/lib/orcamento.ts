@@ -181,3 +181,26 @@ export function sugerirAjustes(e: Entrada, orc: Orcamento, limiteBRL: number): S
   }
   return sug.sort((a, b) => b.economiaBRL - a.economiaBRL).slice(0, 4);
 }
+
+/**
+ * O que ainda não tem preço: sem isso, um total parcial parece a conta inteira.
+ * Essenciais: passagem, hospedagem e alimentação (da fonte ou informados pela pessoa),
+ * e passeios do roteiro sem preço confirmado.
+ */
+export function faltaNoCusto(o: Orcamento, gastos: { categoria: string }[]): { itens: string[]; passeiosSemPreco: number } {
+  const cat = (id: Categoria['id']) => o.categorias.find((c) => c.id === id);
+  const temCat = (id: Categoria['id']) => (cat(id)?.maxBRL ?? 0) > 0;
+  const informou = (c: string) => gastos.some((g) => g.categoria === c);
+  const itens: string[] = [];
+  if (!informou('passagem')) itens.push('passagem');
+  if (!temCat('hospedagem') && !informou('hospedagem')) itens.push('hospedagem');
+  if (!temCat('alimentacao') && !informou('alimentacao')) itens.push('alimentação');
+  const passeiosSemPreco = cat('lazer')?.linhas.filter((l) => l.semPreco).length ?? 0;
+  return { itens, passeiosSemPreco };
+}
+
+/** "passagem, hospedagem e alimentação" (+ passeios sem preço). */
+export function textoFalta(f: { itens: string[]; passeiosSemPreco: number }): string {
+  const partes = [...f.itens, ...(f.passeiosSemPreco ? [`${f.passeiosSemPreco} ${f.passeiosSemPreco === 1 ? 'passeio' : 'passeios'} sem preço`] : [])];
+  return partes.length <= 1 ? partes.join('') : `${partes.slice(0, -1).join(', ')} e ${partes[partes.length - 1]}`;
+}

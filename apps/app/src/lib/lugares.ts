@@ -85,8 +85,14 @@ const TIPO: Record<string, string> = {
   theme_park: 'Parque temático', artwork: 'Obra de arte', water_park: 'Parque aquático', marina: 'Marina', station: 'Estação', bus_station: 'Rodoviária', ferry_terminal: 'Terminal de barcos', aerodrome: 'Aeroporto',
   historic_monument: 'Monumento', historic_castle: 'Castelo', historic_fort: 'Forte', historic_ruins: 'Ruínas', historic_church: 'Igreja histórica', historic_building: 'Prédio histórico',
   historic_archaeological_site: 'Sítio arqueológico', historic_city_gate: 'Portão histórico', historic_manor: 'Solar', historic_monastery: 'Mosteiro', historic_palace: 'Palácio',
+  place_of_worship: 'Igreja ou templo', fountain: 'Chafariz', library: 'Biblioteca', clock: 'Relógio histórico', yes: 'Lugar histórico', townhall: 'Prefeitura', monastery: 'Mosteiro',
+  planetarium: 'Planetário', community_centre: 'Centro comunitário', social_centre: 'Centro comunitário', love_hotel: 'Motel', sambadrome: 'Sambódromo', conference_centre: 'Centro de convenções',
+  public_building: 'Prédio público', sports_centre: 'Centro esportivo', information: 'Informação turística', motel: 'Motel', memorial: 'Memorial', historic_memorial: 'Memorial',
 };
-export const nomeTipo = (t: string) => TIPO[t] ?? t.replace(/^historic_/, '').replace(/_/g, ' ');
+/** Tipos que não são programa de viagem (vêm junto na coleta): ficam fora do app. */
+export const TIPOS_FORA = ['school', 'college', 'university', 'clinic', 'hospital', 'parking', 'fire_station', 'drinking_water', 'bench', 'courthouse', 'social_facility', 'shelter', 'swingerclub', 'toilets'];
+/** Nome do tipo em português; tipo desconhecido vira "Lugar" (nunca o código em inglês). */
+export const nomeTipo = (t: string) => TIPO[t] ?? (t.startsWith('historic_') ? 'Lugar histórico' : 'Lugar');
 
 export const normalizar = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -152,6 +158,7 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
   const pagina = f.pagina ?? 0;
   let q = supabase.from('lugares').select(COLS, { count: 'exact' }).eq('destino_id', f.destino);
   if (f.categoria) q = q.eq('categoria', f.categoria);
+  q = q.not('tipo', 'in', `(${TIPOS_FORA.join(',')})`);
   if (f.termo?.trim()) q = q.ilike('busca', `%${normalizar(f.termo)}%`);
   if (f.soGratis) q = q.eq('gratuito', true);
   if (f.precoMin != null) q = q.gte('preco_max_centavos', f.precoMin);
@@ -161,6 +168,50 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
   const lugares = (data ?? []) as LugarBase[];
   guardar(lugares);
   return { lugares, total: count ?? lugares.length };
+}
+
+/** Item do feed: um lugar da base, com ou sem foto. */
+export type ItemFeed = LugarBase & { relevancia?: number };
+
+const FEED_POR_PAGINA = 12;
+/**
+ * Feed do Descobrir: primeiro os lugares com foto (Wikimedia Commons), dos mais conhecidos aos
+ * menos; quando acabam, os sem foto mais relevantes (aparecem como cartão de texto, sem foto
+ * inventada). Transporte e o que não é programa de viagem ficam de fora.
+ */
+export async function feedLugares(destino: string, pagina: number, categoria?: CategoriaLugar | null): Promise<{ itens: ItemFeed[]; fim: boolean }> {
+  const base = (contar = false) => {
+    let q = (contar ? supabase.from('lugares').select('id', { count: 'exact', head: true }) : supabase.from('lugares').select(COLS)).eq('destino_id', destino).neq('categoria', 'transporte').gte('relevancia', 0)
+      .not('tipo', 'in', `(${[...TIPOS_FORA, 'fast_food', 'food_court', 'department_store'].join(',')})`);
+    if (categoria) q = q.eq('categoria', categoria);
+    return q;
+  };
+  const { count } = await base(true).not('foto', 'is', null);
+  const comFoto = count ?? 0;
+  const de = pagina * FEED_POR_PAGINA;
+  const ate = de + FEED_POR_PAGINA - 1;
+  let itens: ItemFeed[] = [];
+  if (de < comFoto) {
+    const { data } = await base().not('foto', 'is', null).order('relevancia', { ascending: false }).order('id').range(de, ate);
+    itens = (data ?? []) as ItemFeed[];
+  }
+  if (itens.length < FEED_POR_PAGINA) {
+    const inicio = Math.max(0, de - comFoto);
+    const { data } = await base().is('foto', null).gte('relevancia', 2).order('relevancia', { ascending: false }).order('id').range(inicio, inicio + (FEED_POR_PAGINA - itens.length) - 1);
+    itens = [...itens, ...((data ?? []) as ItemFeed[])];
+  }
+  guardar(itens);
+  return { itens, fim: itens.length < FEED_POR_PAGINA };
+}
+
+/** Uma foto por categoria, para os "destaques" redondos no topo do feed. */
+export async function capasPorCategoria(destino: string): Promise<Map<CategoriaLugar, LugarBase>> {
+  const cats = ORDEM_CATEGORIAS.filter((c) => c !== 'transporte');
+  const res = await Promise.all(cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).not('foto', 'is', null).order('relevancia', { ascending: false }).limit(1)));
+  const mapa = new Map<CategoriaLugar, LugarBase>();
+  res.forEach((r, i) => { const l = (r.data ?? [])[0] as LugarBase | undefined; if (l) mapa.set(cats[i]!, l); });
+  guardar([...mapa.values()]);
+  return mapa;
 }
 
 export async function cobertura(destino: string): Promise<Cobertura[]> {
@@ -187,7 +238,7 @@ export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
 /** Candidatos para montar um roteiro automático: os mais documentados de cada categoria. */
 export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto'): Promise<Lugar[]> {
   const cats = ORDEM_CATEGORIAS.filter((c) => CATEGORIAS_LUGAR[c].roteiro);
-  const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
+  const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
   // Viagem de nível conforto: traz também restaurantes de cozinha especial e programas pagos
   // (parque temático, marina, zoológico…) que podem não estar entre os mais documentados.
   if (nivel === 'conforto') {

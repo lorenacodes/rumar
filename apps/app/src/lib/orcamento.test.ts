@@ -81,3 +81,19 @@ describe('grupo', () => {
     expect(paraQuem([{ nome: 'Ana Souza', preferencias: a }, { nome: 'Bia', preferencias: b }], ['comer'])).toBe('Agrada a Bia (comer bem).');
   });
 });
+
+describe('o que falta no custo (nada parece calculado sem estar)', () => {
+  it('só com a passagem, falta hospedagem e alimentação', async () => {
+    const { faltaNoCusto, textoFalta } = await import('./orcamento');
+    const gastos = [{ categoria: 'passagem', descricao: 'Passagem', valor: 450000, moeda: 'BRL' }];
+    const o = calcular(base([], { gastos, precos: { lugares: {}, alimentacao: {}, transporte: {} } as unknown as Precos }));
+    const f = faltaNoCusto(o, gastos);
+    expect(f.itens).toEqual(['hospedagem', 'alimentação']);
+    expect(textoFalta(f)).toBe('hospedagem e alimentação');
+  });
+  it('sem nada informado, falta passagem também', async () => {
+    const { faltaNoCusto } = await import('./orcamento');
+    const o = calcular(base([], { precos: { lugares: {}, alimentacao: {}, transporte: {} } as unknown as Precos }));
+    expect(faltaNoCusto(o, []).itens).toContain('passagem');
+  });
+});
