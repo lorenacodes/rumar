@@ -12,14 +12,13 @@ const ABAS_DESIGN: { id: Aba; nome: string; rota: string }[] = [
   { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
 ];
 /**
- * Navegação do app (D-022): a jornada de quem viaja em 5 lugares claros — começar (Início),
- * explorar (Descobrir), planejar e acompanhar (Viagens), viajar junto (Social) e eu (Perfil).
+ * Navegação do app (D-022, revista na D-032): começar (Início), explorar (Descobrir), planejar e
+ * acompanhar (Viagens) e eu (Perfil). Amigos ficam dentro do Perfil (Perfil → Amigos).
  */
 const ABAS_APP: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
   { id: 'descobrir', nome: 'Descobrir', rota: '/descobrir' },
   { id: 'viagem', nome: 'Viagens', rota: '/viagens' },
-  { id: 'social', nome: 'Social', rota: '/social' },
   { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
 ];
 

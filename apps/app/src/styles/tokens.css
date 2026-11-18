@@ -14,6 +14,9 @@
   --verde: #1a7a3e;
   --ambar: #8a5a00;
   --vermelho: #b3261e;
+  /* Papel dos cartões-postais do Descobrir (D-032). */
+  --papel: #fffdf7;
+  --carimbo: #c2410c;
 
   --texto: var(--marinho);
   --fundo-escuro: var(--marinho);
@@ -38,6 +41,8 @@
   --azul: #8fb0ff;
   --cartao-1: #14264f;
   --cartao-2: #101f44;
+  --papel: #13234a;
+  --carimbo: #ff8a5b;
   --fundo-escuro: #1f4fd8;
 }
 

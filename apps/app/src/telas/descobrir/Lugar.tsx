@@ -95,7 +95,7 @@ export function Lugar() {
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <a href={mapa} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(l.id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>
-            {salvo ? '♥ Salvo' : '♡ Salvar'}
+            {salvo ? '✓ Quero ir' : '+ Quero ir'}
           </button>
         </div>
         <AdicionarAViagem placeId={l.id} slots={l.slots} />
@@ -145,7 +145,7 @@ function LugarDaBase() {
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <a href={`https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lon}`} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
-          <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? '♥ Salvo' : '♡ Salvar'}</button>
+          <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? '✓ Quero ir' : '+ Quero ir'}</button>
         </div>
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Para preço e reserva de hospedagem, use a aba Hospedagem da sua viagem.' : 'Lugar de apoio (não entra no roteiro).'}</p>}
         {b.site ? <a href={b.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}

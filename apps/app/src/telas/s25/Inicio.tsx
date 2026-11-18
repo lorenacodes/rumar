@@ -80,7 +80,7 @@ function Pendencias({ convites, pedidos, semUsuario, semJeito }: { convites: num
   const navegar = useNavigate();
   const itens: { texto: string; ir: string; destaque?: boolean }[] = [];
   if (convites) itens.push({ texto: convites === 1 ? 'Você tem 1 convite para uma viagem' : `Você tem ${convites} convites para viagens`, ir: '/viagens', destaque: true });
-  if (pedidos) itens.push({ texto: pedidos === 1 ? '1 pedido de amizade esperando resposta' : `${pedidos} pedidos de amizade esperando resposta`, ir: '/social', destaque: true });
+  if (pedidos) itens.push({ texto: pedidos === 1 ? '1 pedido de amizade esperando resposta' : `${pedidos} pedidos de amizade esperando resposta`, ir: '/perfil/amigos', destaque: true });
   if (semJeito) itens.push({ texto: 'Conte seu jeito de viajar (1 minuto): os roteiros nascem dele', ir: '/perfil-viajante' });
   if (semUsuario) itens.push({ texto: 'Escolha seu @ para seus amigos te acharem', ir: '/perfil/usuario' });
   if (!itens.length) return null;

@@ -305,7 +305,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                     </div>
                   ) : null}
                   {!pode ? (
-                    <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={{ ...acao, marginTop: '4px' }}>{salvos.includes(l.id) ? '♥ Salvo nos meus lugares' : '♡ Salvar como inspiração'}</button>
+                    <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={{ ...acao, marginTop: '4px' }}>{salvos.includes(l.id) ? '✓ Na lista Quero ir' : '+ Quero ir (inspiração)'}</button>
                   ) : null}
                   {trocando === it.id ? (
                     <div style={{ marginTop: '6px', borderLeft: '3px solid var(--amarelo)', paddingLeft: '8px' }}>
@@ -630,7 +630,7 @@ function AbaGrupo({ v, pode, recarregar }: { v: ViagemCompleta; pode: boolean; r
               <button type="button" className="r-btn" onClick={() => void convidar(v.viagem.id, a.outro.user_id, 'leitor').then(recarregar)} style={acao}>Só ver</button>
             </div>
           ))}
-          {!amigos.length ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: 0 }}>Adicione amigos na aba Social para convidar. <button type="button" className="r-btn" onClick={() => navegar('/social')} style={botaoTexto}>Ir para Social</button></p> : null}
+          {!amigos.length ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: 0 }}>Adicione amigos em Perfil → Amigos para convidar. <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} style={botaoTexto}>Encontrar amigos</button></p> : null}
           <Rotulo>Quem pode ver</Rotulo>
           <Segmentos rotulo="Visibilidade" valor={v.viagem.visibilidade} aoMudar={(vis) => void atualizarViagem(v.viagem.id, { visibilidade: vis }).then(recarregar)}
             opcoes={[{ id: 'privada', nome: 'Só participantes' }, { id: 'amigos', nome: 'Meus amigos também' }]} />

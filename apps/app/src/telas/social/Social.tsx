@@ -6,7 +6,7 @@ import { meuUsuario } from '../../lib/usuario';
 import { buscarPessoas, minhasAmizades, pedirAmizade, responderAmizade, type Amizade, type PessoaPublica } from '../../lib/social';
 import { listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
-import { BotaoPrincipal } from '../../ui/pecas';
+import { BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { campo, periodo, Rotulo } from '../viagens/comum';
 
 const Inicial = ({ nome }: { nome: string }) => (
@@ -15,7 +15,7 @@ const Inicial = ({ nome }: { nome: string }) => (
   </span>
 );
 
-/** Social: encontrar pessoas, pedidos de amizade, amigos e as viagens que eles compartilharam. */
+/** Amigos (dentro do Perfil, D-032): encontrar pessoas, pedidos de amizade, amigos e as viagens que eles compartilharam. */
 export function Social() {
   const navegar = useNavigate();
   const sessao = useSessao();
@@ -43,14 +43,15 @@ export function Social() {
     return (
       <main className="tela" data-tela="social" data-real="social">
         <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
-          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Social</div>
+          <Voltar para="/perfil" />
+          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Perfil · Amigos</div>
           <h1 style={titulo}>Viaje com amigos.</h1>
           <p style={{ fontSize: '16px', lineHeight: '24px' }}>Adicione amigos, veja os roteiros que eles compartilham e planejem a mesma viagem juntos.</p>
         </div>
         <div className="rodape" style={{ padding: '10px 20px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)', bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
           <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta ↗</BotaoPrincipal>
         </div>
-        <Abas ativa="social" logoAbaixoDoRodape />
+        <Abas ativa="passaporte" logoAbaixoDoRodape />
       </main>
     );
   }
@@ -63,7 +64,8 @@ export function Social() {
   return (
     <main className="tela" data-tela="social" data-real="social">
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Social</div>
+        <Voltar para="/perfil" />
+          <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Perfil · Amigos</div>
         <h1 style={titulo}>Amigos e viagens.</h1>
         {meu ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '4px' }}>Você é <b style={{ color: 'var(--texto)' }}>@{meu}</b>: passe esse nome para seus amigos te acharem.</div> : null}
         {meu === null ? (
@@ -127,7 +129,7 @@ export function Social() {
         ) : null}
         <div style={{ height: '24px' }} />
       </div>
-      <Abas ativa="social" />
+      <Abas ativa="passaporte" />
     </main>
   );
 }

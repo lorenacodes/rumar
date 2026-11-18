@@ -1,192 +1,288 @@
-/* Feed de lugares do Descobrir (D-031). CSS puro com os tokens. */
-.feed-destaques {
+/* Mural de cartões-postais do Descobrir (D-031, visual próprio na D-032). CSS puro com os tokens. */
+
+/* ---------- Selos (categorias) ---------- */
+.mural-selos {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   overflow-x: auto;
   margin: 14px -20px 0;
-  padding: 2px 20px 6px;
+  padding: 6px 20px 8px;
   scrollbar-width: none;
 }
-.feed-destaque {
+.mural-selo {
   flex: none;
-  width: 72px;
+  width: 66px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  font: 600 12px/15px 'Open Sans';
-  color: var(--texto);
+  gap: 6px;
+  font: 700 10px/13px 'Open Sans';
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-sec);
   text-align: center;
 }
-.feed-anel {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  padding: 3px;
+/* Borda picotada de selo: furos feitos com máscara radial. */
+.mural-selo-borda {
+  width: 62px;
+  height: 74px;
+  padding: 5px;
   box-sizing: border-box;
-  background: linear-gradient(135deg, var(--amarelo), #ff7a59 45%, var(--azul));
+  /* Picotado: furos só na borda (o miolo é coberto pelo conteúdo). */
+  background: radial-gradient(circle at 50% 50%, transparent 2.3px, var(--papel) 2.8px) -1px -1px / 8px 8px;
+  filter: drop-shadow(0 1px 1px rgba(11, 31, 75, 0.25));
+  transition: transform var(--transicao);
 }
-.feed-destaque[aria-pressed='true'] .feed-anel {
-  background: var(--fundo-escuro);
-}
-.feed-anel > span {
+.mural-selo-borda > span {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  border: 3px solid var(--fundo);
-  box-sizing: border-box;
   overflow: hidden;
-  background: var(--cartao-2);
+  background: var(--cartao-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 22px 'Lexend Exa';
+  color: var(--azul);
 }
-.feed-anel img {
+.mural-selo-borda img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.feed-anel .feed-inicial {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font: 600 22px 'Lexend Exa';
-  color: var(--texto-sec);
+.mural-selo[aria-pressed='true'] {
+  color: var(--texto);
+}
+.mural-selo[aria-pressed='true'] .mural-selo-borda {
+  background: var(--amarelo);
+  transform: rotate(-6deg) scale(1.04);
 }
 
-.feed-post {
-  margin: 0 -20px;
-  padding: 14px 0 6px;
-  border-bottom: 1px solid var(--linha);
+/* ---------- Cartão-postal ---------- */
+.postal {
+  margin: 18px 0 0;
+  background: var(--papel);
+  padding: 8px 8px 0;
+  box-shadow: 0 1px 2px rgba(11, 31, 75, 0.12), 0 8px 22px -12px rgba(11, 31, 75, 0.35);
 }
-.feed-cabeca {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 20px 10px;
-}
-.feed-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  flex: none;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--amarelo), var(--azul));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font: 600 16px 'Lexend Exa';
-}
-.feed-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.feed-midia {
+.postal:nth-of-type(even) { transform: rotate(0.5deg); }
+.postal:nth-of-type(odd) { transform: rotate(-0.4deg); }
+.postal-frente {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--cartao-2);
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  cursor: pointer;
 }
-.feed-midia img {
+.postal-frente > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   filter: saturate(1.15) contrast(1.05);
 }
-.feed-texto {
-  height: 100%;
+.postal-legenda {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 40px 14px 12px;
+  background: linear-gradient(180deg, transparent, rgba(6, 14, 36, 0.78));
+  color: #fff;
+  pointer-events: none;
+}
+.postal-legenda small {
+  display: block;
+  font: 700 11px/14px 'Open Sans';
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+.postal-legenda b {
+  display: block;
+  font: 600 21px/25px 'Lexend Exa';
+  letter-spacing: -0.03em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding-right: 8px;
+}
+/* Selo no canto da frente: categoria. */
+.postal-selo {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 58px;
+  padding: 4px;
+  box-sizing: border-box;
+  background: radial-gradient(circle at 50% 50%, transparent 2px, var(--papel) 2.5px) -1px -1px / 7px 7px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+}
+.postal-selo > span {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 22px;
-  box-sizing: border-box;
-  color: #fff;
-}
-.feed-texto b {
-  font: 600 26px/31px 'Lexend Exa';
-  letter-spacing: -0.03em;
-  overflow-wrap: anywhere;
-}
-.feed-coracao {
-  position: absolute;
-  inset: 0;
-  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 110px;
-  color: #fff;
-  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  height: 100%;
+  background: var(--papel);
+  border: 1px solid var(--azul);
+  color: var(--azul);
+  font: 700 8px/10px 'Open Sans';
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.postal-selo > span i {
+  font: 600 18px/20px 'Lexend Exa';
+  font-style: normal;
+}
+/* Carimbo "Quero ir": aparece ao marcar (e com dois toques na frente). */
+.postal-carimbo {
+  position: absolute;
+  top: 16px;
+  left: 14px;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  border: 3px double var(--carimbo);
+  color: var(--carimbo);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font: 700 15px/17px 'Lexend Exa';
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 253, 247, 0.82);
+  transform: rotate(-14deg);
   pointer-events: none;
-  animation: feed-pulo 900ms ease-out forwards;
 }
-@keyframes feed-pulo {
-  0% { transform: scale(0.2); opacity: 0; }
-  15% { transform: scale(1.2); opacity: 1; }
-  30% { transform: scale(0.95); }
-  45% { transform: scale(1.05); }
-  80% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1); opacity: 0; }
+.postal-carimbo small {
+  font: 700 9px/12px 'Open Sans';
+  letter-spacing: 0.1em;
 }
-.feed-acoes {
+.postal-carimbo.novo {
+  animation: postal-carimbar 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+@keyframes postal-carimbar {
+  0% { transform: rotate(-24deg) scale(1.9); opacity: 0; }
+  60% { transform: rotate(-12deg) scale(0.92); opacity: 1; }
+  100% { transform: rotate(-14deg) scale(1); }
+}
+
+/* Verso: o porquê e o "endereço", separados como num postal. */
+.postal-verso {
+  display: grid;
+  grid-template-columns: 1fr 1px 38%;
+  gap: 12px;
+  padding: 4px 6px 10px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.postal-verso > i {
+  background: var(--linha);
+}
+.postal-endereco {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--texto-sec);
+}
+.postal-endereco div {
+  border-bottom: 1px solid var(--linha);
+  padding: 3px 0 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.postal-acoes {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px 0;
+  gap: 2px;
+  border-top: 1px dashed var(--linha);
+  padding: 2px 0;
 }
-.feed-acao {
-  min-width: 44px;
-  height: 44px;
-  padding: 0 8px;
+.postal-acao {
+  min-height: 46px;
+  padding: 0 10px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
   font: 600 14px 'Open Sans';
   color: var(--texto);
   text-decoration: none;
 }
-.feed-acao .ico {
-  font-size: 25px;
-  line-height: 1;
-  transition: transform 150ms;
+.postal-acao[aria-pressed='true'] {
+  color: var(--carimbo);
 }
-.feed-acao:active .ico {
-  transform: scale(1.25);
+
+/* Sem foto livre: o verso do postal, com o espaço do selo vazio. */
+.postal-sem-foto {
+  aspect-ratio: 16 / 9;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 31px, var(--linha) 31px 32px),
+    var(--papel);
+  padding: 16px 70px 14px 14px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 1px solid var(--linha);
 }
-.feed-acao[aria-pressed='true'] .ico {
-  color: var(--vermelho);
-  animation: feed-bate 300ms ease-out;
+.postal-sem-foto small {
+  font: 700 11px/14px 'Open Sans';
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--azul);
 }
-@keyframes feed-bate {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.35); }
-  100% { transform: scale(1); }
+.postal-sem-foto b {
+  font: 600 24px/29px 'Lexend Exa';
+  letter-spacing: -0.03em;
+  color: var(--texto);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-.feed-legenda {
-  padding: 0 20px 8px;
-  font-size: 14px;
-  line-height: 20px;
+.postal-sem-foto .vazio {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 50px;
+  height: 58px;
+  border: 1px dashed var(--texto-sec);
+  color: var(--texto-sec);
+  font: 600 8px/10px 'Open Sans';
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2px;
+  box-sizing: border-box;
 }
-.feed-esqueleto {
-  margin: 14px -20px 0;
-  aspect-ratio: 4 / 5;
+
+.mural-esqueleto {
+  margin: 18px 0 0;
+  aspect-ratio: 4 / 3;
   background: linear-gradient(100deg, var(--cartao-2) 30%, var(--linha) 50%, var(--cartao-2) 70%);
   background-size: 300% 100%;
-  animation: feed-brilho 1.2s linear infinite;
+  animation: mural-brilho 1.2s linear infinite;
 }
-@keyframes feed-brilho {
+@keyframes mural-brilho {
   from { background-position: 100% 0; }
   to { background-position: 0 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .feed-coracao, .feed-acao[aria-pressed='true'] .ico, .feed-esqueleto { animation: none; }
-  .feed-coracao { opacity: 0; }
+  .postal-carimbo.novo, .mural-esqueleto { animation: none; }
+  .postal:nth-of-type(n), .mural-selo[aria-pressed='true'] .mural-selo-borda { transform: none; }
 }

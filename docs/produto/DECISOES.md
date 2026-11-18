@@ -387,3 +387,19 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   desconhecido vira "Lugar". Escolas, hospitais, estacionamentos etc. (vieram na coleta) saíram do app.
   Lugar repetido com o mesmo nome aparece uma vez. "Sem ingresso (gastos à parte)" virou "Preço do
   consumo não informado".
+
+## D-032 — Menu com 4 abas (amigos no Perfil) e mural de cartões-postais
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("não tem necessidade de uma aba só para procurar amigos"; "não quero
+  um feed com a cara do Instagram, só a mesma pegada; focado em viagem; original").
+- **Menu:** Início, Descobrir, Viagens e Perfil (volta às 4 abas do design; desfaz a aba Social da D-022).
+  Amigos ficam em Perfil → Amigos (`/perfil/amigos`), com a contagem de pedidos esperando resposta na
+  própria linha; o endereço antigo `/social` redireciona. O aviso do Início e o convite da viagem levam
+  para lá.
+- **Mural de cartões-postais (substitui o visual do feed da D-031):** categorias viram selos com borda
+  picotada; cada lugar é um postal com moldura de papel (frente: foto 4:3, cidade e tipo, nome, selo da
+  categoria no canto; verso: "Por que você vai gostar", fatos com fonte e as linhas de endereço).
+  "Quero ir" substitui curtir/salvar em todo o app: marcar (ou dois toques na frente) carimba o postal
+  com "Quero ir · cidade · data". Lugar sem foto livre aparece como o verso do postal, com o espaço do
+  selo vazio "sem foto livre ainda". Sem curtidas, sem círculos de stories, sem coração.
+- **Tokens novos:** `--papel` e `--carimbo` (claro e escuro).

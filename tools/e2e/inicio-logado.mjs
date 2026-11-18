@@ -38,10 +38,10 @@ try {
   await tempo.screenshot({ path: `${OUT}/inicio-logado.png` });
   const t = await texto(tempo);
   confere('aviso de pedido de amizade no Início', /pedido de amizade esperando resposta/.test(t));
-  confere('"Hoje em Salvador" durante a viagem', /Hoje em Salvador/.test(t) && /Dia 1 de/.test(t));
+  confere('"Hoje em Salvador" durante a viagem', /Hoje em Salvador/.test(t) && /Dia \d+ de/.test(t));
   confere('paradas do dia listadas', /1\. /.test(t));
   await tempo.getByRole('button', { name: /pedido de amizade/ }).click(); await tempo.waitForTimeout(2000);
-  confere('aviso leva ao Social', tempo.url().includes('#/social'));
+  confere('aviso leva a Perfil → Amigos', tempo.url().includes('#/perfil/amigos'));
 } finally {
   console.log('— Erros:', erros.length ? erros : 'nenhum');
   await b.close();

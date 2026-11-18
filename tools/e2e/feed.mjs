@@ -21,28 +21,28 @@ async function pagina() {
 
 console.log('— Sem conta');
 let p = await pagina();
-await p.goto(URL + '#/descobrir?d=br-3304557'); await p.waitForTimeout(5000);
-const posts = p.locator('article.feed-post');
+await p.goto(URL + '#/descobrir?d=br-3304557'); await p.locator('article.postal').first().waitFor({ timeout: 20000 }).catch(() => {}); await p.waitForTimeout(1500);
+const posts = p.locator('article.postal');
 confere(`feed aparece por padrão (${await posts.count()} posts)`, (await posts.count()) >= 8);
-confere('destaques por categoria no topo', (await p.locator('.feed-destaque').count()) >= 6);
-confere('primeiros posts têm foto com crédito', (await posts.first().locator('.feed-midia img').count()) === 1 && (await posts.first().getByText('Foto: Wikimedia Commons').count()) === 1);
+confere('selos por categoria no topo', (await p.locator('.mural-selo').count()) >= 6);
+confere('primeiros posts têm foto com crédito', (await posts.first().locator('.postal-frente img').count()) === 1 && (await posts.first().getByText(/Foto: Wikimedia Commons/).count()) === 1);
 await p.screenshot({ path: `${OUT}/01-feed-sem-conta.png` });
 const nome = await posts.nth(1).getAttribute('aria-label');
-await posts.nth(1).locator('.feed-midia').dblclick(); await p.waitForTimeout(400);
-confere('dois toques salvam (coração e "Salvo")', (await posts.nth(1).getByText('Salvo nos seus lugares').count()) === 1);
+await posts.nth(1).locator('.postal-frente').dblclick(); await p.waitForTimeout(400);
+confere('dois toques carimbam "Quero ir"', (await posts.nth(1).locator('.postal-carimbo').count()) === 1 && (await posts.nth(1).getByRole('button', { name: '✓ Quero ir' }).count()) === 1);
 await p.screenshot({ path: `${OUT}/02-dois-toques.png` });
 await p.waitForTimeout(800);
 confere('dois toques não abriram o lugar', /descobrir/.test(p.url()));
 const antes = await posts.count();
 for (let i = 0; i < 6; i++) { await p.mouse.wheel(0, 4000); await p.waitForTimeout(900); }
 confere(`rolagem carrega mais (${antes} → ${await posts.count()})`, (await posts.count()) > antes);
-await p.locator('.feed-destaque', { hasText: 'Restaurantes' }).click(); await p.waitForTimeout(3500);
+await p.locator('.mural-selo', { hasText: 'Restaurantes' }).click(); await p.waitForTimeout(3500);
 confere('destaque filtra a categoria', /Restaurante/.test(await posts.first().innerText()));
 await p.screenshot({ path: `${OUT}/03-restaurantes.png` });
 for (let i = 0; i < 10; i++) { await p.mouse.wheel(0, 5000); await p.waitForTimeout(700); }
-confere('lugar sem foto vira cartão de texto (sem foto inventada)', (await p.locator('.feed-texto').count()) > 0);
-await p.locator('.feed-texto').first().scrollIntoViewIfNeeded(); await p.screenshot({ path: `${OUT}/04-cartao-texto.png` });
-await posts.first().locator('.feed-midia').click(); await p.waitForTimeout(1500);
+confere('lugar sem foto vira cartão de texto (sem foto inventada)', (await p.locator('.postal-sem-foto').count()) > 0);
+await p.locator('.postal-sem-foto').first().scrollIntoViewIfNeeded(); await p.screenshot({ path: `${OUT}/04-cartao-texto.png` });
+await posts.first().locator('.postal-frente').click(); await p.waitForTimeout(1500);
 confere('um toque abre o lugar', /#\/lugar\//.test(p.url()));
 await p.goto(URL + '#/descobrir?d=br-3304557&modo=lista'); await p.waitForTimeout(3000);
 confere('"Ver em lista" continua existindo', (await posts.count()) === 0 && (await p.getByRole('button', { name: 'Ver feed' }).count()) === 1);
@@ -52,11 +52,23 @@ p = await pagina();
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/descobrir?d=br-3304557'); await p.waitForTimeout(5000);
+confere('menu com 4 abas, sem Social', (await p.locator('nav[aria-label="Abas"] button').allInnerTexts()).join('|') === 'Início|Descobrir|Viagens|Perfil');
 confere('"Por que você vai gostar" pelo jeito de viajar', (await p.getByText('Por que você vai gostar:').count()) > 0);
 confere('botão "No roteiro" (já tem viagem para o Rio)', (await p.getByRole('button', { name: /No roteiro/ }).count()) > 0);
 await p.screenshot({ path: `${OUT}/05-feed-com-conta.png` });
 await p.getByRole('button', { name: /No roteiro/ }).first().click(); await p.waitForTimeout(2000);
 confere('"No roteiro" abre o lugar com a viagem escolhida', /viagem=/.test(p.url()) && (await p.getByText('Adicionar à viagem').count()) > 0);
+
+console.log('— Amigos dentro do Perfil');
+await p.goto(URL + '#/perfil'); await p.waitForTimeout(3000);
+const linhaAmigos = p.getByRole('button', { name: /^Amigos/ });
+confere('Perfil tem a linha Amigos', (await linhaAmigos.count()) === 1);
+await p.screenshot({ path: `${OUT}/06-perfil-amigos.png` });
+await linhaAmigos.click(); await p.waitForTimeout(2500);
+confere('Amigos abre a busca de pessoas, com Perfil ativo no menu', /#\/perfil\/amigos/.test(p.url()) && (await p.locator('#busca-pessoa').count()) === 1 && (await p.locator('nav[aria-label="Abas"] [aria-current="page"]').innerText()) === 'Perfil');
+await p.screenshot({ path: `${OUT}/07-amigos.png` });
+await p.goto(URL + '#/social'); await p.waitForTimeout(1500);
+confere('endereço antigo /social leva para Amigos', /#\/perfil\/amigos/.test(p.url()));
 
 await b.close();
 console.log(erros.length ? `\nERROS:\n${erros.join('\n')}` : '\nTudo certo.');

@@ -36,35 +36,34 @@ const deCuradoria = (l: Lugar): Post => ({
   gratuito: l.custo === 0, horario: l.horario ?? null, cozinha: null, lat: l.lat, lon: l.lon, lugar: l,
 });
 
-/** Cores do cartão de texto (lugar sem foto livre), por categoria. */
-const COR: Partial<Record<CategoriaLugar, string>> = {
-  restaurantes: 'linear-gradient(150deg,#d9480f,#f59f00)', bares: 'linear-gradient(150deg,#5f3dc4,#d6336c)', cafes: 'linear-gradient(150deg,#8d5a3b,#e8a87c)',
-  'vida-noturna': 'linear-gradient(150deg,#1b1f3b,#7048e8)', parques: 'linear-gradient(150deg,#2b8a3e,#94d82d)', praias: 'linear-gradient(150deg,#1971c2,#3bc9db)',
-  museus: 'linear-gradient(150deg,#0b1f4b,#1f4fd8)', historico: 'linear-gradient(150deg,#5c3d2e,#c08552)', cultura: 'linear-gradient(150deg,#862e9c,#f06595)',
-  compras: 'linear-gradient(150deg,#c2255c,#ff8787)', mercados: 'linear-gradient(150deg,#e67700,#ffd43b)', lazer: 'linear-gradient(150deg,#0c8599,#63e6be)',
-  atracoes: 'linear-gradient(150deg,#1f4fd8,#ffc83d)', hospedagem: 'linear-gradient(150deg,#364fc7,#748ffc)',
+/** Rótulo curto da categoria, para o selo do postal. */
+const SELO: Partial<Record<CategoriaLugar, string>> = {
+  restaurantes: 'Comer', bares: 'Bar', cafes: 'Café', 'vida-noturna': 'Noite', parques: 'Verde', praias: 'Praia', museus: 'Museu', historico: 'História',
+  cultura: 'Cultura', compras: 'Compras', mercados: 'Feira', lazer: 'Lazer', atracoes: 'Ponto', hospedagem: 'Pouso',
 };
+const hojeCurto = () => new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '').toUpperCase();
 
-function PostLugar({ p, aoAbrir, viagemDoDestino }: { p: Post; aoAbrir: () => void; viagemDoDestino: string | null }) {
+function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: string; aoAbrir: () => void; viagemDoDestino: string | null }) {
   const { salvos, alternarSalvo, preferencias } = useViajante();
-  const salvo = salvos.includes(p.id);
-  const [pulo, setPulo] = useState(0);
+  const quero = salvos.includes(p.id);
+  const [carimbou, setCarimbou] = useState(false);
   const ultimoToque = useRef(0);
   const navegar = useNavigate();
   const motivos = preferencias && p.lugar ? afinidade(p.lugar, preferencias).motivos.filter((m) => !m.startsWith('combina com o nível')) : [];
-  // Dois toques na foto salvam (como curtir); um toque abre o lugar.
+  const marcar = () => { if (!quero) setCarimbou(true); void alternarSalvo(p.id); };
+  // Dois toques na frente carimbam "Quero ir"; um toque abre o lugar.
   const tocar = () => {
     const agora = Date.now();
     if (agora - ultimoToque.current < 320) {
       ultimoToque.current = 0;
-      if (!salvo) void alternarSalvo(p.id);
-      setPulo((n) => n + 1);
+      if (!quero) marcar();
       return;
     }
     ultimoToque.current = agora;
     setTimeout(() => { if (ultimoToque.current === agora) aoAbrir(); }, 330);
   };
   const temImagem = p.curadoria ? temFoto(p.id) : Boolean(p.foto);
+  const selo = (p.categoria && SELO[p.categoria]) || 'Lugar';
   const fatos = [
     p.cozinha ? `Cozinha: ${p.cozinha.replace(/_/g, ' ').replace(/;/g, ', ')}` : null,
     p.gratuito ? 'Entrada grátis (informado no mapa)' : null,
@@ -72,64 +71,60 @@ function PostLugar({ p, aoAbrir, viagemDoDestino }: { p: Post; aoAbrir: () => vo
   ].filter(Boolean) as string[];
 
   return (
-    <article className="feed-post" aria-label={p.nome}>
-      <div className="feed-cabeca">
-        <span className="feed-avatar" aria-hidden="true">{p.foto ? <img src={p.foto} alt="" loading="lazy" /> : (p.nome.replace(/[^\p{L}]/gu, '')[0] ?? '·').toUpperCase()}</span>
-        <button type="button" className="r-btn" onClick={aoAbrir} style={{ textAlign: 'left', minWidth: 0, flex: 1 }}>
-          <span style={{ display: 'block', font: "600 15px/19px 'Lexend Exa'", letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.nome}</span>
-          <span style={{ display: 'block', fontSize: '12px', lineHeight: '16px', color: 'var(--texto-sec)' }}>{[p.tipo, p.bairro].filter(Boolean).join(' · ')}</span>
-        </button>
+    <article className="postal" aria-label={p.nome}>
+      <div className="postal-frente" role="button" tabIndex={0} aria-label={`${p.nome}: toque para ver, dois toques para marcar Quero ir`} onClick={tocar} onKeyDown={(e) => e.key === 'Enter' && aoAbrir()}
+        style={temImagem ? undefined : { aspectRatio: '16 / 9' }}>
+        {temImagem ? (
+          <>
+            {p.curadoria ? <FotoLugar id={p.id} proporcao="4 / 3" credito={false} /> : <img src={p.foto!} alt={`Foto de ${p.nome}`} loading="lazy" draggable={false} />}
+            <div className="postal-legenda"><small>{cidade} · {p.tipo}</small><b>{p.nome}</b></div>
+            <span className="postal-selo" aria-hidden="true"><span><i>{selo[0]}</i>{selo}</span></span>
+          </>
+        ) : (
+          <div className="postal-sem-foto" style={{ height: '100%' }}>
+            <span className="vazio" aria-hidden="true">sem foto livre ainda</span>
+            <small>{cidade} · {p.tipo}</small>
+            <b>{p.nome}</b>
+          </div>
+        )}
+        {quero ? <span className={`postal-carimbo${carimbou ? ' novo' : ''}`} aria-hidden="true"><small>{cidade.slice(0, 16)}</small>Quero ir<small>{hojeCurto()}</small></span> : null}
+      </div>
+      {p.foto && p.fotoPagina ? (
+        <a href={p.fotoPagina} target="_blank" rel="noreferrer" style={{ display: 'block', textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: Wikimedia Commons (autor e licença)</a>
+      ) : null}
+
+      <div className="postal-verso">
+        <div>
+          {motivos.length ? <><b>Por que você vai gostar:</b> {motivos.join(', ')}.</> : <span style={{ color: 'var(--texto-sec)' }}>{p.tipo}{p.bairro ? ` no bairro ${p.bairro}` : ''}.</span>}
+          {fatos.length ? <div style={{ color: 'var(--texto-sec)', fontSize: '13px', lineHeight: '18px', marginTop: '4px' }}>{fatos.join(' · ')}</div> : null}
+        </div>
+        <i aria-hidden="true" />
+        <div className="postal-endereco">
+          <div>{p.nome}</div>
+          {p.bairro ? <div>{p.bairro}</div> : null}
+          <div>{cidade}</div>
+        </div>
       </div>
 
-      <div className="feed-midia" role="button" tabIndex={0} aria-label={`${p.nome}: toque para ver, dois toques para salvar`} onClick={tocar} onKeyDown={(e) => e.key === 'Enter' && aoAbrir()}
-        style={temImagem ? undefined : { aspectRatio: '16 / 11', background: (p.categoria && COR[p.categoria]) || 'linear-gradient(150deg,#0b1f4b,#1f4fd8)' }}>
-        {p.curadoria && temImagem ? <FotoLugar id={p.id} proporcao="4 / 5" credito={false} />
-          : p.foto ? <img src={p.foto} alt={`Foto de ${p.nome}`} loading="lazy" draggable={false} />
-            : (
-              <div className="feed-texto">
-                <span style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.9 }}>{p.tipo}</span>
-                <b>{p.nome}</b>
-                {p.bairro ? <span style={{ fontSize: '15px', marginTop: '6px', opacity: 0.95 }}>{p.bairro}</span> : null}
-                <span style={{ fontSize: '12px', marginTop: '10px', opacity: 0.8 }}>Ainda sem foto livre deste lugar</span>
-              </div>
-            )}
-        {pulo ? <span key={pulo} className="feed-coracao" aria-hidden="true">♥</span> : null}
-        {p.foto && p.fotoPagina ? (
-          <a href={p.fotoPagina} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', right: 0, bottom: 0, padding: '2px 6px', background: 'rgba(0,0,0,.5)', color: '#fff', fontSize: '11px' }}>Foto: Wikimedia Commons</a>
-        ) : null}
-      </div>
-
-      <div className="feed-acoes">
-        <button type="button" className="r-btn feed-acao" aria-pressed={salvo} aria-label={salvo ? `Tirar ${p.nome} dos salvos` : `Salvar ${p.nome}`} onClick={() => { if (!salvo) setPulo((n) => n + 1); void alternarSalvo(p.id); }}>
-          <span className="ico" aria-hidden="true">{salvo ? '♥' : '♡'}</span>
-        </button>
+      <div className="postal-acoes">
+        <button type="button" className="r-btn postal-acao" aria-pressed={quero} onClick={marcar}>{quero ? '✓ Quero ir' : '+ Quero ir'}</button>
         {p.lugar ? (
-          <button type="button" className="r-btn feed-acao" onClick={() => navegar(`/lugar/${p.id}${viagemDoDestino ? `?viagem=${viagemDoDestino}` : ''}`)}>
-            <span className="ico" aria-hidden="true">＋</span>{viagemDoDestino ? 'No roteiro' : 'Viagem'}
-          </button>
+          <button type="button" className="r-btn postal-acao" onClick={() => navegar(`/lugar/${p.id}${viagemDoDestino ? `?viagem=${viagemDoDestino}` : ''}`)}>{viagemDoDestino ? 'No roteiro' : 'Na viagem'}</button>
         ) : null}
         {typeof p.lat === 'number' && typeof p.lon === 'number' ? (
-          <a className="feed-acao" href={`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`} target="_blank" rel="noreferrer">
-            <span className="ico" aria-hidden="true">➚</span>Mapa
-          </a>
+          <a className="postal-acao" href={`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`} target="_blank" rel="noreferrer">Mapa</a>
         ) : null}
         <span style={{ flex: 1 }} />
-        <button type="button" className="r-btn feed-acao" onClick={aoAbrir} style={{ color: 'var(--azul)' }}>Ver mais ›</button>
-      </div>
-
-      <div className="feed-legenda">
-        {salvo ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--vermelho)' }}>♥ Salvo nos seus lugares</div> : null}
-        {motivos.length ? <div><b>Por que você vai gostar:</b> {motivos.join(', ')}.</div> : null}
-        {fatos.length ? <div style={{ color: 'var(--texto-sec)', fontSize: '13px', lineHeight: '18px', marginTop: '2px' }}>{fatos.join(' · ')}</div> : null}
+        <button type="button" className="r-btn postal-acao" onClick={aoAbrir} style={{ color: 'var(--azul)' }}>Ver ›</button>
       </div>
     </article>
   );
 }
 
 /**
- * Feed de lugares no estilo de rede social (D-031): destaques redondos por categoria, fotos grandes,
- * dois toques para salvar e rolagem sem fim. Só fotos livres de verdade (Wikimedia Commons);
- * lugar sem foto vira cartão de texto colorido — nunca foto de outro lugar.
+ * Mural de cartões-postais (D-031/D-032): selos por categoria, cada lugar um postal (frente com foto
+ * e selo, verso com o porquê e o endereço), "Quero ir" carimba o postal, rolagem sem fim.
+ * Só fotos livres de verdade (Wikimedia Commons); lugar sem foto aparece como o verso do postal.
  */
 export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; aoAbrir: (id: string) => void; viagem: string | null }) {
   const { preferencias } = useViajante();
@@ -191,22 +186,22 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
 
   return (
     <section aria-label={`Feed de lugares em ${destino.nome}`}>
-      <div className="feed-destaques" role="group" aria-label="Destaques por categoria">
-        <button type="button" className="r-btn feed-destaque" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
-          <span className="feed-anel"><span><span className="feed-inicial">★</span></span></span>Para você
+      <div className="mural-selos" role="group" aria-label="Selos por categoria">
+        <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
+          <span className="mural-selo-borda"><span>★</span></span>Para você
         </button>
         {cats.map((c) => {
           const capa = capas.get(c);
           return (
-            <button key={c} type="button" className="r-btn feed-destaque" aria-pressed={categoria === c} onClick={() => setCategoria(categoria === c ? null : c)}>
-              <span className="feed-anel"><span>{capa?.foto ? <img src={capa.foto} alt="" loading="lazy" /> : <span className="feed-inicial">{CATEGORIAS_LUGAR[c].nome[0]}</span>}</span></span>
+            <button key={c} type="button" className="r-btn mural-selo" aria-pressed={categoria === c} onClick={() => setCategoria(categoria === c ? null : c)}>
+              <span className="mural-selo-borda"><span>{capa?.foto ? <img src={capa.foto} alt="" loading="lazy" /> : CATEGORIAS_LUGAR[c].nome[0]}</span></span>
               {CATEGORIAS_LUGAR[c].nome.split(' ')[0]}
             </button>
           );
         })}
       </div>
-      {posts.map((p) => <PostLugar key={p.id} p={p} aoAbrir={() => aoAbrir(p.id)} viagemDoDestino={viagemDoDestino} />)}
-      {carregando ? <div className="feed-esqueleto" aria-label="Carregando mais lugares" /> : null}
+      {posts.map((p) => <Postal key={p.id} p={p} cidade={destino.nome} aoAbrir={() => aoAbrir(p.id)} viagemDoDestino={viagemDoDestino} />)}
+      {carregando ? <div className="mural-esqueleto" aria-label="Carregando mais lugares" /> : null}
       <div ref={fundo} style={{ height: '1px' }} />
       {fim && !carregando ? (
         <p style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)', textAlign: 'center', margin: '16px 0 0' }}>

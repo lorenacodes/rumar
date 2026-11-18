@@ -28,7 +28,7 @@ try {
   await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2500); await auditar('inicio');
   await p.goto(URL + '#/entrar'); await p.waitForTimeout(800); await auditar('entrar');
   await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4500);
-  for (const [rota, nome] of [['#/descobrir?d=br-2927408', 'descobrir'], ['#/viagens', 'viagens'], ['#/viagens/nova', 'nova-viagem'], ['#/social', 'social'], ['#/perfil', 'perfil'], ['#/perfil/privacidade', 'privacidade']]) {
+  for (const [rota, nome] of [['#/descobrir?d=br-2927408', 'descobrir'], ['#/viagens', 'viagens'], ['#/viagens/nova', 'nova-viagem'], ['#/perfil/amigos', 'amigos'], ['#/perfil', 'perfil'], ['#/perfil/privacidade', 'privacidade']]) {
     await p.goto(URL + rota); await p.waitForTimeout(3000); await auditar(nome);
   }
   await p.goto(URL + '#/viagens'); await p.waitForTimeout(2500); await p.locator('main button').filter({ hasText: /Faltam/ }).first().click(); await p.waitForTimeout(3500); await auditar('viagem-etapas');

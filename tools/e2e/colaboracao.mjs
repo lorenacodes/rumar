@@ -67,7 +67,7 @@ await ana.getByLabel('Descrição').fill('Passagem ida e volta (2 pessoas)'); aw
 await ana.getByRole('button', { name: 'Adicionar gasto' }).click(); await ana.waitForTimeout(2000);
 console.log('    depois da passagem:', (await texto(ana, 200)).match(/R\$\s?[\d.]+/g)?.slice(0, 2).join(' / '));
 console.log('— 10. Amizade e convite');
-await ana.getByRole('button', { name: 'Social', exact: true }).click(); await ana.waitForTimeout(1000);
+await ana.getByRole('button', { name: 'Perfil', exact: true }).click(); await ana.waitForTimeout(1500); await ana.getByRole('button', { name: /^Amigos/ }).click(); await ana.waitForTimeout(1000);
 await ana.locator('#busca-pessoa').fill('Bia'); await ana.waitForTimeout(1500);
 // Se já forem amigas (de uma execução anterior), segue sem pedir de novo.
 if (await ana.getByRole('button', { name: 'Adicionar' }).count()) { await ana.getByRole('button', { name: 'Adicionar' }).first().click(); await ana.waitForTimeout(1200); }

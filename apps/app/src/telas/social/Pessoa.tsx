@@ -32,7 +32,7 @@ export function Pessoa() {
         ))}
         {!viagens.length ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: 0 }}>{p?.amigos ? 'Nenhuma viagem compartilhada com os amigos ainda.' : 'Viagens aparecem aqui quando vocês forem amigos e ela compartilhar.'}</p> : null}
         {p?.amigos ? (
-          <button type="button" className="r-btn" onClick={() => { if (window.confirm('Desfazer a amizade?')) void desfazerAmizade(id).then(() => navegar('/social')); }} style={{ marginTop: '20px', minHeight: '44px', color: 'var(--vermelho)', fontWeight: 600 }}>Desfazer amizade</button>
+          <button type="button" className="r-btn" onClick={() => { if (window.confirm('Desfazer a amizade?')) void desfazerAmizade(id).then(() => navegar('/perfil/amigos')); }} style={{ marginTop: '20px', minHeight: '44px', color: 'var(--vermelho)', fontWeight: 600 }}>Desfazer amizade</button>
         ) : null}
       </div>
     </main>

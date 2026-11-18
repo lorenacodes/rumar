@@ -44,8 +44,8 @@ function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
           {it.detalhe ? <span style={{ display: 'block', fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{it.detalhe}</span> : null}
         </span>
       </button>
-      <button type="button" className="r-btn" aria-pressed={salvo} aria-label={salvo ? `Tirar ${it.nome} dos salvos` : `Salvar ${it.nome}`} onClick={() => void alternarSalvo(it.id)}
-        style={{ width: '44px', height: '44px', flex: 'none', fontSize: '22px', color: salvo ? 'var(--vermelho)' : 'var(--texto-sec)' }}>{salvo ? '♥' : '♡'}</button>
+      <button type="button" className="r-btn" aria-pressed={salvo} aria-label={salvo ? `Tirar ${it.nome} do Quero ir` : `Quero ir: ${it.nome}`} onClick={() => void alternarSalvo(it.id)}
+        style={{ minWidth: '44px', height: '44px', flex: 'none', color: salvo ? 'var(--carimbo)' : 'var(--texto-sec)', font: "700 13px 'Open Sans'", padding: '0 6px', whiteSpace: 'nowrap' }}>{salvo ? '✓ Quero ir' : '+ Quero ir'}</button>
     </li>
   );
 }
@@ -148,7 +148,7 @@ export function Descobrir() {
   const chips: { id: Filtro; nome: string }[] = [
     { id: 'para-voce', nome: 'Para você' },
     { id: 'todos', nome: 'Tudo' },
-    { id: 'salvos', nome: `Salvos${salvos.length ? ` (${salvos.length})` : ''}` },
+    { id: 'salvos', nome: `Quero ir${salvos.length ? ` (${salvos.length})` : ''}` },
     ...ORDEM_CATEGORIAS.map((c) => ({ id: c, nome: `${CATEGORIAS_LUGAR[c].nome}${porCat.get(c) ? ` (${porCat.get(c)!.quantidade}${porCat.get(c)!.limite_atingido ? '+' : ''})` : ''}` })),
   ];
 
@@ -179,7 +179,7 @@ export function Descobrir() {
               <div role="group" aria-label="Outras formas de ver" style={{ display: 'flex', gap: '16px', marginTop: '8px', fontSize: '14px', fontWeight: 600 }}>
                 <button type="button" className="r-btn alvo-toque" onClick={() => setParams((p) => { const n = new URLSearchParams(p); n.set('modo', 'lista'); return n; }, { replace: true })} style={{ color: 'var(--azul)' }}>Lista e filtros</button>
                 <button type="button" className="r-btn alvo-toque" onClick={() => setMapa(true)} style={{ color: 'var(--azul)' }}>Mapa</button>
-                <button type="button" className="r-btn alvo-toque" onClick={() => mudarFiltro('salvos')} style={{ color: 'var(--azul)' }}>♥ Salvos{salvos.length ? ` (${salvos.length})` : ''}</button>
+                <button type="button" className="r-btn alvo-toque" onClick={() => mudarFiltro('salvos')} style={{ color: 'var(--azul)' }}>Quero ir{salvos.length ? ` (${salvos.length})` : ''}</button>
               </div>
             ) : (
               <>
@@ -271,7 +271,7 @@ export function Descobrir() {
               <button type="button" className="r-btn" onClick={() => setPagina(pagina + 1)} style={{ width: '100%', height: '48px', marginTop: '8px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'" }}>Ver mais ({total - itens.length} restantes)</button>
             ) : null}
             {!feed && !carregando && !itens.length && !semColeta ? (
-              <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{filtro === 'salvos' ? 'Toque no ♡ de um lugar para guardar aqui.' : termo ? 'Nada com esse nome nos lugares já coletados.' : 'Nada nesta categoria nos lugares já coletados.'}</p>
+              <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{filtro === 'salvos' ? 'Toque em "+ Quero ir" num lugar para guardar aqui.' : termo ? 'Nada com esse nome nos lugares já coletados.' : 'Nada nesta categoria nos lugares já coletados.'}</p>
             ) : null}
             <div style={{ height: '24px' }} />
           </>
