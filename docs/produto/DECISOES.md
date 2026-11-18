@@ -511,3 +511,18 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   ignora transporte.
 - **Limite honesto:** ~2.500 das 5.000 têm artigo em português; as outras aparecem com nome (às vezes em
   inglês) e sem "Você sabia?", depois das primeiras.
+
+## D-040 — Visual novo: sem contornos, fotos até a beira
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("tire todas as bordas laterais; design antigo com cara de IA, não
+  fica moderno") — escolheu "os dois": contornos das caixas e margens das fotos/cartões.
+- **O que mudou (no app):** botões, opções, abas e caixas perderam as linhas em volta; ganharam fundo
+  suave (azul-claro) e cantos arredondados (10–14 px). O que antes era destacado pelo contorno escuro
+  (opção escolhida) agora fica com fundo escuro e texto claro. Botão principal amarelo arredondado.
+  Postais do mural e convite de curiosidades vão de ponta a ponta da tela; o texto mantém a margem para
+  ler bem. Fotos não arredondam.
+- **Como:** um arquivo só, `styles/visual.css`, por cima do desenho (sem mexer em cada tela). O modo de
+  comparação com o design (`/dev/telas`, classe `modo-design`) continua igual ao original, para o teste
+  visual (159/159) seguir pegando mudanças sem querer. Acessibilidade: sem problemas (axe).
+- **Próximo passo sugerido:** atualizar o arquivo do design para este visual, para a referência voltar a
+  ser o próprio design.

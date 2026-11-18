@@ -11,7 +11,10 @@ export function DevTela() {
   const [pronto, setPronto] = useState(false);
   useLayoutEffect(() => {
     usePlano.setState(PLANO_ANA);
+    // Comparação com o design: visual original (sem o visual novo da D-040).
+    document.documentElement.classList.add('modo-design');
     setPronto(true);
+    return () => document.documentElement.classList.remove('modo-design');
   }, []);
   const Tela = TELAS[id];
   if (!Tela) return <p style={{ padding: 20 }}>Tela {id} ainda não implementada.</p>;

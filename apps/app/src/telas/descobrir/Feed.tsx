@@ -310,7 +310,7 @@ export function ConviteCuriosidades() {
   useEffect(() => void curiosidades(0, 1).then((l) => setC(l[0] ?? null)), []);
   if (!c) return null;
   return (
-    <button type="button" className="r-btn" onClick={() => navegar(`/curiosos?c=${c.id}`)} aria-label={`Curiosidades do mundo: ${c.nome}`}
+    <button type="button" className="r-btn convite-curiosidades" onClick={() => navegar(`/curiosos?c=${c.id}`)} aria-label={`Curiosidades do mundo: ${c.nome}`}
       style={{ position: 'relative', display: 'block', width: '100%', height: '150px', marginTop: '12px', overflow: 'hidden', background: 'var(--fundo-escuro)', textAlign: 'left' }}>
       <img src={c.foto} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(1.1) contrast(1.05) brightness(0.8)' }} onError={() => setC(null)} />
       <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '30px 14px 12px', background: 'linear-gradient(transparent, rgba(6,14,36,.85))', color: '#fff' }}>

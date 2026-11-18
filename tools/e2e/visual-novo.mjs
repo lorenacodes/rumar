@@ -1,0 +1,21 @@
+/** Fotos das principais telas com o visual novo (D-040), sem conta e com conta. */
+import { mkdirSync } from 'node:fs';
+import { chromium } from 'playwright';
+const OUT = 'tools/e2e/out/visual-novo'; mkdirSync(OUT, { recursive: true });
+const URL = 'http://localhost:8793/';
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
+const p = await (await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })).newPage();
+await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(3000);
+const foto = async (n, rota, espera = 4000) => { if (rota) await p.goto(URL + rota); await p.waitForTimeout(espera); await p.screenshot({ path: `${OUT}/${n}.png` }); };
+await foto('01-inicio', '#/inicio');
+await foto('02-descobrir', '#/descobrir');
+await foto('03-descobrir-rio', '#/descobrir?d=br-3304557');
+await foto('04-lugar', '#/lugar/osm-r4514671');
+await foto('05-nova-viagem', '#/viagens/nova?d=br-3304557');
+await p.goto(URL + '#/entrar'); await p.waitForTimeout(1500); await foto('06-entrar', null, 500);
+await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await foto('07-perfil', '#/perfil');
+await foto('08-viagem-roteiro', '#/viagem/757a544d-0c1c-4b41-ba3e-1da1715af18b?aba=roteiro');
+await foto('09-viagem-dinheiro', '#/viagem/757a544d-0c1c-4b41-ba3e-1da1715af18b?aba=dinheiro');
+await foto('10-jeito', '#/perfil-viajante');
+await b.close();

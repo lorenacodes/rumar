@@ -1,0 +1,87 @@
+/*
+ * Visual novo (D-040, pedido da fundadora em 18/11/2026): sem contornos em volta de botões, opções e
+ * caixas — fundo suave e cantos arredondados no lugar — e fotos/cartões até a beira da tela.
+ * Vale no app; o modo de comparação com o design (/dev/telas, classe .modo-design no <html>) continua
+ * idêntico ao design original, para o teste visual seguir protegendo contra mudanças sem querer.
+ */
+html:not(.modo-design) {
+  --raio: 14px;
+  --raio-p: 10px;
+  --fundo-suave: var(--cartao-2);
+}
+
+/* 1. Contornos fora. Linhas finas entre itens de lista (só em cima/embaixo) continuam. */
+html:not(.modo-design) .tela [style*="border: 1px solid"]:not([style*="border-radius: 50%"]),
+html:not(.modo-design) .tela [style*="border: 2px solid"]:not([style*="border-radius: 50%"]),
+html:not(.modo-design) .tela [style*="border: 1px dashed"]:not([style*="border-radius: 50%"]),
+html:not(.modo-design) .tela [style*="border: 2px dashed"]:not([style*="border-radius: 50%"]),
+html:not(.modo-design) .tela [style*="border: 3px solid"]:not([style*="border-radius: 50%"]) {
+  border-color: transparent !important;
+  border-radius: var(--raio-p) !important;
+}
+/* O que tinha só contorno (sem fundo) ganha um fundo suave para continuar parecendo tocável. */
+html:not(.modo-design) .tela [style*="border: 1px solid"]:not([style*="border-radius: 50%"]):not([style*="background"]),
+html:not(.modo-design) .tela [style*="border: 2px solid"]:not([style*="border-radius: 50%"]):not([style*="background"]),
+html:not(.modo-design) .tela [style*="border: 1px dashed"]:not([style*="border-radius: 50%"]):not([style*="background"]),
+html:not(.modo-design) .tela [style*="border: 2px dashed"]:not([style*="border-radius: 50%"]):not([style*="background"]) {
+  background-color: var(--fundo-suave) !important;
+}
+/* O que tinha contorno escuro (2px) era o escolhido/destacado: ganha fundo mais forte. */
+html:not(.modo-design) .tela [style*="border: 2px solid var(--texto)"]:not([style*="border-radius: 50%"]) {
+  background-color: var(--cartao-1) !important;
+}
+html:not(.modo-design) .tela [aria-pressed='true'][style*="border: 2px solid var(--texto)"]:not([style*="border-radius: 50%"]),
+html:not(.modo-design) .tela [aria-checked='true'][style*="border: 2px solid var(--texto)"]:not([style*="border-radius: 50%"]) {
+  background-color: var(--fundo-escuro) !important;
+  color: #fff !important;
+}
+html:not(.modo-design) .tela [aria-checked='true'] *,
+html:not(.modo-design) .tela [aria-pressed='true'][style*="border: 2px solid var(--texto)"]:not([style*="border-radius: 50%"]) * { color: inherit !important; }
+/* Botões de ação vermelhos (excluir, recusar): o texto continua vermelho, com fundo suave avermelhado. */
+html:not(.modo-design) .tela [style*="border: 2px solid var(--vermelho)"]:not([style*="border-radius: 50%"]) {
+  background-color: color-mix(in srgb, var(--vermelho) 10%, transparent) !important;
+}
+/* Botões e opções com fundo (amarelo, escuro, azul) ficam arredondados. */
+html:not(.modo-design) .tela .r-btn[style*="background"]:not(.postal-frente):not([role='tab'][style*="box-shadow"]),
+html:not(.modo-design) .botao-principal {
+  border-radius: var(--raio-p) !important;
+}
+html:not(.modo-design) .botao-principal { border-radius: var(--raio) !important; }
+/* Caixas de destaque (avisos, painéis) arredondadas. */
+html:not(.modo-design) .tela div[style*="background: var(--cartao-1)"]:not(:has(img)),
+html:not(.modo-design) .tela div[style*="background: var(--cartao-2)"]:not(:has(img)),
+html:not(.modo-design) .tela div[style*="background: var(--fundo-escuro)"]:not(.gabinete):not(:has(img)) {
+  border-radius: var(--raio-p);
+}
+
+/* Selos e postais do mural: sem contorno. */
+html:not(.modo-design) .postal-selo > span { border: 0; border-radius: 6px; }
+html:not(.modo-design) .postal-sem-foto { border: 0; }
+html:not(.modo-design) .postal-sem-foto .vazio { border: 0; background: var(--cartao-2); border-radius: 6px; }
+
+/* 2. Fotos e cartões até a beira da tela (o texto continua com margem para ler bem). */
+html:not(.modo-design) .postal {
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 0;
+  transform: none !important;
+  box-shadow: none;
+  background: transparent;
+}
+html:not(.modo-design) .postal + .postal { margin-top: 26px; }
+html:not(.modo-design) .postal-verso,
+html:not(.modo-design) .postal-acoes,
+html:not(.modo-design) .postal > a { padding-left: 20px; padding-right: 20px; }
+html:not(.modo-design) .postal-acoes { border-top: 0; }
+html:not(.modo-design) .mural-esqueleto { margin-left: -20px; margin-right: -20px; }
+html:not(.modo-design) .convite-curiosidades { margin-left: -20px !important; margin-right: -20px !important; width: calc(100% + 40px) !important; }
+html:not(.modo-design) .ficha-etiqueta { margin-left: 0; margin-right: 0; border-radius: var(--raio) var(--raio) 0 0; }
+
+/* Botões de largura cheia com fundo: texto centralizado. */
+html:not(.modo-design) .tela button.r-btn[style*="height: 48px"][style*="background"],
+html:not(.modo-design) .tela button.r-btn[style*="height: 46px"][style*="background"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
