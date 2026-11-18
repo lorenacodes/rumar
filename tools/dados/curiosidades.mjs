@@ -32,18 +32,17 @@ if (!/atlas obscura/i.test(rotulo)) {
 console.log(`P7772 = "${rotulo}" (conferido)`);
 
 // 2) Lugares (um pedido ao serviço SPARQL; ordem: mais Wikipédias primeiro).
-const sparql = `SELECT ?item ?itemLabel ?desc ?paisLabel ?coord ?img ?links ?titulo WHERE {
+const sparql = `SELECT ?item ?itemLabel ?desc ?paisLabel ?coord ?img ?links WHERE {
   ?item wdt:P7772 ?ao ; wdt:P18 ?img ; wdt:P625 ?coord ; wikibase:sitelinks ?links .
   FILTER(?links >= 2)
   OPTIONAL { ?item wdt:P17 ?pais . }
   OPTIONAL { ?item schema:description ?desc . FILTER(LANG(?desc) = "pt") }
-  OPTIONAL { ?artigo schema:about ?item ; schema:isPartOf <https://pt.wikipedia.org/> ; schema:name ?titulo . }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "pt,pt-br,en". }
-} ORDER BY DESC(?links) LIMIT ${LIMITE * 2}`;
+} ORDER BY DESC(?links) LIMIT ${Math.round(LIMITE * 1.3)}`;
 let linhas = [];
-for (let t = 0; t < 3 && !linhas.length; t++) {
+for (let t = 0; t < 5 && !linhas.length; t++) {
   const r = await fetch(`https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparql)}`, { headers: { 'User-Agent': UA, Accept: 'application/sparql-results+json' } });
-  if (r.ok) linhas = (await r.json()).results.bindings; else { console.log(`SPARQL ${r.status}, tentando de novo`); await espera(20000); }
+  if (r.ok) linhas = (await r.json()).results.bindings; else { console.log(`SPARQL ${r.status}, tentando de novo`); await espera(30000); }
 }
 console.log(`${linhas.length} linhas do Wikidata`);
 const porId = new Map();
@@ -61,11 +60,25 @@ for (const l of linhas) {
     lon: Number(m[1]), lat: Number(m[2]),
     foto: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(arquivo)}?width=900`,
     foto_pagina: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(arquivo.replace(/ /g, '_'))}`,
-    fama: Number(l.links.value) || 0, titulo: l.titulo?.value ?? null, resumo: null, resumo_url: null,
+    fama: Number(l.links.value) || 0, titulo: null, resumo: null, resumo_url: null,
   });
   if (porId.size >= LIMITE) break;
 }
 const itens = [...porId.values()];
+// Título do artigo em português (sitelink ptwiki), 50 itens por pedido — mais leve que juntar no SPARQL.
+const qs = itens.map((c) => c.id.slice(3));
+for (let k = 0; k < qs.length; k += 50) {
+  const lote = qs.slice(k, k + 50);
+  try {
+    const r = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=sitelinks&sitefilter=ptwiki&ids=${lote.join('|')}`, { headers: { 'User-Agent': UA } });
+    const d = r.ok ? await r.json() : { entities: {} };
+    for (const q of lote) {
+      const t = d.entities?.[q]?.sitelinks?.ptwiki?.title;
+      if (t) porId.get(q).titulo = t;
+    }
+  } catch { /* segue sem título */ }
+  await espera(400);
+}
 console.log(`${itens.length} curiosidades com foto; ${itens.filter((i) => i.titulo).length} com artigo em português`);
 
 // 3) Primeira frase do resumo em português.
