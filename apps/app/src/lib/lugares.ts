@@ -6,6 +6,7 @@
  * quantos lugares vieram, de quando são os dados e se a busca bateu no limite (parcial).
  */
 import { sinalNivel } from './nivel';
+import { gruposDeCozinha, TERMOS_COZINHA, type Cozinha } from './comida';
 import { supabase } from './supabase';
 import { registrarLugares } from './catalogo';
 import type { Categoria, Lugar, Periodo } from './planejador';
@@ -240,16 +241,24 @@ export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
 }
 
 /** Candidatos para montar um roteiro automático: os mais documentados de cada categoria. */
-export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto'): Promise<Lugar[]> {
+export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto', cozinhas: Cozinha[] = []): Promise<Lugar[]> {
   const cats = ORDEM_CATEGORIAS.filter((c) => CATEGORIAS_LUGAR[c].roteiro);
   const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
   // Viagem de nível conforto: traz também restaurantes de cozinha especial e programas pagos
   // (parque temático, marina, zoológico…) que podem não estar entre os mais documentados.
   if (nivel === 'conforto') {
     consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', 'restaurantes').eq('tipo', 'restaurant')
-      .or('cozinha.ilike.%french%,cozinha.ilike.%japanese%,cozinha.ilike.%sushi%,cozinha.ilike.%steak%,cozinha.ilike.%seafood%,cozinha.ilike.%italian%,cozinha.ilike.%portuguese%,cozinha.ilike.%mediterranean%,cozinha.ilike.%peruvian%,cozinha.ilike.%fine_dining%')
+      .or('cozinha.ilike.%frances%,cozinha.ilike.%french%,cozinha.ilike.%japon%,cozinha.ilike.%sushi%,cozinha.ilike.%churrascaria%,cozinha.ilike.%frutos do mar%,cozinha.ilike.%italian%,cozinha.ilike.%portugu%,cozinha.ilike.%mediterranean%,cozinha.ilike.%peru%,cozinha.ilike.%fine dining%')
       .not('site', 'is', null).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(30));
     consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('tipo', ['theme_park', 'water_park', 'marina', 'zoo', 'aquarium']).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(15));
+  }
+  // Comida da pessoa (D-041): restaurantes das cozinhas que ela adora ou que a dieta favorece,
+  // mesmo que não estejam entre os mais conhecidos da cidade.
+  const termos = [...new Set(cozinhas.flatMap((c) => TERMOS_COZINHA[c] ?? []))];
+  if (termos.length) {
+    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('categoria', ['restaurantes', 'cafes'])
+      .or(termos.map((t) => `cozinha.ilike.%${t.replace(/[,()%]/g, '')}%`).join(',')).not('tipo', 'in', '(fast_food,food_court)')
+      .gte('relevancia', 0).order('relevancia', { ascending: false }).limit(25));
   }
   const res = await Promise.all(consultas);
   const vistos = new Set<string>();
@@ -284,6 +293,8 @@ export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { de
     // Lugar bem documentado (foto/Wikidata/horário): tende a ser um dos mais conhecidos.
     destaque: (b.relevancia ?? 0) >= 3 || (b.fama ?? 0) >= 3,
     fama: b.fama ?? 0,
+    cozinhas: gruposDeCozinha(b.cozinha),
+    pais: b.destino_id.slice(0, 2),
     nivel: sinalNivel(b),
     ...(PONTOS_MENORES.has(b.tipo) ? { menor: true } : {}),
   };

@@ -526,3 +526,20 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   visual (159/159) seguir pegando mudanças sem querer. Acessibilidade: sem problemas (axe).
 - **Próximo passo sugerido:** atualizar o arquivo do design para este visual, para a referência voltar a
   ser o próprio design.
+
+## D-041 — Comida no jeito de viajar
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora (vegetariano, pescetariano, cozinhas favoritas, o que não gosta,
+  provar coisas novas).
+- **Etapa nova "E na comida?"** no jeito de viajar: dieta (como de tudo, vegetariana, vegana,
+  pescetariana), "Adoro" e "Não quero no roteiro" entre 17 cozinhas (japonesa e sushi, chinesa,
+  italiana, pizza, brasileira, peixes, carnes, árabe, mexicana…) e "Quero provar a comida típica do lugar".
+- **No roteiro e no "Para você":** o que a pessoa não come ou não quer sai (ex.: churrascaria para
+  vegetariano; carne para pescetariano); cozinhas favoritas e as da dieta sobem e trazem o motivo
+  ("você adora comida japonesa", "opção vegetariana", "comida típica do lugar"); a busca de candidatos
+  traz restaurantes dessas cozinhas mesmo fora dos mais conhecidos; a mesma cozinha repetida na viagem
+  pesa (variedade). Em grupo: a dieta mais restrita vale para todos, o que alguém não come sai.
+- **Correção junto:** a busca de restaurantes do nível Conforto usava termos em inglês, mas a base guarda
+  a cozinha em português — quase nunca achava.
+- **Limite honesto:** usamos o tipo de cozinha informado no mapa; muitos restaurantes não dizem se têm
+  opção vegetariana (dito no app, atrás do "Sobre os restaurantes").

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles/feed.css';
 import { DESTINO_CURADORIA, horarioLegivel, LUGARES } from '../../lib/catalogo';
 import { basePorId, capasPorCategoria, type CategoriaLugar, CATEGORIAS_LUGAR, type Destino, feedLugares, type LugarBase, lugaresCuriosos, muralGeral, nomeTipo, ORDEM_CATEGORIAS, paraLugar } from '../../lib/lugares';
-import { afinidade, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
+import { afinidade, filtrar, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
 import { listarViagens } from '../../lib/viagens';
 import { curiosidades, type Curiosidade } from '../../lib/curiosidades';
 import { fotosAprovadas } from '../../lib/fotosEnviadas';
@@ -175,6 +175,8 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
       if (pagina === 0 && destino.id === DESTINO_CURADORIA && !categoria) novos = [...LUGARES.filter((l) => temFoto(l.id)).map(deCuradoria), ...novos];
       // Dentro de cada página, o que mais combina com o jeito de viajar vem antes (fotos primeiro).
       if (preferencias) {
+        // "Para você": o que a pessoa não come ou não quer (D-041) não aparece.
+        if (!categoria) novos = novos.filter((x) => !x.lugar || filtrar([x.lugar], preferencias).length > 0);
         const pontos = (x: Post) => (x.lugar ? afinidade(x.lugar, preferencias).pontos : 0) + (x.foto || x.curadoria ? 100 : 0);
         novos.sort((a, b) => pontos(b) - pontos(a));
       }
@@ -256,6 +258,7 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
       if (!vivo) return;
       let novos = itens.map(deBase);
       if (preferencias) {
+        if (!categoria) novos = novos.filter((x) => !x.lugar || filtrar([x.lugar], preferencias).length > 0);
         // Dentro da página, o que combina com o jeito de viajar vem antes (sem juntar uma cidade só).
         const pontos = (x: Post) => (x.lugar ? afinidade(x.lugar, preferencias).pontos : 0);
         novos = [...novos].sort((a, b) => pontos(b) - pontos(a));

@@ -1,4 +1,7 @@
 import { useState, type ReactNode } from 'react';
+import { NOME_COZINHA, NOME_DIETA, ORDEM_COZINHAS, type Dieta } from '../../lib/comida';
+import { Info } from '../../ui/info';
+import { Rotulo } from '../viagens/comum';
 import { Check } from '../../ui/check';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,6 +41,7 @@ const EVITAR: { id: Evitar; nome: string }[] = [
 const PADRAO: Preferencias = {
   estilo: 'equilibrado', gostos: [], ritmo: 'balanced', evitar: [], orcamento: 'intermediario',
   gratuitos: false, periodo: 'ambos', local: false, deslocamento: 'ambos',
+  dieta: 'tudo', cozinhasAmo: [], cozinhasEvito: [], provar: true,
 };
 
 function hojeMais(dias: number): string {
@@ -88,7 +92,7 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
   const [p, setP] = useState<Preferencias>(preferencias ?? PADRAO);
   const [dataIda, setDataIda] = useState(viagem?.dataIda ?? hojeMais(60));
   const [noites, setNoites] = useState(viagem?.noites ?? 5);
-  const etapas = soPerfil ? ['estilo', 'gostos', 'ritmo', 'evitar', 'orcamento'] : ['viagem', 'estilo', 'gostos', 'ritmo', 'evitar', 'orcamento'];
+  const etapas = soPerfil ? ['estilo', 'gostos', 'comida', 'ritmo', 'evitar', 'orcamento'] : ['viagem', 'estilo', 'gostos', 'comida', 'ritmo', 'evitar', 'orcamento'];
   const [i, setI] = useState(0);
   const etapa = etapas[i];
   const [salvando, setSalvando] = useState(false);
@@ -160,6 +164,27 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
               {GOSTOS.map((g) => <Marcar key={g.id} marcada={p.gostos.includes(g.id)} aoTocar={() => muda({ gostos: alterna(p.gostos, g.id) })}>{g.nome}</Marcar>)}
             </Grupo>
             {!p.gostos.length ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '12px' }}>Marque pelo menos uma opção para seguir.</div> : null}
+          </>
+        ) : null}
+
+        {etapa === 'comida' ? (
+          <>
+            <h1 style={titulo}>E na comida?</h1>
+            <div role="radiogroup" aria-label="Alimentação" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '14px' }}>
+              {(['tudo', 'vegetariana', 'vegana', 'pescetariana'] as Dieta[]).map((d) => <Marcar key={d} unico marcada={(p.dieta ?? 'tudo') === d} aoTocar={() => muda({ dieta: d })}>{NOME_DIETA[d]}</Marcar>)}
+            </div>
+            <Rotulo>Adoro</Rotulo>
+            <Grupo rotulo="Cozinhas que adoro">
+              {ORDEM_COZINHAS.map((c) => <Marcar key={c} marcada={(p.cozinhasAmo ?? []).includes(c)} aoTocar={() => muda({ cozinhasAmo: alterna(p.cozinhasAmo ?? [], c), cozinhasEvito: (p.cozinhasEvito ?? []).filter((x) => x !== c) })}>{NOME_COZINHA[c]}</Marcar>)}
+            </Grupo>
+            <Rotulo>Não quero no roteiro</Rotulo>
+            <Grupo rotulo="Cozinhas que não quero">
+              {ORDEM_COZINHAS.map((c) => <Marcar key={c} marcada={(p.cozinhasEvito ?? []).includes(c)} aoTocar={() => muda({ cozinhasEvito: alterna(p.cozinhasEvito ?? [], c), cozinhasAmo: (p.cozinhasAmo ?? []).filter((x) => x !== c) })}>{NOME_COZINHA[c]}</Marcar>)}
+            </Grupo>
+            <div style={{ marginTop: '14px' }}>
+              <Marcar marcada={p.provar !== false} aoTocar={() => muda({ provar: !(p.provar !== false) })}>Quero provar a comida típica do lugar</Marcar>
+            </div>
+            <Info rotulo="Sobre os restaurantes" style={{ marginTop: '10px' }}>Usamos o tipo de cozinha informado no mapa. Muitos restaurantes não dizem se têm opção vegetariana: confira no local.</Info>
           </>
         ) : null}
 

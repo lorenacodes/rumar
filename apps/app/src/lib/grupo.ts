@@ -32,6 +32,11 @@ export function mesclar(pessoas: Pessoa[]): Preferencias | null {
     periodo: new Set(com.map((p) => p.periodo)).size === 1 ? com[0]!.periodo : 'ambos',
     local: com.filter((p) => p.local).length * 2 > com.length,
     deslocamento: new Set(com.map((p) => p.deslocamento)).size === 1 ? com[0]!.deslocamento : 'ambos',
+    // Comida: a dieta mais restrita do grupo vale para todos; o que alguém não come sai; favoritas somam.
+    dieta: (['vegana', 'vegetariana', 'pescetariana', 'tudo'] as const).find((d) => com.some((p) => (p.dieta ?? 'tudo') === d)) ?? 'tudo',
+    cozinhasAmo: [...new Set(com.flatMap((p) => p.cozinhasAmo ?? []))],
+    cozinhasEvito: [...new Set(com.flatMap((p) => p.cozinhasEvito ?? []))],
+    provar: com.filter((p) => p.provar !== false).length * 2 >= com.length,
   };
 }
 

@@ -4,6 +4,7 @@
  * e só dono/editores alteram; aqui o app só chama.
  */
 import { nivelDoOrcamento, type Nivel, type NivelDoOrcamento } from './nivel';
+import { regrasDaDieta } from './comida';
 import { supabase } from './supabase';
 import { lugarPorId, LUGARES, DESTINO_CURADORIA } from './catalogo';
 import { candidatosRoteiro, lugaresPorIds } from './lugares';
@@ -85,10 +86,10 @@ export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: stri
 
 /** Preferências de quem está na viagem (para o roteiro do grupo). */
 export async function pessoasDaViagem(tripId: string): Promise<Pessoa[]> {
-  const { data } = await supabase.rpc('preferencias_do_grupo', { t: tripId });
+  const { data } = await supabase.rpc('preferencias_do_grupo_v2', { t: tripId });
   return ((data ?? []) as (Record<string, unknown> & { display_name: string; estilo: string | null })[]).map((r) => ({
     nome: r.display_name,
-    preferencias: r.estilo ? ({ estilo: r.estilo, gostos: r.gostos, ritmo: r.ritmo, evitar: r.evitar, orcamento: r.orcamento, gratuitos: r.gratuitos, periodo: r.periodo, local: r.local, deslocamento: r.deslocamento } as unknown as Preferencias) : null,
+    preferencias: r.estilo ? ({ estilo: r.estilo, gostos: r.gostos, ritmo: r.ritmo, evitar: r.evitar, orcamento: r.orcamento, gratuitos: r.gratuitos, periodo: r.periodo, local: r.local, deslocamento: r.deslocamento, dieta: r.dieta ?? 'tudo', cozinhasAmo: r.cozinhas_amo ?? [], cozinhasEvito: r.cozinhas_evito ?? [], provar: r.provar ?? true } as unknown as Preferencias) : null,
   }));
 }
 
@@ -110,7 +111,7 @@ export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Prefe
   const prefs = { ...base, orcamento: nivelDaViagem(v)?.nivel ?? base.orcamento };
   // Paris tem curadoria; as demais cidades usam os lugares já coletados da base.
   const destinoId = v.destino_id ?? (v.destino === 'Paris' ? DESTINO_CURADORIA : null);
-  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId, prefs.orcamento);
+  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId, prefs.orcamento, [...(prefs.cozinhasAmo ?? []), ...regrasDaDieta(prefs.dieta).favorece]);
   if (!candidatos.length) {
     await registrar(v.id, 'Roteiro vazio: ainda não há lugares coletados nesta cidade (pedido de coleta registrado).');
     return;

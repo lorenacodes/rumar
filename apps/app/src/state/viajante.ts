@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { COLUNAS_PREFS, prefsDoBanco, prefsParaBanco } from '../lib/comida';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { supabase } from '../lib/supabase';
@@ -33,7 +34,7 @@ export const useViajante = create<ViajanteState>()(
       definirPreferencias: async (p) => {
         set({ preferencias: p });
         const uid = await usuario();
-        if (uid) await supabase.from('travel_preferences').upsert({ user_id: uid, ...p });
+        if (uid) await supabase.from('travel_preferences').upsert({ user_id: uid, ...prefsParaBanco(p) });
       },
       definirViagem: async (v) => {
         set({ viagem: { ...get().viagem, ...v } });
@@ -69,12 +70,12 @@ export async function sincronizarViajante(): Promise<void> {
   if (!uid) return;
   const s = useViajante.getState();
   const [pref, viagens, salvos] = await Promise.all([
-    supabase.from('travel_preferences').select('estilo, gostos, ritmo, evitar, orcamento, gratuitos, periodo, local, deslocamento').eq('user_id', uid).maybeSingle(),
+    supabase.from('travel_preferences').select(COLUNAS_PREFS).eq('user_id', uid).maybeSingle(),
     supabase.from('trips').select('id, destino, data_ida, noites').eq('user_id', uid).order('created_at', { ascending: false }).limit(1),
     supabase.from('saved_places').select('place_id').eq('user_id', uid),
   ]);
-  if (pref.data) useViajante.setState({ preferencias: pref.data as unknown as Preferencias });
-  else if (s.preferencias) await supabase.from('travel_preferences').upsert({ user_id: uid, ...s.preferencias });
+  if (pref.data) useViajante.setState({ preferencias: prefsDoBanco(pref.data as Record<string, unknown>) as unknown as Preferencias });
+  else if (s.preferencias) await supabase.from('travel_preferences').upsert({ user_id: uid, ...prefsParaBanco(s.preferencias) });
 
   const v = viagens.data?.[0];
   if (v) useViajante.setState({ viagem: { id: v.id as string, destino: v.destino as string, dataIda: v.data_ida as string, noites: v.noites as number } });

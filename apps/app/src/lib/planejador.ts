@@ -18,6 +18,8 @@
  * (link de rota), nunca de um chute.
  */
 
+import { cozinhaLocal, NOME_COZINHA, regrasDaDieta, type Cozinha, type Dieta } from './comida';
+
 export type Categoria = 'cultura' | 'gastronomia' | 'cafes' | 'bares' | 'natureza' | 'compras' | 'entretenimento' | 'passeios' | 'locais';
 export type Periodo = 'morning' | 'afternoon' | 'evening' | 'night';
 
@@ -46,6 +48,9 @@ export interface Lugar {
   nivel?: -1 | 0 | 1;
   /** Fama (nº de Wikipédias com artigo): lugares reconhecidos sobem (D-036). */
   fama?: number;
+  /** Grupos de cozinha (restaurantes, bares, cafés) e país do destino, para a comida (D-041). */
+  cozinhas?: Cozinha[];
+  pais?: string;
   /** Ponto pequeno (estátua, busto, placa, chafariz): bom de ver de passagem, fraco como parada do roteiro. */
   menor?: boolean;
 }
@@ -64,6 +69,11 @@ export interface Preferencias {
   periodo: 'dia' | 'noite' | 'ambos';
   local: boolean;
   deslocamento: 'caminhar' | 'transporte' | 'ambos';
+  /** Comida (D-041). Opcionais: perfis antigos não têm. */
+  dieta?: Dieta;
+  cozinhasAmo?: Cozinha[];
+  cozinhasEvito?: Cozinha[];
+  provar?: boolean;
 }
 
 export interface Viagem {
@@ -162,6 +172,14 @@ export function filtrar(lugares: Lugar[], p: Preferencias): Lugar[] {
     if (p.evitar.includes('festas') && (l.categoria === 'bares' || l.tags.includes('nightlife'))) return false;
     if (p.evitar.includes('longos') && l.caminhada === 'high') return false;
     if (p.orcamento === 'economico' && l.custo >= 3) return false;
+    // Comida (D-041): o que a pessoa não come ou não gosta não entra no roteiro.
+    const cz = l.cozinhas ?? [];
+    if (cz.length) {
+      if (cz.some((c) => p.cozinhasEvito?.includes(c))) return false;
+      const { tira, favorece } = regrasDaDieta(p.dieta);
+      // Lugar que é de uma cozinha "proibida" e não tem nada da dieta (ex.: churrascaria para vegetariano).
+      if (cz.some((c) => tira.includes(c)) && !cz.some((c) => favorece.includes(c))) return false;
+    }
     return true;
   });
 }
@@ -204,6 +222,26 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
     pontos += p.orcamento === 'economico' ? 3 : 1;
     motivos.push('grátis');
   }
+  // Comida (D-041): cozinhas favoritas, dieta e comida local.
+  const cz = l.cozinhas ?? [];
+  if (cz.length) {
+    const amo = cz.filter((c) => p.cozinhasAmo?.includes(c));
+    if (amo.length) {
+      pontos += 5;
+      motivos.push(`você adora comida ${NOME_COZINHA[amo[0]!].split(' ')[0]!.toLowerCase()}`);
+    }
+    const { favorece } = regrasDaDieta(p.dieta);
+    if (p.dieta && p.dieta !== 'tudo' && cz.some((c) => favorece.includes(c))) {
+      pontos += 4;
+      motivos.push(p.dieta === 'pescetariana' ? 'bom para pescetarianos' : p.dieta === 'vegana' ? 'opção vegana/vegetariana' : 'opção vegetariana');
+    }
+    if (p.provar !== false && cz.some((c) => cozinhaLocal(l.pais).includes(c))) {
+      pontos += 2;
+      motivos.push('comida típica do lugar');
+    }
+    // Para quem não come carne, hambúrguer quase sempre é de carne: cai na ordem (sem sumir).
+    if ((p.dieta === 'vegetariana' || p.dieta === 'vegana') && cz.includes('hamburguer') && !cz.includes('vegetariana')) pontos -= 4;
+  }
   if (p.local && l.local) {
     pontos += 3;
     motivos.push('menos turístico');
@@ -244,6 +282,8 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
   const usados = new Set<string>();
   // Variedade: repetir a mesma categoria no dia (e, menos, na viagem) perde pontos.
   const naViagem = new Map<string, number>();
+  // Variedade de cozinha (D-041): repetir a mesma cozinha na viagem pesa um pouco.
+  const cozinhaNaViagem = new Map<string, number>();
   const dias: Dia[] = [];
   const total = viagem.noites + 1;
   const modo = p.deslocamento === 'transporte' ? 'transit' : 'walking';
@@ -264,7 +304,8 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
           const km = temCoord(anterior) && temCoord(c.l) ? distanciaKm(anterior, c.l) : null;
           const ajuste = (km !== null ? -km * pesoDistancia : 0) + (bairro && c.l.area === bairro ? 2 : 0)
             - 4 * (noDia.get(c.l.categoria) ?? 0) - 1 * (naViagem.get(c.l.categoria) ?? 0)
-            + ((c.l as Lugar & { destaque?: boolean }).destaque ? 2 : 0);
+            + ((c.l as Lugar & { destaque?: boolean }).destaque ? 2 : 0)
+            - 2.5 * Math.max(0, ...(c.l.cozinhas ?? []).map((z) => cozinhaNaViagem.get(z) ?? 0));
           return { ...c, km, total: c.pontos + ajuste };
         })
         .sort((a, b) => b.total - a.total || a.l.id.localeCompare(b.l.id));
@@ -276,6 +317,7 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
       usados.add(escolha.l.id);
       noDia.set(escolha.l.categoria, (noDia.get(escolha.l.categoria) ?? 0) + 1);
       naViagem.set(escolha.l.categoria, (naViagem.get(escolha.l.categoria) ?? 0) + 1);
+      for (const z of escolha.l.cozinhas ?? []) cozinhaNaViagem.set(z, (cozinhaNaViagem.get(z) ?? 0) + 1);
       bairro ??= escolha.l.area || null;
       const motivos = [...escolha.motivos];
       if (escolha.km !== null && escolha.km <= 1.5 && anterior) motivos.push(`${fmtKm(escolha.km)} da anterior`);
