@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import '../../styles/curiosos.css';
-import { compartilharCuriosidade, curiosidade, curiosidades, type Curiosidade } from '../../lib/curiosidades';
+import { compartilharCuriosidade, curiosidade, curiosidades, gravarSemSombrios, lerSemSombrios, type Curiosidade } from '../../lib/curiosidades';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
 import { Check } from '../../ui/check';
@@ -51,13 +51,15 @@ export function Curiosos() {
   const fundo = useRef<HTMLDivElement>(null);
   const rolagem = useRef<HTMLDivElement>(null);
   const inicial = params.get('c');
+  const [semSombrios, setSemSombrios] = useState(lerSemSombrios);
+  useEffect(() => { setItens([]); setPagina(0); setFim(false); }, [semSombrios]);
 
   useEffect(() => {
     if (fim) return;
     let vivo = true;
     setCarregando(true);
     void (async () => {
-      const lote = await curiosidades(pagina, 10);
+      const lote = await curiosidades(pagina, 10, semSombrios);
       const primeira = pagina === 0 && inicial ? await curiosidade(inicial) : null;
       if (!vivo) return;
       setItens((atual) => {
@@ -68,7 +70,7 @@ export function Curiosos() {
       setCarregando(false);
     })();
     return () => { vivo = false; };
-  }, [pagina, fim, inicial]);
+  }, [pagina, fim, inicial, semSombrios]);
 
   useEffect(() => {
     const alvo = fundo.current;
@@ -82,7 +84,11 @@ export function Curiosos() {
     <main className="tela" data-tela="curiosos" data-real="curiosos" style={{ background: 'var(--fundo-escuro)' }}>
       <div className="gabinete-topo">
         <button type="button" className="r-btn" aria-label="Voltar" onClick={() => (window.history.length > 1 ? navegar(-1) : navegar('/inicio'))} style={{ minWidth: '44px', minHeight: '44px', color: '#fff', fontSize: '22px' }}>←</button>
-        <b style={{ font: "600 16px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Curiosidades do mundo</b>
+        <b style={{ font: "600 16px 'Lexend Exa'", letterSpacing: '-0.02em', flex: 1 }}>Curiosidades do mundo</b>
+        <button type="button" className="r-btn" aria-pressed={semSombrios} onClick={() => { gravarSemSombrios(!semSombrios); setSemSombrios(!semSombrios); }}
+          style={{ minHeight: '36px', padding: '0 10px', borderRadius: '999px', font: "600 12px 'Open Sans'", color: semSombrios ? 'var(--fundo-escuro)' : '#fff', background: semSombrios ? 'var(--amarelo)' : 'rgba(255,255,255,.18)' }}>
+          Sem lugares sombrios
+        </button>
       </div>
       <div className="gabinete" ref={rolagem} aria-busy={carregando}>
         {itens.map((c, i) => <Ficha key={c.id} c={c} n={i + 1} primeira={i === 0} />)}

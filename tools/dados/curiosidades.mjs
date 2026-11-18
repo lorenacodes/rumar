@@ -123,21 +123,24 @@ const primeiraFrase = (t) => {
 };
 // "Por que visitam" (D-043): trecho do próprio artigo que explica a fama do lugar, numa frase curta.
 const GANCHO = /(conhecid[oa]s? (?:mundialmente )?(?:por|pel[oa]s?|como)|famos[oa]s? (?:por|pel[oa]s?|em todo)|célebre por|atrai (?:milhares|milhões|turistas|visitantes)|(?:um|uma) d[oa]s [^.,;]{0,40}?(?:mais|maiores|principais|poucos|poucas|melhores) |o maior(?![a-zà-ú])|a maior(?![a-zà-ú])|o mais (?:antigo|alto|famoso|profundo|visitado)|a mais (?:antiga|alta|famosa|profunda|visitada)|o único|a única|patrimônio mundial|considerad[oa] (?:o|a|um|uma)|(?:guarda|guardam|abriga|abrigam) (?:os restos|mais de|o maior|a maior|milhares|milhões)|ponto turístico|atração turística|destino turístico)/i;
+// Lugares e frases sombrios (D-045): a frase do "por que visitam" evita mortos, ossos e túmulos.
+const SOMBRIO = /(catacumb|catacomb|ossu[aá]ri|ossada|ossos|cripta|cemit[eé]ri|necr[oó]pole|m[uú]mia|mumific|t[uú]mulo|mausol[eé]u|sepult|cad[aá]ver|esqueleto|cr[aâ]nio|restos|mort[oa]s|morreram|enterrad|campo de concentra|campo de exterm|genoc[ií]d|massacre|execu[cç]|tortura|forca)/i;
 function porQueVisitam(texto) {
   const frases = texto.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').split(/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/);
   for (const f of frases) {
-    const m = GANCHO.exec(f);
-    if (!m) continue;
-    let trecho = f.slice(m.index).replace(/[;:].*$/, '').trim();
-    // Uma ideia só: corta no "e foi…", "e é…" ou na vírgula seguinte quando a frase passa de ~70 letras.
-    if (trecho.length > 70) {
-      const corte = trecho.slice(40).search(/,\s| e (?:foi|é|são|está|estão|tem|fica|recebe)(?=\s)/);
-      if (corte >= 0) trecho = trecho.slice(0, 40 + corte);
+    for (const m of f.matchAll(new RegExp(GANCHO.source, 'gi'))) {
+      let trecho = f.slice(m.index).replace(/[;:].*$/, '').trim();
+      // Uma ideia só: corta no "e foi…", "e é…" ou na vírgula seguinte quando a frase passa de ~70 letras.
+      if (trecho.length > 70) {
+        const corte = trecho.slice(40).search(/,\s| e (?:foi|é|são|está|estão|tem|fica|recebe)(?=\s)/);
+        if (corte >= 0) trecho = trecho.slice(0, 40 + corte);
+      }
+      if (SOMBRIO.test(trecho)) continue;
+      if (trecho.length > 125) trecho = `${trecho.slice(0, 122).replace(/[\s,]+\S*$/, '')}…`;
+      else if (!/[.!?…]$/.test(trecho)) trecho += '.';
+      if (trecho.length < 18) continue;
+      return trecho[0].toUpperCase() + trecho.slice(1);
     }
-    if (trecho.length > 125) trecho = `${trecho.slice(0, 122).replace(/[\s,]+\S*$/, '')}…`;
-    else if (!/[.!?…]$/.test(trecho)) trecho += '.';
-    if (trecho.length < 18) continue;
-    return trecho[0].toUpperCase() + trecho.slice(1);
   }
   return null;
 }
@@ -193,6 +196,8 @@ console.log(`${doGuia} frases do guia de viagem (Wikivoyage)`);
 // Sem frase: o número de visitantes por ano diz que o lugar atrai gente (fonte: Wikidata).
 const formata = (n) => (n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1).replace('.0', '').replace('.', ',')} ${n >= 2_000_000 ? 'milhões' : 'milhão'} de visitantes` : `${Math.round(n / 1000)} mil visitantes`);
 for (const c of itens) if (!c.porque && c.visitantes_ano && c.visitantes_ano >= 1000) c.porque = `Recebe cerca de ${formata(c.visitantes_ano)} por ano.`;
+
+for (const c of itens) c.sombrio = SOMBRIO.test(`${c.nome} ${c.descricao ?? ''} ${c.resumo ?? ''}`);
 
 // Grava em lotes.
 let gravados = 0;

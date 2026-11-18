@@ -582,3 +582,15 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   túneis fechados, ilegais; o app não recomenda.
 - **Limite:** o Wikivoyage em português cobre poucos lugares (mais cidades que atrações); os lugares curiosos
   das cidades (OpenStreetMap) ainda não são conferidos quanto à visitação.
+
+## D-045 — Curiosidades sem susto: lugares sombrios por escolha
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("'guardam os restos de seis milhões de pessoas' pode soar macabro para
+  quem não se interessa").
+- **Frase:** o "por que visitam" pula trechos sobre mortos, ossos, restos e túmulos e usa o próximo trecho
+  da mesma fonte (Catacumbas de Paris → "Uma das atrações turísticas mais visitadas da cidade.") ou o
+  número de visitantes.
+- **Lugares sombrios** (catacumba, ossuário, cripta, cemitério, múmia, túmulo, campo de concentração…)
+  ficam marcados (`sombrio`): não aparecem na faixa do Início nem no convite do Descobrir (1ª impressão);
+  na tela "Curiosidades do mundo", o botão "Sem lugares sombrios" deixa cada pessoa escolher (guardado
+  no aparelho). A ordem também deixou de puxar esses lugares para a frente.

@@ -81,3 +81,23 @@ language sql stable security invoker set search_path = '' as $$
   offset greatest(pagina, 0) * least(greatest(por_pagina, 1), 30)
   limit least(greatest(por_pagina, 1), 30);
 $$;
+
+-- Lugares sombrios (D-045): catacumbas, ossuários, criptas, cemitérios, múmias, campos de concentração…
+-- Ficam fora da faixa do Início e do convite do Descobrir; na tela de curiosidades, a pessoa escolhe.
+alter table public.curiosidades add column if not exists sombrio boolean not null default false;
+update public.curiosidades set sombrio = true
+where lower(nome || ' ' || coalesce(descricao, '') || ' ' || coalesce(resumo, '') || ' ' || coalesce(porque, ''))
+  ~ '(catacumb|catacomb|ossu[aá]ri|ossada|ossos humanos|cripta|cemit[eé]ri|necr[oó]pole|m[uú]mia|mumific|t[uú]mulo|mausol[eé]u|sepult|cad[aá]ver|esqueleto|cr[aâ]nio|restos mortais|restos de mais|campo de concentra|campo de exterm|genoc[ií]d|massacre|execu[cç]|tortura|forca)';
+create or replace function public.curiosidades_feed(pagina integer default 0, por_pagina integer default 10, semente text default '', sem_sombrios boolean default false)
+returns setof public.curiosidades
+language sql stable security invoker set search_path = '' as $$
+  select c.* from public.curiosidades c
+  where c.visitavel and (not sem_sombrios or not c.sombrio)
+    and coalesce(c.descricao, '') !~* '^(uma? )?(cidade|vila|município|aldeia|comuna|povoação|freguesia|bairro)\M'
+  order by (c.porque is not null) desc, (c.visitantes_ano is not null) desc, (c.resumo is not null) desc,
+    ((lower(c.nome || ' ' || coalesce(c.descricao, '') || ' ' || coalesce(c.resumo, ''))) ~ '(caverna|gruta|t[uú]nel|ru[ií]na|mist[eé]ri|estranh|bizarr|perigos|secret|esquecid|labirint|mais (antig|alt|perigos|pequen|profund|estreit|long)|[uú]nic[oa] no mundo|lend|naufr|vulc|cratera|piramid|cristal|deserto|lago|cachoeira|ilha)') desc,
+    md5(c.id || semente)
+  offset greatest(pagina, 0) * least(greatest(por_pagina, 1), 30)
+  limit least(greatest(por_pagina, 1), 30);
+$$;
+grant execute on function public.curiosidades_feed(integer, integer, text, boolean) to anon, authenticated;
