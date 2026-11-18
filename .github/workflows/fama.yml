@@ -1,0 +1,33 @@
+name: Fama
+
+# Fama dos lugares (D-036): conta em quantas Wikipédias cada lugar tem artigo (Wikidata) e grava no
+# banco. Todo dia, até 4.000 lugares; cada um é revisto a cada 30 dias. Sinal público e gratuito
+# de "lugar reconhecido" (não é nota de clientes). Autenticação por OIDC do GitHub; nenhuma chave.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * *'
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fama.yml
+      - tools/dados/fama.mjs
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: fama
+  cancel-in-progress: false
+
+jobs:
+  fama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/dados/fama.mjs --limite 2000 && node tools/dados/fama.mjs --limite 2000

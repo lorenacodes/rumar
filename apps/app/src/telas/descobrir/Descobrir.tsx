@@ -4,20 +4,21 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import PRECOS from '../../dados/precos-paris.json';
 import { DESTINO_CURADORIA, LUGARES, OSM_DA_CURADORIA } from '../../lib/catalogo';
 import {
-  basePorId, buscarLugares, candidatosRoteiro, CATEGORIAS_LUGAR, cobertura, destinoPorId, destinoPorNome, lugaresPorIds, nomeTipo, ORDEM_CATEGORIAS, pedirCidade, rotuloDestino,
+  basePorId, buscarLugares, cidadesEmDestaque, candidatosRoteiro, CATEGORIAS_LUGAR, cobertura, destinoPorId, lugaresPorIds, nomeTipo, ORDEM_CATEGORIAS, pedirCidade, rotuloDestino,
   type CategoriaLugar, type Cobertura, type Destino, type LugarBase,
 } from '../../lib/lugares';
 import { dinheiro, paisPorCodigo } from '../../lib/moedas';
 import type { Precos } from '../../lib/orcamento';
 import { afinidade, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
+import { meusFavoritos } from '../../lib/social';
+import { listarViagens } from '../../lib/viagens';
 import { useDestinoAtual } from '../../state/destino';
-import { usePlano } from '../../state/plano';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa } from '../../ui/Mapa';
-import { FeedLugares } from './Feed';
+import { FeedGeral, FeedLugares } from './Feed';
 
 const P = PRECOS as unknown as Precos;
 const dataBR = (iso?: string | null) => (iso ? iso.slice(0, 10).split('-').reverse().join('/') : '');
@@ -58,9 +59,10 @@ export function Descobrir() {
   const [params, setParams] = useSearchParams();
   const viagem = params.get('viagem');
   const { destino: guardado, escolher } = useDestinoAtual();
-  const { origem } = usePlano();
   const { preferencias, salvos } = useViajante();
-  const [destino, setDestino] = useState<Destino | null>(guardado);
+  // Sem cidade na URL, o Descobrir abre no mural de várias cidades (D-036); escolher cidade é opcional.
+  const [destino, setDestino] = useState<Destino | null>(params.get('d') && guardado?.id === params.get('d') ? guardado : null);
+  const [cidades, setCidades] = useState<{ destino_id: string; nome: string }[]>([]);
   const [trocando, setTrocando] = useState(false);
   const filtro = (params.get('ver') ?? 'para-voce') as Filtro;
   const lista = params.get('modo') === 'lista';
@@ -78,12 +80,28 @@ export function Descobrir() {
   const [verCobertura, setVerCobertura] = useState(false);
   const [pedido, setPedido] = useState(false);
 
-  // Cidade inicial: a da URL (?d=), a última explorada, ou a cidade onde a pessoa mora.
+  // Cidade: só a da URL (?d=). Sem ela, mural geral.
   useEffect(() => {
     const d = params.get('d');
     if (d && d !== destino?.id) void destinoPorId(d).then((x) => x && setDestino(x));
-    else if (!destino && origem && origem.pais === 'Brasil') void destinoPorNome(origem.nome, origem.regiao).then((x) => x && setDestino(x));
-  }, [params, origem]); // eslint-disable-line react-hooks/exhaustive-deps
+    else if (!d && destino) setDestino(null);
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Cidades do mural geral: favoritas e das próximas viagens primeiro, depois as mais fotografadas.
+  useEffect(() => {
+    if (destino) return;
+    void (async () => {
+      const [favs, viagens, destaque] = await Promise.all([meusFavoritos().catch(() => []), listarViagens().catch(() => ({ minhas: [] })), cidadesEmDestaque(16)]);
+      const hoje = new Date().toISOString().slice(0, 10);
+      const minhas = [
+        ...viagens.minhas.filter((v) => v.destino_id && v.data_ida >= hoje).map((v) => ({ destino_id: v.destino_id!, nome: v.destino })),
+        ...favs.filter((f) => f.destino_id).map((f) => ({ destino_id: f.destino_id!, nome: f.nome })),
+      ];
+      const lista = [...minhas, ...destaque];
+      setCidades(lista.filter((c, i) => lista.findIndex((x) => x.destino_id === c.destino_id) === i).slice(0, 24));
+    })();
+  }, [destino]);
+  const irParaCidade = (d: Destino) => (setDestino(d), setTrocando(false), setTermo(''), setParams((p) => { const n = new URLSearchParams(p); n.set('d', d.id); return n; }, { replace: false }));
+  const todasAsCidades = () => setParams((p) => { const n = new URLSearchParams(p); n.delete('d'); n.delete('ver'); n.delete('modo'); return n; }, { replace: false });
   useEffect(() => {
     if (!destino) return;
     escolher(destino);
@@ -157,17 +175,29 @@ export function Descobrir() {
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
           <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Descobrir{destino ? ` · ${rotuloDestino(destino)}` : ''}</div>
-          {destino ? <button type="button" className="r-btn" onClick={() => setTrocando(!trocando)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>{trocando ? 'Cancelar' : 'Trocar cidade'}</button> : null}
+          {destino || trocando ? <button type="button" className="r-btn" onClick={() => (trocando ? setTrocando(false) : todasAsCidades())} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>{trocando ? 'Cancelar' : '← Todas as cidades'}</button> : null}
         </div>
-        <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{destino ? `O que viver em ${destino.nome}.` : 'Para onde você quer ir?'}</h1>
+        <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{destino ? `O que viver em ${destino.nome}.` : 'Lugares para conhecer.'}</h1>
         {destino && !trocando && !viagem ? (
           <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destino.id}`)} style={{ marginTop: '10px', height: '44px', padding: '0 14px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Planejar viagem para {destino.nome} ↗</button>
         ) : null}
-        {!destino || trocando ? (
+        {trocando ? (
           <div style={{ marginTop: '10px' }}>
-            <EscolherDestino autoFoco={trocando} aoEscolher={(d) => (setDestino(d), setTrocando(false), setTermo(''), setParams((p) => { const n = new URLSearchParams(p); n.set('d', d.id); return n; }, { replace: true }))} />
+            <EscolherDestino autoFoco aoEscolher={irParaCidade} />
             <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Qualquer cidade do Brasil e destinos lá fora.</p>
           </div>
+        ) : null}
+        {!destino && !trocando ? (
+          <>
+            <div role="group" aria-label="Cidades" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '12px -20px 0', padding: '0 20px 2px', scrollbarWidth: 'none' }}>
+              <button type="button" className="r-btn" onClick={() => setTrocando(true)} style={{ flex: 'none', height: '42px', padding: '0 14px', background: 'var(--fundo-escuro)', color: '#fff', font: "600 14px 'Open Sans'", whiteSpace: 'nowrap' }}>🔎 Escolher cidade</button>
+              {[...(guardado ? [{ destino_id: guardado.id, nome: guardado.nome }] : []), ...cidades].filter((c, i, a) => a.findIndex((x) => x.destino_id === c.destino_id) === i).slice(0, 16).map((c) => (
+                <button key={c.destino_id} type="button" className="r-btn" onClick={() => void destinoPorId(c.destino_id).then((d) => d && irParaCidade(d))}
+                  style={{ flex: 'none', height: '42px', padding: '0 14px', border: '1px solid var(--linha)', font: "500 14px 'Open Sans'", whiteSpace: 'nowrap' }}>{c.nome}</button>
+              ))}
+            </div>
+            {cidades.length ? <FeedGeral cidades={cidades} aoAbrir={(id) => navegar(`/lugar/${id}`)} /> : <div className="mural-esqueleto" aria-label="Carregando lugares" />}
+          </>
         ) : null}
 
         {destino && !trocando ? (

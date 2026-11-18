@@ -10,6 +10,8 @@
 //   { acao: 'destino', ids: string[] }                           → dados de destinos
 //   { acao: 'gravar', destino_id, categoria, lugares, inicio, final, raio_km, limite_atingido, dados_de }
 //   { acao: 'concluir', destino_id, erro? }
+//   { acao: 'fama_pendentes', limite }                         → lugares com Wikidata sem fama recente (30 dias)
+//   { acao: 'fama_gravar', itens: [{ id, fama }] }             → grava a fama (nº de Wikipédias)
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -86,6 +88,23 @@ Deno.serve(async (req) => {
   if (p.acao === 'concluir') {
     await db.from('cidades_pedidas').update({ processada_em: new Date().toISOString(), erro: p.erro ? String(p.erro).slice(0, 300) : null }).eq('destino_id', p.destino_id);
     return json({ ok: true });
+  }
+  if (p.acao === 'fama_pendentes') {
+    const limite = Math.min(Math.max(Number(p.limite) || 500, 1), 2000);
+    const antes = new Date(Date.now() - 30 * 86_400_000).toISOString();
+    const { data, error } = await db.from('lugares').select('id, wikidata').not('wikidata', 'is', null).or(`fama_em.is.null,fama_em.lt.${antes}`).order('fama_em', { ascending: true, nullsFirst: true }).limit(limite);
+    if (error) return json({ erro: error.message }, 500);
+    return json({ itens: data ?? [] });
+  }
+  if (p.acao === 'fama_gravar') {
+    const itens = ((p.itens ?? []) as { id: string; fama: number }[]).filter((i) => typeof i.id === 'string' && Number.isInteger(i.fama) && i.fama >= 0).slice(0, 2000);
+    const agora = new Date().toISOString();
+    let ok = 0;
+    for (const i of itens) {
+      const { error } = await db.from('lugares').update({ fama: i.fama, fama_em: agora }).eq('id', i.id);
+      if (!error) ok++;
+    }
+    return json({ ok });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });

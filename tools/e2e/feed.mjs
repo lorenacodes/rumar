@@ -21,7 +21,16 @@ async function pagina() {
 
 console.log('— Sem conta');
 let p = await pagina();
-await p.goto(URL + '#/descobrir?d=br-3304557'); await p.locator('article.postal').first().waitFor({ timeout: 20000 }).catch(() => {}); await p.waitForTimeout(1500);
+// Descobrir sem escolher cidade (D-036): mural de várias cidades.
+await p.goto(URL + '#/descobrir'); await p.locator('article.postal').first().waitFor({ timeout: 20000 }).catch(() => {}); await p.waitForTimeout(1500);
+const cidadesNoMural = new Set(await p.locator('article.postal .postal-legenda small').allInnerTexts().then((t) => t.map((x) => x.split('·')[0].trim())));
+confere(`Descobrir abre com lugares sem escolher cidade (${[...cidadesNoMural].join(', ')})`, (await p.locator('article.postal').count()) >= 8 && cidadesNoMural.size >= 3);
+await p.screenshot({ path: `${OUT}/00-descobrir-geral.png` });
+await p.getByRole('group', { name: 'Cidades' }).getByRole('button', { name: 'Salvador', exact: true }).click(); await p.waitForTimeout(3000);
+confere('chip de cidade abre a cidade', /d=br-2927408/.test(p.url()) && (await p.getByRole('heading', { name: /Salvador/ }).count()) === 1);
+await p.getByRole('button', { name: '← Todas as cidades' }).click(); await p.waitForTimeout(2500);
+confere('"Todas as cidades" volta ao mural geral', !/d=/.test(p.url()) && (await p.getByRole('heading', { name: 'Lugares para conhecer.' }).count()) === 1);
+await p.goto(URL + '#/descobrir?d=br-3304557'); await p.getByRole('heading', { name: /O que viver em Rio/ }).waitFor({ timeout: 20000 }); await p.waitForTimeout(4000);
 const posts = p.locator('article.postal');
 confere(`feed aparece por padrão (${await posts.count()} posts)`, (await posts.count()) >= 8);
 confere('selos por categoria no topo', (await p.locator('.mural-selo').count()) >= 6);

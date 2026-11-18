@@ -44,6 +44,8 @@ export interface Lugar {
   destino?: string;
   /** Sinal de nível (lugares da base, sem preço): -1 simples, 0 neutro, 1 especial. Só ordena. */
   nivel?: -1 | 0 | 1;
+  /** Fama (nº de Wikipédias com artigo): lugares reconhecidos sobem (D-036). */
+  fama?: number;
   /** Ponto pequeno (estátua, busto, placa, chafariz): bom de ver de passagem, fraco como parada do roteiro. */
   menor?: boolean;
 }
@@ -178,6 +180,10 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
   const especial = l.custo >= 2 || l.nivel === 1;
   const simples = l.nivel === -1;
   const destaque = (l as Lugar & { destaque?: boolean }).destaque === true;
+  // Lugar reconhecido (artigo em várias Wikipédias) sobe, em qualquer nível.
+  const fama = l.fama ?? 0;
+  if (fama >= 3) pontos += Math.min(4, Math.floor(fama / 5) + 1);
+  if (fama >= 15) motivos.push('muito conhecido');
   if (p.orcamento === 'economico') {
     if (l.custo === 2) pontos -= 2;
     if (l.nivel === 1) pontos -= 2;
@@ -191,9 +197,11 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
     }
     if (simples) pontos -= 3;
     if (destaque) pontos += 1;
+    // Orçamento alto: grátis e pouco conhecido (praça, igrejinha, monumento) perde espaço.
+    if (l.custo === 0 && !destaque) pontos -= 3;
   }
-  if (p.gratuitos && l.custo === 0) {
-    pontos += p.orcamento === 'conforto' ? 1 : 3;
+  if (p.gratuitos && l.custo === 0 && p.orcamento !== 'conforto') {
+    pontos += p.orcamento === 'economico' ? 3 : 1;
     motivos.push('grátis');
   }
   if (p.local && l.local) {

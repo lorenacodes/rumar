@@ -445,3 +445,23 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Motivos do roteiro e do mural viraram "♥ seu estilo cultural · museus e história"; descrições das tarefas
   da linha do tempo encurtadas.
 - As telas do design original (comparação visual) não mudaram: 159/159.
+
+## D-036 — Orçamento alto sem enxurrada de grátis; fama dos lugares; Descobrir sem escolher cidade
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora.
+- **Orçamento alto:** no nível Conforto, lugar grátis e pouco conhecido perde 3 pontos e o "grátis"
+  deixa de contar (antes ainda somava). No Econômico, grátis continua valendo.
+- **"Bem avaliados" — o que é possível hoje, sem pagar:** não existe fonte aberta de notas de clientes.
+  Usamos dois sinais honestos, nunca chamados de "avaliação":
+  1. **Fama** = em quantas Wikipédias o lugar tem artigo (Wikidata). Coleta contínua: workflow "Fama",
+     todo dia, até 4.000 lugares; cada um revisto a cada 30 dias. ~9.900 lugares têm Wikidata (só ~400
+     são restaurantes/bares/cafés). Fama ≥ 3 = destaque; sobe no roteiro e no mural; "muito conhecido"
+     com 15+.
+  2. **Queridos pelos viajantes** (`queridos(destino)`): quantas pessoas marcaram "Quero ir" ou puseram
+     no roteiro, só a partir de 3 pessoas (anônimo). Começa vazio; cresce com o uso.
+  Notas de verdade (estrelas) exigem fonte paga (Google: campo de nota é cobrado à parte, preço a
+  confirmar) — decisão da fundadora.
+- **Descobrir:** abre num mural de várias cidades, sem escolher nada (favoritas e próximas viagens
+  primeiro, depois as cidades com mais lugares fotografados), intercaladas e com os mais conhecidos
+  primeiro. "🔎 Escolher cidade" e chips de cidade são opcionais; "← Todas as cidades" volta.
+- Postal com foto que falha ao carregar vira a versão sem foto (antes aparecia imagem quebrada).

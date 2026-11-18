@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import '../../styles/feed.css';
 import { DESTINO_CURADORIA, horarioLegivel, LUGARES } from '../../lib/catalogo';
-import { capasPorCategoria, CATEGORIAS_LUGAR, feedLugares, nomeTipo, ORDEM_CATEGORIAS, paraLugar, type CategoriaLugar, type Destino, type LugarBase } from '../../lib/lugares';
+import { basePorId, capasPorCategoria, type CategoriaLugar, CATEGORIAS_LUGAR, type Destino, feedLugares, type LugarBase, muralGeral, nomeTipo, ORDEM_CATEGORIAS, paraLugar } from '../../lib/lugares';
 import { afinidade, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
 import { listarViagens } from '../../lib/viagens';
 import { fotosAprovadas } from '../../lib/fotosEnviadas';
@@ -65,7 +65,8 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
     ultimoToque.current = agora;
     setTimeout(() => { if (ultimoToque.current === agora) aoAbrir(); }, 330);
   };
-  const temImagem = p.curadoria ? temFoto(p.id) : Boolean(p.foto);
+  const [fotoFalhou, setFotoFalhou] = useState(false);
+  const temImagem = p.curadoria ? temFoto(p.id) : Boolean(p.foto) && !fotoFalhou;
   const selo = (p.categoria && SELO[p.categoria]) || 'Lugar';
   const fatos = [
     p.cozinha ? `🍽 ${p.cozinha.replace(/_/g, ' ').replace(/;/g, ', ')}` : null,
@@ -79,7 +80,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
         style={temImagem ? undefined : { aspectRatio: '16 / 9' }}>
         {temImagem ? (
           <>
-            {p.curadoria ? <FotoLugar id={p.id} proporcao="4 / 3" credito={false} /> : <img src={p.foto!} alt={`Foto de ${p.nome}`} loading="lazy" draggable={false} />}
+            {p.curadoria ? <FotoLugar id={p.id} proporcao="4 / 3" credito={false} /> : <img src={p.foto!} alt={`Foto de ${p.nome}`} loading="lazy" draggable={false} onError={() => setFotoFalhou(true)} />}
             <div className="postal-legenda"><small>{cidade} · {p.tipo}</small><b>{p.nome}</b></div>
             <span className="postal-selo" aria-hidden="true"><span><i>{selo[0]}</i>{selo}</span></span>
           </>
@@ -92,8 +93,8 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
         )}
         {quero ? <span className={`postal-carimbo${carimbou ? ' novo' : ''}`} aria-hidden="true"><small>{cidade.slice(0, 16)}</small>Quero ir<small>{hojeCurto()}</small></span> : null}
       </div>
-      {p.foto && p.creditoEnviada ? <div style={{ textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: {p.creditoEnviada}</div> : null}
-      {p.foto && p.fotoPagina ? (
+      {temImagem && p.creditoEnviada ? <div style={{ textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: {p.creditoEnviada}</div> : null}
+      {temImagem && p.fotoPagina ? (
         <a href={p.fotoPagina} target="_blank" rel="noreferrer" style={{ display: 'block', textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: Commons</a>
       ) : null}
 
@@ -219,6 +220,80 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
           {posts.length ? 'Você viu tudo por aqui.' : 'Nada nesta categoria ainda.'}
         </p>
       ) : null}
+    </section>
+  );
+}
+
+const ICONE: Partial<Record<CategoriaLugar, string>> = {
+  atracoes: '📍', praias: '🏖', museus: '🏛', historico: '🏰', parques: '🌳', restaurantes: '🍽', cafes: '☕', bares: '🍹', mercados: '🧺',
+  compras: '🛍', cultura: '🎭', 'vida-noturna': '🌙', lazer: '🎡', hospedagem: '🛏',
+};
+
+/**
+ * Descobrir sem escolher cidade (D-036): postais de várias cidades — favoritas e das próximas
+ * viagens primeiro, depois as que têm mais lugares fotografados — intercaladas, rolagem sem fim.
+ */
+export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string; nome: string }[]; aoAbrir: (id: string) => void }) {
+  const { preferencias } = useViajante();
+  const [categoria, setCategoria] = useState<CategoriaLugar | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [pagina, setPagina] = useState(0);
+  const [fim, setFim] = useState(false);
+  const [carregando, setCarregando] = useState(false);
+  const fundo = useRef<HTMLDivElement>(null);
+  const ids = cidades.map((c) => c.destino_id);
+  const nome = useMemo(() => new Map(cidades.map((c) => [c.destino_id, c.nome])), [cidades]);
+  const chave = ids.join(',');
+
+  useEffect(() => { setPosts([]); setPagina(0); setFim(false); }, [chave, categoria]);
+  useEffect(() => {
+    if (fim || !ids.length) return;
+    let vivo = true;
+    setCarregando(true);
+    void muralGeral(ids, pagina, categoria).then(({ itens, fim: acabou }) => {
+      if (!vivo) return;
+      let novos = itens.map(deBase);
+      if (preferencias) {
+        // Dentro da página, o que combina com o jeito de viajar vem antes (sem juntar uma cidade só).
+        const pontos = (x: Post) => (x.lugar ? afinidade(x.lugar, preferencias).pontos : 0);
+        novos = [...novos].sort((a, b) => pontos(b) - pontos(a));
+      }
+      setPosts((atual) => [...atual, ...novos.filter((x) => !atual.some((y) => y.id === x.id))]);
+      setFim(acabou);
+      setCarregando(false);
+    });
+    return () => { vivo = false; };
+  }, [chave, categoria, pagina, fim, preferencias]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const alvo = fundo.current;
+    if (!alvo || fim) return;
+    const obs = new IntersectionObserver((e) => { if (e[0]?.isIntersecting && !carregando) setPagina((n) => n + 1); }, { rootMargin: '600px' });
+    obs.observe(alvo);
+    return () => obs.disconnect();
+  }, [carregando, fim, posts.length]);
+
+  const cats = ORDEM_CATEGORIAS.filter((c) => c !== 'transporte' && c !== 'hospedagem');
+  return (
+    <section aria-label="Lugares para conhecer">
+      <div className="mural-selos" role="group" aria-label="Selos por categoria">
+        <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
+          <span className="mural-selo-borda"><span>★</span></span>Para você
+        </button>
+        {cats.map((c) => (
+          <button key={c} type="button" className="r-btn mural-selo" aria-pressed={categoria === c} onClick={() => setCategoria(categoria === c ? null : c)}>
+            <span className="mural-selo-borda"><span>{ICONE[c] ?? CATEGORIAS_LUGAR[c].nome[0]}</span></span>
+            {CATEGORIAS_LUGAR[c].nome.split(' ')[0]}
+          </button>
+        ))}
+      </div>
+      {posts.map((p) => {
+        const destinoId = (basePorId(p.id)?.destino_id) ?? '';
+        return <Postal key={p.id} p={p} cidade={nome.get(destinoId) ?? ''} aoAbrir={() => aoAbrir(p.id)} viagemDoDestino={null} />;
+      })}
+      {carregando ? <div className="mural-esqueleto" aria-label="Carregando mais lugares" /> : null}
+      <div ref={fundo} style={{ height: '1px' }} />
+      {fim && !carregando ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', textAlign: 'center', margin: '16px 0 0' }}>{posts.length ? 'Você viu tudo por aqui.' : 'Nada nesta categoria ainda.'}</p> : null}
     </section>
   );
 }

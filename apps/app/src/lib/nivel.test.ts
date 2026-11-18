@@ -54,3 +54,20 @@ describe('nível de gasto pelo orçamento', () => {
     expect(economico).not.toContain('sushi');
   });
 });
+
+describe('orçamento alto não enche o roteiro de grátis (D-036)', () => {
+  const conforto: Preferencias = { ...base, estilo: 'cultural', gostos: ['museus'], orcamento: 'conforto', gratuitos: true };
+  it('grátis pouco conhecido perde para o lugar conhecido', async () => {
+    const { afinidade } = await import('./planejador');
+    const praca = paraLugar(lugar('praca', 'historico', 'historic_monument', { gratuito: true }))!;
+    const museuFamoso = paraLugar({ ...lugar('museu', 'museus', 'museum', { fama: 25 }), relevancia: 4 } as LugarBase)!;
+    expect(afinidade(museuFamoso, conforto).pontos).toBeGreaterThan(afinidade(praca, conforto).pontos + 4);
+    expect(afinidade(praca, conforto).motivos).not.toContain('grátis');
+    expect(afinidade(museuFamoso, conforto).motivos).toContain('muito conhecido');
+  });
+  it('no econômico, grátis continua valendo', async () => {
+    const { afinidade } = await import('./planejador');
+    const praca = paraLugar(lugar('praca', 'historico', 'historic_monument', { gratuito: true }))!;
+    expect(afinidade(praca, { ...conforto, orcamento: 'economico' }).motivos).toContain('grátis');
+  });
+});

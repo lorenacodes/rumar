@@ -26,6 +26,8 @@ export interface Destino {
 
 export interface LugarBase {
   id: string;
+  /** Em quantas Wikipédias o lugar tem artigo (D-036); nulo = ainda não medido ou sem Wikidata. */
+  fama?: number | null;
   destino_id: string;
   fonte: 'osm' | 'curadoria';
   fonte_id: string;
@@ -138,7 +140,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
@@ -192,7 +194,7 @@ export async function feedLugares(destino: string, pagina: number, categoria?: C
   const ate = de + FEED_POR_PAGINA - 1;
   let itens: ItemFeed[] = [];
   if (de < comFoto) {
-    const { data } = await base().not('foto', 'is', null).order('relevancia', { ascending: false }).order('id').range(de, ate);
+    const { data } = await base().not('foto', 'is', null).order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).order('id').range(de, ate);
     itens = (data ?? []) as ItemFeed[];
   }
   if (itens.length < FEED_POR_PAGINA) {
@@ -238,7 +240,7 @@ export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
 /** Candidatos para montar um roteiro automático: os mais documentados de cada categoria. */
 export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto'): Promise<Lugar[]> {
   const cats = ORDEM_CATEGORIAS.filter((c) => CATEGORIAS_LUGAR[c].roteiro);
-  const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
+  const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
   // Viagem de nível conforto: traz também restaurantes de cozinha especial e programas pagos
   // (parque temático, marina, zoológico…) que podem não estar entre os mais documentados.
   if (nivel === 'conforto') {
@@ -278,8 +280,23 @@ export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { de
     endereco: b.endereco, horario: b.horario, site: b.site, osm: b.fonte === 'osm' ? `https://www.openstreetmap.org/${b.fonte_id}` : undefined,
     destino: b.destino_id, ...(r?.ingresso === false ? { ingresso: false } : {}), foto: b.foto, base: true,
     // Lugar bem documentado (foto/Wikidata/horário): tende a ser um dos mais conhecidos.
-    destaque: (b.relevancia ?? 0) >= 3,
+    destaque: (b.relevancia ?? 0) >= 3 || (b.fama ?? 0) >= 3,
+    fama: b.fama ?? 0,
     nivel: sinalNivel(b),
     ...(PONTOS_MENORES.has(b.tipo) ? { menor: true } : {}),
   };
+}
+
+/** Cidades com mais lugares fotografados (para o Descobrir sem cidade escolhida, D-036). */
+export async function cidadesEmDestaque(n = 16): Promise<{ destino_id: string; nome: string; pais: string }[]> {
+  const { data } = await supabase.rpc('cidades_em_destaque', { n });
+  return (data ?? []) as { destino_id: string; nome: string; pais: string }[];
+}
+
+/** Mural de várias cidades, intercaladas, só com foto, os mais reconhecidos primeiro. */
+export async function muralGeral(ids: string[], pagina: number, categoria?: CategoriaLugar | null): Promise<{ itens: ItemFeed[]; fim: boolean }> {
+  const { data } = await supabase.rpc('mural_geral', { ids: ids.slice(0, 40), cat: categoria ?? null, pagina, por_pagina: 12 });
+  const itens = (data ?? []) as ItemFeed[];
+  guardar(itens);
+  return { itens, fim: itens.length < 12 };
 }

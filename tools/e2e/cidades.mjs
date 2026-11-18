@@ -33,13 +33,13 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   if (SO?.includes('nenhuma')) break;
   console.log(`— ${cidade}${uf ? ` (${uf})` : ''}`);
   await p.goto(URL + '#/descobrir'); await p.waitForTimeout(1500);
-  const trocar = p.getByRole('button', { name: 'Trocar cidade' });
-  if (await trocar.count()) await trocar.click();
+  await p.getByRole('button', { name: /Escolher cidade/ }).click();
   await p.locator('#busca-destino-geral').fill(cidade); await p.waitForTimeout(1500);
   await p.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: uf ? new RegExp(`${uf}\\b`) : /França/ }).first().click();
   await p.waitForTimeout(3000);
   // Feed é o padrão (D-031); cobertura e lista ficam em "Lista e filtros".
-  const posts = await p.locator('article.feed-post').count();
+  await p.locator('article.postal').first().waitFor({ timeout: 15000 }).catch(() => {});
+  const posts = await p.locator('article.postal').count();
   const semColeta = /Ainda não coletamos/.test(await texto());
   if (!semColeta) confere(`${cidade}: feed com lugares (${posts})`, posts > 0);
   if (!semColeta) { await p.getByRole('button', { name: 'Lista e filtros' }).click(); await p.waitForTimeout(3000); }
@@ -73,6 +73,7 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.getByRole('button', { name: 'Fechar mapa', exact: true }).click(); await p.waitForTimeout(800);
   // Abrir e salvar
   await p.locator('main ul li button').first().click(); await p.waitForTimeout(2500);
+  if (await p.getByRole('button', { name: 'ⓘ Fonte' }).count()) { await p.getByRole('button', { name: 'ⓘ Fonte' }).first().click(); await p.waitForTimeout(300); }
   t = await texto();
   confere(`${cidade}: página do lugar com fonte`, /OpenStreetMap|curadoria/.test(t));
   const fotos = await p.locator('main img').count();
@@ -99,7 +100,7 @@ if (await p.getByRole('button', { name: 'Trocar', exact: true }).count()) await 
 await p.locator('#busca-destino-geral').fill('Salvador'); await p.waitForTimeout(1500);
 await p.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: /BA\b/ }).first().click(); await p.waitForTimeout(2000);
 t = await texto();
-confere('nova viagem mostra lugares coletados', /lugares já coletados nesta cidade/.test(t));
+confere('nova viagem mostra lugares coletados', /lugares para o seu roteiro/.test(t));
 await p.getByRole('button', { name: /Criar viagem/ }).click(); await p.waitForTimeout(9000);
 await p.getByRole('tab', { name: 'Roteiro' }).click(); await p.waitForTimeout(1500);
 t = await texto();
