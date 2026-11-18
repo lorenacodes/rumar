@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { NOME_COZINHA, NOME_DIETA, ORDEM_COZINHAS, type Dieta } from '../../lib/comida';
+import { NOME_AREA, ORDEM_AREAS } from '../../lib/networking';
 import { Info } from '../../ui/info';
 import { Rotulo } from '../viagens/comum';
 import { Check } from '../../ui/check';
@@ -41,7 +42,7 @@ const EVITAR: { id: Evitar; nome: string }[] = [
 const PADRAO: Preferencias = {
   estilo: 'equilibrado', gostos: [], ritmo: 'balanced', evitar: [], orcamento: 'intermediario',
   gratuitos: false, periodo: 'ambos', local: false, deslocamento: 'ambos',
-  dieta: 'tudo', cozinhasAmo: [], cozinhasEvito: [], provar: true,
+  dieta: 'tudo', cozinhasAmo: [], cozinhasEvito: [], provar: true, networking: false, area: null,
 };
 
 function hojeMais(dias: number): string {
@@ -92,7 +93,7 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
   const [p, setP] = useState<Preferencias>(preferencias ?? PADRAO);
   const [dataIda, setDataIda] = useState(viagem?.dataIda ?? hojeMais(60));
   const [noites, setNoites] = useState(viagem?.noites ?? 5);
-  const etapas = soPerfil ? ['estilo', 'gostos', 'comida', 'ritmo', 'evitar', 'orcamento'] : ['viagem', 'estilo', 'gostos', 'comida', 'ritmo', 'evitar', 'orcamento'];
+  const etapas = soPerfil ? ['estilo', 'gostos', 'comida', 'ritmo', 'evitar', 'trabalho', 'orcamento'] : ['viagem', 'estilo', 'gostos', 'comida', 'ritmo', 'evitar', 'trabalho', 'orcamento'];
   const [i, setI] = useState(0);
   const etapa = etapas[i];
   const [salvando, setSalvando] = useState(false);
@@ -212,6 +213,25 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
             <Grupo rotulo="Evitar">
               {EVITAR.map((e) => <Marcar key={e.id} marcada={p.evitar.includes(e.id)} aoTocar={() => muda({ evitar: alterna(p.evitar, e.id) })}>{e.nome}</Marcar>)}
             </Grupo>
+          </>
+        ) : null}
+
+        {etapa === 'trabalho' ? (
+          <>
+            <h1 style={titulo}>Também vai trabalhar ou fazer networking?</h1>
+            <div role="radiogroup" aria-label="Trabalho e networking" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '14px' }}>
+              <Marcar unico marcada={!p.networking} aoTocar={() => muda({ networking: false })}>Não, é só lazer</Marcar>
+              <Marcar unico marcada={Boolean(p.networking)} aoTocar={() => muda({ networking: true })}>Sim</Marcar>
+            </div>
+            {p.networking ? (
+              <>
+                <Rotulo>Minha área</Rotulo>
+                <div role="radiogroup" aria-label="Área" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {ORDEM_AREAS.map((a) => <Marcar key={a} unico marcada={p.area === a} aoTocar={() => muda({ area: a })}>{NOME_AREA[a]}</Marcar>)}
+                </div>
+                <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '10px' }}>Mostramos coworkings, hubs de inovação e eventos da sua área.</div>
+              </>
+            ) : null}
           </>
         ) : null}
 

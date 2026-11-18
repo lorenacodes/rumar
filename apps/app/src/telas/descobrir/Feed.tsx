@@ -45,7 +45,7 @@ const deCuradoria = (l: Lugar): Post => ({
 /** Rótulo curto da categoria, para o selo do postal. */
 const SELO: Partial<Record<CategoriaLugar, string>> = {
   restaurantes: 'Comer', bares: 'Bar', cafes: 'Café', 'vida-noturna': 'Noite', parques: 'Verde', praias: 'Praia', museus: 'Museu', historico: 'História',
-  cultura: 'Cultura', compras: 'Compras', mercados: 'Feira', lazer: 'Lazer', atracoes: 'Ponto', hospedagem: 'Pouso',
+  cultura: 'Cultura', compras: 'Compras', mercados: 'Feira', lazer: 'Lazer', atracoes: 'Ponto', hospedagem: 'Pouso', trabalho: 'Rede',
 };
 const hojeCurto = () => new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '').toUpperCase();
 
@@ -278,7 +278,7 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
     return () => obs.disconnect();
   }, [carregando, fim, posts.length]);
 
-  const cats = ORDEM_CATEGORIAS.filter((c) => c !== 'transporte' && c !== 'hospedagem');
+  const cats = ORDEM_CATEGORIAS.filter((c) => c !== 'transporte' && c !== 'hospedagem' && (c !== 'trabalho' || preferencias?.networking));
   return (
     <section aria-label="Lugares para conhecer">
       <div className="mural-selos" role="group" aria-label="Selos por categoria">

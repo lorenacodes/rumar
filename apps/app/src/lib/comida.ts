@@ -69,7 +69,7 @@ export function prefsDoBanco(r: Record<string, unknown>): Record<string, unknown
   const { cozinhas_amo, cozinhas_evito, ...resto } = r;
   return { ...resto, cozinhasAmo: (cozinhas_amo as string[] | null) ?? [], cozinhasEvito: (cozinhas_evito as string[] | null) ?? [] };
 }
-export const COLUNAS_PREFS = 'estilo, gostos, ritmo, evitar, orcamento, gratuitos, periodo, local, deslocamento, dieta, cozinhas_amo, cozinhas_evito, provar';
+export const COLUNAS_PREFS = 'estilo, gostos, ritmo, evitar, orcamento, gratuitos, periodo, local, deslocamento, dieta, cozinhas_amo, cozinhas_evito, provar, networking, area';
 
 /** Termos para buscar no banco os restaurantes de cada cozinha (campo "cozinha", em português ou inglês). */
 export const TERMOS_COZINHA: Record<Cozinha, string[]> = {

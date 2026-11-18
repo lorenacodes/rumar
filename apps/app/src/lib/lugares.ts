@@ -61,7 +61,7 @@ export interface LugarBase {
 
 export interface Cobertura { categoria: CategoriaLugar; quantidade: number; limite_atingido: boolean; raio_km: number | null; fonte: string; dados_de: string | null; atualizado_em: string }
 
-export type CategoriaLugar = 'restaurantes' | 'bares' | 'cafes' | 'hospedagem' | 'museus' | 'parques' | 'praias' | 'atracoes' | 'historico' | 'cultura' | 'compras' | 'mercados' | 'vida-noturna' | 'lazer' | 'transporte';
+export type CategoriaLugar = 'restaurantes' | 'bares' | 'cafes' | 'hospedagem' | 'museus' | 'parques' | 'praias' | 'atracoes' | 'historico' | 'cultura' | 'compras' | 'mercados' | 'vida-noturna' | 'lazer' | 'transporte' | 'trabalho';
 
 /** Nome, e como cada categoria entra no roteiro (null = não entra: hospedagem, transporte). */
 export const CATEGORIAS_LUGAR: Record<CategoriaLugar, { nome: string; roteiro: { categoria: Categoria; tags: string[]; slots: Periodo[]; ingresso?: false } | null }> = {
@@ -80,6 +80,8 @@ export const CATEGORIAS_LUGAR: Record<CategoriaLugar, { nome: string; roteiro: {
   lazer: { nome: 'Lazer e diversão', roteiro: { categoria: 'entretenimento', tags: ['photography'], slots: ['morning', 'afternoon'] } },
   hospedagem: { nome: 'Hospedagem', roteiro: null },
   transporte: { nome: 'Transporte', roteiro: null },
+  // Trabalho e networking (D-046): fora do roteiro automático; aparece para quem viaja a trabalho.
+  trabalho: { nome: 'Trabalho e networking', roteiro: null },
 };
 export const ORDEM_CATEGORIAS = Object.keys(CATEGORIAS_LUGAR) as CategoriaLugar[];
 
@@ -94,12 +96,13 @@ const TIPO: Record<string, string> = {
   historic_archaeological_site: 'Sítio arqueológico', historic_city_gate: 'Portão histórico', historic_manor: 'Solar', historic_monastery: 'Mosteiro', historic_palace: 'Palácio',
   place_of_worship: 'Igreja ou templo', fountain: 'Chafariz', library: 'Biblioteca', clock: 'Relógio histórico', yes: 'Lugar histórico', townhall: 'Prefeitura', monastery: 'Mosteiro',
   planetarium: 'Planetário', community_centre: 'Centro comunitário', social_centre: 'Centro comunitário', love_hotel: 'Motel', sambadrome: 'Sambódromo', conference_centre: 'Centro de convenções',
-  public_building: 'Prédio público', sports_centre: 'Centro esportivo', information: 'Informação turística', motel: 'Motel', memorial: 'Memorial', historic_memorial: 'Memorial',
+  public_building: 'Prédio público', coworking_space: 'Coworking', hackerspace: 'Hackerspace', makerspace: 'Makerspace', university: 'Universidade',
+  office_company: 'Centro de inovação', office_research: 'Centro de pesquisa', office_association: 'Associação', office_coworking: 'Coworking', office_government: 'Centro de inovação', sports_centre: 'Centro esportivo', information: 'Informação turística', motel: 'Motel', memorial: 'Memorial', historic_memorial: 'Memorial',
 };
 /** Tipos que não são programa de viagem (vêm junto na coleta): ficam fora do app. */
 export const TIPOS_FORA = ['school', 'college', 'university', 'clinic', 'hospital', 'parking', 'fire_station', 'drinking_water', 'bench', 'courthouse', 'social_facility', 'shelter', 'swingerclub', 'toilets'];
 /** Nome do tipo em português; tipo desconhecido vira "Lugar" (nunca o código em inglês). */
-export const nomeTipo = (t: string) => TIPO[t] ?? (t.startsWith('historic_') ? 'Lugar histórico' : 'Lugar');
+export const nomeTipo = (t: string) => TIPO[t] ?? (t.startsWith('historic_') ? 'Lugar histórico' : t.startsWith('office_') ? 'Centro de inovação' : 'Lugar');
 
 export const normalizar = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -189,6 +192,8 @@ const FEED_POR_PAGINA = 12;
 export async function feedLugares(destino: string, pagina: number, categoria?: CategoriaLugar | null): Promise<{ itens: ItemFeed[]; fim: boolean }> {
   const base = (contar = false) => {
     let q = (contar ? supabase.from('lugares').select('id', { count: 'exact', head: true }) : supabase.from('lugares').select(COLS)).eq('destino_id', destino).neq('categoria', 'transporte').gte('relevancia', 0)
+      // Trabalho e networking só no selo próprio (não entra no "Para você" de quem viaja a lazer).
+      .neq('categoria', categoria === 'trabalho' ? '__nenhuma__' : 'trabalho')
       .not('tipo', 'in', `(${[...TIPOS_FORA, 'fast_food', 'food_court', 'department_store'].join(',')})`);
     if (categoria) q = q.eq('categoria', categoria);
     return q;
@@ -213,7 +218,7 @@ export async function feedLugares(destino: string, pagina: number, categoria?: C
 
 /** Uma foto por categoria, para os "destaques" redondos no topo do feed. */
 export async function capasPorCategoria(destino: string): Promise<Map<CategoriaLugar, LugarBase>> {
-  const cats = ORDEM_CATEGORIAS.filter((c) => c !== 'transporte');
+  const cats = ORDEM_CATEGORIAS.filter((c) => c !== 'transporte' && c !== 'trabalho');
   const res = await Promise.all(cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).not('foto', 'is', null).order('relevancia', { ascending: false }).limit(1)));
   const mapa = new Map<CategoriaLugar, LugarBase>();
   res.forEach((r, i) => { const l = (r.data ?? [])[0] as LugarBase | undefined; if (l) mapa.set(cats[i]!, l); });

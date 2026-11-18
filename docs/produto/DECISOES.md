@@ -599,3 +599,21 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - A fundadora achou pouco profissional o botão "Sem lugares sombrios": saiu, e esses lugares voltaram à faixa
   do Início e ao convite do Descobrir. Fica só a melhoria da descrição (o "por que visitam" evita o lado
   mórbido) e a ordem que não puxa esses lugares para a frente.
+
+## D-046 — Trabalho e networking
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora (pessoas de tecnologia, engenharia etc. viajam também para networking).
+- **Pesquisa (sinceridade):** networking acontece em eventos, e eventos não têm fonte aberta: a API da Meetup
+  só com assinatura paga (Pro) e a busca pública da Eventbrite foi desligada em 2019/2020. Raspar os sites
+  está fora (termos de uso). Lugares, sim, têm fonte aberta (OpenStreetMap).
+- **Onde encontrar os lugares:** nova categoria `trabalho` na coleta — coworkings (amenity=coworking_space,
+  office=coworking), hackerspaces/makerspaces, universidades e, pelo nome, hubs de inovação, parques/polos
+  tecnológicos, incubadoras, aceleradoras e fab labs (só se marcados como escritório, prédio ou instituição,
+  para não pegar "Coworking Lanches"). Coleta só dessa categoria nas cidades já coletadas: workflow
+  "Lugares", modo "trabalho".
+- **No app:** etapa "Também vai trabalhar ou fazer networking?" no jeito de viajar, com a área (tecnologia,
+  engenharia, design, negócios e startups, marketing, saúde, ciência, educação, direito, arte). Para quem
+  marca "Sim": bloco "Trabalho e networking" no roteiro (dia 1) e no Descobrir da cidade, com os lugares
+  (para tecnologia/engenharia/ciência, hackerspaces e hubs antes) e atalhos que abrem a busca de eventos da
+  área na cidade (Meetup, Eventbrite e, no Brasil, Sympla). Selo "Trabalho" no mural só para essas pessoas;
+  esses lugares não entram no "Para você" de quem viaja a lazer.

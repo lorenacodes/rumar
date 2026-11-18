@@ -76,6 +76,9 @@ export interface Preferencias {
   cozinhasAmo?: Cozinha[];
   cozinhasEvito?: Cozinha[];
   provar?: boolean;
+  /** Viaja também a trabalho / para networking, e a área (D-046). */
+  networking?: boolean;
+  area?: import('./networking').Area | null;
 }
 
 export interface Viagem {

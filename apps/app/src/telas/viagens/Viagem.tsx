@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { BlocoNetworking } from '../descobrir/Networking';
 import { Check } from '../../ui/check';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -231,7 +232,7 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
 // ---------------------------------------------------------------- Roteiro (lista editável)
 function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[]; pode: boolean; grupo: ReturnType<typeof mesclar>; recarregar: () => void }) {
   const navegar = useNavigate();
-  const { alternarSalvo, salvos } = useViajante();
+  const { alternarSalvo, salvos, preferencias } = useViajante();
   const [trocando, setTrocando] = useState<string | null>(null);
   const [editando, setEditando] = useState<string | null>(null);
   const doDia = itens.filter((x) => x.it.dia === dia).sort((a, b) => a.it.ordem - b.it.ordem);
@@ -243,6 +244,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
   return (
     <section style={{ marginTop: '14px' }}>
       <NivelDoRoteiro v={v} pode={pode} recarregar={recarregar} />
+      {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
       <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
       <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{temas || 'Dia livre'}</div>
       {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Nada planejado para este dia.</p> : null}
