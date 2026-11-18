@@ -42,6 +42,12 @@ export const CATEGORIAS = {
   'vida-noturna': { limite: 300, filtros: ['amenity~"^(nightclub|events_venue|music_venue)$"'] },
   lazer: { limite: 200, filtros: ['tourism~"^(zoo|aquarium|theme_park)$"', 'leisure~"^(water_park|marina)$"'] },
   transporte: { limite: 300, filtros: ['railway=station', 'amenity~"^(bus_station|ferry_terminal)$"', 'aeroway=aerodrome][iata'] },
+  // Trabalho e networking (D-046): coworkings, hackerspaces, universidades e, pelo nome, hubs de inovação,
+  // parques tecnológicos, incubadoras e aceleradoras (só se marcados como escritório/prédio/instituição).
+  trabalho: { limite: 300, filtros: [
+    'amenity=coworking_space', 'office=coworking', 'leisure~"^(hackerspace|makerspace)$"', 'amenity=university',
+    'name~"(coworking|hub de inova|hub de tecnologia|centro de inova|parque tecnol|polo tecnol|porto digital|science park|technology park|technopark|tech park|innovation hub|innovation cent|incubadora|aceleradora|fab ?lab|makerspace|hackerspace|campus google|station f)",i][~"^(office|amenity|building|landuse|leisure|club)$"~"."',
+  ] },
 };
 
 const COZINHA = { regional: 'regional', brazilian: 'brasileira', pizza: 'pizza', japanese: 'japonesa', italian: 'italiana', burger: 'hambúrguer', seafood: 'frutos do mar', steak_house: 'churrascaria', barbecue: 'churrasco', sushi: 'sushi', chinese: 'chinesa', french: 'francesa', portuguese: 'portuguesa', vegetarian: 'vegetariana', vegan: 'vegana', arab: 'árabe', mexican: 'mexicana', coffee_shop: 'café', ice_cream: 'sorvete', chicken: 'frango', sandwich: 'sanduíche', fish: 'peixe', international: 'internacional' };
@@ -56,7 +62,8 @@ export function opcoesDeDieta(t) {
 }
 
 function tipoDe(t) {
-  return t.amenity ?? t.tourism ?? t.leisure ?? (t.natural === 'beach' ? 'beach' : null) ?? (t.historic ? `historic_${t.historic}` : null) ?? t.shop ?? t.railway ?? t.aeroway ?? (t.boundary === 'national_park' ? 'national_park' : 'outro');
+  if (t.office === 'coworking') return 'coworking_space';
+  return t.amenity ?? t.tourism ?? t.leisure ?? (t.natural === 'beach' ? 'beach' : null) ?? (t.historic ? `historic_${t.historic}` : null) ?? t.shop ?? t.railway ?? t.aeroway ?? (t.office ? `office_${t.office}` : null) ?? (t.boundary === 'national_park' ? 'national_park' : 'outro');
 }
 
 function endereco(t, pais) {
@@ -210,27 +217,28 @@ async function banco(corpo) {
 // ---------------------------------------------------------------- coleta de uma cidade
 /** Em que categoria um elemento cai (a mesma regra dos filtros, na ordem das categorias). */
 const testes = Object.fromEntries(Object.entries(CATEGORIAS).map(([cat, { filtros }]) => [cat, filtros.map((f) => {
-  const [k, op, v] = f.replace(/\]\[.*$/, '').match(/^([^=~]+)(=|~)"?([^"]*)"?$/).slice(1);
-  return (t) => t[k] !== undefined && (op === '=' ? t[k] === v : new RegExp(v).test(t[k]));
+  const [k, op, v, flag] = f.replace(/\]\[.*$/, '').match(/^([^=~]+)(=|~)"?([^"]*)"?(,i)?$/).slice(1);
+  return (t) => t[k] !== undefined && (op === '=' ? t[k] === v : new RegExp(v, flag ? 'i' : '').test(t[k]));
 })]));
 export const categoriaDe = (t) => Object.keys(testes).find((c) => testes[c].some((f) => f(t))) ?? null;
 
+const SO = arg('--so') ? arg('--so').split(',') : null;
 async function coletar(d) {
   const t0 = Date.now();
   console.log(`\n== ${d.nome} (${d.regiao}, ${d.pais}) · raio ${d.raio_km} km`);
   const inicio = new Date().toISOString();
   // UMA consulta por cidade: um conjunto e um limite por categoria (vários "out" no mesmo pedido).
-  const partes = Object.entries(CATEGORIAS).map(([cat, { limite, filtros }], i) => `(${filtros.map((f) => `nwr[${f}][name];`).join('')})->.c${i};.c${i} out center tags ${limite};`);
+  const partes = Object.entries(CATEGORIAS).filter(([cat]) => !SO || SO.includes(cat)).map(([cat, { limite, filtros }], i) => `(${filtros.map((f) => `nwr[${f}][name];`).join('')})->.c${i};.c${i} out center tags ${limite};`);
   const consulta = `[out:json][timeout:180][bbox:${caixa(d)}];${partes.join('')}`;
   const dados = await overpass(consulta);
   const dadosDe = dados.osm3s?.timestamp_osm_base?.slice(0, 10) ?? null;
   console.log(`   overpass: ${(dados.elements ?? []).length} elementos em ${Math.round((Date.now() - t0) / 1000)} s`);
-  const porCat = Object.fromEntries(Object.keys(CATEGORIAS).map((c) => [c, []]));
+  const porCat = Object.fromEntries(Object.keys(CATEGORIAS).filter((c) => !SO || SO.includes(c)).map((c) => [c, []]));
   const brutosPorCat = Object.fromEntries(Object.keys(CATEGORIAS).map((c) => [c, 0]));
   const vistos = new Set();
   for (const e of dados.elements ?? []) {
     const cat = categoriaDe(e.tags ?? {});
-    if (!cat) continue;
+    if (!cat || !porCat[cat]) continue;
     brutosPorCat[cat]++;
     const l = normalizarElemento(e, d, dadosDe);
     if (!l || vistos.has(l.id)) continue;
@@ -273,6 +281,7 @@ if (arg('--cidades')) alvo = arg('--cidades').split(',').map((s) => s.trim()).fi
 if (args.includes('--padrao')) alvo = [...alvo, ...PADRAO];
 const destinos = alvo.length ? (await banco({ acao: 'destino', ids: alvo })).destinos : [];
 if (arg('--turisticos') !== null) destinos.push(...(await banco({ acao: 'pendentes', limite: Number(arg('--turisticos')) || 40 })).destinos);
+if (args.includes('--coletadas')) destinos.push(...(await banco({ acao: 'coletadas' })).destinos.map((d) => ({ ...d, regiao: d.regiao ?? '', pais: d.pais ?? '' })));
 if (arg('--fila') !== null) destinos.push(...(await banco({ acao: 'fila', limite: Number(arg('--fila')) || 5 })).destinos);
 const falhas = [];
 const LIMITE_MS = 4.5 * 3600_000; // para antes do limite de 5 h do job; o resto fica para a próxima

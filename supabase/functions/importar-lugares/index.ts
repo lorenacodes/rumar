@@ -21,7 +21,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 const JWKS = createRemoteJWKSet(new URL('https://token.actions.githubusercontent.com/.well-known/jwks'));
 const REPO = 'lorenacodes/rumar';
 const json = (corpo: unknown, status = 200) => new Response(JSON.stringify(corpo), { status, headers: { 'Content-Type': 'application/json' } });
-const CATEGORIAS = new Set(['restaurantes', 'bares', 'cafes', 'hospedagem', 'museus', 'parques', 'praias', 'atracoes', 'historico', 'cultura', 'compras', 'mercados', 'vida-noturna', 'lazer', 'transporte']);
+const CATEGORIAS = new Set(['restaurantes', 'bares', 'cafes', 'hospedagem', 'museus', 'parques', 'praias', 'atracoes', 'historico', 'cultura', 'compras', 'mercados', 'vida-noturna', 'lazer', 'transporte', 'trabalho']);
 
 async function autorizado(req: Request): Promise<boolean> {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
     const ids = [...new Set((cob ?? []).map((c) => c.destino_id))];
     const destinos: unknown[] = [];
     for (let i = 0; i < ids.length; i += 200) {
-      const { data } = await db.from('destinos').select('id, nome, lat, lon, raio_km').in('id', ids.slice(i, i + 200));
+      const { data } = await db.from('destinos').select('id, nome, regiao, pais, lat, lon, raio_km').in('id', ids.slice(i, i + 200));
       destinos.push(...(data ?? []));
     }
     return json({ destinos });
