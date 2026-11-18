@@ -567,3 +567,18 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Quando o artigo não diz, a linha não aparece. O "Você sabia?" fica menor (2 linhas). Fichas com
   "por que visitam" vêm primeiro. O compartilhar usa essa frase.
 - Possível melhoria paga (não feita): resumir com IA para cobrir as fichas sem esse trecho — mostrar custo antes.
+
+## D-044 — Curiosidades: só lugares abertos à visitação; "por que visitam" pelo guia de viagem
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("tem que ser lugares disponíveis para visitação"; a frase deve dizer
+  por que as pessoas vão, a experiência).
+- **Visitação:** a coleta lê no Wikidata data de demolição (P576), de fechamento oficial (P3999) e estado de
+  uso (P5817: fechado, destruído, abandonado, desativado…) — cada propriedade conferida pelo nome antes de
+  usar. Esses lugares ficam com `visitavel = false` e saem das fichas. Ruínas continuam (costumam ser
+  visitáveis). Lê também visitantes por ano (P1174).
+- **"Por que visitam":** 1º o guia de viagem Wikivoyage em português (texto de viagem, fala da experiência),
+  2º o trecho da Wikipédia que explica a fama, 3º "Recebe cerca de X visitantes por ano". Nada inventado.
+- **Não feito:** afirmar que se dança jazz nas Catacumbas de Paris — não há fonte e as festas acontecem em
+  túneis fechados, ilegais; o app não recomenda.
+- **Limite:** o Wikivoyage em português cobre poucos lugares (mais cidades que atrações); os lugares curiosos
+  das cidades (OpenStreetMap) ainda não são conferidos quanto à visitação.

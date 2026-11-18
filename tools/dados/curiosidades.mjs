@@ -65,20 +65,53 @@ for (const l of linhas) {
   if (porId.size >= LIMITE) break;
 }
 const itens = [...porId.values()];
-// Título do artigo em português (sitelink ptwiki), 50 itens por pedido — mais leve que juntar no SPARQL.
+// Títulos em português (Wikipédia e Wikivoyage) e visitação, 50 itens por pedido.
+// Visitação (D-044): fora quem tem data de demolição/fechamento ou estado "fechado/destruído/abandonado".
+// Cada propriedade é conferida pelo nome antes de usar (se o nome não bater, a regra fica de fora).
+const PROPS = { demolido: ['P576', /dissolved|abolished|demolished/i], fechado: ['P3999', /closure/i], estado: ['P5817', /state of use/i], visitantes: ['P1174', /visitors/i] };
+const nomesProp = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=labels&languages=en&ids=${Object.values(PROPS).map(([p]) => p).join('|')}`, { headers: { 'User-Agent': UA } }).then((r) => r.json()).catch(() => ({ entities: {} }));
+const usa = Object.fromEntries(Object.entries(PROPS).map(([k, [p, re]]) => [k, re.test(nomesProp.entities?.[p]?.labels?.en?.value ?? '') ? p : null]));
+console.log('Propriedades de visitação conferidas:', JSON.stringify(usa));
+const estados = new Map();
 const qs = itens.map((c) => c.id.slice(3));
 for (let k = 0; k < qs.length; k += 50) {
   const lote = qs.slice(k, k + 50);
   try {
-    const r = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=sitelinks&sitefilter=ptwiki&ids=${lote.join('|')}`, { headers: { 'User-Agent': UA } });
+    const r = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=sitelinks|claims&sitefilter=ptwiki|ptwikivoyage&ids=${lote.join('|')}`, { headers: { 'User-Agent': UA } });
     const d = r.ok ? await r.json() : { entities: {} };
     for (const q of lote) {
-      const t = d.entities?.[q]?.sitelinks?.ptwiki?.title;
-      if (t) porId.get(q).titulo = t;
+      const e = d.entities?.[q];
+      const c = porId.get(q);
+      if (!e || !c) continue;
+      c.titulo = e.sitelinks?.ptwiki?.title ?? null;
+      c.guia = e.sitelinks?.ptwikivoyage?.title ?? null;
+      const cl = e.claims ?? {};
+      const tem = (p) => Boolean(p && (cl[p] ?? []).length);
+      c.visitavel = !(tem(usa.demolido) || tem(usa.fechado));
+      if (usa.estado) c._estados = (cl[usa.estado] ?? []).map((x) => x.mainsnak?.datavalue?.value?.id).filter(Boolean);
+      if (usa.visitantes) {
+        // Valor mais recente (pelo qualificador de data P585, quando houver).
+        const vals = (cl[usa.visitantes] ?? []).map((x) => ({ v: Number(x.mainsnak?.datavalue?.value?.amount), t: x.qualifiers?.P585?.[0]?.datavalue?.value?.time ?? '' })).filter((x) => Number.isFinite(x.v) && x.v > 0);
+        vals.sort((x, y) => (y.t > x.t ? 1 : -1));
+        c.visitantes_ano = vals[0] ? Math.round(vals[0].v) : null;
+      }
     }
-  } catch { /* segue sem título */ }
+  } catch { /* segue */ }
   await espera(400);
 }
+// Estados de uso: nome em inglês decide (closed, destroyed, abandoned, disused, demolished, ruins não conta).
+const qEstados = [...new Set(itens.flatMap((c) => c._estados ?? []))];
+for (let k = 0; k < qEstados.length; k += 50) {
+  const d = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=labels&languages=en&ids=${qEstados.slice(k, k + 50).join('|')}`, { headers: { 'User-Agent': UA } }).then((r) => r.json()).catch(() => ({ entities: {} }));
+  for (const q of qEstados.slice(k, k + 50)) estados.set(q, d.entities?.[q]?.labels?.en?.value ?? '');
+  await espera(400);
+}
+for (const c of itens) {
+  if ((c._estados ?? []).some((q) => /closed|destroyed|abandoned|disused|demolished|out of service|decommissioned|not open/i.test(estados.get(q) ?? ''))) c.visitavel = false;
+  delete c._estados;
+  if (c.visitavel === undefined) c.visitavel = true;
+}
+console.log(`${itens.filter((c) => !c.visitavel).length} fora por não estarem abertos à visitação; ${itens.filter((c) => c.visitantes_ano).length} com visitantes por ano; ${itens.filter((c) => c.guia).length} com página no Wikivoyage`);
 console.log(`${itens.length} curiosidades com foto; ${itens.filter((i) => i.titulo).length} com artigo em português`);
 
 // 3) Primeira frase do resumo em português.
@@ -139,10 +172,32 @@ for (let k = 0; k < comTitulo.length; k += 20) {
 }
 console.log(`${feitos} resumos em português; ${itens.filter((i) => i.porque).length} com "por que visitam"`);
 
+// "Por que visitam" pelo guia de viagem (Wikivoyage em português), quando existe: o texto é de viagem,
+// fala da experiência. Tem prioridade sobre a frase tirada da Wikipédia.
+const comGuia = itens.filter((c) => c.guia);
+let doGuia = 0;
+for (let k = 0; k < comGuia.length; k += 20) {
+  const lote = comGuia.slice(k, k + 20);
+  try {
+    const d = await fetch(`https://pt.wikivoyage.org/w/api.php?action=query&format=json&formatversion=2&prop=extracts&exintro=1&explaintext=1&exlimit=20&redirects=1&titles=${encodeURIComponent(lote.map((c) => c.guia).join('|'))}`, { headers: { 'User-Agent': UA } }).then((r) => r.json());
+    for (const pg of d.query?.pages ?? []) {
+      const c = lote.find((x) => x.guia === pg.title);
+      if (!c || !pg.extract) continue;
+      const f = porQueVisitam(pg.extract) ?? primeiraFrase(pg.extract);
+      if (f && f.length <= 140) { c.porque = f.length > 125 ? `${f.slice(0, 122).replace(/[\s,]+\S*$/, '')}…` : f; doGuia++; }
+    }
+  } catch { /* segue */ }
+  await espera(1000);
+}
+console.log(`${doGuia} frases do guia de viagem (Wikivoyage)`);
+// Sem frase: o número de visitantes por ano diz que o lugar atrai gente (fonte: Wikidata).
+const formata = (n) => (n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1).replace('.0', '').replace('.', ',')} ${n >= 2_000_000 ? 'milhões' : 'milhão'} de visitantes` : `${Math.round(n / 1000)} mil visitantes`);
+for (const c of itens) if (!c.porque && c.visitantes_ano && c.visitantes_ano >= 1000) c.porque = `Recebe cerca de ${formata(c.visitantes_ano)} por ano.`;
+
 // Grava em lotes.
 let gravados = 0;
 for (let k = 0; k < itens.length; k += 500) {
-  const lote = itens.slice(k, k + 500).map(({ titulo, ...resto }) => resto);
+  const lote = itens.slice(k, k + 500).map(({ titulo, guia, ...resto }) => resto);
   gravados += (await api({ acao: 'curiosidades_gravar', itens: lote })).gravados;
 }
 console.log(`Gravadas ${gravados} curiosidades.`);
