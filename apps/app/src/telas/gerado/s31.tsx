@@ -64,7 +64,7 @@ export function Tela31_2() {
               AJU
             </span>
             <span style={{ color: "var(--amarelo)" }}>
-              ✈
+              →
             </span>
             <span style={{ font: "600 40px/42px 'Lexend Exa'", letterSpacing: "-0.03em" }}>
               CDG
@@ -87,7 +87,7 @@ export function Tela31_2() {
         </div>
         <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed #2A3A66" }}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", background: "#1F4FD8", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'", color: "#AEBBE0", textDecoration: "line-through" }}>
             Escolher destino e mês
@@ -98,7 +98,7 @@ export function Tela31_2() {
         </div>
         <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed #2A3A66" }}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", background: "#1F4FD8", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'", color: "#AEBBE0", textDecoration: "line-through" }}>
             Ver custo e folga

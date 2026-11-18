@@ -43,7 +43,7 @@ export function Tela19_1() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "46px", borderBottom: "1px dashed var(--linha)" }}>
           <div style={{ width: "24px", height: "24px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", fontSize: "16px", color: "var(--texto-sec)", textDecoration: "line-through" }}>
             Passaporte (vale até a volta + 6 meses)
@@ -51,7 +51,7 @@ export function Tela19_1() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "46px", borderBottom: "1px dashed var(--linha)" }}>
           <div style={{ width: "24px", height: "24px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", fontSize: "16px", color: "var(--texto-sec)", textDecoration: "line-through" }}>
             Reservas e comprovantes
@@ -86,7 +86,7 @@ export function Tela19_1() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "46px", borderBottom: "1px dashed var(--linha)" }}>
           <div style={{ width: "24px", height: "24px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", fontSize: "16px", color: "var(--texto-sec)", textDecoration: "line-through" }}>
             Tênis confortável
@@ -240,7 +240,7 @@ export function Tela19_3() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("19.1")}>
-          Marcar tudo como conferido ✓
+          Marcar tudo como conferido 
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -269,7 +269,7 @@ export function Tela19_4() {
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "56px", borderBottom: "1px solid var(--linha)" }}>
           <div style={{ width: "24px", height: "24px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
@@ -282,7 +282,7 @@ export function Tela19_4() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "56px", borderBottom: "1px solid var(--linha)" }}>
           <div style={{ width: "24px", height: "24px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 16px 'Open Sans'" }}>
@@ -317,7 +317,7 @@ export function Tela19_4() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "56px", borderBottom: "1px solid var(--linha)" }}>
           <div style={{ width: "24px", height: "24px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1" }}>
             <div style={{ font: "600 16px 'Open Sans'" }}>

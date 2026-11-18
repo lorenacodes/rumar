@@ -1,4 +1,5 @@
 import { Info } from '../../ui/info';
+import { Check } from '../../ui/check';
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -82,7 +83,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
             <li key={e.id} style={{ borderLeft: `3px solid ${estado === 'feita' ? 'var(--verde)' : estado === 'atual' ? 'var(--amarelo)' : 'var(--linha)'}`, paddingLeft: '12px', marginLeft: '6px' }}>
               <button type="button" className="r-btn" aria-expanded={aberta} onClick={() => setVista(e.id)} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', minHeight: '48px', alignItems: 'center', textAlign: 'left' }}>
                 <span>
-                  <b style={{ font: "600 16px 'Lexend Exa'" }}>{estado === 'feita' ? '✓ ' : estado === 'atual' ? '● ' : '○ '}{e.nome}</b>
+                  <b style={{ font: "600 16px 'Lexend Exa'" }}>{estado === 'feita' ? <Check cor="var(--verde)" /> : estado === 'atual' ? '● ' : '○ '}{e.nome}</b>
                   <span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{pend ? `${pend} ${pend === 1 ? 'pendente' : 'pendentes'}` : daEtapa.length ? 'Tudo feito' : 'Sem tarefas'}{e.id === j.etapa ? ' · você está aqui' : ''}</span>
                 </span>
                 <span aria-hidden="true">{aberta ? '▴' : '▾'}</span>
@@ -305,7 +306,7 @@ function PainelEncerrar({ v, fechar, recarregar, resumo }: { v: ViagemCompleta; 
       <Rotulo>Como foi o planejamento?</Rotulo>
       <div role="radiogroup" aria-label="Nota do planejamento" style={{ display: 'flex', gap: '4px' }}>
         {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} type="button" role="radio" aria-checked={nota === n} aria-label={`${n} de 5`} className="r-btn" onClick={() => setNota(n)} style={{ width: '48px', height: '48px', fontSize: '26px', color: n <= nota ? 'var(--amarelo)' : 'var(--linha)' }}>★</button>
+          <button key={n} type="button" role="radio" aria-checked={nota === n} aria-label={`${n} de 5`} className="r-btn" onClick={() => setNota(n)} style={{ width: '48px', height: '48px', font: "600 18px 'Lexend Exa'", border: '1px solid var(--linha)', background: n <= nota ? 'var(--amarelo)' : 'transparent', color: 'var(--texto)' }}>{n}</button>
         ))}
       </div>
       <Rotulo><label htmlFor="coment">O que faria diferente? (opcional)</label></Rotulo>

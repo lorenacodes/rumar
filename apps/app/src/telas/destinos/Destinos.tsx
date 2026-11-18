@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Check } from '../../ui/check';
 import { useNavigate } from 'react-router-dom';
 
 import DESTINOS from '../../dados/destinos.json';
@@ -47,7 +48,7 @@ export function Destinos({ primeiraVez = false }: { primeiraVez?: boolean }) {
             <div role="group" aria-label="Seus favoritos" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {favs.map((f) => (
                 <button key={f.chave} type="button" className="r-btn" aria-label={`Tirar ${f.nome} dos favoritos`} onClick={() => void alternar(f)} style={{ minHeight: '44px', padding: '0 12px', background: 'var(--fundo-escuro)', color: '#fff', font: "600 14px 'Open Sans'" }}>
-                  ♥ {f.destino_id ? rotuloDestino({ nome: f.nome, regiao: f.regiao, pais: f.destino_id.slice(0, 2).toUpperCase() }) : f.nome} ×
+                  {f.destino_id ? rotuloDestino({ nome: f.nome, regiao: f.regiao, pais: f.destino_id.slice(0, 2).toUpperCase() }) : f.nome} ×
                 </button>
               ))}
             </div>
@@ -61,7 +62,7 @@ export function Destinos({ primeiraVez = false }: { primeiraVez?: boolean }) {
             return (
               <button key={f.chave} type="button" role="checkbox" aria-checked={sim} className="r-btn" onClick={() => void alternar(f)}
                 style={{ minHeight: '44px', padding: '0 12px', font: `${sim ? 600 : 500} 14px 'Open Sans'`, ...(sim ? { background: 'var(--fundo-escuro)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>
-                {sim ? `♥ ${d.nome}` : d.nome}
+                {sim ? <><Check />{d.nome}</> : d.nome}
               </button>
             );
           })}
@@ -69,7 +70,7 @@ export function Destinos({ primeiraVez = false }: { primeiraVez?: boolean }) {
         <div style={{ height: '16px' }} />
       </div>
       <Rodape>
-        <BotaoPrincipal onClick={() => navegar(primeiraVez ? '/inicio' : -1 as never)}>{primeiraVez ? (favs.length ? 'Continuar ↗' : 'Pular por agora') : 'Pronto ✓'}</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => navegar(primeiraVez ? '/inicio' : -1 as never)}>{primeiraVez ? (favs.length ? 'Continuar ↗' : 'Pular por agora') : 'Pronto'}</BotaoPrincipal>
       </Rodape>
     </main>
   );

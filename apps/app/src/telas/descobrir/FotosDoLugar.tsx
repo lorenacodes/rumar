@@ -90,7 +90,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
       {!aberto ? (
         <button type="button" className="r-btn" onClick={() => (sessao ? (setAberto(true), setMsg(null)) : navegar('/entrar'))}
           style={{ width: '100%', height: '48px', marginTop: '10px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'" }}>
-          {sessao ? '📷 Mandar foto' : 'Entre para mandar fotos'}
+          {sessao ? 'Mandar foto' : 'Entre para mandar fotos'}
         </button>
       ) : (
         <div style={{ marginTop: '10px', padding: '12px', border: '2px solid var(--texto)' }}>

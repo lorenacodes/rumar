@@ -119,7 +119,7 @@ export function Tela23_2() {
             Museu de Montmartre
           </div>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--verde)", marginTop: "2px" }}>
-            ✓ Acesso sem degraus pela entrada lateral
+            Acesso sem degraus pela entrada lateral
           </div>
           <div style={{ fontSize: "14px", color: "var(--texto-sec)" }}>
             Informado pelo local · conferido em 04/11/2026
@@ -152,7 +152,7 @@ export function Tela23_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("6.3")}>
-          Aceitar as trocas ✓
+          Aceitar as trocas 
         </div>
       </div>
     </main>
@@ -180,7 +180,7 @@ export function Tela23_3() {
               AJU
             </b>
             <span style={{ color: "var(--amarelo)" }}>
-              ✈
+              →
             </span>
             <b style={{ font: "600 38px 'Lexend Exa'" }}>
               CDG

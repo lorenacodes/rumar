@@ -206,7 +206,7 @@ export function Tela17_3() {
         <div style={{ marginTop: "12px", border: "2px solid var(--texto)" }}>
           <div style={{ padding: "12px 14px", background: "var(--fundo-escuro)", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <span style={{ font: "600 22px 'Lexend Exa'" }}>
-              AJU ✈ CDG
+              AJU → CDG
             </span>
             <span style={{ fontSize: "14px", color: "var(--amarelo)" }}>
               12 jul · 06:10

@@ -126,7 +126,7 @@ export function Tela21_2() {
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", background: "var(--amarelo)", border: "2px solid var(--texto)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-              ✓
+              
             </div>
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
@@ -137,7 +137,7 @@ export function Tela21_2() {
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", background: "var(--amarelo)", border: "2px solid var(--texto)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-              ✓
+              
             </div>
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
@@ -157,7 +157,7 @@ export function Tela21_2() {
               <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
             </div>
             <div style={{ position: "absolute", right: "6px", top: "6px", width: "24px", height: "24px", boxSizing: "border-box", background: "var(--amarelo)", border: "2px solid var(--texto)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-              ✓
+              
             </div>
           </div>
           <div style={{ position: "relative", height: "104px", overflow: "hidden" }}>
@@ -187,7 +187,7 @@ export function Tela21_2() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "44px" }}>
           <div style={{ width: "24px", height: "24px", border: "2px solid var(--texto)", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/20px 'Open Sans'", textAlign: "center", boxSizing: "border-box" }}>
-            ✓
+            
           </div>
           <span style={{ fontSize: "15px" }}>
             Visitantes dos lugares onde fui

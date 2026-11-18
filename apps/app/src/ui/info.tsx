@@ -11,7 +11,7 @@ export function Info({ rotulo = 'Fonte', children, style }: { rotulo?: string; c
     <span style={{ display: 'block', ...style }}>
       <button type="button" className="r-btn" aria-expanded={aberto} aria-controls={id} onClick={() => setAberto(!aberto)}
         style={{ minHeight: '32px', padding: '0', fontSize: '12px', fontWeight: 600, color: 'var(--texto-sec)', textDecoration: 'underline dotted' }}>
-        ⓘ {rotulo}
+        {rotulo}
       </button>
       {aberto ? <span id={id} style={{ display: 'block', fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', marginTop: '2px' }}>{children}</span> : null}
     </span>

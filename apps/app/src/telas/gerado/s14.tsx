@@ -158,10 +158,10 @@ export function Tela14_2() {
             Você
           </b>
           <span style={{ color: "var(--verde)", fontWeight: "600" }}>
-            ✓
+            
           </span>
           <span style={{ color: "var(--verde)", fontWeight: "600" }}>
-            ✓
+            
           </span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1.4fr .8fr .8fr", gap: "8px", alignItems: "center", minHeight: "52px", borderBottom: "1px solid var(--linha)", fontSize: "15px" }}>
@@ -169,7 +169,7 @@ export function Tela14_2() {
             Bia M.
           </b>
           <span style={{ color: "var(--verde)", fontWeight: "600" }}>
-            ✓
+            
           </span>
           <span style={{ color: "var(--ambar)", fontWeight: "600" }}>
             Falta
@@ -199,7 +199,7 @@ export function Tela14_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/minha-viagem")}>
-          Marcar minha parte como paga ✓
+          Marcar minha parte como paga 
         </div>
       </div>
     </main>

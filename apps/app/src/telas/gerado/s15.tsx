@@ -23,7 +23,7 @@ export function Tela15_1() {
               AJU
             </span>
             <span style={{ color: "var(--amarelo)" }}>
-              ✈
+              →
             </span>
             <span style={{ font: "600 40px/42px 'Lexend Exa'", letterSpacing: "-0.03em" }}>
               CDG
@@ -46,7 +46,7 @@ export function Tela15_1() {
         </div>
         <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("2.2")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'", color: "var(--texto-sec)", textDecoration: "line-through" }}>
             Escolher destino e mês
@@ -57,7 +57,7 @@ export function Tela15_1() {
         </div>
         <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px dashed var(--linha)" }} {...toque("2.3")}>
           <div style={{ width: "22px", height: "22px", flex: "none", boxSizing: "border-box", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/22px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <div style={{ flex: "1", font: "600 15px/20px 'Open Sans'", color: "var(--texto-sec)", textDecoration: "line-through" }}>
             Ver custo e folga

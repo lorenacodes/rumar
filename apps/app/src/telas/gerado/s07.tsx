@@ -64,7 +64,7 @@ export function Tela7_1() {
               </span>
             </div>
             <div style={{ fontSize: "14px", color: "var(--texto-sec)", marginTop: "6px" }}>
-              ✓ Reservou pelo Bo Vair · 38 copiaram
+              Reservou pelo Bo Vair · 38 copiaram
             </div>
           </div>
         </div>
@@ -138,7 +138,7 @@ export function Tela7_2() {
               Marina R. · Aracaju
             </div>
             <div style={{ font: "600 14px 'Open Sans'", color: "var(--verde)" }}>
-              ✓ Reservou pelo Bo Vair · jun/2026
+              Reservou pelo Bo Vair · jun/2026
             </div>
           </div>
         </div>
@@ -267,7 +267,7 @@ export function Tela7_3() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("6.3")}>
-          Adicionar ao meu roteiro ✓
+          Adicionar ao meu roteiro 
         </div>
       </div>
     </main>
@@ -309,7 +309,7 @@ export function Tela7_4() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "46px" }}>
           <div style={{ width: "24px", height: "24px", border: "2px solid var(--texto)", boxSizing: "border-box", flex: "none", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <span style={{ fontSize: "15px" }}>
             Nome e estado de origem
@@ -323,7 +323,7 @@ export function Tela7_4() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "46px" }}>
           <div style={{ width: "24px", height: "24px", border: "2px solid var(--texto)", boxSizing: "border-box", flex: "none", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <span style={{ fontSize: "15px" }}>
             Hotel por nome
@@ -331,7 +331,7 @@ export function Tela7_4() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "46px" }}>
           <div style={{ width: "24px", height: "24px", border: "2px solid var(--texto)", boxSizing: "border-box", flex: "none", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <span style={{ fontSize: "15px" }}>
             Fotos do roteiro

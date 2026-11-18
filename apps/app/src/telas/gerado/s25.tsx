@@ -58,7 +58,7 @@ export function Tela25_1() {
             AJU
           </b>
           <span style={{ color: "var(--amarelo)" }}>
-            ✈
+            →
           </span>
           <b style={{ font: "600 24px 'Lexend Exa'" }}>
             CDG
@@ -75,7 +75,7 @@ export function Tela25_1() {
         </div>
         <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
           <div style={{ height: "48px", flex: "1", border: "2px solid var(--texto)", boxSizing: "border-box", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            ♡ 128
+            128
           </div>
           <div style={{ height: "48px", flex: "2.2", background: "var(--amarelo)", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("7.2")}>
             Quero ir também ↗

@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { Check } from '../../ui/check';
 import { useNavigate } from 'react-router-dom';
 
 import { useValorInicial } from '../../dev/demo';
@@ -30,7 +31,7 @@ function Chip({ marcado, aoTocar, children }: { marcado: boolean; aoTocar: () =>
           ? { height: '48px', padding: '0 14px', display: 'flex', alignItems: 'center', gap: '6px', font: "600 15px 'Open Sans'", boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff' }
           : { height: '48px', padding: '0 14px', display: 'flex', alignItems: 'center', gap: '6px', font: "500 15px 'Open Sans'", boxSizing: 'border-box', border: '1px solid var(--linha)' }
       }>
-      {marcado ? `✓ ${children}` : children}
+      {children}
     </button>
   );
 }
@@ -75,7 +76,7 @@ export function Tela1_3() {
             onChange={(e) => campo.digitar(e.target.value)}
             style={{ flex: '1', font: "600 22px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}
           />
-          {cidadeOk ? <span style={{ color: 'var(--azul)', fontWeight: '600' }}>✓</span> : null}
+          {cidadeOk ? <span style={{ color: 'var(--azul)', fontWeight: '600' }}><Check /></span> : null}
         </label>
         <SugestoesCidade campo={campo} />
         <div style={rotulo} id="idioma-app">

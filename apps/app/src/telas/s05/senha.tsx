@@ -71,9 +71,9 @@ function Regras({ senha, anterior = true }: { senha: string; anterior?: boolean 
   const cor = (ok: boolean) => (ok ? 'var(--verde)' : 'var(--texto-sec)');
   return (
     <div style={{ marginTop: '10px' }}>
-      <div style={{ fontSize: '14px', lineHeight: '24px', color: cor(r.tamanho) }}>{r.tamanho ? '✓' : '·'} Pelo menos 8 caracteres</div>
-      <div style={{ fontSize: '14px', lineHeight: '24px', color: cor(r.letraENumero) }}>{r.letraENumero ? '✓' : '·'} Uma letra e um número</div>
-      {anterior ? <div style={{ fontSize: '14px', lineHeight: '24px', color: cor(senha.length > 0) }}>{senha.length > 0 ? '✓' : '·'} Não pode ser a senha anterior</div> : null}
+      <div style={{ fontSize: '14px', lineHeight: '24px', color: cor(r.tamanho) }}>{r.tamanho ? <span className="visualmente-oculto">Atendido: </span> : null}Pelo menos 8 caracteres</div>
+      <div style={{ fontSize: '14px', lineHeight: '24px', color: cor(r.letraENumero) }}>{r.letraENumero ? <span className="visualmente-oculto">Atendido: </span> : null}Uma letra e um número</div>
+      {anterior ? <div style={{ fontSize: '14px', lineHeight: '24px', color: cor(senha.length > 0) }}>{senha.length > 0 ? <span className="visualmente-oculto">Atendido: </span> : null}Não pode ser a senha anterior</div> : null}
     </div>
   );
 }
@@ -111,7 +111,7 @@ export function Tela5_10() {
           <Nota marginTop="14px">Depois de salvar, saímos da sua conta nos outros aparelhos. Seu plano continua salvo.</Nota>
         </div>
         <Rodape padding="10px 20px 14px">
-          <BotaoPrincipal type="submit">Salvar senha nova ✓</BotaoPrincipal>
+          <BotaoPrincipal type="submit">Salvar senha nova</BotaoPrincipal>
         </Rodape>
       </form>
     </main>
@@ -191,7 +191,7 @@ export function Tela5_16() {
           <Nota marginTop="14px">Ao trocar, saímos da conta nos outros aparelhos.</Nota>
         </div>
         <Rodape padding="10px 20px 14px">
-          <BotaoPrincipal type="submit">Salvar senha nova ✓</BotaoPrincipal>
+          <BotaoPrincipal type="submit">Salvar senha nova</BotaoPrincipal>
           <BotaoTexto onClick={() => navegar('/conta/esqueci')}>Esqueci a senha atual</BotaoTexto>
         </Rodape>
       </form>

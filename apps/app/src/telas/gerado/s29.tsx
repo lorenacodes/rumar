@@ -23,7 +23,7 @@ export function Tela29_1() {
         </div>
         <div style={{ height: "52px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "10px", padding: "0 14px", display: "flex", alignItems: "center", gap: "10px", font: "500 16px 'Open Sans'", color: "var(--texto-sec)" }}>
           <span>
-            ⌕
+            
           </span>
           Buscar na ajuda
         </div>

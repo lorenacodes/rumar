@@ -242,7 +242,7 @@ export function Tela18_3() {
             </div>
           </div>
           <span style={{ color: "var(--verde)", font: "600 14px 'Open Sans'", textAlign: "right" }}>
-            ✓
+            
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "56px", borderBottom: "1px solid var(--linha)" }}>
@@ -255,7 +255,7 @@ export function Tela18_3() {
             </div>
           </div>
           <span style={{ color: "var(--verde)", font: "600 14px 'Open Sans'", textAlign: "right" }}>
-            ✓
+            
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "56px", borderBottom: "1px solid var(--linha)" }}>
@@ -268,7 +268,7 @@ export function Tela18_3() {
             </div>
           </div>
           <span style={{ color: "var(--verde)", font: "600 14px 'Open Sans'", textAlign: "right" }}>
-            ✓
+            
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "56px", borderBottom: "1px solid var(--linha)" }}>
@@ -281,7 +281,7 @@ export function Tela18_3() {
             </div>
           </div>
           <span style={{ color: "var(--verde)", font: "600 14px 'Open Sans'", textAlign: "right" }}>
-            ✓
+            
           </span>
         </div>
         <div style={{ marginTop: "12px", background: "var(--cartao-1)", padding: "10px 14px", fontSize: "14px", lineHeight: "20px" }}>

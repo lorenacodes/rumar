@@ -413,7 +413,7 @@ export function Tela10_4() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/conta/criar")}>
-          Criar meu cofrinho ✓
+          Criar meu cofrinho 
         </div>
       </div>
     </main>
@@ -594,7 +594,7 @@ export function Tela10_7() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.8")}>
-          Registrar ✓
+          Registrar 
         </div>
       </div>
     </main>

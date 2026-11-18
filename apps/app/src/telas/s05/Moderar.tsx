@@ -22,7 +22,7 @@ export function Moderar() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Perfil · Moderação</div>
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Fotos para aprovar</h1>
         <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)' }}>Aprove só se a foto é do lugar (ou de um prato de lá), sem pessoas que dê para reconhecer e sem nada impróprio. Na dúvida, recuse.</p>
-        {fila === null ? <p>Carregando…</p> : !fila.length ? <p style={{ fontSize: '15px' }}>Nenhuma foto esperando. ✓</p> : null}
+        {fila === null ? <p>Carregando…</p> : !fila.length ? <p style={{ fontSize: '15px' }}>Nenhuma foto esperando.</p> : null}
         {(fila ?? []).map((f) => {
           const b = basePorId(f.place_id);
           return (

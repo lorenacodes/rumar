@@ -51,7 +51,7 @@ export function Chip({
         }
       }}
       style={marcado ? estiloMarcado : estiloDesmarcado}>
-      {marcado && comCheck ? `✓ ${valor}` : valor}
+      {valor}
     </div>
   );
 }

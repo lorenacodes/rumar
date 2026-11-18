@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Check } from '../../ui/check';
 import { useNavigate } from 'react-router-dom';
 
 import '../../styles/feed.css';
@@ -69,9 +70,9 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
   const temImagem = p.curadoria ? temFoto(p.id) : Boolean(p.foto) && !fotoFalhou;
   const selo = (p.categoria && SELO[p.categoria]) || 'Lugar';
   const fatos = [
-    p.cozinha ? `🍽 ${p.cozinha.replace(/_/g, ' ').replace(/;/g, ', ')}` : null,
+    p.cozinha ? `Cozinha ${p.cozinha.replace(/_/g, ' ').replace(/;/g, ', ')}` : null,
     p.gratuito ? 'Grátis' : null,
-    p.horario ? `🕒 ${horarioLegivel(p.horario)}` : null,
+    p.horario ? `Abre ${horarioLegivel(p.horario)}` : null,
   ].filter(Boolean) as string[];
 
   return (
@@ -100,7 +101,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
 
       <div className="postal-verso">
         <div>
-          {motivos.length ? <span style={{ fontWeight: 600, color: 'var(--verde)' }}>♥ {motivos.join(' · ')}</span> : null}
+          {motivos.length ? <span style={{ fontWeight: 600, color: 'var(--verde)' }}>Combina: {motivos.join(' · ')}</span> : null}
           {fatos.length ? <div style={{ color: 'var(--texto-sec)', fontSize: '13px', lineHeight: '18px', marginTop: '4px' }}>{fatos.join(' · ')}</div> : null}
         </div>
         <i aria-hidden="true" />
@@ -112,7 +113,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
       </div>
 
       <div className="postal-acoes">
-        <button type="button" className="r-btn postal-acao" aria-pressed={quero} onClick={marcar}>{quero ? '✓ Quero ir' : '+ Quero ir'}</button>
+        <button type="button" className="r-btn postal-acao" aria-pressed={quero} onClick={marcar}>{quero ? <><Check />Quero ir</> : '+ Quero ir'}</button>
         {p.lugar ? (
           <button type="button" className="r-btn postal-acao" onClick={() => navegar(`/lugar/${p.id}${viagemDoDestino ? `?viagem=${viagemDoDestino}` : ''}`)}>{viagemDoDestino ? 'No roteiro' : 'Na viagem'}</button>
         ) : null}
@@ -200,7 +201,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
     <section aria-label={`Feed de lugares em ${destino.nome}`}>
       <div className="mural-selos" role="group" aria-label="Selos por categoria">
         <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
-          <span className="mural-selo-borda"><span>★</span></span>Para você
+          <span className="mural-selo-borda"><span style={{ fontSize: '16px' }}>Bo</span></span>Para você
         </button>
         {cats.map((c) => {
           const capa = capas.get(c);
@@ -223,11 +224,6 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
     </section>
   );
 }
-
-const ICONE: Partial<Record<CategoriaLugar, string>> = {
-  atracoes: '📍', praias: '🏖', museus: '🏛', historico: '🏰', parques: '🌳', restaurantes: '🍽', cafes: '☕', bares: '🍹', mercados: '🧺',
-  compras: '🛍', cultura: '🎭', 'vida-noturna': '🌙', lazer: '🎡', hospedagem: '🛏',
-};
 
 /**
  * Descobrir sem escolher cidade (D-036): postais de várias cidades — favoritas e das próximas
@@ -278,11 +274,11 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
     <section aria-label="Lugares para conhecer">
       <div className="mural-selos" role="group" aria-label="Selos por categoria">
         <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
-          <span className="mural-selo-borda"><span>★</span></span>Para você
+          <span className="mural-selo-borda"><span style={{ fontSize: '16px' }}>Bo</span></span>Para você
         </button>
         {cats.map((c) => (
           <button key={c} type="button" className="r-btn mural-selo" aria-pressed={categoria === c} onClick={() => setCategoria(categoria === c ? null : c)}>
-            <span className="mural-selo-borda"><span>{ICONE[c] ?? CATEGORIAS_LUGAR[c].nome[0]}</span></span>
+            <span className="mural-selo-borda"><span>{CATEGORIAS_LUGAR[c].nome[0]}</span></span>
             {CATEGORIAS_LUGAR[c].nome.split(' ')[0]}
           </button>
         ))}

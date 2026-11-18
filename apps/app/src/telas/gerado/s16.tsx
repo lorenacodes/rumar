@@ -29,7 +29,7 @@ export function Tela16_1() {
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginTop: "10px", font: "600 24px 'Lexend Exa'" }}>
             AJU{' '}
             <span style={{ fontSize: "16px", color: "var(--amarelo)" }}>
-              ✈
+              →
             </span>
             {' '}CDG
           </div>

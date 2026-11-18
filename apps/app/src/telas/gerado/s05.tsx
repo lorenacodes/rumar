@@ -73,7 +73,7 @@ export function Tela5_19() {
               </div>
             </div>
             <span style={{ color: "var(--verde)", font: "600 14px 'Open Sans'", textAlign: "right" }}>
-              ✓
+              
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "62px", borderBottom: "1px solid var(--linha)" }}>
@@ -231,7 +231,7 @@ export function Tela5_21() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-          Confirmar ✓
+          Confirmar 
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Usar um código de recuperação
@@ -292,7 +292,7 @@ export function Tela5_22() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-          Guardei os códigos ✓
+          Guardei os códigos 
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Gerar códigos novos

@@ -89,7 +89,7 @@ export function Usuario({ primeiraVez = false }: { primeiraVez?: boolean }) {
         </div>
         <div id="usuario-situacao" role="status" aria-live="polite" style={{ minHeight: '22px', fontSize: '14px', marginTop: '6px', fontWeight: 600, color: formato || sit === 'em_uso' || sit === 'reservado' ? 'var(--vermelho)' : sit === 'livre' || sit === 'seu' ? 'var(--verde)' : 'var(--texto-sec)' }}>
           {bloqueadoAte ? `Você poderá trocar a partir de ${bloqueadoAte.toLocaleDateString('pt-BR')} (uma troca a cada 14 dias).`
-            : formato ?? (conferindo ? 'Conferindo…' : sit ? `${sit === 'livre' || sit === 'seu' ? '✓ ' : ''}@${valor} ${MENSAGEM[sit]}` : '')}
+            : formato ?? (conferindo ? 'Conferindo…' : sit ? `@${valor} ${MENSAGEM[sit]}` : '')}
         </div>
         {sugestoes.length ? (
           <div role="group" aria-label="Sugestões livres" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>

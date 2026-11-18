@@ -147,6 +147,15 @@ for (const id of ids) {
     falhas++;
     continue;
   }
+  // D-037 (sem emojis no app): o design passa pela mesma regra antes da comparação, para comparar
+  // igual com igual sem afrouxar o limite.
+  await el.evaluate((raiz) => {
+    const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) {
+      const t = n.nodeValue ?? '';
+      if (/[\u2713\u2708\u2661\u2715\u2315]/.test(t)) n.nodeValue = t.replace(/\u2713 ?/g, '').replace(/\u2708/g, '→').replace(/\u2661 ?/g, '').replace(/\u2315/g, '').replace(/\u2715/g, '×');
+    }
+  });
   const pngDesign = await el.screenshot();
 
   await app.goto(`${base}/#/dev/telas/${id}`);

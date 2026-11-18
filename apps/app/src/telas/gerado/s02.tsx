@@ -337,11 +337,11 @@ export function Tela2_4() {
         </div>
         <div style={{ height: "52px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "10px", padding: "0 14px", display: "flex", alignItems: "center", gap: "10px", font: "500 16px 'Open Sans'" }}>
           <span style={{ color: "var(--texto-sec)" }}>
-            ⌕
+            
           </span>
           Lis
           <span style={{ marginLeft: "auto", color: "var(--texto-sec)" }}>
-            ✕
+            ×
           </span>
         </div>
         <div style={{ font: "600 15px 'Open Sans'", color: "var(--texto-sec)", margin: "14px 0 6px" }}>
@@ -356,7 +356,7 @@ export function Tela2_4() {
               mar de 2028 · Folgado
             </div>
             <div style={{ font: "600 14px 'Open Sans'", color: "var(--azul)", marginTop: "2px" }}>
-              ♡ Salvo
+              Salvo
             </div>
           </div>
           <span style={{ color: "var(--texto-sec)", alignSelf: "center" }}>
@@ -429,7 +429,7 @@ export function Tela2_5() {
           Para decidir depois.
         </div>
         <div style={{ fontSize: "15px", lineHeight: "22px", color: "var(--texto-sec)", marginTop: "6px" }}>
-          Destinos que você salvou com ♡. O selo muda se o seu plano mudar.
+          Destinos que você salvou com . O selo muda se o seu plano mudar.
         </div>
         <div style={{ marginTop: "8px" }}>
           <div style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid var(--linha)", marginTop: "0px" }} {...toque("2.2")}>

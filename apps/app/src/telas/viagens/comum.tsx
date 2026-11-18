@@ -13,7 +13,7 @@ export function dataMais(dataIda: string, dias: number): string {
 export const reais = (centavos: number) => (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
 export const euros = (centavos: number) => (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'EUR', maximumFractionDigits: centavos % 100 ? 2 : 0 });
 
-export const SELO: Record<string, string> = { cotado: '◉ Cotado', referencia: '▤ Referência', estimativa: '≈ Estimativa', informado: '✎ Informado por você' };
+export const SELO: Record<string, string> = { cotado: 'Cotado', referencia: 'Referência', estimativa: 'Estimativa', informado: 'Informado por você' };
 
 export function Selo({ tipo }: { tipo: string }) {
   return <span style={{ font: "600 12px 'Open Sans'", border: '1px solid currentColor', padding: '0 5px', whiteSpace: 'nowrap', color: tipo === 'cotado' ? 'var(--verde)' : 'var(--texto-sec)' }}>{SELO[tipo] ?? tipo}</span>;

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Check } from '../../ui/check';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import { carregarPerfil, emailValido, conferirSenhaAtual, enviarFoto, iniciais, pedirTrocaDeEmail, removerFoto, sair, salvarPerfil, useSessao, type Perfil } from '../../conta/servico';
@@ -225,7 +226,7 @@ export function Tela5_14() {
               Remover foto
             </button>
           </div>
-          <BotaoPrincipal type="submit">Salvar ✓</BotaoPrincipal>
+          <BotaoPrincipal type="submit">Salvar</BotaoPrincipal>
         </Rodape>
       </form>
     </main>
@@ -306,10 +307,10 @@ export function Tela5_17() {
         </div>
         <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '6px' }} role="radiogroup" aria-labelledby="docs">
           <button type="button" className="r-btn" role="radio" aria-checked={manterDocs} onClick={() => setManterDocs(true)} style={opcao(manterDocs)}>
-            {manterDocs ? '✓ ' : ''}Manter neste aparelho
+            {manterDocs ? <Check /> : ''}Manter neste aparelho
           </button>
           <button type="button" className="r-btn" role="radio" aria-checked={!manterDocs} onClick={() => setManterDocs(false)} style={opcao(!manterDocs)}>
-            {!manterDocs ? '✓ ' : ''}Remover deste aparelho
+            {!manterDocs ? <Check /> : ''}Remover deste aparelho
           </button>
         </div>
         <div style={{ marginTop: '12px', background: 'var(--cartao-1)', padding: '10px 12px', fontSize: '14px', lineHeight: '20px' }}>Viajando? Sem internet você não consegue entrar de novo. Vale ficar até voltar.</div>

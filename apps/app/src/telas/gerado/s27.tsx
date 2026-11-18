@@ -95,7 +95,7 @@ export function Tela27_2() {
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
           <div style={{ border: "2px solid var(--texto)", padding: "12px 14px", font: "600 15px 'Open Sans'" }}>
-            ✓ Borrar o rosto (recomendado)
+            Borrar o rosto (recomendado)
           </div>
           <div style={{ border: "1px solid var(--linha)", padding: "12px 14px", font: "500 15px 'Open Sans'" }}>
             Essa pessoa é amiga e deixou eu postar
@@ -132,7 +132,7 @@ export function Tela27_3() {
         </div>
         <div style={{ marginTop: "10px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
           <span style={{ font: "600 14px 'Open Sans'", background: "var(--amarelo)", padding: "3px 8px" }}>
-            ✓ Reservou pelo Bo Vair
+            Reservou pelo Bo Vair
           </span>
           <span style={{ font: "600 14px 'Open Sans'", background: "var(--cartao-1)", padding: "3px 8px" }}>
             Foi em jun/2026
@@ -151,7 +151,7 @@ export function Tela27_3() {
                 </span>
               </div>
               <div style={{ fontSize: "14px", color: "var(--verde)", fontWeight: "600" }}>
-                ✓ Reservou pelo Bo Vair
+                Reservou pelo Bo Vair
               </div>
             </div>
             <span style={{ color: "var(--texto-sec)", fontSize: "20px" }}>

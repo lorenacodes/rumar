@@ -3,6 +3,7 @@
  * Visual copiado do Fluxo Unificado; aqui só entra semântica e comportamento.
  */
 import type { CSSProperties, InputHTMLAttributes, ReactNode } from 'react';
+import { Check } from './check';
 import { useNavigate } from 'react-router-dom';
 
 export function Voltar({ para, rotulo = 'Voltar' }: { para?: string; rotulo?: string }) {
@@ -204,7 +205,7 @@ export function Caixa({ marcada, aoMudar, children }: { marcada: boolean; aoMuda
           font: "600 14px/20px 'Open Sans'",
           textAlign: 'center',
         }}>
-        {marcada ? '✓' : ''}
+        {marcada ? <Check /> : ''}
       </span>
       <span style={{ fontSize: '15px', lineHeight: '20px' }}>{children}</span>
     </label>

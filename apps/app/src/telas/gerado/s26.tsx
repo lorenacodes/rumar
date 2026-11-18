@@ -65,7 +65,7 @@ export function Tela26_1() {
             </div>
           </div>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--texto-sec)", marginTop: "6px" }}>
-            ♡ 42 · Comentar
+            42 · Comentar
           </div>
         </div>
         <div style={{ padding: "12px 0", borderBottom: "1px solid var(--linha)" }}>
@@ -86,7 +86,7 @@ export function Tela26_1() {
             Comi na praça e fiquei até escurecer.
           </div>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--texto-sec)", marginTop: "6px" }}>
-            ♡ 19 · Comentar
+            19 · Comentar
           </div>
         </div>
       </div>
@@ -163,7 +163,7 @@ export function Tela26_2() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "44px" }}>
           <div style={{ width: "24px", height: "24px", border: "2px solid var(--texto)", boxSizing: "border-box", flex: "none", background: "var(--fundo-escuro)", color: "#fff", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-            ✓
+            
           </div>
           <span style={{ fontSize: "15px", lineHeight: "20px" }}>
             Todos que visitam Montmartre
@@ -244,7 +244,7 @@ export function Tela26_3() {
         <div style={{ padding: "12px 20px 0" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", minHeight: "44px" }}>
             <div style={{ width: "24px", height: "24px", border: "2px solid var(--texto)", boxSizing: "border-box", flex: "none", background: "var(--fundo-escuro)", font: "600 14px/20px 'Open Sans'", textAlign: "center" }}>
-              ✓
+              
             </div>
             <span style={{ fontSize: "15px", lineHeight: "20px" }}>
               Usar uma foto minha
@@ -445,7 +445,7 @@ export function Tela26_6() {
         </div>
         <div style={{ marginTop: "10px" }}>
           <span style={{ display: "inline-block", background: "var(--cartao-1)", padding: "2px 8px", font: "600 13px 'Open Sans'" }}>
-            ✓ Reservou pelo Bo Vair
+            Reservou pelo Bo Vair
           </span>
         </div>
         <div style={{ marginTop: "12px" }}>

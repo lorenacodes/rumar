@@ -59,7 +59,7 @@ export function Tela28_2() {
               AJU
             </b>
             <span style={{ color: "var(--amarelo)" }}>
-              ✈
+              →
             </span>
             <b style={{ font: "600 40px/42px 'Lexend Exa'" }}>
               CDG
@@ -74,10 +74,10 @@ export function Tela28_2() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "16px" }}>
           <div style={{ minHeight: "44px", display: "flex", alignItems: "center" }}>
-            ✓ Cartão de embarque e comprovantes
+            Cartão de embarque e comprovantes
           </div>
           <div style={{ minHeight: "44px", display: "flex", alignItems: "center" }}>
-            ✓ Roteiro do dia
+            Roteiro do dia
           </div>
           <div style={{ minHeight: "44px", display: "flex", alignItems: "center", color: "var(--texto-sec)" }}>
             Preços, avisos e comunidade voltam com a internet

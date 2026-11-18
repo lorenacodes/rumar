@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Check } from '../../ui/check';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import CAMBIO from '../../dados/cambio.json';
@@ -141,7 +142,7 @@ export function Viagem() {
         ) : null}
         <div style={{ marginTop: '12px' }}>
           <Segmentos rotulo="Partes da viagem" valor={aba} aoMudar={(a) => setParams({ aba: a }, { replace: true })}
-            opcoes={[{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: v.hospedagem ? 'Hospedagem ✓' : 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
+            opcoes={[{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
         </div>
         {aba === 'roteiro' || aba === 'mapa' ? (
           <div role="tablist" aria-label="Dias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
@@ -209,7 +210,7 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
           {(['economico', 'intermediario', 'conforto'] as Nivel[]).map((n) => (
             <button key={n} type="button" className="r-btn" disabled={refazendo} onClick={() => void refazer(n)}
               style={{ display: 'block', width: '100%', textAlign: 'left', minHeight: '48px', borderTop: '1px solid var(--linha)', fontWeight: n === nivel ? 700 : 500 }}>
-              {n === nivel ? '✓ ' : ''}{NOME_NIVEL[n]}{c && c.nivel === n ? ' (o que o orçamento sugere)' : ''}
+              {n === nivel ? <Check /> : ''}{NOME_NIVEL[n]}{c && c.nivel === n ? ' (o que o orçamento sugere)' : ''}
             </button>
           ))}
           {info?.escolhido && c ? (
@@ -268,13 +269,13 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                 <div style={{ minWidth: 0 }}>
                   <div style={{ font: "700 11px/15px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{NOME_CATEGORIA[l.categoria]}</div>
                   <div style={{ font: "600 17px/22px 'Lexend Exa'", letterSpacing: '-0.02em', textDecoration: it.feito ? 'line-through' : 'none' }}>{l.nome}</div>
-                  {it.feito ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--verde)' }}>✓ Feito</div> : null}
+                  {it.feito ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--verde)' }}><Check />Feito</div> : null}
                   {it.situacao === 'sugerido' ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--ambar)' }}>Sugestão de um participante</div> : null}
                   <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{enderecoCurto(l.endereco) ?? l.area}</div>
                   <div style={{ fontSize: '14px', lineHeight: '20px', marginTop: '2px' }}>
                     <b>{preco.texto}</b>{preco.reserva ? <span style={{ color: 'var(--ambar)', fontWeight: 600 }}> · compre o ingresso antes</span> : null}
                   </div>
-                  {motivos.length ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)', fontWeight: 600, marginTop: '2px' }}>♥ {motivos.join(' · ')}</div> : null}
+                  {motivos.length ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)', fontWeight: 600, marginTop: '2px' }}>Combina: {motivos.join(' · ')}</div> : null}
                   {quem ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)' }}>{quem}</div> : null}
                   {km !== null && prox ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>
@@ -285,7 +286,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                   {pode ? (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
                       {it.situacao === 'sugerido' ? <button type="button" className="r-btn" onClick={() => void executar(confirmarSugestao(it))} style={acao}>Confirmar</button> : null}
-                      <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? '✓ Feito' : 'Marcar feito'}</button>
+                      <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? <><Check />Feito</> : 'Marcar feito'}</button>
                       <button type="button" className="r-btn" aria-expanded={editando === it.id} onClick={() => setEditando(editando === it.id ? null : it.id)} style={acao}>{editando === it.id ? 'Fechar ▴' : 'Editar ▾'}</button>
                     </div>
                   ) : null}
@@ -308,7 +309,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                     </div>
                   ) : null}
                   {!pode ? (
-                    <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={{ ...acao, marginTop: '4px' }}>{salvos.includes(l.id) ? '✓ Na lista Quero ir' : '+ Quero ir (inspiração)'}</button>
+                    <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={{ ...acao, marginTop: '4px' }}>{salvos.includes(l.id) ? 'Na lista Quero ir' : '+ Quero ir (inspiração)'}</button>
                   ) : null}
                   {trocando === it.id ? (
                     <div style={{ marginTop: '6px', borderLeft: '3px solid var(--amarelo)', paddingLeft: '8px' }}>
@@ -344,7 +345,7 @@ function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { i
   const doDia = itens.filter((x) => x.it.dia === dia).sort((a, b) => a.it.ordem - b.it.ordem);
   const pontos: Ponto[] = [
     ...(todos
-      ? lugaresDoDestino(destinoDe(v)).filter(temCoord).map((l) => ({ id: l.id, lat: l.lat!, lon: l.lon!, rotulo: itens.some((x) => x.l.id === l.id) ? '★' : '·', titulo: l.nome, tipo: 'lugar' as const }))
+      ? lugaresDoDestino(destinoDe(v)).filter(temCoord).map((l) => ({ id: l.id, lat: l.lat!, lon: l.lon!, rotulo: itens.some((x) => x.l.id === l.id) ? '●' : '·', titulo: l.nome, tipo: 'lugar' as const }))
       : doDia.filter((x) => temCoord(x.l)).map((x, i) => ({ id: x.l.id, lat: x.l.lat!, lon: x.l.lon!, rotulo: String(i + 1), titulo: x.l.nome, tipo: x.it.situacao === 'sugerido' ? ('sugerido' as const) : ('parada' as const) }))),
     ...(v.hospedagem?.lat && v.hospedagem.lon ? [{ id: 'hotel', lat: v.hospedagem.lat, lon: v.hospedagem.lon, rotulo: 'H', titulo: v.hospedagem.nome, tipo: 'hotel' as const }] : []),
   ];
@@ -466,7 +467,7 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginTop: '6px' }}>
                   <div style={{ minWidth: 0 }}>
                     <b style={{ font: "600 16px/21px 'Lexend Exa'" }}>{h.nome}</b>
-                    <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{h.estrelas ? `${'★'.repeat(Math.round(h.estrelas))} · ` : ''}{h.nota ? `nota ${h.nota} (${h.avaliacoes} avaliações)` : 'sem nota'}</div>
+                    <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{h.estrelas ? `${Math.round(h.estrelas)} estrelas · ` : ''}{h.nota ? `nota ${h.nota} (${h.avaliacoes} avaliações)` : 'sem nota'}</div>
                     <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{textoDistancia(km)} do centro do roteiro</div>
                   </div>
                   <div style={{ textAlign: 'right', flex: 'none' }}>

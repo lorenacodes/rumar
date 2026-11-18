@@ -138,7 +138,7 @@ export function Tela5_5() {
       </div>
       <Rodape padding="10px 20px 14px">
         <BotaoPrincipal onClick={() => void confirmar()} disabled={enviando || bloqueado}>
-          {enviando ? 'Confirmando…' : 'Confirmar ✓'}
+          {enviando ? 'Confirmando…' : 'Confirmar'}
         </BotaoPrincipal>
         <BotaoTexto onClick={() => (setFluxo({ erros: 0 }), navegar(tipoCodigo === 'signup' ? '/conta/criar' : '/perfil/email', { replace: true }))}>Trocar o e-mail</BotaoTexto>
       </Rodape>

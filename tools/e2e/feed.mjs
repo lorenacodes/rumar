@@ -38,7 +38,7 @@ confere('primeiros posts têm foto com crédito', (await posts.first().locator('
 await p.screenshot({ path: `${OUT}/01-feed-sem-conta.png` });
 const nome = await posts.nth(1).getAttribute('aria-label');
 await posts.nth(1).locator('.postal-frente').dblclick(); await p.waitForTimeout(400);
-confere('dois toques carimbam "Quero ir"', (await posts.nth(1).locator('.postal-carimbo').count()) === 1 && (await posts.nth(1).getByRole('button', { name: '✓ Quero ir' }).count()) === 1);
+confere('dois toques carimbam "Quero ir"', (await posts.nth(1).locator('.postal-carimbo').count()) === 1 && (await posts.nth(1).getByRole('button', { name: 'Quero ir', exact: true }).count()) === 1);
 await p.screenshot({ path: `${OUT}/02-dois-toques.png` });
 await p.waitForTimeout(800);
 confere('dois toques não abriram o lugar', /descobrir/.test(p.url()));
@@ -62,7 +62,7 @@ await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/descobrir?d=br-3304557'); await p.waitForTimeout(5000);
 confere('menu com 4 abas, sem Social', (await p.locator('nav[aria-label="Abas"] button').allInnerTexts()).join('|') === 'Início|Descobrir|Viagens|Perfil');
-confere('motivos pelo jeito de viajar (♥)', (await p.locator('.postal-verso').getByText(/^♥ /).count()) > 0);
+confere('motivos pelo jeito de viajar', (await p.locator('.postal-verso').getByText(/^Combina: /).count()) > 0);
 confere('botão "No roteiro" (já tem viagem para o Rio)', (await p.getByRole('button', { name: /No roteiro/ }).count()) > 0);
 await p.screenshot({ path: `${OUT}/05-feed-com-conta.png` });
 await p.getByRole('button', { name: /No roteiro/ }).first().click(); await p.waitForTimeout(2000);

@@ -131,7 +131,7 @@ await foto('dinheiro-na-viagem');
 console.log('— Roteiro: feito e horário');
 await p.getByRole('tab', { name: 'Roteiro' }).click(); await p.waitForTimeout(800);
 const marcar = p.getByRole('button', { name: 'Marcar feito' }).first();
-if (await marcar.count()) { await marcar.click(); await p.waitForTimeout(2500); confere('item marcado como feito', (await p.getByText('✓ Feito').count()) > 0); }
+if (await marcar.count()) { await marcar.click(); await p.waitForTimeout(2500); confere('item marcado como feito', (await p.getByRole('button', { name: 'Feito', exact: true }).count()) > 0); }
 else console.log('   (dia 1 sem itens)');
 await p.getByRole('button', { name: 'Editar ▾' }).first().click().catch(() => {}); await p.waitForTimeout(300);
 const hora = p.locator('input[type="time"]').first();

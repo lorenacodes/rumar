@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Check } from '../../ui/check';
 import { useParams } from 'react-router-dom';
 
 import { aulasDoIdioma, duracao, IDIOMA_DO_PAIS, linkVideo, miniatura, TEMAS, visualizacoes, type Aula } from '../../lib/aulas';
@@ -105,7 +106,7 @@ export function Idioma() {
                           {a.duracao_s ? <span style={{ position: 'absolute', right: 3, bottom: 3, background: 'rgba(0,0,0,.75)', color: '#fff', fontSize: '11px', padding: '0 4px' }}>{duracao(a.duracao_s)}</span> : null}
                         </span>
                         <span style={{ flex: 1, minWidth: 0 }}>
-                          <span style={{ display: 'block', font: "600 14px/19px 'Open Sans'" }}>{visto ? '✓ ' : ''}{a.titulo}</span>
+                          <span style={{ display: 'block', font: "600 14px/19px 'Open Sans'" }}>{visto ? <Check cor="var(--verde)" /> : ''}{a.titulo}</span>
                           <span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{a.canal}{a.visualizacoes ? ` · ${visualizacoes(a.visualizacoes)}` : ''}</span>
                         </span>
                       </a>

@@ -30,7 +30,7 @@ function CartaoViagem() {
     <div style={{ background: 'var(--fundo-escuro)', borderTop: '6px solid var(--amarelo)', color: '#fff', marginTop: '14px', padding: '12px 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <b style={{ font: "600 32px/34px 'Lexend Exa'" }}>AJU</b>
-        <span style={{ color: 'var(--amarelo)' }}>✈</span>
+        <span style={{ color: 'var(--amarelo)' }}>→</span>
         <b style={{ font: "600 32px/34px 'Lexend Exa'" }}>CDG</b>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '14px', color: '#AEBBE0' }}>
@@ -105,9 +105,9 @@ export function Tela5_3() {
           <Campo id="senha" rotulo="Senha" type="password" autoComplete="new-password" placeholder="••••••••" valor={senha} aoMudar={setSenha} aria-describedby="regras-senha" />
           {senha ? (
             <div id="regras-senha" style={{ fontSize: '13px', lineHeight: '20px', marginTop: '4px' }}>
-              <span style={{ color: regras.tamanho ? 'var(--verde)' : 'var(--texto-sec)' }}>{regras.tamanho ? '✓' : '·'} Pelo menos 8 caracteres</span>
+              <span style={{ color: regras.tamanho ? 'var(--verde)' : 'var(--texto-sec)' }}>{regras.tamanho ? <span className="visualmente-oculto">Atendido: </span> : null}Pelo menos 8 caracteres</span>
               {'  '}
-              <span style={{ color: regras.letraENumero ? 'var(--verde)' : 'var(--texto-sec)' }}>{regras.letraENumero ? '✓' : '·'} Uma letra e um número</span>
+              <span style={{ color: regras.letraENumero ? 'var(--verde)' : 'var(--texto-sec)' }}>{regras.letraENumero ? <span className="visualmente-oculto">Atendido: </span> : null}Uma letra e um número</span>
             </div>
           ) : null}
           <div style={{ marginTop: '8px' }}>

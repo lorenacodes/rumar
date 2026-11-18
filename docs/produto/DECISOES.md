@@ -465,3 +465,17 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   primeiro, depois as cidades com mais lugares fotografados), intercaladas e com os mais conhecidos
   primeiro. "🔎 Escolher cidade" e chips de cidade são opcionais; "← Todas as cidades" volta.
 - Postal com foto que falha ao carregar vira a versão sem foto (antes aparecia imagem quebrada).
+
+## D-037 — Nenhum emoji no app
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("não quero que tenha emojis em nenhuma parte do aplicativo").
+- Saíram os pictogramas (selos do mural, horário, cozinha, foto, busca) e os símbolos que o Android
+  desenha como emoji: ♥ ★ ✓ ✈ ♡ ✕ ⌕ ☕ ⓘ ✎. Substituições: marca de "feito" desenhada em CSS
+  (`ui/check.tsx`, só onde a marca é a informação: caixa marcada, item feito, aula vista); em botões de
+  escolha o fundo escuro já indica a escolha; regras de senha ficam verdes (com aviso para leitor de
+  tela); "Salvar ✓" virou "Salvar"; avião virou "→"; estrelas de hotel viraram "4 estrelas"; nota do
+  planejamento virou 1 a 5; selo "Para você" virou "Bo".
+- Também nas telas do design (desvio aprovado por este pedido). O teste visual aplica a mesma regra ao
+  design antes de comparar: o limite de 2% continua igual (159/159).
+- Guarda automática: `src/lib/semEmoji.test.ts` reprova qualquer emoji ou símbolo-emoji no código.
+  Setas, pontos (· ● ○) e ▾ ▴ continuam (tipografia).

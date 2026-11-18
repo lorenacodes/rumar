@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { Check } from '../../ui/check';
 import { useNavigate } from 'react-router-dom';
 
 import { CIDADE } from '../../lib/catalogo';
@@ -65,7 +66,7 @@ function Marcar({ marcada, aoTocar, children, unico }: { marcada: boolean; aoToc
   return (
     <button type="button" role={unico ? 'radio' : 'checkbox'} aria-checked={marcada} className="r-btn" onClick={aoTocar}
       style={{ minHeight: '48px', padding: '0 14px', boxSizing: 'border-box', display: 'flex', alignItems: 'center', font: `${marcada ? 600 : 500} 15px 'Open Sans'`, ...(marcada ? { background: 'var(--fundo-escuro)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>
-      {marcada ? `✓ ${children}` : children}
+      {marcada ? <><Check />{children}</> : children}
     </button>
   );
 }
@@ -213,7 +214,7 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
       </div>
       <Rodape>
         <BotaoPrincipal onClick={() => void seguir()} disabled={!podeSeguir || salvando}>
-          {i < etapas.length - 1 ? 'Continuar ↗' : soPerfil ? 'Salvar ✓' : salvando ? 'Montando…' : 'Montar meu roteiro ↗'}
+          {i < etapas.length - 1 ? 'Continuar ↗' : soPerfil ? 'Salvar' : salvando ? 'Montando…' : 'Montar meu roteiro ↗'}
         </BotaoPrincipal>
         {i > 0 ? (
           <button type="button" className="r-btn" onClick={() => setI(i - 1)} style={{ width: '100%', height: '44px', marginTop: '4px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)' }}>

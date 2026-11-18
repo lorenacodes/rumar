@@ -338,7 +338,7 @@ export function Tela4_4() {
         </div>
         <div style={{ display: "flex", gap: "6px", marginTop: "12px" }}>
           <div style={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", font: "600 15px 'Open Sans'", boxSizing: "border-box", whiteSpace: "nowrap", background: "var(--fundo-escuro)", color: "#fff" }} {...toque("4.1")}>
-            ✓ Dá para ir já
+            Dá para ir já
           </div>
           <Chip grupo="4.4:g1" valor="Meus sonhos" modo="um" marcadoNoDesign={false} comCheck={true} estiloMarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "600 15px 'Open Sans'", background: "var(--fundo-escuro)", color: "#fff" }} estiloDesmarcado={{ flex: "1", justifyContent: "center", height: "48px", padding: "0 14px", display: "flex", alignItems: "center", gap: "6px", boxSizing: "border-box", whiteSpace: "nowrap", font: "500 15px 'Open Sans'", border: "1px solid var(--linha)" }} />
         </div>

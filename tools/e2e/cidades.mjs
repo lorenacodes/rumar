@@ -73,14 +73,14 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.getByRole('button', { name: 'Fechar mapa', exact: true }).click(); await p.waitForTimeout(800);
   // Abrir e salvar
   await p.locator('main ul li button').first().click(); await p.waitForTimeout(2500);
-  if (await p.getByRole('button', { name: 'ⓘ Fonte' }).count()) { await p.getByRole('button', { name: 'ⓘ Fonte' }).first().click(); await p.waitForTimeout(300); }
+  if (await p.getByRole('button', { name: 'Fonte', exact: true }).count()) { await p.getByRole('button', { name: 'Fonte', exact: true }).first().click(); await p.waitForTimeout(300); }
   t = await texto();
   confere(`${cidade}: página do lugar com fonte`, /OpenStreetMap|curadoria/.test(t));
   const fotos = await p.locator('main img').count();
   // Pode já estar salvo (conta de teste reaproveitada): tira e salva de novo.
-  if (await p.getByRole('button', { name: '✓ Quero ir' }).count()) { await p.getByRole('button', { name: '✓ Quero ir' }).first().click(); await p.waitForTimeout(800); }
+  if (await p.getByRole('button', { name: 'Quero ir', exact: true }).count()) { await p.getByRole('button', { name: 'Quero ir', exact: true }).first().click(); await p.waitForTimeout(800); }
   await p.getByRole('button', { name: '+ Quero ir' }).first().click(); await p.waitForTimeout(1500);
-  confere(`${cidade}: salvar lugar`, /✓ Quero ir/.test(await texto()));
+  confere(`${cidade}: salvar lugar`, (await p.getByRole('button', { name: 'Quero ir', exact: true }).count()) > 0);
   await foto(`${cidade}-lugar`);
   resumo.push(`${cidade}: ${total} lugares, ${rest} restaurantes na 1ª página, ${gratis} grátis, ${marcadores} no mapa, foto no lugar: ${fotos ? 'sim' : 'não'}`);
 }

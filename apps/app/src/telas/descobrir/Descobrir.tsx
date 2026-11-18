@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Check } from '../../ui/check';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import PRECOS from '../../dados/precos-paris.json';
@@ -28,7 +29,7 @@ interface Item { id: string; nome: string; rotulo: string; detalhe: string; lat?
 const deCuradoria = (l: Lugar): Item => ({ id: l.id, nome: l.nome, rotulo: NOME_CATEGORIA[l.categoria], detalhe: [l.area, l.custo === 0 ? 'grátis' : null, 'curadoria Bo Vair'].filter(Boolean).join(' · '), lat: l.lat, lon: l.lon, verificado: true });
 const deBase = (b: LugarBase): Item => ({
   id: b.id, nome: b.nome, rotulo: nomeTipo(b.tipo),
-  detalhe: [b.cozinha, b.bairro, b.estrelas ? `${b.estrelas}★ (classificação oficial do hotel)` : null, b.gratuito ? 'grátis' : null, b.preco_min_centavos != null && b.preco_moeda ? dinheiro(b.preco_min_centavos, b.preco_moeda) : null].filter(Boolean).join(' · '),
+  detalhe: [b.cozinha, b.bairro, b.estrelas ? `${b.estrelas} estrelas` : null, b.gratuito ? 'grátis' : null, b.preco_min_centavos != null && b.preco_moeda ? dinheiro(b.preco_min_centavos, b.preco_moeda) : null].filter(Boolean).join(' · '),
   lat: b.lat, lon: b.lon, verificado: b.verificado,
 });
 
@@ -46,7 +47,7 @@ function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
         </span>
       </button>
       <button type="button" className="r-btn" aria-pressed={salvo} aria-label={salvo ? `Tirar ${it.nome} do Quero ir` : `Quero ir: ${it.nome}`} onClick={() => void alternarSalvo(it.id)}
-        style={{ minWidth: '44px', height: '44px', flex: 'none', color: salvo ? 'var(--carimbo)' : 'var(--texto-sec)', font: "700 13px 'Open Sans'", padding: '0 6px', whiteSpace: 'nowrap' }}>{salvo ? '✓ Quero ir' : '+ Quero ir'}</button>
+        style={{ minWidth: '44px', height: '44px', flex: 'none', color: salvo ? 'var(--carimbo)' : 'var(--texto-sec)', font: "700 13px 'Open Sans'", padding: '0 6px', whiteSpace: 'nowrap' }}>{salvo ? <><Check />Quero ir</> : '+ Quero ir'}</button>
     </li>
   );
 }
@@ -190,7 +191,7 @@ export function Descobrir() {
         {!destino && !trocando ? (
           <>
             <div role="group" aria-label="Cidades" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '12px -20px 0', padding: '0 20px 2px', scrollbarWidth: 'none' }}>
-              <button type="button" className="r-btn" onClick={() => setTrocando(true)} style={{ flex: 'none', height: '42px', padding: '0 14px', background: 'var(--fundo-escuro)', color: '#fff', font: "600 14px 'Open Sans'", whiteSpace: 'nowrap' }}>🔎 Escolher cidade</button>
+              <button type="button" className="r-btn" onClick={() => setTrocando(true)} style={{ flex: 'none', height: '42px', padding: '0 14px', background: 'var(--fundo-escuro)', color: '#fff', font: "600 14px 'Open Sans'", whiteSpace: 'nowrap' }}>Escolher cidade</button>
               {[...(guardado ? [{ destino_id: guardado.id, nome: guardado.nome }] : []), ...cidades].filter((c, i, a) => a.findIndex((x) => x.destino_id === c.destino_id) === i).slice(0, 16).map((c) => (
                 <button key={c.destino_id} type="button" className="r-btn" onClick={() => void destinoPorId(c.destino_id).then((d) => d && irParaCidade(d))}
                   style={{ flex: 'none', height: '42px', padding: '0 14px', border: '1px solid var(--linha)', font: "500 14px 'Open Sans'", whiteSpace: 'nowrap' }}>{c.nome}</button>
@@ -246,7 +247,7 @@ export function Descobrir() {
               <div style={{ marginTop: '14px', padding: '14px', background: 'var(--cartao-2)' }}>
                 <b>Ainda não coletamos os lugares de {destino.nome}.</b>
                 <p style={{ fontSize: '14px', lineHeight: '20px', margin: '6px 0 0' }}>A coleta é feita aos poucos, cidade por cidade, para não sobrecarregar as fontes. Peça esta cidade: ela entra na fila, e a coleta roda a cada 3 horas.</p>
-                <button type="button" className="r-btn" disabled={pedido} onClick={() => void pedirCidade(destino.id).then((ok) => setPedido(ok))} style={{ marginTop: '8px', height: '48px', padding: '0 16px', background: 'var(--amarelo)', font: "600 15px 'Open Sans'" }}>{pedido ? '✓ Pedido registrado' : `Pedir ${destino.nome}`}</button>
+                <button type="button" className="r-btn" disabled={pedido} onClick={() => void pedirCidade(destino.id).then((ok) => setPedido(ok))} style={{ marginTop: '8px', height: '48px', padding: '0 16px', background: 'var(--amarelo)', font: "600 15px 'Open Sans'" }}>{pedido ? 'Pedido registrado' : `Pedir ${destino.nome}`}</button>
               </div>
             ) : null}
 
