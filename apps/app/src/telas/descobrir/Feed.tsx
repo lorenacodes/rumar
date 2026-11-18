@@ -7,6 +7,7 @@ import { DESTINO_CURADORIA, horarioLegivel, LUGARES } from '../../lib/catalogo';
 import { basePorId, capasPorCategoria, type CategoriaLugar, CATEGORIAS_LUGAR, type Destino, feedLugares, type LugarBase, lugaresCuriosos, muralGeral, nomeTipo, ORDEM_CATEGORIAS, paraLugar } from '../../lib/lugares';
 import { afinidade, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
 import { listarViagens } from '../../lib/viagens';
+import { curiosidades, type Curiosidade } from '../../lib/curiosidades';
 import { fotosAprovadas } from '../../lib/fotosEnviadas';
 import { useViajante } from '../../state/viajante';
 import { FotoLugar, temFoto } from '../../ui/foto';
@@ -235,6 +236,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
  */
 export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string; nome: string }[]; aoAbrir: (id: string) => void }) {
   const { preferencias } = useViajante();
+  const navegar = useNavigate();
   const [categoria, setCategoria] = useState<CategoriaLugar | 'curiosos' | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [pagina, setPagina] = useState(0);
@@ -280,7 +282,7 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
         <button type="button" className="r-btn mural-selo" aria-pressed={!categoria} onClick={() => setCategoria(null)}>
           <span className="mural-selo-borda"><span style={{ fontSize: '16px' }}>Bo</span></span>Para você
         </button>
-        <button type="button" className="r-btn mural-selo" aria-pressed={categoria === 'curiosos'} onClick={() => setCategoria(categoria === 'curiosos' ? null : 'curiosos')}>
+        <button type="button" className="r-btn mural-selo" onClick={() => navegar('/curiosos')}>
           <span className="mural-selo-borda"><span style={{ fontSize: '15px' }}>?!</span></span>Curiosos
         </button>
         {cats.map((c) => (
@@ -298,5 +300,24 @@ export function FeedGeral({ cidades, aoAbrir }: { cidades: { destino_id: string;
       <div ref={fundo} style={{ height: '1px' }} />
       {fim && !carregando ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', textAlign: 'center', margin: '16px 0 0' }}>{posts.length ? 'Você viu tudo por aqui.' : 'Nada nesta categoria ainda.'}</p> : null}
     </section>
+  );
+}
+
+/** Convite para as Curiosidades do mundo (D-039), no topo do Descobrir. */
+export function ConviteCuriosidades() {
+  const navegar = useNavigate();
+  const [c, setC] = useState<Curiosidade | null>(null);
+  useEffect(() => void curiosidades(0, 1).then((l) => setC(l[0] ?? null)), []);
+  if (!c) return null;
+  return (
+    <button type="button" className="r-btn" onClick={() => navegar(`/curiosos?c=${c.id}`)} aria-label={`Curiosidades do mundo: ${c.nome}`}
+      style={{ position: 'relative', display: 'block', width: '100%', height: '150px', marginTop: '12px', overflow: 'hidden', background: 'var(--fundo-escuro)', textAlign: 'left' }}>
+      <img src={c.foto} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(1.1) contrast(1.05) brightness(0.8)' }} onError={() => setC(null)} />
+      <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '30px 14px 12px', background: 'linear-gradient(transparent, rgba(6,14,36,.85))', color: '#fff' }}>
+        <span style={{ display: 'block', font: "700 11px 'Open Sans'", letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Curiosidades do mundo</span>
+        <span style={{ display: 'block', font: "600 19px/23px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{c.nome}</span>
+        <span style={{ display: 'block', fontSize: '13px', opacity: 0.9 }}>Lugares estranhos e incríveis. Ver ›</span>
+      </span>
+    </button>
   );
 }

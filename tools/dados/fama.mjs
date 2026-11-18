@@ -33,8 +33,8 @@ try {
 console.log(`Atlas Obscura (${PROP_AO}): ${usaAtlas ? 'conferido' : 'NÃO usado'}`);
 const CURIOSO = [
   [/catacomb/i, 'catacumba'], [/ossuary|charnel/i, 'ossuário'], [/crypt/i, 'cripta'], [/mausoleum|tomb\b/i, 'túmulo'],
-  [/cave|grotto|cavern/i, 'gruta'], [/ruin/i, 'ruínas'], [/ghost town|abandoned/i, 'abandonado'], [/underground|subterranean/i, 'subterrâneo'],
-  [/tunnel/i, 'túnel'], [/labyrinth|maze/i, 'labirinto'], [/cemetery|necropolis/i, 'cemitério'], [/catacomb|hypogeum/i, 'hipogeu'],
+  [/cave|grotto|cavern/i, 'gruta'], [/ruin/i, 'ruínas'], [/ghost town|abandoned/i, 'abandonado'], [/underground city|subterranean city|underground river/i, 'subterrâneo'],
+  [/pedestrian tunnel|historic tunnel/i, 'túnel'], [/labyrinth|maze/i, 'labirinto'], [/cemetery|necropolis/i, 'cemitério'], [/catacomb|hypogeum/i, 'hipogeu'],
   [/cabinet of curiosities|oddity|folly/i, 'curiosidade'],
 ];
 const nomesClasse = new Map();
@@ -68,7 +68,9 @@ for (let k = 0; k < qs.length; k += 50) {
   for (const q of lote) {
     const links = dados.entities?.[q]?.sitelinks ?? {};
     const nomes = classes(q).map((c) => nomesClasse.get(c) ?? '').join(' | ');
-    const porClasse = CURIOSO.find(([re]) => re.test(nomes))?.[1] ?? null;
+    // Transporte e serviços nunca são "curiosos" (estação de metrô, túnel rodoviário, estacionamento…).
+    const transporte = /station|stop|railway|metro|subway|road|highway|parking|bridge|line\b/i.test(nomes);
+    const porClasse = transporte ? null : CURIOSO.find(([re]) => re.test(nomes))?.[1] ?? null;
     const noAtlas = usaAtlas && (dados.entities?.[q]?.claims?.[PROP_AO] ?? []).length > 0;
     const curioso = porClasse ?? (noAtlas ? 'curioso' : null);
     // Só Wikipédias (enwiki, ptwiki…), sem Commons, Wikivoyage etc.

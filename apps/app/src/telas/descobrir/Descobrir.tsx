@@ -19,7 +19,7 @@ import { Abas } from '../../ui/abas';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa } from '../../ui/Mapa';
-import { FeedGeral, FeedLugares } from './Feed';
+import { ConviteCuriosidades, FeedGeral, FeedLugares } from './Feed';
 
 const P = PRECOS as unknown as Precos;
 const dataBR = (iso?: string | null) => (iso ? iso.slice(0, 10).split('-').reverse().join('/') : '');
@@ -197,6 +197,7 @@ export function Descobrir() {
                   style={{ flex: 'none', height: '42px', padding: '0 14px', border: '1px solid var(--linha)', font: "500 14px 'Open Sans'", whiteSpace: 'nowrap' }}>{c.nome}</button>
               ))}
             </div>
+            <ConviteCuriosidades />
             {cidades.length ? <FeedGeral cidades={cidades} aoAbrir={(id) => navegar(`/lugar/${id}`)} /> : <div className="mural-esqueleto" aria-label="Carregando lugares" />}
           </>
         ) : null}

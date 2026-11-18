@@ -12,6 +12,7 @@ import { useViajante } from '../../state/viajante';
 import { hojeISO } from '../viagens/jornada';
 import { carregarViagem, listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
+import { curiosidades } from '../../lib/curiosidades';
 import { lugaresCuriosos, nomesDestinos } from '../../lib/lugares';
 import { DESTINOS_COM_FOTO, FotoDestino } from '../../ui/foto';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
@@ -74,30 +75,36 @@ function CartaoPequeno({ d }: { d: DestinoCartao }) {
   );
 }
 
-/** Faixa "Lugares curiosos" (D-038): catacumbas, criptas, ruínas, grutas… de várias cidades. */
+/** Faixa "Lugares curiosos" (D-038/D-039): curiosidades do mundo; toque abre a ficha. */
 function Curiosos() {
   const navegar = useNavigate();
-  const [itens, setItens] = useState<{ id: string; nome: string; foto: string; cidade: string }[]>([]);
+  const [itens, setItens] = useState<{ id: string; nome: string; foto: string; onde: string; mundo: boolean }[]>([]);
   useEffect(() => {
-    void lugaresCuriosos(null, 0, 24).then(async ({ itens: l }) => {
+    void curiosidades(0, 12).then(async (mundo) => {
+      if (mundo.length) { setItens(mundo.map((c) => ({ id: c.id, nome: c.nome, foto: c.foto, onde: c.pais ?? '', mundo: true }))); return; }
+      // Antes da 1ª coleta mundial: os curiosos das cidades já coletadas.
+      const { itens: l } = await lugaresCuriosos(null, 0, 24);
       const comFoto = l.filter((x) => x.foto).slice(0, 12);
       const nomes = await nomesDestinos(comFoto.map((x) => x.destino_id));
-      setItens(comFoto.map((x) => ({ id: x.id, nome: x.nome, foto: x.foto!, cidade: nomes.get(x.destino_id) ?? '' })));
+      setItens(comFoto.map((x) => ({ id: x.id, nome: x.nome, foto: x.foto!, onde: nomes.get(x.destino_id) ?? '', mundo: false })));
     });
   }, []);
   if (!itens.length) return null;
   return (
     <>
-      <Rot t="Lugares curiosos" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <Rot t="Lugares curiosos" />
+        <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/curiosos')} style={{ color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Ver todos ›</button>
+      </div>
       <div role="list" aria-label="Lugares curiosos" style={fileira}>
         {itens.map((c) => (
           <div role="listitem" key={c.id} style={{ display: 'contents' }}>
-            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${c.id}`)} style={{ flex: 'none', width: '148px', textAlign: 'left' }}>
+            <button type="button" className="r-btn" onClick={() => navegar(c.mundo ? `/curiosos?c=${c.id}` : `/lugar/${c.id}`)} style={{ flex: 'none', width: '148px', textAlign: 'left' }}>
               <span style={{ display: 'block', width: '148px', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}>
                 <img src={c.foto} alt={`Foto de ${c.nome}`} loading="lazy" onError={() => setItens((l) => l.filter((x) => x.id !== c.id))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(1.1) contrast(1.05)' }} />
               </span>
               <b style={{ font: "600 14px/19px 'Lexend Exa'", marginTop: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{c.nome}</b>
-              <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{c.cidade}</span>
+              <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{c.onde}</span>
             </button>
           </div>
         ))}

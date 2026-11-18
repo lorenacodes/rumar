@@ -492,3 +492,22 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   confere pelo nome que a propriedade é mesmo a do Atlas Obscura antes de usar; se não for, ignora).
 - Exemplos já aparecendo: Catacumbas de Paris, Père-Lachaise, cripta de Notre-Dame, catacumbas de Roma,
   Memorial dos Pretos Novos (Rio).
+
+## D-039 — Curiosidades do mundo
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("muita gente entra em rede social só para essas coisas; queria que o
+  nosso app entregasse isso").
+- **O que é:** tela própria (`/curiosos`), uma ficha por tela, deslizando para cima, com visual de
+  etiqueta de gabinete de curiosidades (número de catálogo, país, nome, "Você sabia?"). Ações: Quero ir,
+  Compartilhar (texto pronto com "Vi no Bo Vair" — traz gente nova) e Onde fica. A ordem muda todo dia.
+- **Entradas:** faixa "Lugares curiosos" no Início (com "Ver todos"), convite com foto no topo do
+  Descobrir e o selo "Curiosos" do mural geral.
+- **Conteúdo (sem inventar e sem copiar):** coleta semanal (workflow "Curiosidades") no Wikidata: lugares
+  com identificador do Atlas Obscura (propriedade conferida pelo nome a cada rodada), foto e coordenadas
+  — 5.000 no mundo todo. "Você sabia?" = 1ª frase do artigo da Wikipédia em português, com link (CC BY-SA).
+  Nenhum texto do Atlas Obscura é copiado. Ordem: com resumo em português primeiro, depois o que tem cara de
+  curioso (catacumba, abandonado, assombrado, "mais perigoso"…); cidades e vilas comuns ficam de fora.
+- **Correção:** a coleta de fama marcava estações de metrô como "subterrâneo" (463); limpo e a regra agora
+  ignora transporte.
+- **Limite honesto:** ~2.500 das 5.000 têm artigo em português; as outras aparecem com nome (às vezes em
+  inglês) e sem "Você sabia?", depois das primeiras.

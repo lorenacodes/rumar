@@ -76,20 +76,31 @@ const primeiraFrase = (t) => {
   return f.length > 300 ? `${f.slice(0, 297).replace(/\s+\S*$/, '')}…` : f;
 };
 let feitos = 0;
-for (const c of itens) {
-  if (!c.titulo) continue;
-  try {
-    const r = await fetch(`https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(c.titulo.replace(/ /g, '_'))}`, { headers: { 'User-Agent': UA } });
-    if (r.ok) {
-      const d = await r.json();
-      if (d.type === 'standard' && d.extract) {
-        c.resumo = primeiraFrase(d.extract);
-        c.resumo_url = d.content_urls?.mobile?.page?.startsWith('https://pt.') ? d.content_urls.mobile.page.replace('pt.m.wikipedia', 'pt.wikipedia') : `https://pt.wikipedia.org/wiki/${encodeURIComponent(c.titulo.replace(/ /g, '_'))}`;
-        feitos++;
-      }
-    }
-  } catch { /* segue sem resumo */ }
-  await espera(120);
+// Em lote: 20 artigos por pedido (limite da API para resumos), 1 pedido por segundo.
+const comTitulo = itens.filter((c) => c.titulo);
+for (let k = 0; k < comTitulo.length; k += 20) {
+  const lote = comTitulo.slice(k, k + 20);
+  const url = `https://pt.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=extracts|pageprops&exintro=1&explaintext=1&exlimit=20&redirects=1&titles=${encodeURIComponent(lote.map((c) => c.titulo).join('|'))}`;
+  let d = null;
+  for (let t = 0; t < 4 && !d; t++) {
+    const r = await fetch(url, { headers: { 'User-Agent': UA } });
+    if (r.ok) d = await r.json(); else await espera(5000 * (t + 1));
+  }
+  if (!d) continue;
+  // Títulos normalizados e redirecionados voltam ao título pedido.
+  const mapa = new Map();
+  for (const n of d.query?.normalized ?? []) mapa.set(n.to, n.from);
+  for (const r of d.query?.redirects ?? []) mapa.set(r.to, mapa.get(r.from) ?? r.from);
+  for (const pg of d.query?.pages ?? []) {
+    if (!pg.extract || pg.pageprops?.disambiguation !== undefined) continue;
+    const pedido = mapa.get(pg.title) ?? pg.title;
+    const c = lote.find((x) => x.titulo === pedido || x.titulo === pg.title);
+    if (!c) continue;
+    c.resumo = primeiraFrase(pg.extract);
+    c.resumo_url = `https://pt.wikipedia.org/wiki/${encodeURIComponent(pg.title.replace(/ /g, '_'))}`;
+    feitos++;
+  }
+  await espera(1000);
 }
 console.log(`${feitos} resumos em português`);
 

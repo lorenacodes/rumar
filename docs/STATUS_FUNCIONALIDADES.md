@@ -1,6 +1,6 @@
 # Status das funcionalidades
 
-> Atualizado em 17/11/2026. Decisões: `docs/produto/DECISOES.md` (D-001 a D-038).
+> Atualizado em 17/11/2026. Decisões: `docs/produto/DECISOES.md` (D-001 a D-039).
 > Pendências que dependem da fundadora: `docs/CHECKLIST_FUNDADORA.md`.
 > Legenda: ✅ feito e testado · 🟡 parcial · 🔧 depende de configuração sua · ⏳ ainda não feito
 

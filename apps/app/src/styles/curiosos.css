@@ -1,0 +1,126 @@
+/* Curiosidades do mundo (D-039): fichas de um gabinete de curiosidades, uma por tela. */
+.gabinete {
+  height: calc(100dvh - 64px - env(safe-area-inset-bottom));
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior: contain;
+  background: var(--fundo-escuro);
+  scrollbar-width: none;
+}
+.gabinete-topo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
+  background: linear-gradient(180deg, rgba(6, 14, 36, 0.75), transparent);
+  color: #fff;
+  pointer-events: none;
+}
+.gabinete-topo > * { pointer-events: auto; }
+.ficha {
+  position: relative;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ficha-foto {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: #0b1f4b;
+}
+.ficha-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.12) contrast(1.06);
+}
+.ficha-foto a {
+  position: absolute;
+  right: 8px;
+  bottom: 10px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 1px 5px;
+}
+/* A etiqueta de museu: papel, número de catálogo, nome e o "você sabia". */
+.ficha-etiqueta {
+  position: relative;
+  margin: -34px 12px 12px;
+  padding: 14px 16px 6px;
+  background: var(--papel);
+  color: var(--texto);
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  border-top: 4px solid var(--carimbo);
+}
+.ficha-numero {
+  display: flex;
+  justify-content: space-between;
+  font: 700 11px/14px 'Open Sans';
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--carimbo);
+}
+.ficha-nome {
+  margin: 4px 0 0;
+  font: 600 22px/27px 'Lexend Exa';
+  letter-spacing: -0.03em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ficha-desc {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--texto-sec);
+  margin-top: 2px;
+}
+.ficha-sabia {
+  font-size: 15px;
+  line-height: 21px;
+  margin-top: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ficha-sabia b { color: var(--carimbo); }
+.ficha-acoes {
+  display: flex;
+  gap: 2px;
+  margin: 6px -6px 0;
+  border-top: 1px dashed var(--linha);
+}
+.ficha-acao {
+  min-height: 46px;
+  padding: 0 8px;
+  font: 600 14px 'Open Sans';
+  color: var(--texto);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.ficha-acao[aria-pressed='true'] { color: var(--carimbo); }
+.ficha-dica {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  text-align: center;
+  font: 600 11px 'Open Sans';
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-sec);
+  pointer-events: none;
+}

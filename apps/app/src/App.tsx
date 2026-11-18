@@ -32,6 +32,7 @@ import { Lugar } from './telas/descobrir/Lugar';
 import { Destinos } from './telas/destinos/Destinos';
 import { Pessoa } from './telas/social/Pessoa';
 import { Social } from './telas/social/Social';
+import { Curiosos } from './telas/curiosos/Curiosos';
 import { Moderar } from './telas/s05/Moderar';
 import { NovaViagem } from './telas/viagens/NovaViagem';
 import { Viagem } from './telas/viagens/Viagem';
@@ -137,6 +138,7 @@ const filhos: RouteObject[] = [
   { path: '/perfil-moeda', element: <Moeda /> },
   { path: '/viagem/:id/idioma', element: <Idioma /> },
   { path: '/descobrir', element: <Descobrir /> },
+  { path: '/curiosos', element: <Curiosos /> },
   { path: '/lugar/:id', element: <Lugar /> },
   { path: '/roteiro', element: <Navigate to="/viagens" replace /> },
   { path: '*', element: <Navigate to="/" replace /> },
