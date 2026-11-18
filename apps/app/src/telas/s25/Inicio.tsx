@@ -189,7 +189,7 @@ export function Inicio() {
         <div role="list" aria-label="Destinos em destaque" style={{ ...fileira, marginTop: '14px' }}>
           {destaques.slice(0, 10).map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoGrande d={d} favorito={favs.some((f) => f.nome === d.nome)} /></div>)}
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Toque num destino para ver o que viver lá. Fotos: Wikimedia Commons (créditos em cada destino).</p>
+        <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Fotos: Wikimedia Commons.</p>
 
         {sessao && viagem === null ? (
           <div style={{ marginTop: '14px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Planejar uma viagem ↗</BotaoPrincipal></div>

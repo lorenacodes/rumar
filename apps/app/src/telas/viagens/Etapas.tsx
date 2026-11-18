@@ -1,3 +1,4 @@
+import { Info } from '../../ui/info';
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -108,9 +109,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
       {painel === 'diagnostico' ? <PainelDiagnostico v={v} j={j} fechar={() => setPainel(null)} recarregar={recarregar} /> : null}
       {painel === 'editar' ? <PainelEditar v={v} j={j} fechar={() => setPainel(null)} recarregar={recarregar} /> : null}
       {painel === 'encerrar' ? <PainelEncerrar v={v} fechar={() => setPainel(null)} recarregar={recarregar} resumo={resumoFinal} /> : null}
-      <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', marginTop: '16px' }}>
-        Regras e valores oficiais mudam: cada um mostra a fonte e a data em que conferimos. Antes de decidir, abra o link oficial. "A confirmar" quer dizer que o prazo depende de quem presta o serviço e não inventamos um número.
-      </p>
+      <Info rotulo="Sobre prazos e regras" style={{ marginTop: '16px' }}>Regras oficiais mudam: cada tarefa mostra a fonte e a data em que conferimos. "A confirmar" = o prazo depende de quem presta o serviço.</Info>
     </section>
   );
 }

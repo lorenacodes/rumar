@@ -20,4 +20,5 @@
 - **Velocidade.** Ela quer lançar o quanto antes para não ser copiada: priorizar o que leva ao lançamento e avisar quando algo atrasa.
 - **Orçamento.** Investimento disponível hoje: até R$ 500. Qualquer custo novo precisa ser mostrado antes, em reais.
 - **Experiência de quem já tem conta (17/11/2026).** Toda mudança precisa pensar também em quem está logado: o que espera resposta (convites, pedidos), o que está acontecendo agora (viagem em andamento), o que falta para aproveitar o app. Testar os dois caminhos: sem conta e com conta.
+- **Pouco texto (18/11/2026).** Usuários não leem muito: cada bloco com uma frase curta (até ~12 palavras), ação primeiro, linguagem simples. Fonte, licença e "como calculamos" vão num `<Info>` (ⓘ, `ui/info.tsx`), não na tela. Não mostrar o que não temos (ex.: linha "Avaliações: sem fonte"). Medir com `node tools/e2e/palavras.mjs` (blocos de 14+ palavras devem ficar perto de zero).
 - Plano vigente: `docs/PLANO_DE_ACAO.md`.

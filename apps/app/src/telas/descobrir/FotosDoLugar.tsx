@@ -63,7 +63,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
     setEnviando(true);
     const r = await enviarFoto(placeId, arquivo, tipo, legenda);
     setEnviando(false);
-    if (r.ok) { setMsg('Recebemos sua foto! Ela aparece aqui depois de aprovada (normalmente em até 2 dias).'); setArquivo(null); setLegenda(''); setDeclaro(false); setAberto(false); carregar(); }
+    if (r.ok) { setMsg('Recebemos! A foto aparece depois de aprovada.'); setArquivo(null); setLegenda(''); setDeclaro(false); setAberto(false); carregar(); }
     else setMsg(r.mensagem);
   };
   const pendentes = minhas.filter((m) => m.status === 'pendente').length;
@@ -81,16 +81,16 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
             </figure>
           ))}
         </div>
-      ) : <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Ninguém mandou foto daqui ainda. {comida ? 'Foi e comeu bem? Mostre o prato.' : 'Já foi? Seja a primeira pessoa a mostrar.'}</p>}
+      ) : <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{comida ? 'Já comeu aqui? Mostre o prato.' : 'Já foi? Mostre como é.'}</p>}
 
       {pendentes ? <p role="status" style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>{pendentes === 1 ? '1 foto sua esperando aprovação.' : `${pendentes} fotos suas esperando aprovação.`}</p> : null}
-      {recusadas.length ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{recusadas.length === 1 ? '1 foto sua não foi aprovada' : `${recusadas.length} fotos suas não foram aprovadas`} (fora das regras: foto que não é do lugar, pessoas identificáveis ou conteúdo impróprio). <button type="button" className="r-btn" onClick={() => void Promise.all(recusadas.map((r) => apagarMinhaFoto(r.id, r.caminho))).then(carregar)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Apagar</button></p> : null}
+      {recusadas.length ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{recusadas.length === 1 ? '1 foto sua não foi aprovada.' : `${recusadas.length} fotos suas não foram aprovadas.`} <button type="button" className="r-btn" onClick={() => void Promise.all(recusadas.map((r) => apagarMinhaFoto(r.id, r.caminho))).then(carregar)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Apagar</button></p> : null}
       {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.startsWith('Recebemos') ? 'var(--verde)' : 'var(--vermelho)', margin: '6px 0 0' }}>{msg}</p> : null}
 
       {!aberto ? (
         <button type="button" className="r-btn" onClick={() => (sessao ? (setAberto(true), setMsg(null)) : navegar('/entrar'))}
           style={{ width: '100%', height: '48px', marginTop: '10px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'" }}>
-          {sessao ? (comida ? '📷 Mandar foto do lugar ou do prato' : '📷 Mandar uma foto') : 'Entre para mandar fotos'}
+          {sessao ? '📷 Mandar foto' : 'Entre para mandar fotos'}
         </button>
       ) : (
         <div style={{ marginTop: '10px', padding: '12px', border: '2px solid var(--texto)' }}>
@@ -104,12 +104,12 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
               ))}
             </div>
           ) : null}
-          <label style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '10px' }}>Legenda (opcional){tipo === 'prato' ? ', ex.: nome do prato' : ''}
+          <label style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '10px' }}>{tipo === 'prato' ? 'Nome do prato (opcional)' : 'Legenda (opcional)'}
             <input className="r-input" maxLength={140} value={legenda} onChange={(e) => setLegenda(e.target.value)} style={{ display: 'block', width: '100%', boxSizing: 'border-box', borderBottom: '2px solid var(--texto)', padding: '8px 0', font: "500 16px 'Open Sans'", color: 'var(--texto)', background: 'transparent' }} />
           </label>
           <label style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', fontSize: '13px', lineHeight: '18px', marginTop: '10px' }}>
             <input type="checkbox" checked={declaro} onChange={(e) => setDeclaro(e.target.checked)} style={{ width: '22px', height: '22px', flex: 'none', marginTop: '1px' }} />
-            <span>A foto é minha e foi tirada neste lugar; não mostra pessoas que dê para reconhecer (ou elas autorizaram); autorizo o Bo Vair a mostrar a foto no app com meu @ como crédito. Posso apagar quando quiser. <a href="#/termos" style={{ color: 'var(--azul)' }}>Termos</a></span>
+            <span>A foto é minha, foi tirada aqui e não mostra rostos de outras pessoas. <a href="#/termos" style={{ color: 'var(--azul)' }}>Regras</a></span>
           </label>
           <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
             <button type="button" className="r-btn" onClick={() => (setAberto(false), setArquivo(null))} style={{ flex: 1, height: '48px', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>Cancelar</button>

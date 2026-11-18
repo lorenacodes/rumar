@@ -24,7 +24,7 @@ export function Viagens() {
         <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
           <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Viagens</div>
           <h1 style={titulo}>Planeje com a sua conta.</h1>
-          <p style={{ fontSize: '16px', lineHeight: '24px' }}>Suas viagens, roteiros, hospedagem e orçamento ficam guardados na conta, e você pode planejar junto com amigos.</p>
+          <p style={{ fontSize: '16px', lineHeight: '24px' }}>Roteiro, orçamento e amigos num lugar só.</p>
         </div>
         <div className="rodape" style={{ padding: '10px 20px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)', bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
           <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta ↗</BotaoPrincipal>

@@ -1,3 +1,4 @@
+import { Info } from '../../ui/info';
 import { useMemo, useState, type ReactNode } from 'react';
 
 import { faltaNoCusto, textoFalta, type Orcamento } from '../../lib/orcamento';
@@ -78,9 +79,9 @@ function TabelaMoedas({ j, orc, gastos }: { j: Jornada; orc: Orcamento; gastos: 
           </tr>
         </tbody>
       </table>
-      {total && falta ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--ambar)', fontWeight: 600, marginTop: '6px' }}>Parcial: ainda falta preço de {falta}. O total vai subir.</div> : null}
+      {total && falta ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--ambar)', fontWeight: 600, marginTop: '6px' }}>Falta: {falta}.</div> : null}
       <Cotacao de={j.moedaDestino} para={j.moedaPlano} />
-      <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>Conversão pela cotação de referência, sem IOF nem taxas do banco (veja "Como levar"). Cada valor original continua com a fonte dele abaixo.</div>
+      <Info rotulo="Sobre a conversão" style={{ marginTop: '4px' }}>Pela cotação de referência, sem IOF nem taxas do banco (veja "Como levar"). Cada valor tem a fonte dele abaixo.</Info>
     </div>
   );
 }
@@ -96,7 +97,7 @@ function Economia({ v, j, pode, recarregar, semPrecos }: { v: ViagemCompleta; j:
   const f = (c: number) => dinheiro(c, m);
   const p = j.plano;
   const temPassagem = v.gastos.some((g) => g.categoria === 'passagem');
-  if (!p) return <Aviso cor="var(--ambar)">{semPrecos ? 'Ainda não dá para calcular a meta: esta viagem não tem nenhum custo com fonte. Escolha a hospedagem ou informe gastos em Custos.' : `Sem a cotação do Banco Central, não dá para calcular a meta em ${m} ainda.`}</Aviso>;
+  if (!p) return <Aviso cor="var(--ambar)">{semPrecos ? 'Anote a passagem e a hospedagem em Custos para calcular quanto guardar.' : `Sem a cotação do Banco Central, não dá para calcular a meta em ${m} ainda.`}</Aviso>;
   return (
     <div style={{ marginTop: '12px' }}>
       <div style={{ font: "600 24px 'Lexend Exa'" }}>{p.falta ? `Faltam ${f(p.falta)}` : 'Meta atingida'}</div>
@@ -197,7 +198,7 @@ function ComoLevar({ v, j, orc }: { v: ViagemCompleta; j: Jornada; orc: Orcament
   const falta = c.estimativa !== null ? Math.max(0, c.estimativa - j.guardado) : null;
   const fRef = (x: number | null) => (x === null ? '—' : dinheiro(x, ref));
 
-  if (md === ref) return <div style={caixa}>A viagem é na mesma moeda em que você planeja ({NOME_MOEDA[md] ?? md}): não há câmbio. Os custos estão em Custos.</div>;
+  if (md === ref) return <div style={caixa}>Viagem em {NOME_MOEDA[md] ?? md}: não precisa trocar dinheiro.</div>;
   return (
     <div style={{ marginTop: '12px' }}>
       <Cotacao de={md} para={ref} />
@@ -369,7 +370,7 @@ export function PlanejadoReal({ v, j, orc, comCompartilhar }: { v: ViagemComplet
           </tr>
         </tbody>
       </table>
-      <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>Planejado = custo provável estimado + o que você informou. Real = gastos anotados, convertidos pela taxa guardada em cada um.{r.semConversao ? ` ${r.semConversao} gasto(s) sem conversão ficaram fora.` : ''}</div>
+      <Info rotulo="Como calculamos" style={{ marginTop: '4px' }}>Planejado = estimativa + o que você informou. Real = gastos anotados, na taxa de cada um.{r.semConversao ? ` ${r.semConversao} gasto(s) sem conversão ficaram fora.` : ''}</Info>
       {comCompartilhar && v.viagem.encerrada_em ? <BotaoContorno onClick={() => compartilhar(texto)} style={{ marginTop: '8px' }}>Compartilhar resumo</BotaoContorno> : null}
     </div>
   );

@@ -44,13 +44,13 @@ export function Privacidade() {
 
   return (
     <Pagina titulo="Privacidade" sobre="Perfil">
-      <p style={{ ...p, color: 'var(--texto-sec)' }}>Seus dados ficam guardados no Brasil (São Paulo). Não vendemos dados, não há anúncios e não usamos rastreamento.</p>
+      <p style={{ ...p, color: 'var(--texto-sec)' }}>Dados guardados no Brasil. Sem anúncios, sem venda de dados.</p>
       <button type="button" className="r-btn" onClick={() => navegar('/privacidade')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Ler o aviso de privacidade completo ›</button>
 
       <Rotulo>Seus dados</Rotulo>
-      <p style={p}>Baixe uma cópia de tudo o que o Bo Vair guarda sobre você: perfil, jeito de viajar, viagens, gastos, favoritos e amizades.</p>
+      <p style={p}>Uma cópia de tudo o que guardamos sobre você.</p>
       <BotaoContorno onClick={() => { setBaixando(true); void baixarMeusDados().then((r) => { setBaixando(false); setMsg(r === 'ok' ? null : 'Não conseguimos gerar o arquivo. Tente de novo.'); }); }} style={{ marginTop: '10px' }}>{baixando ? 'Gerando o arquivo…' : 'Baixar meus dados'}</BotaoContorno>
-      <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Para corrigir algo, use as opções do Perfil (nome, cidade, e-mail, jeito de viajar).</p>
+      <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Para corrigir algo, use o Perfil.</p>
 
       <Rotulo>Excluir a conta</Rotulo>
       {pedido ? (
@@ -60,7 +60,7 @@ export function Privacidade() {
         </div>
       ) : (
         <>
-          <p style={p}>Apaga sua conta e os dados ligados a ela. As viagens que você criou também são apagadas, inclusive para quem participa delas. Você tem {PRAZO_EXCLUSAO_DIAS} dias para desistir.</p>
+          <p style={p}>Apaga a conta e as viagens que você criou (também para quem participa). Dá para desistir em {PRAZO_EXCLUSAO_DIAS} dias.</p>
           {!abrir ? (
             <button type="button" className="r-btn" onClick={() => setAbrir(true)} style={{ marginTop: '10px', minHeight: '48px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--vermelho)', color: 'var(--vermelho)', font: "600 15px 'Open Sans'" }}>Excluir minha conta</button>
           ) : (
@@ -79,7 +79,7 @@ export function Privacidade() {
         </>
       )}
       {msg ? <Aviso>{msg}</Aviso> : null}
-      <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>Dúvidas sobre seus dados: {contato}. Você também pode reclamar à ANPD (gov.br/anpd).</p>
+      <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>Dúvidas: {contato}. Reclamações: ANPD (gov.br/anpd).</p>
       {pedido ? <button type="button" className="r-btn" onClick={() => void sair().then(() => navegar('/', { replace: true }))} style={{ minHeight: '44px', color: 'var(--texto-sec)', fontSize: '14px' }}>Sair da conta</button> : null}
     </Pagina>
   );
@@ -137,7 +137,7 @@ export function Termos() {
     ['Quem pode usar', 'Pessoas com 18 anos ou mais. Você é responsável por manter sua senha em segredo e pelas informações que coloca na conta.'],
     ['Preços, regras e prazos são referências', 'Mostramos preços, câmbio, regras de entrada, prazos e horários com a fonte e a data em que conferimos. Eles mudam: antes de pagar, viajar ou decidir, confirme na fonte oficial. Estimativas não são garantias, e a aceitação de cartões ou moedas depende de cada estabelecimento.'],
     ['Lugares e conteúdo de terceiros', 'Lugares vêm do OpenStreetMap (mapa colaborativo) e da curadoria do Bo Vair; fotos, do Wikimedia Commons; aulas, de canais do YouTube. Esse conteúdo pertence a quem o criou, pode estar desatualizado e não é endossado pelo Bo Vair.'],
-    ['Fotos que você envia', 'Você pode mandar fotos de lugares e pratos. Ao enviar, você declara que a foto é sua, foi tirada no lugar e não mostra pessoas reconhecíveis sem autorização, e dá ao Bo Vair uma licença gratuita e não exclusiva para mostrá-la no app com o seu @ como crédito, enquanto ela estiver publicada. A foto continua sua: você pode apagá-la quando quiser, e ela sai junto se você excluir a conta. Toda foto passa por aprovação antes de aparecer; podemos recusar ou retirar fotos fora dessas regras. Fotos de outros apps ou sites (como apps de entrega) não podem ser enviadas.'],
+    ['Fotos que você envia', 'Você pode mandar fotos de lugares e pratos. Ao enviar, você declara que a foto é sua, foi tirada no lugar e não mostra rostos de outras pessoas sem autorização, e dá ao Bo Vair uma licença gratuita e não exclusiva para mostrá-la no app com o seu @ como crédito, enquanto ela estiver publicada. A foto continua sua: você pode apagá-la quando quiser, e ela sai junto se você excluir a conta. Toda foto passa por aprovação antes de aparecer; podemos recusar ou retirar fotos fora dessas regras. Fotos de outros apps ou sites (como apps de entrega) não podem ser enviadas.'],
     ['Fotos do Google', 'Em alguns lugares, a foto vem do Google Maps, com o nome do autor. Ela pertence a quem a publicou no Google.'],
     ['Viagens em grupo', 'Quem você convida para uma viagem vê o roteiro, os gastos e o histórico dela; editores também podem alterar. Use com respeito: conteúdo ofensivo ou ilegal pode levar à suspensão da conta.'],
     ['Seus dados', 'Como tratamos seus dados está no Aviso de privacidade. Você pode baixar seus dados e excluir sua conta quando quiser, em Perfil → Privacidade.'],

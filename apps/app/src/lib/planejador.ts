@@ -168,10 +168,10 @@ export function filtrar(lugares: Lugar[], p: Preferencias): Lugar[] {
 export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos: string[] } {
   let pontos = PESO_ESTILO[p.estilo][l.categoria] ?? 0;
   const motivos: string[] = [];
-  if (pontos >= 3) motivos.push(`combina com seu estilo de viagem (${NOME_ESTILO[p.estilo]})`);
+  if (pontos >= 3) motivos.push(`seu estilo ${NOME_ESTILO[p.estilo].toLowerCase()}`);
   const gostos = p.gostos.filter((g) => GOSTO[g].categorias?.includes(l.categoria) || GOSTO[g].tags?.some((t) => l.tags.includes(t)));
   pontos += gostos.length * 3;
-  if (gostos.length) motivos.push(`você gosta de ${gostos.map((g) => GOSTO[g].nome).join(' e ')}`);
+  if (gostos.length) motivos.push(gostos.map((g) => GOSTO[g].nome).join(' e '));
   if (l.menor) pontos -= 4;
   // Nível de gasto: vem do orçamento da viagem (lib/nivel) ou do jeito de viajar.
   // Paris tem custo conferido (0 a 3); os lugares da base só têm o sinal pelo tipo/cozinha.
@@ -187,18 +187,18 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
   if (p.orcamento === 'conforto') {
     if (especial) {
       pontos += 3;
-      motivos.push('combina com o nível da viagem');
+      motivos.push('nível da viagem');
     }
     if (simples) pontos -= 3;
     if (destaque) pontos += 1;
   }
   if (p.gratuitos && l.custo === 0) {
     pontos += p.orcamento === 'conforto' ? 1 : 3;
-    motivos.push('é gratuito');
+    motivos.push('grátis');
   }
   if (p.local && l.local) {
     pontos += 3;
-    motivos.push('é menos turístico');
+    motivos.push('menos turístico');
   }
   if (p.local && l.lotado) pontos -= 2;
   if (p.deslocamento === 'transporte' && l.caminhada === 'high') pontos -= 2;
@@ -270,8 +270,8 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
       naViagem.set(escolha.l.categoria, (naViagem.get(escolha.l.categoria) ?? 0) + 1);
       bairro ??= escolha.l.area || null;
       const motivos = [...escolha.motivos];
-      if (escolha.km !== null && escolha.km <= 1.5 && anterior) motivos.push(`fica a ${fmtKm(escolha.km)} da parada anterior`);
-      else if (anterior && escolha.l.area === anterior.area) motivos.push('fica no mesmo bairro da parada anterior');
+      if (escolha.km !== null && escolha.km <= 1.5 && anterior) motivos.push(`${fmtKm(escolha.km)} da anterior`);
+      else if (anterior && escolha.l.area === anterior.area) motivos.push('mesmo bairro');
       const motivo = motivos.length ? `Escolhemos porque ${juntar(motivos)}.` : 'Escolhemos para completar o dia perto das outras paradas.';
       paradas.push({ periodo: per, horario: HORARIO[per], lugar: escolha.l, motivo, proximo: null });
       anterior = escolha.l;

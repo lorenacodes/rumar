@@ -166,7 +166,7 @@ export function Descobrir() {
         {!destino || trocando ? (
           <div style={{ marginTop: '10px' }}>
             <EscolherDestino autoFoco={trocando} aoEscolher={(d) => (setDestino(d), setTrocando(false), setTermo(''), setParams((p) => { const n = new URLSearchParams(p); n.set('d', d.id); return n; }, { replace: true }))} />
-            <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Todos os municípios do Brasil e destinos no exterior. Mesmo sem roteiro pronto, dá para explorar o que já coletamos.</p>
+            <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Qualquer cidade do Brasil e destinos lá fora.</p>
           </div>
         ) : null}
 
@@ -209,7 +209,7 @@ export function Descobrir() {
                 <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '110px' }}>Máximo ({moeda})<input inputMode="decimal" className="r-input" value={max} onChange={(e) => setMax(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
               </div>
             ) : null}
-            {comPreco || gratis ? <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Só entram lugares com preço ou gratuidade informados por uma fonte. A maioria dos estabelecimentos não publica preço em bases abertas: eles ficam de fora deste filtro, não somem do app.</p> : null}
+            {comPreco || gratis ? <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Só aparecem lugares com preço informado; os outros continuam no app.</p> : null}
             {viagem ? <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--azul)', margin: '8px 0 0' }}>Escolha um lugar para adicionar à sua viagem.</p> : null}
 
             {semColeta ? (

@@ -52,7 +52,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
   const [carimbou, setCarimbou] = useState(false);
   const ultimoToque = useRef(0);
   const navegar = useNavigate();
-  const motivos = preferencias && p.lugar ? afinidade(p.lugar, preferencias).motivos.filter((m) => !m.startsWith('combina com o nível')) : [];
+  const motivos = preferencias && p.lugar ? afinidade(p.lugar, preferencias).motivos.filter((m) => m !== 'nível da viagem') : [];
   const marcar = () => { if (!quero) setCarimbou(true); void alternarSalvo(p.id); };
   // Dois toques na frente carimbam "Quero ir"; um toque abre o lugar.
   const tocar = () => {
@@ -68,9 +68,9 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
   const temImagem = p.curadoria ? temFoto(p.id) : Boolean(p.foto);
   const selo = (p.categoria && SELO[p.categoria]) || 'Lugar';
   const fatos = [
-    p.cozinha ? `Cozinha: ${p.cozinha.replace(/_/g, ' ').replace(/;/g, ', ')}` : null,
-    p.gratuito ? 'Entrada grátis (informado no mapa)' : null,
-    p.horario ? `Horário no mapa: ${horarioLegivel(p.horario)}` : null,
+    p.cozinha ? `🍽 ${p.cozinha.replace(/_/g, ' ').replace(/;/g, ', ')}` : null,
+    p.gratuito ? 'Grátis' : null,
+    p.horario ? `🕒 ${horarioLegivel(p.horario)}` : null,
   ].filter(Boolean) as string[];
 
   return (
@@ -94,12 +94,12 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
       </div>
       {p.foto && p.creditoEnviada ? <div style={{ textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: {p.creditoEnviada}</div> : null}
       {p.foto && p.fotoPagina ? (
-        <a href={p.fotoPagina} target="_blank" rel="noreferrer" style={{ display: 'block', textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: Wikimedia Commons (autor e licença)</a>
+        <a href={p.fotoPagina} target="_blank" rel="noreferrer" style={{ display: 'block', textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: Commons</a>
       ) : null}
 
       <div className="postal-verso">
         <div>
-          {motivos.length ? <><b>Por que você vai gostar:</b> {motivos.join(', ')}.</> : <span style={{ color: 'var(--texto-sec)' }}>{p.tipo}{p.bairro ? ` no bairro ${p.bairro}` : ''}.</span>}
+          {motivos.length ? <span style={{ fontWeight: 600, color: 'var(--verde)' }}>♥ {motivos.join(' · ')}</span> : null}
           {fatos.length ? <div style={{ color: 'var(--texto-sec)', fontSize: '13px', lineHeight: '18px', marginTop: '4px' }}>{fatos.join(' · ')}</div> : null}
         </div>
         <i aria-hidden="true" />
@@ -216,7 +216,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
       <div ref={fundo} style={{ height: '1px' }} />
       {fim && !carregando ? (
         <p style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)', textAlign: 'center', margin: '16px 0 0' }}>
-          {posts.length ? 'Você viu tudo o que já coletamos aqui.' : 'Nada nesta categoria nos lugares já coletados.'} Fotos: Wikimedia Commons, com crédito em cada uma. Lugares: OpenStreetMap (cobertura parcial; confira antes de ir).
+          {posts.length ? 'Você viu tudo por aqui.' : 'Nada nesta categoria ainda.'}
         </p>
       ) : null}
     </section>

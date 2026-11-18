@@ -6,7 +6,7 @@ import { paisPorCodigo } from '../../lib/moedas';
 import { useDestinoAtual } from '../../state/destino';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { criarViagem } from '../../lib/viagens';
-import { nivelDoOrcamento, NOME_NIVEL, TEXTO_NIVEL } from '../../lib/nivel';
+import { nivelDoOrcamento, NOME_NIVEL } from '../../lib/nivel';
 import type { Diagnostico } from '../../lib/linhaDoTempo';
 import { dinheiro, NOME_MOEDA } from '../../lib/moedas';
 import { usePlano } from '../../state/plano';
@@ -88,7 +88,7 @@ export function NovaViagem() {
         ) : <EscolherDestino aoEscolher={setDestino} placeholder="Qualquer cidade: Aracaju, Gramado, Lisboa…" />}
         {destino && lugaresNaBase !== null ? (
           <div style={{ fontSize: '14px', lineHeight: '20px', color: lugaresNaBase ? 'var(--texto-sec)' : 'var(--ambar)' }}>
-            {lugaresNaBase ? `${lugaresNaBase} lugares já coletados nesta cidade: o roteiro nasce deles e do seu jeito de viajar.` : 'Ainda não coletamos lugares desta cidade: a viagem é criada com o roteiro vazio, pedimos a coleta e você pode montar os dias depois.'}
+            {lugaresNaBase ? `${lugaresNaBase} lugares para o seu roteiro.` : 'Ainda sem lugares aqui: o roteiro começa vazio e pedimos a coleta.'}
           </div>
         ) : null}
         {paisDestino ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{paisDestino.nome} · moeda: {NOME_MOEDA[paisDestino.moeda] ?? paisDestino.moeda} · viagem {intl ? 'internacional' : 'nacional'}</div> : null}
@@ -104,8 +104,8 @@ export function NovaViagem() {
         <input id="orc" className="r-input" inputMode="decimal" placeholder={`Ex.: ${dinheiro(1_500_000, moedaReferencia)}`} value={orcamento} onChange={(e) => setOrcamento(e.target.value.replace(/[^\d.,]/g, ''))} style={campo} />
         <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>
           {nivelOrc
-            ? <>≈ {dinheiro(nivelOrc.porPessoaDia, moedaReferencia, 0)} por pessoa por dia: o roteiro será de nível <b style={{ color: 'var(--texto)' }}>{NOME_NIVEL[nivelOrc.nivel]}</b>. {TEXTO_NIVEL[nivelOrc.nivel]} Dá para trocar depois no roteiro.</>
-            : 'O roteiro se ajusta a ele (mais simples ou mais sofisticado) e avisamos se o custo passar desse valor.'}
+            ? <>≈ {dinheiro(nivelOrc.porPessoaDia, moedaReferencia, 0)} por pessoa por dia: o roteiro será de nível <b style={{ color: 'var(--texto)' }}>{NOME_NIVEL[nivelOrc.nivel]}</b>.</>
+            : 'O roteiro se ajusta ao valor.'}
         </div>
         <details style={{ marginTop: '18px', borderTop: '1px solid var(--linha)', borderBottom: '1px solid var(--linha)' }}>
           <summary style={{ minHeight: '52px', display: 'flex', alignItems: 'center', cursor: 'pointer', font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Mais detalhes (opcional): economia e documentos</summary>
@@ -134,7 +134,7 @@ export function NovaViagem() {
         <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '6px' }}>Tudo aqui pode ficar para depois: as mesmas perguntas estão em Etapas, e as tarefas mostram só o que vale para o seu caso.</div>
           </div>
         </details>
-        {!preferencias ? <p style={{ fontSize: '14px', color: 'var(--azul)', fontWeight: 600 }}>Antes, conte seu jeito de viajar (1 minuto): o roteiro nasce dele.</p> : null}
+        {!preferencias ? <p style={{ fontSize: '14px', color: 'var(--azul)', fontWeight: 600 }}>Antes, conte seu jeito de viajar (1 minuto).</p> : null}
         {erro ? <Aviso>{erro}</Aviso> : null}
         <div style={{ height: '16px' }} />
       </div>

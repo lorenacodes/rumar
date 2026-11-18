@@ -124,7 +124,7 @@ export function gerarTarefas(c: Contexto): Tarefa[] {
   t.push({ chave: 'destino', etapa: 'concepcao', titulo: `Destino: ${c.destino.nome}`, descricao: intl ? 'Viagem internacional.' : 'Viagem nacional.', prioridade: 'alta', automatica: true });
   t.push(c.dataDefinida
     ? { chave: 'datas', etapa: 'concepcao', titulo: 'Datas definidas', descricao: `${dataBR(c.dataIda)} a ${dataBR(volta)}.`, prioridade: 'alta', automatica: true }
-    : { chave: 'datas', etapa: 'concepcao', titulo: 'Fechar as datas', descricao: `Hoje a data é uma previsão (${dataBR(c.dataIda)}). Prazos e metas usam essa previsão e mudam quando você fixar a data.`, prioridade: 'alta', ir: 'editar' });
+    : { chave: 'datas', etapa: 'concepcao', titulo: 'Fechar as datas', descricao: `Data prevista: ${dataBR(c.dataIda)}. Os prazos mudam quando você fixar.`, prioridade: 'alta', ir: 'editar' });
   t.push(c.temOrcamento
     ? { chave: 'orcamento', etapa: 'concepcao', titulo: 'Orçamento definido', descricao: 'Avisamos se o custo estimado passar dele.', prioridade: 'media', automatica: true }
     : { chave: 'orcamento', etapa: 'concepcao', titulo: 'Definir quanto pode gastar', descricao: 'Com um limite, o app avisa quando o roteiro passa dele e sugere trocas.', prioridade: 'media', ir: 'dinheiro' });
@@ -151,11 +151,11 @@ export function gerarTarefas(c: Contexto): Tarefa[] {
     }
 
     if (schengenBR) {
-      t.push({ chave: 'visto', etapa: 'documentos', titulo: 'Visto: brasileiros não precisam para turismo de até 90 dias', descricao: 'Vale para até 90 dias em qualquer período de 180 dias no espaço Schengen. A fronteira pode pedir passagem de volta, reservas, meios de se manter e seguro.', prioridade: 'baixa', informativa: true, fonte: FONTES.consular });
-      t.push({ chave: 'etias', etapa: 'documentos', titulo: 'ETIAS (autorização eletrônica): ainda não está em funcionamento', descricao: 'A União Europeia anunciará a data de início com meses de antecedência. Até lá, não é exigido. Desconfie de sites que cobram por ele.', prioridade: 'baixa', informativa: true, fonte: FONTES.etias });
+      t.push({ chave: 'visto', etapa: 'documentos', titulo: 'Visto: brasileiros não precisam para turismo de até 90 dias', descricao: 'Até 90 dias a cada 180. Leve passagem de volta, reservas e seguro: a fronteira pode pedir.', prioridade: 'baixa', informativa: true, fonte: FONTES.consular });
+      t.push({ chave: 'etias', etapa: 'documentos', titulo: 'ETIAS (autorização eletrônica): ainda não está em funcionamento', descricao: 'Ainda não é exigido. Desconfie de sites que cobram por ele.', prioridade: 'baixa', informativa: true, fonte: FONTES.etias });
       t.push({ chave: 'ees', etapa: 'documentos', titulo: 'Registro biométrico na fronteira (EES)', descricao: 'Na primeira entrada, a fronteira registra digitais e foto. Pode levar mais tempo na fila.', prioridade: 'baixa', informativa: true, fonte: FONTES.ees });
     } else {
-      t.push({ chave: 'visto', etapa: 'documentos', titulo: 'Conferir se precisa de visto', descricao: `As regras dependem do país do seu passaporte e do destino. Confira a página de ${c.destino.nome} no Portal Consular ou no consulado.`, prioridade: 'alta', fonte: FONTES.consular, tipoPrazo: 'a_confirmar', prazoTexto: 'Prazo a confirmar com o consulado' });
+      t.push({ chave: 'visto', etapa: 'documentos', titulo: 'Conferir se precisa de visto', descricao: `Depende do seu passaporte. Confira ${c.destino.nome} no Portal Consular.`, prioridade: 'alta', fonte: FONTES.consular, tipoPrazo: 'a_confirmar', prazoTexto: 'Prazo a confirmar com o consulado' });
     }
 
     if (d.seguro !== 'sim') {
@@ -163,7 +163,7 @@ export function gerarTarefas(c: Contexto): Tarefa[] {
     }
     t.push({ chave: 'saude', etapa: 'documentos', titulo: 'Conferir vacinas e cuidados de saúde', descricao: 'Veja as recomendações para o destino. Algumas vacinas precisam ser tomadas com antecedência.', prioridade: 'media', fonte: FONTES.saude, tipoPrazo: 'a_confirmar', prazoTexto: 'Prazo depende da vacina: confirme no posto de saúde' });
     if (d.conexao === 'sim' || d.conexao === 'nao_sei') {
-      t.push({ chave: 'conexao', etapa: 'documentos', titulo: 'Conferir regras do país da conexão', descricao: 'Alguns países pedem visto de trânsito, mesmo sem sair do aeroporto. Confira com a companhia aérea e o Portal Consular.', prioridade: 'media', fonte: FONTES.consular, tipoPrazo: 'a_confirmar', prazoTexto: 'Prazo a confirmar' });
+      t.push({ chave: 'conexao', etapa: 'documentos', titulo: 'Conferir regras do país da conexão', descricao: 'Alguns países pedem visto até para conexão. Confira com a companhia aérea.', prioridade: 'media', fonte: FONTES.consular, tipoPrazo: 'a_confirmar', prazoTexto: 'Prazo a confirmar' });
     }
   }
 
@@ -188,9 +188,9 @@ export function gerarTarefas(c: Contexto): Tarefa[] {
   const vespera = menos(c.dataIda, 1);
   if (intl) t.push({ chave: 'cartao', etapa: 'antes', titulo: 'Habilitar o cartão para uso no exterior', descricao: 'Alguns bancos pedem para avisar ou liberar compras internacionais no aplicativo.', prioridade: 'media', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Antes da ida' });
   t.push({ chave: 'docs-mao', etapa: 'antes', titulo: 'Separar documentos e reservas', descricao: intl ? 'Passaporte, seguro, passagens, reserva da hospedagem e comprovante de volta, em papel e no celular.' : 'Documento com foto, passagens e reserva da hospedagem.', prioridade: 'alta', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Até a véspera' });
-  t.push({ chave: 'checkin', etapa: 'antes', titulo: 'Fazer o check-in do voo', descricao: 'A janela de check-in on-line e a antecedência para chegar ao aeroporto são definidas pela companhia aérea.', prioridade: 'alta', tipoPrazo: 'a_confirmar', prazoTexto: 'Confira na sua companhia aérea' });
-  if (c.idioma) t.push({ chave: 'idioma', etapa: 'antes', titulo: c.idioma.jaFala ? `Revisar o ${c.idioma.nome} de viagem` : `Aprender frases básicas em ${c.idioma.nome}`, descricao: 'Aulas curtas por tema: cumprimentar, pedir comida, perguntar o caminho, números, transporte, hotel, compras e emergência.', prioridade: c.idioma.jaFala ? 'baixa' : 'media', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Comece já: 15 minutos por dia até a viagem (sugestão)', ir: 'idioma' });
-  t.push({ chave: 'offline', etapa: 'antes', titulo: 'Salvar o essencial fora do app', descricao: 'O app precisa de internet para mostrar a viagem: tire print do roteiro e anote o endereço e o telefone da hospedagem.', prioridade: 'baixa', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Até a véspera' });
+  t.push({ chave: 'checkin', etapa: 'antes', titulo: 'Fazer o check-in do voo', descricao: 'Horários de check-in: veja no app da companhia aérea.', prioridade: 'alta', tipoPrazo: 'a_confirmar', prazoTexto: 'Confira na sua companhia aérea' });
+  if (c.idioma) t.push({ chave: 'idioma', etapa: 'antes', titulo: c.idioma.jaFala ? `Revisar o ${c.idioma.nome} de viagem` : `Aprender frases básicas em ${c.idioma.nome}`, descricao: 'Aulas curtas: cumprimentar, pedir comida, pedir ajuda.', prioridade: c.idioma.jaFala ? 'baixa' : 'media', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Comece já: 15 minutos por dia até a viagem (sugestão)', ir: 'idioma' });
+  t.push({ chave: 'offline', etapa: 'antes', titulo: 'Salvar o essencial fora do app', descricao: 'Tire print do roteiro e do endereço da hospedagem, para usar sem internet.', prioridade: 'baixa', prazo: vespera, tipoPrazo: 'viagem', prazoTexto: 'Até a véspera' });
 
   // ---- Durante
   t.push({ chave: 'roteiro-dia', etapa: 'durante', titulo: 'Seguir o roteiro e marcar o que já fez', descricao: 'Mude horários e troque lugares no próprio roteiro.', prioridade: 'media', ir: 'roteiro', prazo: volta, tipoPrazo: 'viagem', prazoTexto: 'Durante a viagem' });
@@ -200,7 +200,7 @@ export function gerarTarefas(c: Contexto): Tarefa[] {
   t.push({ chave: 'ida-aeroporto', etapa: 'volta', titulo: 'Planejar o trajeto até o aeroporto', descricao: 'Do último lugar do roteiro ou da hospedagem. Considere o horário do check-out.', prioridade: 'alta', prazo: volta, tipoPrazo: 'viagem', prazoTexto: 'No dia da volta' });
   t.push({ chave: 'checkin-volta', etapa: 'volta', titulo: 'Check-in do voo de volta', descricao: 'Janela de check-in e antecedência no aeroporto: confira na companhia aérea.', prioridade: 'alta', tipoPrazo: 'a_confirmar', prazoTexto: 'Confira na sua companhia aérea' });
   if (intl && c.residencia.codigo === 'BR') {
-    t.push({ chave: 'receita', etapa: 'volta', titulo: 'Conferir a cota da Receita Federal', descricao: 'Chegando de avião, a cota de isenção é de US$ 1.000 por pessoa (individual, não se soma à de familiares). O que passar é tributado em 50% e precisa ser declarado.', orientacao: 'Compras no free shop de saída entram na cota da bagagem. A cota do free shop de chegada tem regra própria: confira no guia.', prioridade: 'media', fonte: FONTES.receita, prazo: volta, tipoPrazo: 'viagem', prazoTexto: 'Na chegada ao Brasil' });
+    t.push({ chave: 'receita', etapa: 'volta', titulo: 'Conferir a cota da Receita Federal', descricao: 'Isenção de US$ 1.000 por pessoa, de avião. Acima disso, declare e pague 50%.', orientacao: 'Compras no free shop de saída entram na cota da bagagem. A cota do free shop de chegada tem regra própria: confira no guia.', prioridade: 'media', fonte: FONTES.receita, prazo: volta, tipoPrazo: 'viagem', prazoTexto: 'Na chegada ao Brasil' });
   }
   t.push(c.encerrada
     ? { chave: 'encerrar', etapa: 'volta', titulo: 'Viagem encerrada', descricao: 'Planejado × real e sua avaliação estão guardados.', prioridade: 'media', automatica: true }

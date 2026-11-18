@@ -63,7 +63,7 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(2000);
   t = await texto();
   const gratis = await p.locator('main ul li').count();
-  confere(`${cidade}: filtro de preço explica quem fica de fora (${gratis} grátis)`, /ficam de fora deste filtro/.test(t));
+  confere(`${cidade}: filtro de preço explica quem fica de fora (${gratis} grátis)`, /continuam no app/.test(t));
   await p.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(1500);
   // Mapa
   await p.getByRole('button', { name: 'Ver no mapa', exact: true }).click(); await p.waitForTimeout(4500);

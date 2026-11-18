@@ -432,3 +432,16 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   imagem cobradas, cada uma com teto mensal (900) dentro das cotas grátis. A foto não é guardada (termos do
   Google) e mostra o autor + "Google". Sem chave: nada muda no app.
 - **Limitação:** no mural, lugares com foto enviada ainda entram na ordem dos "sem foto" (a ordem vem do banco).
+
+## D-035 — Menos texto em todo o app
+- **Data:** 18/11/2026
+- **Status:** ✅ Pedido da fundadora ("usuários não gostam de ler muito texto; direto e acessível").
+- **Regra:** uma frase curta por bloco, ação primeiro. Fonte, licença e "como calculamos" ficam atrás de
+  "ⓘ" (`ui/info.tsx`), abertos só se a pessoa quiser — a informação continua disponível, só sai da frente.
+  Não mostrar linhas vazias do que não temos (Avaliações, "Preço não informado", "Horário não informado").
+- **Medição** (`tools/e2e/palavras.mjs`, blocos com 14+ palavras): antes 96 (Privacidade), 62 (Roteiro), 61
+  (Custos), 50 (Hospedagem), 41 (Etapas), 35 (Nova viagem e Lugar), 34 (Grupo)…; depois só 2 blocos
+  (exclusão de conta e hospedagem sem busca), mantidos de propósito por serem avisos importantes.
+- Motivos do roteiro e do mural viraram "♥ seu estilo cultural · museus e história"; descrições das tarefas
+  da linha do tempo encurtadas.
+- As telas do design original (comparação visual) não mudaram: 159/159.

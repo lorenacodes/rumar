@@ -12,6 +12,7 @@ import { afinidade } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
+import { Info } from '../../ui/info';
 import { CapaAlternativa, FotosDeQuemFoi } from './FotosDoLugar';
 import { useSessao } from '../../conta/servico';
 
@@ -46,7 +47,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
     return (
       <div style={caixa}>
         <b style={{ font: "600 16px 'Lexend Exa'" }}>Montar uma viagem com este lugar</b>
-        <p style={{ fontSize: '14px', lineHeight: '20px', margin: '6px 0 0' }}>Roteiro, orçamento e datas ficam guardados na sua conta (grátis). O "Quero ir" já fica salvo neste aparelho.</p>
+        <p style={{ fontSize: '14px', lineHeight: '20px', margin: '6px 0 0' }}>Crie sua conta grátis para montar o roteiro.</p>
         <button type="button" className="r-btn" onClick={() => navegar('/conta/criar')} style={botao}>Criar conta ↗</button>
         <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/entrar')} style={{ display: 'block', margin: '6px auto 0', color: 'var(--azul)', fontWeight: 600 }}>Já tenho conta · Entrar</button>
       </div>
@@ -57,8 +58,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
     return (
       <div style={caixa}>
         <b style={{ font: "600 16px 'Lexend Exa'" }}>{cidade ? `Você ainda não tem viagem para ${cidade}` : 'Você ainda não tem viagem para esta cidade'}</b>
-        <p style={{ fontSize: '14px', lineHeight: '20px', margin: '6px 0 0' }}>Crie a viagem e o roteiro nasce do seu jeito de viajar. Depois é só voltar aqui e adicionar este lugar no dia que quiser.</p>
-        {destinoId ? <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)} style={botao}>Planejar viagem{cidade ? ` para ${cidade}` : ''} ↗</button> : null}
+                {destinoId ? <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)} style={botao}>Planejar viagem{cidade ? ` para ${cidade}` : ''} ↗</button> : null}
       </div>
     );
   }
@@ -153,7 +153,7 @@ function LugarDaBase() {
   const linha = (rotulo: string, valor: React.ReactNode) => (<><dt style={{ fontWeight: 600 }}>{rotulo}</dt><dd style={{ margin: 0 }}>{valor}</dd></>);
   const preco = b.preco_min_centavos != null && b.preco_moeda
     ? `${dinheiro(b.preco_min_centavos, b.preco_moeda)}${b.preco_max_centavos && b.preco_max_centavos !== b.preco_min_centavos ? ` a ${dinheiro(b.preco_max_centavos, b.preco_moeda)}` : ''}${b.preco_fonte ? ` (${b.preco_fonte})` : ''}`
-    : b.gratuito ? 'Grátis (segundo o OpenStreetMap)' : 'Não informado pela fonte. Confira no local ou no site.';
+    : b.gratuito ? 'Grátis' : null;
   return (
     <main className="tela" data-tela="lugar" data-real="lugar">
       {b.foto ? (
@@ -166,24 +166,23 @@ function LugarDaBase() {
         <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS_LUGAR[b.categoria].nome} · {nomeTipo(b.tipo)}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{b.nome}</h1>
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
-          {linha('Onde', b.endereco ?? b.bairro ?? 'Endereço não informado (veja no mapa).')}
+          {b.endereco ?? b.bairro ? linha('Onde', b.endereco ?? b.bairro) : null}
           {b.cozinha ? linha('Cozinha', b.cozinha) : null}
-          {b.estrelas ? linha('Categoria', `${b.estrelas} estrelas (classificação do hotel, não é avaliação de clientes)`) : null}
-          {linha('Horário', b.horario ? horarioLegivel(b.horario) : 'Não informado. Confira antes de ir.')}
-          {linha('Preço', preco)}
+          {b.estrelas ? linha('Categoria', `${b.estrelas} estrelas`) : null}
+          {b.horario ? linha('Horário', horarioLegivel(b.horario)) : null}
+          {preco ? linha('Preço', preco) : null}
           {b.telefone ? linha('Telefone', <>{b.telefone.split(/[;,]/).map((t) => t.trim()).filter(Boolean).slice(0, 2).map((t, i) => <React.Fragment key={t}>{i ? ' · ' : ''}<a href={`tel:${t.replace(/[^\d+]/g, '')}`} style={{ color: 'var(--azul)' }}>{t}</a></React.Fragment>)}</>) : null}
-          {linha('Avaliações', 'Ainda não temos uma fonte de avaliações para mostrar.')}
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <a href={`https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lon}`} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? '✓ Quero ir' : '+ Quero ir'}</button>
         </div>
-        {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Para preço e reserva de hospedagem, use a aba Hospedagem da sua viagem.' : 'Lugar de apoio (não entra no roteiro).'}</p>}
+        {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Reserve pela aba Hospedagem da sua viagem.' : 'Não entra no roteiro.'}</p>}
         <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
         {b.site ? <a href={b.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
-        <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>
-          Dados: <a href={`https://www.openstreetmap.org/${b.fonte_id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a> (© colaboradores, ODbL){b.dados_de ? `, base de ${b.dados_de.split('-').reverse().join('/')}` : ''}. Mapa colaborativo: {b.verificado ? 'conferido pela curadoria do Bo Vair.' : 'não conferido pela curadoria do Bo Vair.'}
-        </p>
+        <Info style={{ marginTop: '14px' }}>
+          Dados: <a href={`https://www.openstreetmap.org/${b.fonte_id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a> (© colaboradores, ODbL){b.dados_de ? `, ${b.dados_de.split('-').reverse().join('/')}` : ''}. Mapa colaborativo{b.verificado ? ', conferido pela curadoria do Bo Vair' : ''}: confira horário e preço antes de ir. Estrelas de hotel são a classificação oficial, não nota de clientes.
+        </Info>
         <button type="button" className="r-btn" onClick={() => navegar(`/descobrir?d=${b.destino_id}`)} style={{ marginTop: '4px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Ver mais lugares desta cidade</button>
       </div>
     </main>

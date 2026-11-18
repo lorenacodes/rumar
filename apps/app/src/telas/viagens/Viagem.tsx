@@ -24,6 +24,7 @@ import { Abas } from '../../ui/abas';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa, type Ponto } from '../../ui/Mapa';
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
+import { Info } from '../../ui/info';
 import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rotulo, Segmentos, Selo } from './comum';
 
 type Aba = 'etapas' | 'roteiro' | 'mapa' | 'hospedagem' | 'dinheiro' | 'grupo';
@@ -126,10 +127,10 @@ export function Viagem() {
               <span style={{ display: 'block', fontSize: '13px', color: 'var(--sobre-escuro-sec)' }}>{orc.o.provavelBRL > 0 && parcial ? 'Somado até agora' : 'Custo estimado'} {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
               {orc.o.provavelBRL > 0
                 ? <b style={{ font: "600 22px 'Lexend Exa'" }}>{reais(orc.o.provavelBRL)}</b>
-                : <b style={{ font: "600 16px/21px 'Lexend Exa'" }}>Ainda sem preços com fonte</b>}
+                : <b style={{ font: "600 16px/21px 'Lexend Exa'" }}>Nada somado ainda</b>}
             </span>
             <span style={{ textAlign: 'right', fontSize: '13px', color: 'var(--sobre-escuro-sec)', alignSelf: 'center' }}>
-              {orc.o.provavelBRL > 0 ? `${reais(orc.o.porPessoaBRL)} por pessoa` : 'Escolha a hospedagem ou informe gastos'}
+              {orc.o.provavelBRL > 0 ? `${reais(orc.o.porPessoaBRL)} por pessoa` : 'Anote seus custos'}
               {orc.o.provavelBRL > 0 && v.viagem.orcamento_centavos && acima > 0
                 ? <span style={{ display: 'block', color: 'var(--amarelo)', fontWeight: 600 }}>{reais(acima)} acima do orçamento{parcial ? ' (e ainda falta somar)' : ''}</span>
                 : orc.o.provavelBRL > 0 && parcial
@@ -181,10 +182,11 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
   const nivel: Nivel = info?.nivel ?? perfil;
   const c = info?.calculo;
   const origem = info?.escolhido
-    ? 'Escolhido por você.'
+    ? 'Escolhido por você'
     : c
-      ? `Pelo orçamento: ${dinheiro(c.porPessoaDia, c.moeda, 0)} por pessoa por dia (orçamento ÷ ${v.viagem.viajantes} ${v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'} ÷ ${v.viagem.noites + 1} dias).`
-      : 'Pelo seu jeito de viajar. Informe o orçamento em Dinheiro para o roteiro se ajustar a ele.';
+      ? `Pelo orçamento: ${dinheiro(c.porPessoaDia, c.moeda, 0)} por pessoa por dia`
+      : 'Pelo seu jeito de viajar';
+  const conta = c ? `Orçamento ÷ ${v.viagem.viajantes} ${v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'} ÷ ${v.viagem.noites + 1} dias. ` : 'Informe o orçamento em Dinheiro para o roteiro se ajustar a ele. '
   const refazer = async (novo: Nivel | null) => {
     if (!window.confirm('Refazer o roteiro neste nível? As mudanças manuais no roteiro serão substituídas.')) return;
     setRefazendo(true);
@@ -200,7 +202,8 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
         <div style={{ font: "600 15px 'Open Sans'" }}>Roteiro nível {NOME_NIVEL[nivel]}</div>
         {pode ? <button type="button" className="r-btn" aria-expanded={aberto} onClick={() => setAberto(!aberto)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Mudar {aberto ? '▴' : '▾'}</button> : null}
       </div>
-      <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{origem} {TEXTO_NIVEL[nivel]}</div>
+      <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{origem}</div>
+      <Info rotulo="Como funciona">{conta}{TEXTO_NIVEL[nivel]}</Info>
       {aberto ? (
         <div style={{ marginTop: '6px' }}>
           {(['economico', 'intermediario', 'conforto'] as Nivel[]).map((n) => (
@@ -271,7 +274,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                   <div style={{ fontSize: '14px', lineHeight: '20px', marginTop: '2px' }}>
                     <b>{preco.texto}</b>{preco.reserva ? <span style={{ color: 'var(--ambar)', fontWeight: 600 }}> · compre o ingresso antes</span> : null}
                   </div>
-                  {motivos.length ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)', fontWeight: 600, marginTop: '2px' }}>Por que aqui: {motivos.join(', ')}.</div> : null}
+                  {motivos.length ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)', fontWeight: 600, marginTop: '2px' }}>♥ {motivos.join(' · ')}</div> : null}
                   {quem ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)' }}>{quem}</div> : null}
                   {km !== null && prox ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>
@@ -414,12 +417,12 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
           <div style={{ font: "700 11px 'Open Sans'", textTransform: 'uppercase', color: 'var(--verde)' }}>Hospedagem escolhida</div>
           <b style={{ font: "600 17px 'Lexend Exa'" }}>{v.hospedagem.nome}</b>
           <div style={{ fontSize: '14px' }}>{euros(v.hospedagem.total_centavos)} no total{emReais(v.hospedagem.total_centavos)} · {v.hospedagem.checkin.split('-').reverse().join('/')} a {v.hospedagem.checkout.split('-').reverse().join('/')}</div>
-          <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>{v.hospedagem.fonte}, cotado em {new Date(v.hospedagem.cotado_em).toLocaleDateString('pt-BR')}. Preços mudam até a reserva.</div>
+          <Info>{v.hospedagem.fonte}, cotado em {new Date(v.hospedagem.cotado_em).toLocaleDateString('pt-BR')}. Preços mudam até a reserva.</Info>
         </div>
-      ) : <p style={{ fontSize: '15px', lineHeight: '22px', margin: 0 }}>Sem hospedagem a viagem não está planejada no bolso. Busque perto do seu roteiro:</p>}
+      ) : <p style={{ fontSize: '15px', lineHeight: '22px', margin: 0 }}>Onde você vai ficar?</p>}
       {ligada === false ? (
         <div style={{ marginTop: '10px', padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '14px', lineHeight: '20px' }}>
-          A busca de hotéis com preço ainda não está ligada nesta versão. Enquanto isso, informe o valor da hospedagem em <b>Dinheiro → Custos → Informar um gasto</b>, e veja hotéis e pousadas da cidade no Descobrir.
+          Já reservou? Anote o valor em <b>Dinheiro</b>. Para ver opções, abra Hospedagem no <b>Descobrir</b>.
         </div>
       ) : null}
       {pode && ligada !== false ? (
@@ -515,19 +518,19 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCom
         </>
       ) : (
         <div style={{ padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '15px', lineHeight: '22px' }}>
-          <b>Ainda sem preços com fonte para esta viagem.</b> Escolha a hospedagem ou informe gastos (passagem, por exemplo) logo abaixo para começar a somar.
+          <b>Nada somado ainda.</b> Anote a passagem e a hospedagem abaixo.
         </div>
       )}
       {!o.categorias.some((c) => c.linhas.some((l) => l.moeda === 'EUR' && !l.semPreco && l.max > 0)) ? null : EURO ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Euro a R$ {EURO.venda.toFixed(4).replace('.', ',')} (Banco Central, PTAX de {EURO.data.split('-').reverse().join('/')})</div> : <Aviso cor="var(--ambar)">Câmbio do Banco Central ainda não carregado: os valores em euro não entram no total em reais.</Aviso>}
       {limiteC ? (
         <div style={{ marginTop: '10px', padding: '10px 12px', background: o.provavelBRL > limiteC ? 'var(--cartao-1)' : 'var(--cartao-2)' }}>
           <b>{o.provavelBRL > limiteC
-            ? `Passa ${reais(o.provavelBRL - limiteC)} do orçamento de ${reais(limiteC)}${faltaAqui ? ', e ainda faltam preços.' : '.'}`
+            ? `Passa ${reais(o.provavelBRL - limiteC)} do orçamento${faltaAqui ? ' (e ainda falta somar)' : ''}.`
             : o.provavelBRL === 0
-              ? `Ainda não dá para comparar com o orçamento de ${reais(limiteC)}: nenhum custo com preço.`
+              ? `Orçamento: ${reais(limiteC)}. Anote os custos para comparar.`
               : faltaAqui
-                ? `Somado até agora: ${reais(o.provavelBRL)} do orçamento de ${reais(limiteC)}. Ainda falta preço de ${faltaAqui}, então não dá para dizer se cabe.`
-                : `Dentro do orçamento de ${reais(limiteC)} (sobram ${reais(limiteC - o.provavelBRL)}).`}</b>
+                ? `${reais(o.provavelBRL)} de ${reais(limiteC)} até agora. Falta: ${faltaAqui}.`
+                : `Cabe no orçamento. Sobram ${reais(limiteC - o.provavelBRL)}.`}</b>
           {sugestoes.length ? (
             <ul style={{ margin: '6px 0 0', paddingLeft: '18px', fontSize: '14px', lineHeight: '20px' }}>
               {sugestoes.map((s) => (
@@ -639,7 +642,8 @@ function AbaGrupo({ v, pode, recarregar }: { v: ViagemCompleta; pode: boolean; r
       {pode ? (
         <>
           <Rotulo>Roteiro do grupo</Rotulo>
-          <p style={{ fontSize: '14px', lineHeight: '20px', margin: 0 }}>Junta o jeito de viajar de todos: gostos somam, o que alguém quer evitar fica de fora e o orçamento segue o mais apertado. Cada parada diz para quem do grupo ela foi pensada.</p>
+          <p style={{ fontSize: '14px', lineHeight: '20px', margin: 0 }}>Um roteiro que agrada todo mundo.</p>
+          <Info rotulo="Como funciona">Gostos somam, o que alguém quer evitar fica de fora e o orçamento segue o mais apertado.</Info>
           <div style={{ marginTop: '8px' }}>
             <BotaoContorno onClick={() => { if (window.confirm('Refazer o roteiro com as preferências de todos? As mudanças manuais serão substituídas.')) { setRefazendo(true); void montarRoteiro(v.viagem, v.pessoas, preferencias).then(() => (setRefazendo(false), recarregar())); } }}>{refazendo ? 'Refazendo…' : 'Refazer roteiro para o grupo'}</BotaoContorno>
           </div>
