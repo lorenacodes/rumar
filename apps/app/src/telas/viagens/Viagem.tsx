@@ -278,7 +278,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                   {quem ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)' }}>{quem}</div> : null}
                   {km !== null && prox ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>
-                      <span>↓ {textoDistancia(km)} · {km <= 1.5 ? 'dá para ir a pé' : (P.transporte.metro ? `metrô: 1 bilhete (${euros(P.transporte.metro.valor)})` : 'transporte (veja a rota)')}</span>
+                      <span>↓ {textoDistancia(km).replace(' em linha reta', '')} · {km <= 1.5 ? 'a pé' : (P.transporte.metro ? `metrô (${euros(P.transporte.metro.valor)})` : 'de carro ou transporte')}</span>
                       <a href={rotaMapa(l as { lat: number; lon: number }, prox as { lat: number; lon: number }, km <= 1.5 ? 'walking' : 'transit')} target="_blank" rel="noreferrer" style={{ color: 'var(--azul)', fontWeight: 600, minHeight: '40px', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>Rota ↗</a>
                     </div>
                   ) : null}
