@@ -35,10 +35,19 @@
       Não precisa de cartão: a cota gratuita é de 10.000 unidades por dia; cada idioma atualizado gasta
       ~810 e fica guardado por 14 dias. Não cole a chave em chat nem no código.
 
-## Fotos e avaliações de restaurantes, bares, baladas e hotéis — DECISÃO SUA (custo)
-- [ ] Escolher se liga uma fonte paga/parceira de fotos e avaliações de estabelecimentos. Sem isso, essas
-      categorias aparecem sem foto (só museus, monumentos, praias e parques conhecidos têm foto livre).
-      Opções e custos estão no relatório da seção 12. Nada foi contratado.
+## Fotos de restaurantes e pratos (decidido em 18/11: os dois caminhos)
+- [ ] **Criar sua conta no app com o seu e-mail principal** (o mesmo deste projeto) e confirmar o código. Ele já está
+  cadastrado como moderadora: aparece **Perfil → Moderação de fotos**, onde você aprova ou recusa cada foto enviada.
+  Aprove só foto do lugar ou de prato de lá, sem pessoas reconhecíveis e sem nada impróprio.
+- [ ] **(Opcional, Google)** Para ligar fotos do Google nas páginas dos lugares:
+  1. console.cloud.google.com → projeto "Bo Vair" → Faturamento (precisa de cartão; o Google cobra em dólar, +IOF).
+  2. APIs e serviços → Biblioteca → ativar **Places API (New)** → Credenciais → Criar chave → restringir à Places API (New).
+  3. Recomendado: em Faturamento → Orçamentos e alertas, criar alerta de US$ 5.
+  4. Supabase → Edge Functions → Secrets → `GOOGLE_PLACES_KEY` = a chave.
+  O app tem teto de 900 pedidos de lista de fotos e 900 imagens por mês (dentro das cotas grátis divulgadas: 1.000
+  imagens/mês; a lista de fotos aparece como 5.000/mês em sites de terceiros — confira na sua fatura no 1º mês).
+  Com o teto, o custo esperado é R$ 0; acima dele, o app mostra o lugar sem foto do Google. Para aumentar o teto, me peça.
+- Avaliações (notas) de estabelecimentos continuam sem fonte: não inventamos nota.
 
 ## Seções 13–16 (moedas e linha do tempo) — o que depende de você
 - [ ] **Conferir os links oficiais** em Etapas (PF, Itamaraty, UE, Receita, Ministério da Saúde, Banco Central).

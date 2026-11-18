@@ -415,3 +415,20 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   restaurante/fotógrafo, Lei 9.610/98). Wikimedia Commons quase não tem restaurante (teste no Rio:
   0 de 16). Caminhos legais em decisão da fundadora: fotos enviadas por quem foi e pelos restaurantes
   (grátis, precisa moderação) ou API paga (Google Places Photos: 1.000 grátis/mês, depois US$ 7 por mil).
+
+## D-034 — Fotos de quem foi + Google Places com teto
+- **Data:** 18/11/2026
+- **Status:** ✅ Fundadora escolheu "os dois". Copiar do iFood foi descartado (direito autoral das fotos).
+- **Fotos de quem foi:** na página de cada lugar, "Mandar uma foto" (restaurantes, bares, cafés, mercados e
+  baladas: "do lugar ou do prato"). Só com conta; declaração obrigatória (foto própria, tirada lá, sem
+  pessoas reconhecíveis sem autorização, licença para mostrar com o @). A imagem é reduzida no aparelho
+  (até 1600 px, JPEG, sem metadados de localização) e vai para armazenamento privado; aparece para todos só
+  depois de aprovada (Perfil → Moderação de fotos, só para moderadores cadastrados direto no banco).
+  Crédito público: só o @. Limite de 20 envios por dia. A pessoa vê as suas pendentes e recusadas e pode
+  apagar. Entram no "Baixar meus dados" e saem na exclusão da conta. Termos e Aviso de privacidade
+  atualizados. Capa da página e mural usam a foto aprovada quando não há foto do Commons.
+- **Google Places (opcional):** função `foto-google`, só na página do lugar, só com o segredo
+  `GOOGLE_PLACES_KEY`. Busca "só IDs" (sem cobrança na tabela do Google) e guarda o id; lista de fotos e
+  imagem cobradas, cada uma com teto mensal (900) dentro das cotas grátis. A foto não é guardada (termos do
+  Google) e mostra o autor + "Google". Sem chave: nada muda no app.
+- **Limitação:** no mural, lugares com foto enviada ainda entram na ordem dos "sem foto" (a ordem vem do banco).

@@ -2,7 +2,7 @@
 //
 // O pedido é feito no app (Perfil → Privacidade → Excluir minha conta), que grava
 // profiles.deletion_requested_at depois de conferir a senha. Durante 14 dias a pessoa pode
-// desistir. Depois, esta função apaga a foto de perfil e o usuário; o resto (perfil, viagens
+// desistir. Depois, esta função apaga a foto de perfil, as fotos de lugares enviadas e o usuário; o resto (perfil, viagens
 // criadas pela pessoa, itens, gastos, amizades, favoritos, salvos) sai junto pelas chaves
 // estrangeiras com "on delete cascade".
 //
@@ -36,6 +36,9 @@ Deno.serve(async (req) => {
   const falhas: string[] = [];
   for (const { user_id } of data ?? []) {
     await db.storage.from('fotos-perfil').remove([`${user_id}/perfil.jpg`]);
+    // Fotos de lugares enviadas pela pessoa (os registros saem pela chave estrangeira).
+    const { data: arquivos } = await db.storage.from('fotos-enviadas').list(user_id, { limit: 1000 });
+    if (arquivos?.length) await db.storage.from('fotos-enviadas').remove(arquivos.map((a) => `${user_id}/${a.name}`));
     const { error: e } = await db.auth.admin.deleteUser(user_id);
     if (e) falhas.push(e.message);
     else removidas++;

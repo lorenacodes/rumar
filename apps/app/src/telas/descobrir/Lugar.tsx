@@ -12,6 +12,7 @@ import { afinidade } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
+import { CapaAlternativa, FotosDeQuemFoi } from './FotosDoLugar';
 import { useSessao } from '../../conta/servico';
 
 /** Detalhe do lugar: foto, categoria, endereço, horário com fonte, mapa e salvar. */
@@ -160,10 +161,9 @@ function LugarDaBase() {
           <FotoLugar id={id} proporcao="4 / 3" />
           <div style={{ position: 'absolute', top: 'calc(8px + env(safe-area-inset-top))', left: '12px', background: 'var(--fundo)', zIndex: 2 }}><Voltar /></div>
         </div>
-      ) : <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}><Voltar /></div>}
+      ) : <><div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}><Voltar /></div><CapaAlternativa placeId={id} nome={b.nome} /></>}
       <div style={{ padding: '14px 20px 24px' }}>
         <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS_LUGAR[b.categoria].nome} · {nomeTipo(b.tipo)}</div>
-        {!b.foto ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Ainda sem foto com licença livre deste lugar.</div> : null}
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{b.nome}</h1>
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
           {linha('Onde', b.endereco ?? b.bairro ?? 'Endereço não informado (veja no mapa).')}
@@ -179,6 +179,7 @@ function LugarDaBase() {
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? '✓ Quero ir' : '+ Quero ir'}</button>
         </div>
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Para preço e reserva de hospedagem, use a aba Hospedagem da sua viagem.' : 'Lugar de apoio (não entra no roteiro).'}</p>}
+        <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
         {b.site ? <a href={b.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
         <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>
           Dados: <a href={`https://www.openstreetmap.org/${b.fonte_id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a> (© colaboradores, ODbL){b.dados_de ? `, base de ${b.dados_de.split('-').reverse().join('/')}` : ''}. Mapa colaborativo: {b.verificado ? 'conferido pela curadoria do Bo Vair.' : 'não conferido pela curadoria do Bo Vair.'}

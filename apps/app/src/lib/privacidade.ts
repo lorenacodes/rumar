@@ -44,7 +44,7 @@ export async function meusDados(): Promise<Record<string, unknown>> {
   const { data: u } = await supabase.auth.getUser();
   if (!u.user) throw new Error('sem sessão');
   const uid = u.user.id;
-  const [perfil, consentimentos, plano, preferencias, favoritos, salvos, amizades, membros] = await Promise.all([
+  const [perfil, consentimentos, plano, preferencias, favoritos, salvos, amizades, membros, fotos] = await Promise.all([
     supabase.from('profiles').select('*').eq('user_id', uid).maybeSingle(),
     supabase.from('consents').select('*').eq('user_id', uid),
     supabase.from('savings_plan').select('*').eq('user_id', uid).maybeSingle(),
@@ -53,6 +53,7 @@ export async function meusDados(): Promise<Record<string, unknown>> {
     supabase.from('saved_places').select('*').eq('user_id', uid),
     supabase.from('friendships').select('*'),
     supabase.from('trip_members').select('trip_id, papel, status').eq('user_id', uid),
+    supabase.from('fotos_enviadas').select('id, place_id, tipo, legenda, status, created_at, caminho').eq('user_id', uid),
   ]);
   const ids = (membros.data ?? []).map((m) => m.trip_id as string);
   const tabelas = ['trips', 'trip_items', 'trip_lodging', 'trip_expenses', 'trip_tasks', 'trip_savings', 'trip_spend'] as const;
@@ -66,7 +67,7 @@ export async function meusDados(): Promise<Record<string, unknown>> {
     aviso: 'Dados da sua conta no Bo Vair (LGPD, art. 18). A data de nascimento nunca foi guardada: só "maior de 18".',
     conta: { id: uid, email: u.user.email, criada_em: u.user.created_at },
     perfil: perfil.data, consentimentos: consentimentos.data, plano: plano.data, jeito_de_viajar: preferencias.data,
-    destinos_favoritos: favoritos.data, lugares_salvos: salvos.data, amizades: amizades.data, participacao_em_viagens: membros.data, viagens,
+    destinos_favoritos: favoritos.data, lugares_salvos: salvos.data, amizades: amizades.data, participacao_em_viagens: membros.data, viagens, fotos_enviadas: fotos.data,
   };
 }
 

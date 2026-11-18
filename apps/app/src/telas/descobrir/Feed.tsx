@@ -6,6 +6,7 @@ import { DESTINO_CURADORIA, horarioLegivel, LUGARES } from '../../lib/catalogo';
 import { capasPorCategoria, CATEGORIAS_LUGAR, feedLugares, nomeTipo, ORDEM_CATEGORIAS, paraLugar, type CategoriaLugar, type Destino, type LugarBase } from '../../lib/lugares';
 import { afinidade, NOME_CATEGORIA, type Lugar } from '../../lib/planejador';
 import { listarViagens } from '../../lib/viagens';
+import { fotosAprovadas } from '../../lib/fotosEnviadas';
 import { useViajante } from '../../state/viajante';
 import { FotoLugar, temFoto } from '../../ui/foto';
 
@@ -17,6 +18,8 @@ interface Post {
   bairro: string | null;
   foto: string | null;
   fotoPagina: string | null;
+  /** Crédito de foto enviada por quem foi (@usuario), quando a foto não é do Commons. */
+  creditoEnviada?: string | null;
   curadoria: boolean;
   categoria: CategoriaLugar | null;
   gratuito: boolean;
@@ -89,6 +92,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
         )}
         {quero ? <span className={`postal-carimbo${carimbou ? ' novo' : ''}`} aria-hidden="true"><small>{cidade.slice(0, 16)}</small>Quero ir<small>{hojeCurto()}</small></span> : null}
       </div>
+      {p.foto && p.creditoEnviada ? <div style={{ textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: {p.creditoEnviada}</div> : null}
       {p.foto && p.fotoPagina ? (
         <a href={p.fotoPagina} target="_blank" rel="noreferrer" style={{ display: 'block', textAlign: 'right', fontSize: '11px', lineHeight: '24px', color: 'var(--texto-sec)', padding: '0 4px' }}>Foto: Wikimedia Commons (autor e licença)</a>
       ) : null}
@@ -154,9 +158,16 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
     if (fim) return;
     let vivo = true;
     setCarregando(true);
-    void feedLugares(destino.id, pagina, categoria).then(({ itens, fim: acabou }) => {
+    void feedLugares(destino.id, pagina, categoria).then(async ({ itens, fim: acabou }) => {
+      // Sem foto do Commons: usa a foto aprovada de quem foi (D-034).
+      const semFoto = itens.filter((i) => !i.foto).map((i) => i.id);
+      const enviadas = semFoto.length ? await fotosAprovadas(semFoto) : new Map();
       if (!vivo) return;
-      let novos = itens.map(deBase);
+      let novos = itens.map((i) => {
+        const p = deBase(i);
+        const f = enviadas.get(i.id)?.[0];
+        return f ? { ...p, foto: f.url, fotoPagina: null, creditoEnviada: f.usuario ? `@${f.usuario}` : 'quem foi' } : p;
+      });
       if (pagina === 0 && destino.id === DESTINO_CURADORIA && !categoria) novos = [...LUGARES.filter((l) => temFoto(l.id)).map(deCuradoria), ...novos];
       // Dentro de cada página, o que mais combina com o jeito de viajar vem antes (fotos primeiro).
       if (preferencias) {

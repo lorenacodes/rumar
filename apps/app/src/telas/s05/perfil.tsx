@@ -8,6 +8,7 @@ import { ORIGEM_ANA, usePlano } from '../../state/plano';
 import { paisPorCodigo } from '../../lib/moedas';
 import { meuUsuario } from '../../lib/usuario';
 import { minhasAmizades, type Amizade } from '../../lib/social';
+import { souModerador } from '../../lib/fotosEnviadas';
 import { NOME_ESTILO } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
@@ -80,6 +81,8 @@ function SecaoViajante() {
   const [amizades, setAmizades] = useState<Amizade[] | null>(null);
   useEffect(() => void meuUsuario().then((m) => setUsuario(m?.username ?? null)), []);
   useEffect(() => void minhasAmizades().then(setAmizades), []);
+  const [moderadora, setModeradora] = useState(false);
+  useEffect(() => void souModerador().then(setModeradora), []);
   const pedidos = amizades?.filter((a) => a.status === 'pendente' && !a.enviadaPorMim).length ?? 0;
   const nAmigos = amizades?.filter((a) => a.status === 'aceita').length ?? 0;
   const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
@@ -88,6 +91,7 @@ function SecaoViajante() {
       <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '8px 0 2px' }}>Viagens</div>
       <Linha minHeight="44px" titulo={pedidos ? `Amigos · ${pedidos} ${pedidos === 1 ? 'pedido' : 'pedidos'} esperando` : 'Amigos'}
         detalhe={amizades === null ? '…' : nAmigos ? `${nAmigos} ${nAmigos === 1 ? 'amigo' : 'amigos'} · encontrar mais pelo nome ou @` : 'Encontrar amigos pelo nome ou @ e viajar junto'} onClick={() => navegar('/perfil/amigos')} />
+      {moderadora ? <Linha minHeight="44px" titulo="Moderação de fotos" detalhe="Aprovar fotos enviadas" onClick={() => navegar('/perfil/moderar')} /> : null}
       <Linha minHeight="44px" titulo="Nome de usuário" detalhe={usuario ? `@${usuario}` : usuario === null ? 'Escolher (para amigos te encontrarem)' : '…'} onClick={() => navegar('/perfil/usuario')} />
       <Linha minHeight="44px" titulo="Meu jeito de viajar" detalhe={preferencias ? `Estilo ${NOME_ESTILO[preferencias.estilo]} · ritmo ${RITMO[preferencias.ritmo]}` : 'Responder em 1 minuto'} onClick={() => navegar('/perfil-viajante')} />
       <Linha minHeight="44px" titulo="Minhas viagens" detalhe="Roteiros, hospedagem e orçamento" onClick={() => navegar('/viagens')} />

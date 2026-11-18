@@ -32,6 +32,7 @@ import { Lugar } from './telas/descobrir/Lugar';
 import { Destinos } from './telas/destinos/Destinos';
 import { Pessoa } from './telas/social/Pessoa';
 import { Social } from './telas/social/Social';
+import { Moderar } from './telas/s05/Moderar';
 import { NovaViagem } from './telas/viagens/NovaViagem';
 import { Viagem } from './telas/viagens/Viagem';
 import { Viagens } from './telas/viagens/Viagens';
@@ -119,6 +120,7 @@ const filhos: RouteObject[] = [
   { path: '/viagens/nova', element: <NovaViagem /> },
   { path: '/viagem/:id', element: <Viagem /> },
   { path: '/perfil/amigos', element: <Social /> },
+  { path: '/perfil/moderar', element: <Moderar /> },
   { path: '/social', element: <Navigate to="/perfil/amigos" replace /> },
   { path: '/pessoa/:id', element: <Pessoa /> },
   { path: '/destinos', element: <Destinos /> },
