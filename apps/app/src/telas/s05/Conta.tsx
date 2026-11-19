@@ -7,7 +7,8 @@ import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { campo, Rotulo } from '../viagens/comum';
 
 const VERSAO_AVISO = '17/11/2026';
-const contato = CONTATO_PRIVACIDADE ?? 'pelo Instagram @bovair.app';
+// Contato de privacidade: a fundadora informa (checklist 7.4). Sem ele, não inventamos um canal.
+const contato = CONTATO_PRIVACIDADE ?? 'pelo e-mail de contato, que será publicado aqui antes do lançamento';
 
 function Pagina({ titulo, sobre, voltar = '/perfil', children }: { titulo: string; sobre: string; voltar?: string; children: ReactNode }) {
   return (
@@ -164,10 +165,18 @@ export function Ajuda() {
     <Pagina titulo="Ajuda e contato" sobre="Perfil">
       <Rotulo>Perguntas comuns</Rotulo>
       {[
-        ['De onde vêm os lugares e os preços?', 'Lugares vêm do OpenStreetMap (mapa colaborativo) e da curadoria do Bo Vair. Preço só aparece quando há fonte, com a data; o resto aparece como "sem preço".'],
-        ['Por que a cidade aparece como "cobertura parcial"?', 'Nenhuma base tem todos os lugares. Mostramos o que já coletamos e o que ainda falta.'],
-        ['Como convido alguém para a minha viagem?', 'Adicione a pessoa como amiga no Social (pelo nome ou @). Depois, na viagem, aba Grupo → Convidar.'],
-        ['Esqueci a senha.', 'Na tela de entrar, toque em "Esqueci a senha" e siga o código enviado ao seu e-mail.'],
+        ['Como começo?', 'Toque em Viagens → Nova viagem. Escolha destino, datas e pessoas.'],
+        ['Como sei quanto vou gastar?', 'Em Nova viagem, anote passagem, hotel e dia a dia. O app soma e põe 10% para imprevistos.'],
+        ['Quando consigo viajar?', 'Diga quanto já guardou e quanto guarda por mês. O gráfico mostra o mês em que você chega lá.'],
+        ['Guardei dinheiro. Onde anoto?', 'Abra a viagem e toque em "Guardei dinheiro".'],
+        ['Posso guardar uma viagem que já fiz?', 'Sim: Viagens → Registrar viagem que já fiz. Depois poste as fotos e avalie os lugares.'],
+        ['Quem vê minhas fotos e meu roteiro?', 'Você escolhe: Só eu, Amigos ou Todos. Hotel e gastos nunca aparecem para quem não está na viagem.'],
+        ['Como convido amigos?', 'Perfil → Amigos: busque pelo nome ou @. Depois, na viagem, aba Grupo → Convidar.'],
+        ['O que é "Especial" e "Em conta"?', 'Especial: lugar reconhecido ou com nota alta. Em conta: simples e barato. Sem dados, não marcamos.'],
+        ['De onde vêm lugares, preços e experiências?', 'Lugares: OpenStreetMap. Experiências: pesquisa do Bo Vair. Preço só aparece com fonte e data.'],
+        ['Funciona sem internet?', 'As viagens que você abriu ficam salvas no celular. Mudanças só com internet.'],
+        ['Como apago uma foto ou minha conta?', 'Foto: Perfil → Minhas fotos → toque nela → Apagar. Conta: Perfil → Privacidade.'],
+        ['Esqueci a senha.', 'Na tela de entrar, toque em "Esqueci a senha" e use o código do e-mail.'],
       ].map(([q, r]) => (
         <details key={q} style={{ borderTop: '1px solid var(--linha)', padding: '6px 0' }}>
           <summary style={{ minHeight: '44px', display: 'flex', alignItems: 'center', fontWeight: 600, cursor: 'pointer' }}>{q}</summary>
@@ -175,7 +184,7 @@ export function Ajuda() {
         </details>
       ))}
       <Rotulo>Falar com a gente</Rotulo>
-      <p style={p}>{CONTATO_PRIVACIDADE ? `E-mail: ${CONTATO_PRIVACIDADE}` : 'Pelo Instagram @bovair.app.'}</p>
+      <p style={p}>{CONTATO_PRIVACIDADE ? `E-mail: ${CONTATO_PRIVACIDADE}` : 'O canal de contato chega em breve. Na fase de teste, fale com quem te convidou.'}</p>
     </Pagina>
   );
 }

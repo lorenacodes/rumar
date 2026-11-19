@@ -27,6 +27,10 @@
       sua **Moderação** (Perfil → Moderação de fotos). As fotos aparecem na hora; lá chegam só as denunciadas
       (2 denúncias tiram a foto do ar). Olhe 1 vez por semana.
 
+- [ ] **1.5 Canal de contato (antes dos testadores).** O Aviso de privacidade e a Ajuda precisam de um contato
+      real (a LGPD exige um canal para pedidos sobre dados). Pode ser o próprio Gmail do item 1.1. Me passe o
+      endereço (não é segredo) e eu coloco no app. **O app citava um Instagram "@bovair.app": ele é seu?** Se não
+      for, foi bom ter tirado; se for, me avise que eu volto a mostrar.
 - [ ] **1.4 Teste com o pessoal do trabalho** — guia e mensagem pronta em `docs/TESTADORES.md`. Faça depois do 1.1.
       Peça "relatório dos testadores" quando quiser ver os números (só contagens, sem dados pessoais).
 

@@ -986,3 +986,13 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   por marcadores; até 5 por sessão; teto de 2.000/hora), captura de erros não tratados e tela "Algo deu errado"
   com "Tentar de novo" (antes, erro na tela = tela branca). A rotina diária passa a conferir os erros.
 - Limpeza: arquivos de teste que tinham ido para o repositório (offline.png, undefined/) removidos.
+
+## D-086 — Análise completa (parte de produto, mercado e custos)
+- Documento: `docs/ANALISE_COMPLETA_2026-11.md` (mercado com fontes, serviços grátis conferidos, segurança,
+  concorrência, Brasil e exterior, o que depende de quem).
+- Ajuda reescrita com as 12 perguntas atuais. O app citava um Instagram "@bovair.app" como contato sem
+  confirmação de que é da empresa: retirado até a fundadora confirmar (checklist 1.5). O aviso de privacidade
+  diz que o contato será publicado antes do lançamento.
+- Rotina diária passa a conferir a tabela de erros do app.
+- Índice para o feed de viagens (só viagens visíveis).
+- Nenhum serviço externo novo: o registro de erros próprio cobre a fase de teste sem custo e sem fornecedor.
