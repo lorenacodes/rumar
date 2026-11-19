@@ -939,3 +939,11 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   cantos de 16 px; nome sobre a foto. Ainda maiores que o original (148 px).
 - Corrigido: no Android, o conteúdo aparecia por baixo da barra de abas, na faixa dos botões do sistema
   (o selo "Seu favorito"). A barra agora pinta o fundo abaixo dela.
+
+## D-082 — Fotos no perfil, "Minhas fotos" e carrossel no feed
+- Perfil de outra pessoa: seção "Fotos" (grade 3 por linha, 9 e "Ver todas") com as fotos dos álbuns das viagens
+  que eu posso ver e as fotos de lugares publicadas. Respeita o "Quem vê" de cada viagem; foto com 2+ denúncias
+  não aparece para os outros. Tocar abre a foto com "Ver a viagem" ou "Ver o lugar".
+- Perfil → "Minhas fotos": tudo o que eu postei, num lugar só.
+- Feed "Viagens da galera": até 5 fotos do álbum deslizam no próprio cartão, com pontinhos.
+- Funções no banco: fotos_da_pessoa e fotos_das_viagens (security definer, mesmas regras de visibilidade).

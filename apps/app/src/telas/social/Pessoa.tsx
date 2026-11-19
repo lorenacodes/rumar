@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { atualizarViagem, eu, listarViagens, textoMotivo, viagensVisiveis, type Viagem } from '../../lib/viagens';
 import { FotoLugar } from '../../ui/foto';
 import { Avatar } from '../../ui/avatar';
+import { GradeDeFotos } from '../../ui/GradeDeFotos';
 import { Voltar } from '../../ui/pecas';
 import { periodo, Rotulo } from '../viagens/comum';
 
@@ -70,6 +71,11 @@ export function Pessoa() {
             {cidades ? <span><b style={{ display: 'block', font: "600 20px 'Lexend Exa'" }}>{cidades}</b><span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{cidades === 1 ? 'cidade visitada' : 'cidades visitadas'}</span></span> : null}
           </div>
         ) : null}
+
+        <section aria-label="Fotos" style={{ marginTop: '6px' }}>
+          <Rotulo>Fotos</Rotulo>
+          <GradeDeFotos userId={id} max={9} vazio="Nenhuma foto que você possa ver." />
+        </section>
 
         {grupos.map(({ f, lista }) => (
           <section key={f} aria-label={NOME_FASE[f]}>

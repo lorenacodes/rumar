@@ -19,9 +19,9 @@ await t.getByRole('radio', { name: 'Evento' }).click(); await t.getByLabel('Qual
 await t.getByRole('radio', { name: 'Todos' }).click();
 await t.getByRole('button', { name: 'Salvar viagem' }).click(); await t.waitForTimeout(5000);
 await t.getByRole('button', { name: 'Postar fotos' }).click();
-await t.getByLabel('Escolher fotos e vídeos').setInputFiles('tools/e2e/foto-teste.jpg');
+await t.getByLabel('Escolher fotos e vídeos').setInputFiles(['tools/e2e/foto-teste.jpg', 'tools/e2e/foto-teste.jpg']);
 await t.getByRole('button', { name: 'Postar', exact: true }).click(); await t.waitForTimeout(6000);
-confere('foto postada na viagem pública', /Foto postada/.test((await t.locator('[role=status]').first().textContent().catch(() => '')) ?? ''));
+confere('foto postada na viagem pública', /postad/i.test((await t.locator('[role=status]').first().textContent().catch(() => '')) ?? ''));
 
 const bia = await entrar('e2e.bia@bovair.com.br');
 await bia.goto(URL + '#/inicio'); await bia.waitForTimeout(5000);
@@ -31,6 +31,12 @@ const card = bia.locator('article', { hasText: 'Olinda' }).first();
 confere('feed mostra a viagem de Olinda', await card.isVisible().catch(() => false));
 confere('feed mostra o evento', await card.getByText('Evento: Carnaval teste').isVisible().catch(() => false));
 confere('cartão tem foto', (await card.locator('img').count()) > 0);
+await bia.waitForTimeout(2000);
+confere('cartão desliza entre as fotos da viagem (2)', (await card.locator('img').count()) === 2);
+// Perfil do Tempo: grade com as fotos que a Bia pode ver (D-082).
+await card.getByRole('button').first().click(); await bia.waitForTimeout(5000);
+confere('perfil mostra a grade de fotos', (await bia.getByRole('list', { name: 'Fotos' }).locator('img').count()) >= 2);
+await bia.goBack(); await bia.waitForTimeout(4000);
 await card.getByRole('button', { name: /Ver a viagem/ }).click(); await bia.waitForTimeout(5000);
 confere('abre a viagem', /#\/viagem\//.test(bia.url()));
 confere('vê as fotos do álbum', (await bia.locator('section[aria-label="Fotos da viagem"] img').count()) > 0);
@@ -47,7 +53,7 @@ await denuncia(bia);
 const ana = await entrar('e2e.ana@bovair.com.br');
 await denuncia(ana);
 await bia.reload(); await bia.waitForTimeout(5000);
-confere('2 denúncias: foto some para os outros', (await bia.locator('section[aria-label="Fotos da viagem"] img').count()) === 0);
+confere('2 denúncias: a foto denunciada some para os outros', (await bia.locator('section[aria-label="Fotos da viagem"] img').count()) === 1);
 await t.reload(); await t.waitForTimeout(5000);
 confere('quem postou ainda vê a foto', (await t.locator('section[aria-label="Fotos da viagem"] img').count()) > 0);
 await t.getByRole('button', { name: 'Apagar viagem' }).click(); await t.waitForTimeout(4000);

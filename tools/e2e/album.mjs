@@ -17,6 +17,11 @@ await p.getByLabel(/Legenda/).fill('Teste automático do álbum');
 await p.getByRole('button', { name: 'Postar', exact: true }).click(); await p.waitForTimeout(6000);
 confere('foto postada', /Foto postada/.test((await p.locator('[role=status]').first().textContent().catch(() => '')) ?? ''));
 confere('miniatura aparece', (await p.locator('section[aria-label="Fotos da viagem"] img').count()) === antes + 1);
+// Minhas fotos (D-082): a foto aparece na grade do perfil.
+const voltar = p.url();
+await p.goto(URL + '#/perfil/fotos'); await p.waitForTimeout(4000);
+confere('aparece em Minhas fotos', (await p.getByRole('list', { name: 'Fotos' }).locator('img').count()) >= 1);
+await p.goto(voltar); await p.waitForTimeout(5000);
 p.on('dialog', (d) => d.accept());
 await p.locator('section[aria-label="Fotos da viagem"] button[aria-label="Teste automático do álbum"]').first().click(); await p.waitForTimeout(800);
 await p.getByRole('button', { name: 'Apagar', exact: true }).click(); await p.waitForTimeout(3000);

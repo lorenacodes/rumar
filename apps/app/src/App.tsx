@@ -71,6 +71,7 @@ const Destinos = sob(() => import('./telas/destinos/Destinos'), 'Destinos');
 const Pessoa = sob(() => import('./telas/social/Pessoa'), 'Pessoa');
 const Social = sob(() => import('./telas/social/Social'), 'Social');
 const FeedViagens = sob(() => import('./telas/social/FeedViagens'), 'FeedViagens');
+const MinhasFotos = sob(() => import('./telas/social/MinhasFotos'), 'MinhasFotos');
 const Curiosos = sob(() => import('./telas/curiosos/Curiosos'), 'Curiosos');
 const Moderar = sob(() => import('./telas/s05/Moderar'), 'Moderar');
 const NovaViagem = sob(() => import('./telas/viagens/NovaViagem'), 'NovaViagem');
@@ -137,6 +138,7 @@ const filhos: RouteObject[] = [
   { path: '/viagem/:id', element: <Viagem /> },
   { path: '/perfil/amigos', element: <Social /> },
   { path: '/perfil/avaliacoes', element: <MinhasAvaliacoes /> },
+  { path: '/perfil/fotos', element: <MinhasFotos /> },
   { path: '/perfil/moderar', element: <Moderar /> },
   { path: '/social', element: <Navigate to="/perfil/amigos" replace /> },
   { path: '/pessoa/:id', element: <Pessoa /> },
