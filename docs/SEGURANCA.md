@@ -19,6 +19,8 @@ Registro técnico das verificações e proteções. Atualizar a cada rodada.
   a ser indicado com `setWorkerUrl`, senão o mapa fica em branco). `npm audit`: 0 falhas.
 - **Reforço — links de fontes abertas:** `lib/seguro.ts` (`linkSeguro`) só deixa virar link endereço http(s)
   (site do lugar, autor da foto do Google, fontes de preço). A coleta também só grava http(s).
+- **Reforço — limite diário contra abuso por script** (`privado.limite_diario`): pedidos de amizade 40,
+  denúncias 30, viagens 100, convites 60, avaliações 60, itens de roteiro 3.000 por pessoa em 24 h.
 - **Conferido, sem falha:** funções do Google (`google_*`) recusam quem não é o servidor (`service_role`);
   funções públicas de busca/perfil exigem conta; arquivos de álbum privado não aparecem nem para amigos.
 
