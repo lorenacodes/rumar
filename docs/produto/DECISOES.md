@@ -758,3 +758,11 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Para a faixa não nascer vazia:** "Registrar viagem que já fiz" pergunta "Quem vê as fotos" já em "Meus
   amigos" (dá para trocar para "Só eu"); no álbum de viagem privada aparece "Seus amigos não veem esta viagem ·
   Mostrar para amigos".
+
+## D-064 — Aulas de idioma: sem link para a busca do YouTube
+- O app já tem a escolha automática de aulas específicas (função `aulas`, YouTube Data API v3, cache de 14 dias),
+  mas ela depende do segredo `YOUTUBE_API_KEY`, que nunca foi configurado. Sem ele, o app mandava para a barra de
+  pesquisa do YouTube, o que a fundadora reprovou. Agora, sem chave, a tela mostra o plano por temas e "Elas
+  aparecem aqui em breve"; com a chave, aparecem os vídeos escolhidos, com miniatura, duração e canal.
+- Custo da chave: zero dentro da cota gratuita (10.000 unidades/dia; cada busca gasta 100; 5 idiomas × 8 temas a
+  cada 14 dias).

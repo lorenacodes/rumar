@@ -23,7 +23,7 @@ await p.getByRole('button', { name: /Criar viagem/ }).click(); await p.waitForTi
 await p.getByRole('button', { name: /Antes de partir/ }).click(); await p.waitForTimeout(500);
 let t = await texto();
 confere('tarefa "Aprender frases básicas em francês" na linha do tempo', /Aprender frases básicas em francês/.test(t));
-await p.getByRole('button', { name: 'Ver as aulas ↗' }).click(); await p.waitForTimeout(4000);
+await p.getByRole('button', { name: 'Ver as aulas' }).click(); await p.waitForTimeout(4000);
 t = await texto();
 confere('tela diz o idioma do destino', /Em Paris falam francês/.test(t));
 confere('plano até a viagem por semanas', /8 temas em \d+ semanas/.test(t));
@@ -31,7 +31,7 @@ confere('8 temas de viagem', ['Cumprimentar', 'restaurante', 'direção', 'Núme
 const especificas = await p.locator('main a[href*="youtube.com/watch"]').count();
 const buscas = await p.locator('main a[href*="youtube.com/results"]').count();
 console.log(`   aulas específicas: ${especificas} · buscas por tema: ${buscas}`);
-confere('mostra aulas específicas OU explica que falta ligar a busca', especificas > 0 || /aparecem assim que a busca do YouTube for ligada/.test(t));
+confere('mostra aulas específicas OU explica que falta ligar a busca', especificas > 0 || /Elas aparecem aqui em breve/.test(t));
 await p.screenshot({ path: `${OUT}/idioma.png`, fullPage: true });
 console.log('— Erros:', erros.length ? erros : 'nenhum');
 await b.close();

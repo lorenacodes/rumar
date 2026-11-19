@@ -85,13 +85,12 @@ export function Idioma() {
               <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '14px', lineHeight: '20px' }}>
                 {res.configurado
                   ? 'Não encontramos aulas que passem nos nossos critérios agora. Tente de novo mais tarde.'
-                  : 'As aulas escolhidas para você aparecem assim que a busca do YouTube for ligada no servidor. Por enquanto, dá para buscar cada tema direto no YouTube:'}
+                  : 'Estamos escolhendo as aulas de cada tema. Elas aparecem aqui em breve.'}
               </div>
             ) : null}
 
             {TEMAS.map((t, i) => {
               const doTema = aulas.filter((a) => a.tema === t.id);
-              const busca = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${idioma.nome} para viajantes ${t.nome}`)}`;
               if (!doTema.length && aulas.length) return null;
               return (
                 <section key={t.id} aria-label={t.nome}>
@@ -112,7 +111,6 @@ export function Idioma() {
                       </a>
                     );
                   })}
-                  {!doTema.length ? <a href={busca} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Buscar no YouTube ↗</a> : null}
                 </section>
               );
             })}
