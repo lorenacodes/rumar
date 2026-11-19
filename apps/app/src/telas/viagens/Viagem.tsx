@@ -28,6 +28,7 @@ import { Mapa, type Ponto } from '../../ui/Mapa';
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { Info } from '../../ui/info';
 import { AlbumDaViagem } from './Album';
+import { OndeFui } from './OndeFui';
 import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rotulo, Segmentos, Selo } from './comum';
 
 type Aba = 'etapas' | 'roteiro' | 'mapa' | 'hospedagem' | 'dinheiro' | 'grupo';
@@ -250,10 +251,16 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi?</h2>
       <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares. Fotos vão em Fotos da viagem, no topo.</p>
       <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
+        {v.hospedagem?.hotel_id.startsWith('lugar:') ? (
+          <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
+            <span style={{ minWidth: 0 }}><b style={{ display: 'block', fontSize: '15px' }}>{v.hospedagem.nome}</b><span style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Onde você ficou</span></span>
+            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${v.hospedagem!.hotel_id.slice(6)}#avaliar=1`)} style={{ flex: 'none', minHeight: '44px', padding: '0 12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Avaliar</button>
+          </li>
+        ) : null}
         {lugares.map(({ l, it }) => (
           <li key={l.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
             <span style={{ minWidth: 0 }}><b style={{ display: 'block', fontSize: '15px' }}>{l.nome}</b>{it.feito ? <span style={{ fontSize: '12px', color: 'var(--verde)' }}>Você foi</span> : null}</span>
-            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?avaliar=1`)} style={{ flex: 'none', minHeight: '44px', padding: '0 12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Avaliar</button>
+            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}#avaliar=1`)} style={{ flex: 'none', minHeight: '44px', padding: '0 12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Avaliar</button>
           </li>
         ))}
       </ul>
@@ -345,6 +352,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
 
   return (
     <section style={{ marginTop: '14px' }}>
+      {dia === 1 && pode && v.viagem.data_ida <= new Date().toISOString().slice(0, 10) ? <OndeFui v={v} recarregar={recarregar} /> : null}
       {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
       {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
       <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>

@@ -726,3 +726,11 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   encerrada, sem roteiro nem custos, e abre direto nas Fotos da viagem. Nela, só as abas Lugares (os lugares
   visitados, que a pessoa pode acrescentar e avaliar), Mapa e Quem foi. Aparece no perfil em "Já foi" para os
   amigos, se ela escolher mostrar.
+
+## D-061 — Registrar onde fui (restaurantes, passeios, hotéis)
+- Na viagem que já começou ou foi registrada: "Onde você foi?" busca pelo nome qualquer lugar da cidade
+  (restaurante, ponto turístico, hotel...). "Fui aqui" põe o lugar na viagem como feito (hotel vira a
+  hospedagem, sem preço) e abre a avaliação: estrelas, comentário, acessibilidade e quanto gastou.
+- O hotel aparece no "Como foi?" com "Avaliar". Perfil ganhou "Minhas avaliações", por cidade.
+- Limite honesto: só acha lugares que estão na base (OpenStreetMap). Lugar que falta ainda não pode ser criado
+  pela pessoa.

@@ -55,3 +55,19 @@ export function resumir(lista: Avaliacao[]) {
   const mediana = mesmos.length ? mesmos[Math.floor(mesmos.length / 2)]! : null;
   return { media, quantidade: lista.length, acessivel, acessivelQuantos: acess.length, gastoTipico: mediana, moeda, gastosQuantos: mesmos.length };
 }
+
+/** Minhas avaliações (D-061), com nome e cidade do lugar. */
+export async function minhasAvaliacoes(): Promise<{ id: string; place_id: string; nota: number; comentario: string | null; created_at: string; nome: string; cidade: string | null; categoria: string | null }[]> {
+  const { data: s } = await supabase.auth.getSession();
+  const uid = s.session?.user.id;
+  if (!uid) return [];
+  const { data } = await supabase.from('avaliacoes').select('id, place_id, nota, comentario, created_at').eq('user_id', uid).order('created_at', { ascending: false }).limit(200);
+  const lista = (data ?? []) as { id: string; place_id: string; nota: number; comentario: string | null; created_at: string }[];
+  if (!lista.length) return [];
+  const { data: lugares } = await supabase.from('lugares').select('id, nome, categoria, destino_id').in('id', lista.map((a) => a.place_id));
+  const ids = [...new Set((lugares ?? []).map((l) => l.destino_id as string))];
+  const { data: destinos } = ids.length ? await supabase.from('destinos').select('id, nome').in('id', ids) : { data: [] };
+  const nomeDestino = new Map((destinos ?? []).map((d) => [d.id as string, d.nome as string]));
+  const porId = new Map((lugares ?? []).map((l) => [l.id as string, l]));
+  return lista.map((a) => { const l = porId.get(a.place_id); return { ...a, nome: (l?.nome as string) ?? 'Lugar', cidade: l ? nomeDestino.get(l.destino_id as string) ?? null : null, categoria: (l?.categoria as string) ?? null }; });
+}

@@ -280,6 +280,17 @@ export async function candidatosRoteiro(destino: string, nivel?: 'economico' | '
   return todos.filter((b) => !FORA_DO_ROTEIRO.has(b.tipo)).map(paraLugar).filter((l) => l !== null) as Lugar[];
 }
 
+/** Busca por nome um lugar da cidade (restaurante, ponto turístico, hotel...), para registrar onde a pessoa foi (D-061). */
+export async function procurarNaCidade(destino: string, termo: string): Promise<LugarBase[]> {
+  const t = termo.trim().replace(/[,()%]/g, '');
+  if (t.length < 2) return [];
+  const { data } = await supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('ativo', true).ilike('nome', `%${t}%`)
+    .not('categoria', 'in', '(transporte)').order('relevancia', { ascending: false }).limit(12);
+  const lista = (data ?? []) as LugarBase[];
+  guardar(lista);
+  return lista;
+}
+
 function guardar(lista: LugarBase[]) {
   for (const l of lista) bases.set(l.id, l);
   registrarLugares(lista.map(paraLugar).filter((l) => l !== null) as Lugar[]);

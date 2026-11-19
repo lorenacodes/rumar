@@ -96,6 +96,7 @@ function SecaoViajante() {
       <Linha minHeight="44px" titulo="Nome de usuário" detalhe={usuario ? `@${usuario}` : usuario === null ? 'Escolher (para amigos te encontrarem)' : '…'} onClick={() => navegar('/perfil/usuario')} />
       <Linha minHeight="44px" titulo="Meu jeito de viajar" detalhe={preferencias ? `Estilo ${NOME_ESTILO[preferencias.estilo]} · ritmo ${RITMO[preferencias.ritmo]}` : 'Responder em 1 minuto'} onClick={() => navegar('/perfil-viajante')} />
       <Linha minHeight="44px" titulo="Minhas viagens" detalhe="Roteiros, hospedagem e orçamento" onClick={() => navegar('/viagens')} />
+      <Linha minHeight="44px" titulo="Minhas avaliações" detalhe="Restaurantes, passeios e hotéis onde fui" onClick={() => navegar('/perfil/avaliacoes')} />
       <Linha minHeight="44px" titulo="País e moeda" detalhe={`${paisPorCodigo(paisResidencia)?.nome ?? paisResidencia} · ${moedaReferencia}`} onClick={() => navegar('/perfil-moeda')} />
       <Linha minHeight="44px" titulo="Destinos favoritos" detalhe="Lugares que quero conhecer" onClick={() => navegar('/destinos')} />
       <Linha minHeight="44px" titulo="Lugares que quero ir" detalhe={salvos.length ? `${salvos.length} ${salvos.length === 1 ? 'lugar' : 'lugares'}` : 'Nenhum ainda'} onClick={() => navegar('/descobrir?ver=salvos')} />

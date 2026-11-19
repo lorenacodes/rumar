@@ -319,6 +319,16 @@ export function acompanhar(tripId: string, aoMudar: () => void): () => void {
 }
 
 // ---------------------------------------------------------------- linha do tempo, economia e gastos reais
+/** "Fui aqui" (D-061): põe o lugar na viagem já marcado como feito. */
+export async function adicionarVisitado(tripId: string, placeId: string, periodo: string): Promise<boolean> {
+  const uid = await eu();
+  const { data: ja } = await supabase.from('trip_items').select('id').eq('trip_id', tripId).eq('place_id', placeId).limit(1);
+  if (ja?.length) { await supabase.from('trip_items').update({ feito: true }).eq('id', ja[0]!.id); return true; }
+  const { data: ult } = await supabase.from('trip_items').select('ordem').eq('trip_id', tripId).eq('dia', 1).order('ordem', { ascending: false }).limit(1);
+  const { error } = await supabase.from('trip_items').insert({ trip_id: tripId, dia: 1, periodo, ordem: ((ult?.[0]?.ordem as number | undefined) ?? -1) + 1, place_id: placeId, adicionado_por: uid, situacao: 'confirmado', feito: true });
+  if (!error) await registrar(tripId, `Registrou que foi em ${nome(placeId)}.`);
+  return !error;
+}
 export async function marcarFeito(it: Item, feito: boolean) {
   await supabase.from('trip_items').update({ feito }).eq('id', it.id);
   if (feito) await registrar(it.trip_id, `Marcou ${nome(it.place_id)} como feito.`);

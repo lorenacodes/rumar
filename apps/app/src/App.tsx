@@ -36,6 +36,7 @@ import { Curiosos } from './telas/curiosos/Curiosos';
 import { Moderar } from './telas/s05/Moderar';
 import { NovaViagem } from './telas/viagens/NovaViagem';
 import { JaFiz } from './telas/viagens/JaFiz';
+import { MinhasAvaliacoes } from './telas/s05/MinhasAvaliacoes';
 import { Viagem } from './telas/viagens/Viagem';
 import { Viagens } from './telas/viagens/Viagens';
 import { Montar } from './telas/viagem/Montar';
@@ -123,6 +124,7 @@ const filhos: RouteObject[] = [
   { path: '/viagens/ja-fiz', element: <JaFiz /> },
   { path: '/viagem/:id', element: <Viagem /> },
   { path: '/perfil/amigos', element: <Social /> },
+  { path: '/perfil/avaliacoes', element: <MinhasAvaliacoes /> },
   { path: '/perfil/moderar', element: <Moderar /> },
   { path: '/social', element: <Navigate to="/perfil/amigos" replace /> },
   { path: '/pessoa/:id', element: <Pessoa /> },
