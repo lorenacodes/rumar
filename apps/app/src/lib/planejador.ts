@@ -12,7 +12,7 @@
  *    "menos turístico" ajustam os pontos.
  * 3. Cada dia começa pelo melhor lugar ainda não usado; as paradas seguintes preferem o
  *    mesmo bairro e o que estiver mais perto da anterior (distância real pelas coordenadas).
- * 4. O ritmo define quantas paradas por dia; "dia" ou "noite" define os horários.
+ * 4. O dia intercala passeios com almoço e jantar; o ritmo define quantos passeios (D-053).
  * 5. Horário sem lugar adequado vira "tempo livre": o planejador nunca inventa lugar.
  * Distância é em linha reta, calculada pelas coordenadas; o tempo do trajeto vem do mapa
  * (link de rota), nunca de um chute.
@@ -57,9 +57,9 @@ export interface Lugar {
   menor?: boolean;
 }
 
-export type Estilo = 'cultural' | 'gastronomico' | 'agitado' | 'relaxante' | 'aventureiro' | 'compras' | 'equilibrado';
+export type Estilo = 'cultural' | 'gastronomico' | 'agitado' | 'relaxante' | 'praia' | 'aventureiro' | 'compras' | 'equilibrado';
 export type Gosto = 'museus' | 'comer' | 'cafes' | 'noite' | 'parques' | 'compras' | 'fotos' | 'feiras' | 'gente' | 'lgbt';
-export type Evitar = 'lotados' | 'caros' | 'festas' | 'longos';
+export type Evitar = 'lotados' | 'caros' | 'festas' | 'longos' | 'cultura';
 
 export interface Preferencias {
   estilo: Estilo;
@@ -86,10 +86,19 @@ export interface Viagem {
   /** AAAA-MM-DD */
   dataIda: string;
   noites: number;
+  /** Hospedagem (D-054): cada dia começa perto dela. */
+  inicio?: { lat: number; lon: number } | null;
 }
+
+/** O que a parada é no dia (D-053): passeio ou refeição. */
+export type Papel = 'passeio' | 'almoco' | 'jantar' | 'noite';
+export const NOME_PAPEL: Record<Papel, string> = { passeio: 'Passeio', almoco: 'Almoço', jantar: 'Jantar', noite: 'Noite' };
 
 export interface Parada {
   periodo: Periodo;
+  papel: Papel;
+  /** HH:MM sugerido (a pessoa pode mudar). */
+  hora: string;
   horario: string;
   lugar: Lugar | null;
   motivo: string;
@@ -125,6 +134,7 @@ const PESO_ESTILO: Record<Estilo, Partial<Record<Categoria, number>>> = {
   gastronomico: { gastronomia: 4, cafes: 3, locais: 2 },
   agitado: { bares: 4, entretenimento: 3, passeios: 1 },
   relaxante: { natureza: 4, cafes: 2, passeios: 1 },
+  praia: { natureza: 4, gastronomia: 1, cafes: 1 },
   aventureiro: { natureza: 3, locais: 3, passeios: 1 },
   compras: { compras: 4, locais: 2, cafes: 1 },
   equilibrado: { cultura: 2, gastronomia: 2, cafes: 2, bares: 2, natureza: 2, compras: 2, entretenimento: 2, passeios: 2, locais: 2 },
@@ -148,12 +158,12 @@ export const NOME_ESTILO: Record<Estilo, string> = {
   gastronomico: 'gastronomia',
   agitado: 'vida noturna',
   relaxante: 'descanso',
+  praia: 'praia e descanso',
   aventureiro: 'aventura',
   compras: 'compras',
   equilibrado: 'um pouco de tudo',
 };
 
-const HORARIO: Record<Periodo, string> = { morning: '9h30', afternoon: '14h', evening: '18h30', night: '21h30' };
 const SEMANA = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
 
 /** Distância em km entre duas coordenadas (fórmula de haversine). */
@@ -176,6 +186,8 @@ export function filtrar(lugares: Lugar[], p: Preferencias): Lugar[] {
     if (p.evitar.includes('caros') && l.custo >= 3) return false;
     if (p.evitar.includes('festas') && (l.categoria === 'bares' || l.tags.includes('nightlife'))) return false;
     if (p.evitar.includes('longos') && l.caminhada === 'high') return false;
+    // Quem não quer programa cultural (D-053): museus, monumentos e centro histórico saem.
+    if (p.evitar.includes('cultura') && (l.categoria === 'cultura' || l.tags.includes('museums_art'))) return false;
     if (p.orcamento === 'economico' && l.custo >= 3) return false;
     // Comida (D-041): o que a pessoa não come ou não gosta não entra no roteiro.
     const cz = l.cozinhas ?? [];
@@ -192,8 +204,13 @@ export function filtrar(lugares: Lugar[], p: Preferencias): Lugar[] {
 /** Pontos de afinidade de um lugar com o perfil, e os motivos em palavras. */
 export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos: string[] } {
   let pontos = PESO_ESTILO[p.estilo][l.categoria] ?? 0;
+  const doEstilo = pontos > 0;
+  // Praia (D-053): é o motivo nº 1 das viagens de lazer no Brasil; quem quer praia ou descanso vê praia primeiro.
+  const praia = l.tags.includes('beach');
+  if (praia && p.estilo === 'praia') pontos += 6;
+  if (praia && (p.estilo === 'relaxante' || p.estilo === 'equilibrado')) pontos += 2;
   const motivos: string[] = [];
-  if (pontos >= 3) motivos.push(`seu estilo ${NOME_ESTILO[p.estilo].toLowerCase()}`);
+  if (pontos >= 3) motivos.push(praia && (p.estilo === 'praia' || p.estilo === 'relaxante') ? 'você quer praia e descanso' : `seu estilo ${NOME_ESTILO[p.estilo].toLowerCase()}`);
   const gostos = p.gostos.filter((g) => GOSTO[g].categorias?.includes(l.categoria) || GOSTO[g].tags?.some((t) => l.tags.includes(t)));
   pontos += gostos.length * 3;
   if (gostos.length) motivos.push(gostos.map((g) => GOSTO[g].nome).join(' e '));
@@ -205,8 +222,11 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
   const destaque = (l as Lugar & { destaque?: boolean }).destaque === true;
   // Lugar reconhecido (artigo em várias Wikipédias) sobe, em qualquer nível.
   const fama = l.fama ?? 0;
-  if (fama >= 3) pontos += Math.min(4, Math.floor(fama / 5) + 1);
-  if (fama >= 15) motivos.push('muito conhecido');
+  // Fama só ajuda o que já combina com a pessoa: museu famoso não entra no roteiro de quem quer praia (D-053).
+  const combina = doEstilo || gostos.length > 0 || praia;
+  if (fama >= 3 && combina) pontos += Math.min(4, Math.floor(fama / 5) + 1);
+  else if (fama >= 25) pontos += 1;
+  if (fama >= 15 && combina) motivos.push('muito conhecido');
   if (p.orcamento === 'economico') {
     if (l.custo === 2) pontos -= 2;
     if (l.nivel === 1) pontos -= 2;
@@ -270,16 +290,40 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
   return { pontos, motivos };
 }
 
-function periodosDoDia(p: Preferencias, tipo: Dia['tipo']): Periodo[] {
-  if (tipo === 'partida') return ['morning'];
-  const base: Periodo[] = p.ritmo === 'calm' ? ['morning', 'afternoon'] : p.ritmo === 'balanced' ? ['morning', 'afternoon', 'evening'] : ['morning', 'afternoon', 'evening', 'night'];
-  let lista = [...base];
-  if (p.periodo === 'noite' && !lista.includes('night') && !p.evitar.includes('festas')) lista.push('night');
-  if (p.periodo === 'dia') lista = lista.filter((x) => x !== 'night');
-  if (p.periodo === 'noite' && p.ritmo !== 'intense') lista = lista.filter((x) => x !== 'morning');
-  if (tipo === 'chegada') lista = lista.filter((x) => x !== 'morning').slice(0, 2);
-  return lista.length ? lista : ['afternoon'];
+interface Slot { papel: Papel; per: Periodo; hora: string }
+const M1: Slot = { papel: 'passeio', per: 'morning', hora: '09:30' };
+const M2: Slot = { papel: 'passeio', per: 'morning', hora: '11:00' };
+const AL: Slot = { papel: 'almoco', per: 'afternoon', hora: '12:30' };
+const T1: Slot = { papel: 'passeio', per: 'afternoon', hora: '14:30' };
+const T2: Slot = { papel: 'passeio', per: 'afternoon', hora: '16:30' };
+const JA: Slot = { papel: 'jantar', per: 'evening', hora: '19:30' };
+const NO: Slot = { papel: 'noite', per: 'night', hora: '21:30' };
+
+/**
+ * O dia (D-053): passeios intercalados com almoço e jantar. O ritmo diz quantos passeios:
+ * tranquilo 2, equilibrado 4, intenso 4 e a noite. Chegada é tarde e jantar; partida, só a manhã.
+ */
+export function slotsDoDia(p: Preferencias, tipo: Dia['tipo']): Slot[] {
+  const semNoite = p.periodo === 'dia' || p.evitar.includes('festas');
+  if (tipo === 'partida') return p.ritmo === 'calm' ? [M1] : [M1, M2];
+  if (tipo === 'chegada') return [T2, JA, ...(!semNoite && (p.ritmo === 'intense' || p.periodo === 'noite') ? [NO] : [])];
+  let lista = p.ritmo === 'calm' ? [M1, AL, T1, JA] : p.ritmo === 'balanced' ? [M1, M2, AL, T1, T2, JA] : [M1, M2, AL, T1, T2, JA, NO];
+  if (p.periodo === 'noite') {
+    if (p.ritmo !== 'intense') lista = lista.filter((x) => x.per !== 'morning');
+    if (!lista.includes(T2)) lista.splice(lista.indexOf(JA), 0, T2);
+    if (!lista.includes(NO)) lista.push(NO);
+  }
+  if (semNoite) lista = lista.filter((x) => x !== NO);
+  return lista;
 }
+
+/** Quais lugares servem para cada papel. */
+function serve(l: Lugar, s: Slot): boolean {
+  if (s.papel === 'almoco' || s.papel === 'jantar') return l.categoria === 'gastronomia' && l.slots.includes(s.per);
+  if (s.papel === 'noite') return (l.categoria === 'bares' || l.categoria === 'entretenimento') && (l.slots.includes('night') || l.slots.includes('evening'));
+  return l.categoria !== 'gastronomia' && l.categoria !== 'bares' && l.slots.includes(s.per);
+}
+const horaTexto = (h: string) => h.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 
 function dataDoDia(dataIda: string, n: number): { data: string; diaSemana: string } {
   const [a, m, d] = dataIda.split('-').map(Number);
@@ -307,18 +351,22 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
 
   for (let n = 1; n <= total; n++) {
     const tipo: Dia['tipo'] = n === 1 ? 'chegada' : n === total ? 'partida' : 'cheio';
-    const periodos = periodosDoDia(p, tipo);
+    const slots = slotsDoDia(p, tipo);
     const paradas: Parada[] = [];
-    let anterior: (Lugar & { lat?: number; lon?: number }) | null = null;
+    let anterior: (Lugar & { lat?: number; lon?: number }) | null = viagem.inicio ? ({ id: 'hotel', area: '', ...viagem.inicio } as unknown as Lugar) : null;
+    let doHotel = Boolean(viagem.inicio);
     let bairro: string | null = null;
     const noDia = new Map<string, number>();
 
-    for (const per of periodos) {
+    for (const slot of slots) {
+      const per = slot.per;
+      const refeicao = slot.papel === 'almoco' || slot.papel === 'jantar';
+      // Todo mundo come: refeição não precisa "combinar com o estilo", só não pode ser o que a pessoa evita.
       const opcoes = candidatos
-        .filter((c) => !usados.has(c.l.id) && c.l.slots.includes(per) && c.pontos > 0)
+        .filter((c) => !usados.has(c.l.id) && serve(c.l, slot) && (refeicao || c.pontos > 0))
         .map((c) => {
           const km = temCoord(anterior) && temCoord(c.l) ? distanciaKm(anterior, c.l) : null;
-          const ajuste = (km !== null ? -km * pesoDistancia : 0) + (bairro && c.l.area === bairro ? 2 : 0)
+          const ajuste = (km !== null ? -km * pesoDistancia * (refeicao ? 2 : 1) : 0) + (bairro && c.l.area === bairro ? 2 : 0)
             - 4 * (noDia.get(c.l.categoria) ?? 0) - 1 * (naViagem.get(c.l.categoria) ?? 0)
             + ((c.l as Lugar & { destaque?: boolean }).destaque ? 2 : 0)
             - 2.5 * Math.max(0, ...(c.l.cozinhas ?? []).map((z) => cozinhaNaViagem.get(z) ?? 0));
@@ -327,7 +375,7 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
         .sort((a, b) => b.total - a.total || a.l.id.localeCompare(b.l.id));
       const escolha = opcoes[0];
       if (!escolha) {
-        paradas.push({ periodo: per, horario: HORARIO[per], lugar: null, motivo: 'Tempo livre para descansar ou explorar por conta própria.', proximo: null });
+        if (!refeicao) paradas.push({ periodo: per, papel: slot.papel, hora: slot.hora, horario: horaTexto(slot.hora), lugar: null, motivo: 'Tempo livre para descansar ou explorar por conta própria.', proximo: null });
         continue;
       }
       usados.add(escolha.l.id);
@@ -336,11 +384,13 @@ export function planejar(catalogo: Lugar[], p: Preferencias, viagem: Viagem): Di
       for (const z of escolha.l.cozinhas ?? []) cozinhaNaViagem.set(z, (cozinhaNaViagem.get(z) ?? 0) + 1);
       bairro ??= escolha.l.area || null;
       const motivos = [...escolha.motivos];
-      if (escolha.km !== null && escolha.km <= 1.5 && anterior) motivos.push(`${fmtKm(escolha.km)} da anterior`);
+      if (doHotel && escolha.km !== null && escolha.km <= 1.5) motivos.push(`${fmtKm(escolha.km)} do hotel`);
+      else if (escolha.km !== null && escolha.km <= 1.5 && anterior) motivos.push(`${fmtKm(escolha.km)} da anterior`);
       else if (anterior && escolha.l.area === anterior.area) motivos.push('mesmo bairro');
-      const motivo = motivos.length ? `Escolhemos porque ${juntar(motivos)}.` : 'Escolhemos para completar o dia perto das outras paradas.';
-      paradas.push({ periodo: per, horario: HORARIO[per], lugar: escolha.l, motivo, proximo: null });
+      const motivo = motivos.length ? `Escolhemos porque ${juntar(motivos)}.` : refeicao ? 'Escolhemos para comer perto das outras paradas.' : 'Escolhemos para completar o dia perto das outras paradas.';
+      paradas.push({ periodo: per, papel: slot.papel, hora: slot.hora, horario: horaTexto(slot.hora), lugar: escolha.l, motivo, proximo: null });
       anterior = escolha.l;
+      doHotel = false;
     }
 
     // Distância e rota até a próxima parada (só entre lugares com coordenadas).

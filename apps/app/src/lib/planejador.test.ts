@@ -27,15 +27,31 @@ describe('planejador', () => {
     expect(cats(gastro).filter((c) => c === 'gastronomia' || c === 'cafes').length).toBeGreaterThan(cats(cultural).filter((c) => c === 'gastronomia' || c === 'cafes').length);
   });
 
-  it('ritmo tranquilo tem no máximo 2 paradas nos dias cheios', () => {
-    const dias = planejar(LUGARES, { ...base, ritmo: 'calm' }, viagem);
-    for (const d of dias.filter((x) => x.tipo === 'cheio')) expect(d.paradas.length).toBeLessThanOrEqual(2);
+  it('ritmo muda quantos passeios cabem no dia; refeições sempre entram', () => {
+    const passeios = (r: Preferencias['ritmo']) => planejar(LUGARES, { ...base, ritmo: r }, viagem).filter((x) => x.tipo === 'cheio')[0]!.paradas.filter((p) => p.papel === 'passeio').length;
+    expect(passeios('calm')).toBeLessThanOrEqual(2);
+    expect(passeios('balanced')).toBeGreaterThan(passeios('calm'));
+    const dia = planejar(LUGARES, base, viagem)[1]!;
+    expect(dia.paradas.some((p) => p.papel === 'almoco' && p.lugar?.categoria === 'gastronomia')).toBe(true);
+    expect(dia.paradas.some((p) => p.papel === 'jantar' && p.lugar?.categoria === 'gastronomia')).toBe(true);
+    expect(dia.paradas.map((p) => p.hora)).toEqual([...dia.paradas.map((p) => p.hora)].sort());
+  });
+
+  it('quem evita cultura não recebe museu; quem quer praia vê praia primeiro', () => {
+    const dias = planejar(LUGARES, { ...base, evitar: ['cultura'] }, viagem);
+    expect(dias.flatMap((d) => d.paradas).some((p) => p.lugar?.categoria === 'cultura')).toBe(false);
+    const mk = (id: string, categoria: Lugar['categoria'], tags: string[], fama = 0): Lugar => ({ id, nome: id, descricao: '', categoria, area: '', tags, slots: ['morning', 'afternoon'], energia: 1, caminhada: 'low', custo: 1, local: false, lotado: false, fama });
+    const museu = mk('museu', 'cultura', ['museums_art'], 40);
+    const praia = mk('praia', 'natureza', ['nature_outdoors', 'beach']);
+    const prefs = { ...base, estilo: 'praia' as const };
+    expect(afinidade(praia, prefs).pontos).toBeGreaterThan(afinidade(museu, prefs).pontos);
   });
 
   it('dia de chegada não tem manhã e o de partida só tem manhã', () => {
     const dias = planejar(LUGARES, base, viagem);
     expect(dias[0]!.paradas.some((p) => p.periodo === 'morning')).toBe(false);
     expect(dias.at(-1)!.paradas.every((p) => p.periodo === 'morning')).toBe(true);
+    expect(dias[0]!.paradas.some((p) => p.papel === 'jantar')).toBe(true);
     expect(dias).toHaveLength(5);
   });
 

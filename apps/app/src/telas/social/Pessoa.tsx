@@ -26,7 +26,10 @@ export function Pessoa() {
   const carregar = () => {
     void perfilPublico(id).then(setP);
     void Promise.all([listarViagens(), eu()]).then(async ([v, uid]) => {
-      const dele = [...v.deAmigos.filter((x) => x.user_id === id), ...v.minhas.filter((x) => x.user_id === id && x.status === 'ativo').map((x) => ({ ...x, juntos: true }))];
+      const juntos = new Set(v.minhas.filter((x) => x.user_id === id && x.status === 'ativo').map((x) => x.id));
+      // O banco só devolve o que posso ver: compartilhadas com amigos, públicas e as que fazemos juntos.
+      const { data: visiveis } = await supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade').eq('user_id', id).order('data_ida');
+      const dele = ((visiveis ?? []) as Viagem[]).filter((x) => x.visibilidade !== 'privada' || juntos.has(x.id)).map((x) => ({ ...x, juntos: juntos.has(x.id) }));
       setViagens(dele);
       setMinhasPrivadas(v.minhas.filter((x) => x.user_id === uid && x.visibilidade === 'privada'));
       if (dele.length) {
@@ -88,7 +91,7 @@ export function Pessoa() {
         ))}
         {!viagens.length ? (
           <p style={{ fontSize: '15px', color: 'var(--texto-sec)', marginTop: '18px' }}>
-            {p?.amigos ? `${nome.split(' ')[0]} ainda não mostrou viagens para os amigos.` : 'As viagens aparecem quando vocês forem amigos.'}
+            {p?.amigos ? `${nome.split(' ')[0]} ainda não mostrou viagens para os amigos.` : 'Nenhuma viagem pública. Viagens para amigos aparecem quando vocês forem amigos.'}
           </p>
         ) : null}
 

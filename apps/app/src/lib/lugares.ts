@@ -66,7 +66,7 @@ export type CategoriaLugar = 'restaurantes' | 'bares' | 'cafes' | 'hospedagem' |
 /** Nome, e como cada categoria entra no roteiro (null = não entra: hospedagem, transporte). */
 export const CATEGORIAS_LUGAR: Record<CategoriaLugar, { nome: string; roteiro: { categoria: Categoria; tags: string[]; slots: Periodo[]; ingresso?: false } | null }> = {
   atracoes: { nome: 'Pontos turísticos', roteiro: { categoria: 'passeios', tags: ['photography', 'history_culture'], slots: ['morning', 'afternoon', 'evening'] } },
-  praias: { nome: 'Praias', roteiro: { categoria: 'natureza', tags: ['nature_outdoors', 'photography'], slots: ['morning', 'afternoon'] } },
+  praias: { nome: 'Praias', roteiro: { categoria: 'natureza', tags: ['nature_outdoors', 'photography', 'beach'], slots: ['morning', 'afternoon'] } },
   museus: { nome: 'Museus', roteiro: { categoria: 'cultura', tags: ['museums_art', 'history_culture'], slots: ['morning', 'afternoon'] } },
   historico: { nome: 'Centro histórico e monumentos', roteiro: { categoria: 'cultura', tags: ['history_culture', 'photography'], slots: ['morning', 'afternoon'] } },
   parques: { nome: 'Parques e natureza', roteiro: { categoria: 'natureza', tags: ['nature_outdoors'], slots: ['morning', 'afternoon'] } },

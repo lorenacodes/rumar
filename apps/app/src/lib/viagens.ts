@@ -20,7 +20,7 @@ export interface Viagem {
   noites: number;
   viajantes: number;
   orcamento_centavos: number | null;
-  visibilidade: 'privada' | 'amigos';
+  visibilidade: 'privada' | 'amigos' | 'publica';
   data_definida?: boolean;
   moeda_destino?: string | null;
   guardado_centavos?: number;
@@ -40,7 +40,7 @@ export interface Aporte { id: string; valor_centavos: number; data: string; nota
 export interface GastoReal { id: string; data: string; categoria: string; descricao: string; valor_centavos: number; moeda: string; forma: string; taxa: number | null; taxa_fonte: string | null; valor_ref_centavos: number | null; moeda_ref: string | null }
 export interface Item { id: string; trip_id: string; dia: number; periodo: string; ordem: number; place_id: string; situacao: string; adicionado_por: string | null; feito?: boolean; hora?: string | null }
 export interface Membro { user_id: string; papel: 'dono' | 'editor' | 'leitor'; status: 'convidado' | 'ativo'; nome: string }
-export interface Hospedagem { hotel_id: string; nome: string; endereco: string | null; lat: number | null; lon: number | null; foto: string | null; nota: number | null; checkin: string; checkout: string; total_centavos: number; moeda: string; fonte: string; cotado_em: string }
+export interface Hospedagem { hotel_id: string; nome: string; endereco: string | null; lat: number | null; lon: number | null; foto: string | null; nota: number | null; checkin: string; checkout: string; total_centavos: number; moeda: string; fonte: string; cotado_em: string; cafe_incluso?: boolean | null }
 export interface Gasto { id: string; categoria: string; descricao: string; valor_centavos: number; moeda: string }
 export interface Evento { id: number; texto: string; created_at: string; autor: string | null }
 
@@ -72,15 +72,18 @@ async function registrar(tripId: string, texto: string) {
 export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: string; status: string })[]; deAmigos: Viagem[] }> {
   const uid = await eu();
   if (!uid) return { minhas: [], deAmigos: [] };
-  const [membros, todas] = await Promise.all([
+  const [membros, todas, amizades] = await Promise.all([
     supabase.from('trip_members').select('trip_id, papel, status').eq('user_id', uid),
     supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade').order('data_ida'),
+    supabase.from('friendships').select('requester, addressee').eq('status', 'aceita'),
   ]);
+  // Viagem pública de quem não é amigo não entra aqui (aparece só no perfil da pessoa, D-055).
+  const amigos = new Set((amizades.data ?? []).map((a) => (a.requester === uid ? a.addressee : a.requester) as string));
   const meu = new Map((membros.data ?? []).map((m) => [m.trip_id as string, m]));
   const viagens = (todas.data ?? []) as Viagem[];
   return {
     minhas: viagens.filter((v) => meu.has(v.id)).map((v) => ({ ...v, papel: meu.get(v.id)!.papel as string, status: meu.get(v.id)!.status as string })),
-    deAmigos: viagens.filter((v) => !meu.has(v.id)),
+    deAmigos: viagens.filter((v) => !meu.has(v.id) && amigos.has(v.user_id)),
   };
 }
 
@@ -116,9 +119,11 @@ export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Prefe
     await registrar(v.id, 'Roteiro vazio: ainda não há lugares coletados nesta cidade (pedido de coleta registrado).');
     return;
   }
-  const dias = planejar(candidatos, prefs, { destino: v.destino, dataIda: v.data_ida, noites: v.noites });
+  const { data: hosp } = await supabase.from('trip_lodging').select('lat, lon').eq('trip_id', v.id).maybeSingle();
+  const inicio = typeof hosp?.lat === 'number' && typeof hosp?.lon === 'number' ? { lat: hosp.lat, lon: hosp.lon } : null;
+  const dias = planejar(candidatos, prefs, { destino: v.destino, dataIda: v.data_ida, noites: v.noites, inicio });
   const uid = await eu();
-  const linhas = dias.flatMap((d) => d.paradas.filter((p) => p.lugar).map((p, i) => ({ trip_id: v.id, dia: d.numero, periodo: p.periodo, ordem: i, place_id: p.lugar!.id, adicionado_por: uid })));
+  const linhas = dias.flatMap((d) => d.paradas.filter((p) => p.lugar).map((p, i) => ({ trip_id: v.id, dia: d.numero, periodo: p.periodo, ordem: i, hora: p.hora, place_id: p.lugar!.id, adicionado_por: uid })));
   await supabase.from('trip_items').delete().eq('trip_id', v.id);
   if (linhas.length) await supabase.from('trip_items').insert(linhas);
   await registrar(v.id, pessoas.length > 1 ? `Roteiro refeito com as preferências de ${pessoas.length} pessoas.` : 'Roteiro montado com o seu jeito de viajar.');
@@ -184,13 +189,17 @@ export async function removerItem(it: Item) {
   await supabase.from('trip_items').delete().eq('id', it.id);
   await registrar(it.trip_id, `Tirou ${nome(it.place_id)} do dia ${it.dia}.`);
 }
-export async function adicionarItem(tripId: string, placeId: string, dia: number, periodo: string, sugestao = false) {
+export async function adicionarItem(tripId: string, placeId: string, dia: number, periodo: string, sugestao = false, hora: string | null = null, primeiro = false) {
   const uid = await eu();
   const { data: ult } = await supabase.from('trip_items').select('ordem').eq('trip_id', tripId).eq('dia', dia).order('ordem', { ascending: false }).limit(1);
-  const ordem = ((ult?.[0]?.ordem as number | undefined) ?? -1) + 1;
-  const { error } = await supabase.from('trip_items').insert({ trip_id: tripId, dia, periodo, ordem, place_id: placeId, adicionado_por: uid, situacao: sugestao ? 'sugerido' : 'confirmado' });
+  const ordem = primeiro ? -1 : ((ult?.[0]?.ordem as number | undefined) ?? -1) + 1;
+  const { error } = await supabase.from('trip_items').insert({ trip_id: tripId, dia, periodo, ordem, hora, place_id: placeId, adicionado_por: uid, situacao: sugestao ? 'sugerido' : 'confirmado' });
   if (!error) await registrar(tripId, `${sugestao ? 'Sugeriu' : 'Adicionou'} ${nome(placeId)} no dia ${dia}.`);
   return !error;
+}
+/** O hotel serve café da manhã? (D-054) Some com a sugestão de café quando "sim". */
+export async function marcarCafeIncluso(tripId: string, sim: boolean | null) {
+  await supabase.from('trip_lodging').update({ cafe_incluso: sim }).eq('trip_id', tripId);
 }
 export async function moverItem(it: Item, dia: number, ordem: number) {
   await supabase.from('trip_items').update({ dia, ordem }).eq('id', it.id);
@@ -208,7 +217,7 @@ export async function confirmarSugestao(it: Item) {
 // ---------------------------------------------------------------- viagem, hospedagem e gastos
 export async function atualizarViagem(id: string, parcial: Partial<Pick<Viagem, 'data_ida' | 'noites' | 'viajantes' | 'orcamento_centavos' | 'visibilidade' | 'data_definida' | 'guardado_centavos' | 'capacidade_mensal_centavos' | 'reserva_pct' | 'nivel' | 'diagnostico' | 'encerrada_em' | 'avaliacao' | 'comentario'>>, texto?: string) {
   await supabase.from('trips').update({ ...parcial, updated_at: new Date().toISOString() }).eq('id', id);
-  await registrar(id, texto ?? (parcial.visibilidade ? (parcial.visibilidade === 'amigos' ? 'Compartilhou a viagem com os amigos.' : 'Deixou a viagem privada.') : 'Atualizou os dados da viagem.'));
+  await registrar(id, texto ?? (parcial.visibilidade ? ({ amigos: 'Mostrou o roteiro para os amigos.', publica: 'Deixou o roteiro público.', privada: 'Deixou a viagem só para o grupo.' } as const)[parcial.visibilidade] : 'Atualizou os dados da viagem.'));
 }
 
 export interface Hotel { id: string; nome: string; foto: string | null; endereco: string; lat: number; lon: number; estrelas: number | null; nota: number | null; avaliacoes: number | null; comodidades: string[]; total: number; porNoite: number }
@@ -244,6 +253,18 @@ export async function escolherHotel(tripId: string, h: Hotel, busca: Busca, chec
   const uid = await eu();
   await supabase.from('trip_lodging').upsert({ trip_id: tripId, hotel_id: h.id, nome: h.nome, endereco: h.endereco, lat: h.lat, lon: h.lon, foto: h.foto, nota: h.nota, checkin, checkout, total_centavos: h.total, moeda: busca.moeda, fonte: busca.fonte, cotado_em: busca.cotadoEm, escolhido_por: uid });
   await registrar(tripId, `Escolheu a hospedagem ${h.nome}.`);
+}
+/** Hospedagem que a pessoa já reservou (D-054): da base de lugares da cidade, sem preço inventado. */
+export async function procurarHospedagem(destinoId: string, termo: string): Promise<{ id: string; nome: string; endereco: string | null; lat: number; lon: number }[]> {
+  const t = termo.trim().replace(/[,()%]/g, '');
+  if (t.length < 3) return [];
+  const { data } = await supabase.from('lugares').select('id, nome, endereco, lat, lon').eq('destino_id', destinoId).eq('categoria', 'hospedagem').ilike('nome', `%${t}%`).limit(8);
+  return (data ?? []) as { id: string; nome: string; endereco: string | null; lat: number; lon: number }[];
+}
+export async function informarHospedagem(tripId: string, h: { id: string; nome: string; endereco: string | null; lat: number; lon: number }, checkin: string, checkout: string, cafe: boolean | null) {
+  const uid = await eu();
+  await supabase.from('trip_lodging').upsert({ trip_id: tripId, hotel_id: `lugar:${h.id}`, nome: h.nome, endereco: h.endereco, lat: h.lat, lon: h.lon, checkin, checkout, total_centavos: 0, moeda: 'BRL', fonte: 'informado por você', cotado_em: new Date().toISOString(), escolhido_por: uid, cafe_incluso: cafe });
+  await registrar(tripId, `Informou a hospedagem ${h.nome}.`);
 }
 export async function adicionarGasto(tripId: string, g: { categoria: string; descricao: string; valor: number }) {
   const uid = await eu();

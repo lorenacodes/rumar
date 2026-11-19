@@ -627,11 +627,58 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   na hora; "Denunciar" em cada uma; a moderação vê as denunciadas e esconde. Crédito: só o @. A página do
   lugar mostra média, quantidade, acessibilidade (o que a maioria disse) e gasto típico (mediana).
 - **Vídeos curtos:** junto com as fotos de quem foi, até 20 s e 25 MB, com a mesma moderação.
-  **Custo:** Supabase grátis = 1 GB de arquivos (~40 vídeos no limite); depois, plano pago US$ 25/mês
-  (~R$ 145, 100 GB). Avisar a fundadora quando chegar perto.
+  **Custo:** a fundadora já paga o Supabase Pro (100 GB de arquivos incluídos); vídeo curto não é custo
+  novo. Acompanhar o uso só se passar de 100 GB.
 - **"Como foi?":** quando a viagem começa, o roteiro mostra os lugares (os marcados como feitos primeiro)
   com "Avaliar" e o atalho "Avaliar outro lugar de <cidade>".
 
 ## D-048 — Início que diz o que o app faz
 - Para quem não tem conta ou não tem viagem: bloco "Como uma agência, no seu bolso — Sua viagem inteira num
   lugar só" (Roteiro, Dinheiro, Hospedagem e prazos, Com amigos) e "Planejar uma viagem", antes dos destinos.
+
+## D-049 — Roteiro em linha do tempo
+- **Data:** 19/11/2026 · **Status:** ✅ Pedido da fundadora ("não entendo nada do que está acontecendo").
+- Cada dia mostra data por extenso e resumo ("6 paradas · 2,9 km entre elas"). Paradas numa linha do tempo:
+  horário à esquerda, cartão com foto, nome, tipo e bairro; preço só quando conhecido; "Por que" numa linha.
+  Entre paradas, distância e minutos a pé (80 m/min, em linha reta) com link de rota. Ações: Como chegar,
+  Feito, Mais (horário, subir, descer, mudar de dia, trocar, tirar). O nível da viagem foi para o fim.
+
+## D-050 — Menos espaço entre palavras
+- A Lexend Exa é larga; no visual novo, títulos usam `word-spacing: -0.1em` (a fonte não mudou).
+
+## D-051 — WhatsApp de estabelecimentos
+- Ícone (SVG) ao lado de celular brasileiro (DDD + 9 + 8 dígitos), abrindo `wa.me/55…`. Fixo não ganha ícone:
+  não dá para saber se tem WhatsApp, e o app não promete o que não sabe. Não precisa de configuração.
+
+## D-052 — Perfil do amigo
+- Viagens agrupadas em "Viajando agora", "Próximas" e "Já foi", com foto, período e número de paradas; abre o
+  roteiro só para ver (com "+ Quero ir"). Mostra também as viagens que vocês fazem juntos. Quando os amigos não
+  veem as suas, um atalho "Mostrar para amigos" (com confirmação). O padrão continua privado (LGPD).
+
+## D-053 — O dia tem ritmo, refeições e estilo "Praia e descanso"
+- **Por quê:** dias com 1 ou 2 lugares; muito roteiro cultural para quem não quer. Pesquisa: no Brasil, sol e
+  praia são 44,6% das viagens de lazer e cultura/gastronomia 24,4% (PNAD Contínua Turismo 2024, IBGE/MTur);
+  estudos de segmentação apontam "fugir e descansar" como um dos grupos principais.
+- **Dia:** passeios intercalados com almoço (12h30) e jantar (19h30). Tranquilo: 2 passeios; equilibrado: 4;
+  intenso: 4 e a noite. Chegada: fim de tarde e jantar; partida: manhã. Refeição não precisa "combinar com o
+  estilo" (todo mundo come), só respeita dieta e o que a pessoa evita. Horários vão para o item (editáveis).
+- **Estilo novo "Praia e descanso"** (praia sobe muito); relaxante e equilibrado também favorecem praia.
+- **Evitar "Museus e programas culturais"** tira cultura do roteiro.
+- **Fama só ajuda o que combina:** museu famoso não entra no roteiro de quem quer praia.
+
+## D-054 — Hotel e café da manhã
+- "Já sei onde vou ficar": acha a hospedagem na base da cidade (OpenStreetMap) e guarda a localização, sem
+  preço (não soma no custo; o custo pede o valor em Dinheiro). Com hotel, o roteiro começa cada dia perto dele.
+- "Café da manhã incluso? Sim/Não". Quando não for "sim", o roteiro sugere até 2 cafés a até 1,5 km do hotel
+  (sem hotel, da primeira parada), com "Pôr às 8h30".
+
+## D-055 — Quem vê a viagem
+- No topo da viagem: "Só o grupo", "Amigos" ou "Todos". "Todos" = qualquer pessoa com conta vê a viagem e o
+  roteiro; hospedagem, gastos, histórico e participantes continuam só para o grupo e amigos (onde a pessoa dorme
+  não fica público). Viagens públicas de quem não é amigo aparecem só no perfil da pessoa.
+
+## D-056 — iPhone pela web (PWA)
+- App nativo de iPhone exige Mac com Xcode e conta Apple Developer (US$ 99/ano, ~R$ 575): passa do orçamento
+  de R$ 500. Caminho grátis: a versão web no GitHub Pages (workflow "Web (iPhone)"), que no Safari vira app em
+  "Compartilhar → Adicionar à Tela de Início" (manifesto, ícone e tela cheia). Limites: sem App Store, e
+  notificações só em iOS 16.4+ depois de instalado. GitHub Pages grátis só com repositório público.

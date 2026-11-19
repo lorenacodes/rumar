@@ -15,6 +15,7 @@ const ESTILOS: { id: Estilo; titulo: string; texto: string }[] = [
   { id: 'cultural', titulo: 'Cultural', texto: 'Museus, arquitetura, história e monumentos.' },
   { id: 'gastronomico', titulo: 'Gastronômico', texto: 'Restaurantes, cafés, mercados e sabores locais.' },
   { id: 'agitado', titulo: 'Agitado', texto: 'Bares, festas, shows e vida noturna.' },
+  { id: 'praia', titulo: 'Praia e descanso', texto: 'Praia, sol e pouco compromisso.' },
   { id: 'relaxante', titulo: 'Relaxante', texto: 'Parques, passeios tranquilos e tempo para descansar.' },
   { id: 'aventureiro', titulo: 'Aventureiro', texto: 'Ar livre, trilhas e experiências diferentes.' },
   { id: 'compras', titulo: 'Compras', texto: 'Lojas, feiras, brechós e centros comerciais.' },
@@ -37,6 +38,7 @@ const EVITAR: { id: Evitar; nome: string }[] = [
   { id: 'caros', nome: 'Atividades caras' },
   { id: 'festas', nome: 'Festas e baladas' },
   { id: 'longos', nome: 'Caminhadas longas' },
+  { id: 'cultura', nome: 'Museus e programas culturais' },
 ];
 
 const PADRAO: Preferencias = {

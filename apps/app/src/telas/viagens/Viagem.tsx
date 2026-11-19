@@ -12,7 +12,7 @@ import { calcular, faltaNoCusto, sugerirAjustes, textoFalta, type Precos } from 
 import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type Gosto, type Lugar, type Periodo } from '../../lib/planejador';
 import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
-  acompanhar, adicionarGasto, hoteisLigados, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
+  acompanhar, adicionarGasto, adicionarItem, informarHospedagem, marcarCafeIncluso, procurarHospedagem, hoteisLigados, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
   marcarFeito, montarRoteiro, nivelDaViagem, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
 } from '../../lib/viagens';
 import { converter, dinheiro, taxa } from '../../lib/moedas';
@@ -97,7 +97,7 @@ export function Viagem() {
     const entrada = {
       itens: itens.filter((x) => x.it.situacao === 'confirmado').map((x) => ({ dia: x.it.dia, periodo: x.it.periodo, ordem: x.it.ordem, lugar: x.l })),
       precos: P, catalogo: lugaresDoDestino(destinoId),
-      hospedagem: v.hospedagem ? { nome: v.hospedagem.nome, total: v.hospedagem.total_centavos, moeda: v.hospedagem.moeda, fonte: v.hospedagem.fonte, cotadoEm: v.hospedagem.cotado_em, lat: v.hospedagem.lat, lon: v.hospedagem.lon } : null,
+      hospedagem: v.hospedagem && v.hospedagem.fonte !== 'informado por você' ? { nome: v.hospedagem.nome, total: v.hospedagem.total_centavos, moeda: v.hospedagem.moeda, fonte: v.hospedagem.fonte, cotadoEm: v.hospedagem.cotado_em, lat: v.hospedagem.lat, lon: v.hospedagem.lon } : null,
       gastos: v.gastos.map((g) => ({ categoria: g.categoria, descricao: g.descricao, valor: g.valor_centavos, moeda: g.moeda })),
       viajantes: v.viagem.viajantes, noites: v.viagem.noites, euroEmReais: EURO?.venda ?? null, prefereTransporte: grupo?.deslocamento === 'transporte',
     };
@@ -123,6 +123,7 @@ export function Viagem() {
         <Voltar para="/viagens" />
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
+        <QuemVe v={v} recarregar={recarregar} />
         {orc ? (
           <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>
@@ -257,6 +258,67 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
   );
 }
 
+/** Rótulo embaixo do horário: refeição quando é restaurante, senão a parte do dia. */
+function rotuloDoHorario(it: Item, l: Lugar): string {
+  const h = it.hora?.slice(0, 2) ?? '';
+  if (l.categoria === 'gastronomia') return h && h < '11' ? 'Café' : (h ? h < '17' : it.periodo === 'afternoon') ? 'Almoço' : 'Jantar';
+  if (l.categoria === 'cafes' && h && h < '11') return 'Café da manhã';
+  return FAIXA[it.periodo] ?? '';
+}
+
+/** Quem vê a viagem (D-055), à vista no topo: só o grupo, amigos ou todos com conta. */
+function QuemVe({ v, recarregar }: { v: ViagemCompleta; recarregar: () => void }) {
+  const [aberto, setAberto] = useState(false);
+  const NOME = { privada: 'Só o grupo vê', amigos: 'Amigos veem', publica: 'Público' } as const;
+  if (v.papel !== 'dono') return <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '2px' }}>{NOME[v.viagem.visibilidade]}</div>;
+  return (
+    <div style={{ marginTop: '4px' }}>
+      <button type="button" className="r-btn" aria-expanded={aberto} onClick={() => setAberto(!aberto)} style={{ minHeight: '36px', fontSize: '14px', fontWeight: 600, color: 'var(--azul)' }}>
+        {NOME[v.viagem.visibilidade]} · Mudar
+      </button>
+      {aberto ? (
+        <div role="radiogroup" aria-label="Quem pode ver" style={{ display: 'grid', gap: '6px', marginTop: '4px' }}>
+          {([['privada', 'Só o grupo', 'Só quem está na viagem.'], ['amigos', 'Amigos', 'Seus amigos veem o roteiro.'], ['publica', 'Todos', 'Qualquer pessoa com conta vê o roteiro. Hotel e gastos não.']] as const).map(([id, nome, texto]) => (
+            <button key={id} type="button" role="radio" aria-checked={v.viagem.visibilidade === id} className="r-btn"
+              onClick={() => void atualizarViagem(v.viagem.id, { visibilidade: id }).then(() => { setAberto(false); recarregar(); })}
+              style={{ textAlign: 'left', padding: '10px 12px', borderRadius: '10px', background: v.viagem.visibilidade === id ? 'var(--fundo-escuro)' : 'var(--cartao-2)', color: v.viagem.visibilidade === id ? '#fff' : 'var(--texto)' }}>
+              <b style={{ display: 'block', fontSize: '15px' }}>{nome}</b>
+              <span style={{ fontSize: '13px', opacity: 0.85 }}>{texto}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * Café da manhã (D-054): quando o hotel não serve (ou a pessoa ainda não disse), sugere cafés
+ * perto do hotel; sem hotel escolhido, perto da primeira parada do dia.
+ */
+function CafeDaManha({ v, dia, primeira, usados, pode, recarregar }: { v: ViagemCompleta; dia: number; primeira: Lugar | null; usados: Set<string>; pode: boolean; recarregar: () => void }) {
+  const h = v.hospedagem;
+  const jaTem = v.itens.some((x) => x.dia === dia && (x.hora ?? '99') < '10:30' && lugaresDoDestino(destinoDe(v)).find((o) => o.id === x.place_id)?.categoria === 'cafes');
+  if (!pode || h?.cafe_incluso === true || jaTem) return null;
+  const origem = h && typeof h.lat === 'number' && typeof h.lon === 'number' ? { lat: h.lat, lon: h.lon } : temCoord(primeira) ? primeira : null;
+  if (!origem) return null;
+  const perto = lugaresDoDestino(destinoDe(v)).filter((o) => o.categoria === 'cafes' && temCoord(o) && !usados.has(o.id))
+    .map((o) => ({ o, km: distanciaKm(origem, o as { lat: number; lon: number }) })).filter((x) => x.km <= 1.5).sort((a, b) => a.km - b.km).slice(0, 2);
+  if (!perto.length) return null;
+  return (
+    <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '12px', background: 'var(--cartao-2)' }}>
+      <div style={{ fontSize: '15px', fontWeight: 600 }}>Café da manhã {h ? 'perto do hotel' : 'perto da primeira parada'}</div>
+      {perto.map(({ o, km }) => (
+        <div key={o.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', minHeight: '44px' }}>
+          <span style={{ minWidth: 0, fontSize: '14px' }}><b>{o.nome}</b> <span style={{ color: 'var(--texto-sec)' }}>· {textoDistancia(km).replace(' em linha reta', '')}</span></span>
+          <button type="button" className="r-btn" onClick={() => void adicionarItem(v.viagem.id, o.id, dia, 'morning', false, '08:30', true).then(recarregar)} style={{ ...acao, flex: 'none' }}>Pôr às 8h30</button>
+        </div>
+      ))}
+      {h ? <button type="button" className="r-btn" onClick={() => void marcarCafeIncluso(v.viagem.id, true).then(recarregar)} style={{ minHeight: '36px', fontSize: '13px', color: 'var(--azul)', fontWeight: 600 }}>O hotel já serve café</button> : null}
+    </div>
+  );
+}
+
 function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[]; pode: boolean; grupo: ReturnType<typeof mesclar>; recarregar: () => void }) {
   const navegar = useNavigate();
   const { alternarSalvo, salvos, preferencias } = useViajante();
@@ -284,6 +346,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
       {resumo ? <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '2px' }}>{resumo}</div> : null}
       {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Dia livre. Adicione lugares quando quiser.</p> : null}
 
+      {dia > 1 ? <CafeDaManha v={v} dia={dia} primeira={doDia[0]?.l ?? null} usados={usados} pode={pode} recarregar={recarregar} /> : null}
       <ol aria-label={`Paradas do dia ${dia}`} style={{ listStyle: 'none', margin: '14px 0 0', padding: 0 }}>
         {doDia.map(({ it, l }, i) => {
           const prox = doDia[i + 1]?.l;
@@ -301,7 +364,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
               {/* Horário e linha do tempo */}
               <div style={{ position: 'relative' }}>
                 <div style={{ font: "700 14px/20px 'Open Sans'" }}>{hora}</div>
-                <div style={{ fontSize: '11px', color: 'var(--texto-sec)' }}>{FAIXA[it.periodo]}</div>
+                <div style={{ fontSize: '11px', color: 'var(--texto-sec)' }}>{rotuloDoHorario(it, l)}</div>
                 <span aria-hidden="true" style={{ position: 'absolute', right: '-6px', top: '6px', width: '10px', height: '10px', borderRadius: '50%', background: it.feito ? 'var(--verde)' : 'var(--amarelo)', boxShadow: '0 0 0 3px var(--fundo)' }} />
                 {!ultimo ? <span aria-hidden="true" style={{ position: 'absolute', right: '-2px', top: '20px', bottom: '-6px', width: '2px', background: 'var(--linha)' }} /> : null}
               </div>
@@ -415,6 +478,32 @@ function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { i
 }
 
 // ---------------------------------------------------------------- Hospedagem
+/** "Já sei onde vou ficar" (D-054): acha a hospedagem na base da cidade e usa a localização no roteiro. */
+function JaSeiOnde({ v, recarregar }: { v: ViagemCompleta; recarregar: () => void }) {
+  const [aberto, setAberto] = useState(false);
+  const [termo, setTermo] = useState('');
+  const [achados, setAchados] = useState<Awaited<ReturnType<typeof procurarHospedagem>>>([]);
+  useEffect(() => {
+    const t = setTimeout(() => void procurarHospedagem(v.viagem.destino_id!, termo).then(setAchados), 300);
+    return () => clearTimeout(t);
+  }, [termo, v.viagem.destino_id]);
+  if (!aberto) return <button type="button" className="r-btn" onClick={() => setAberto(true)} style={{ ...botaoTexto, display: 'block', marginTop: '6px' }}>{v.hospedagem ? 'Trocar hospedagem' : 'Já sei onde vou ficar'}</button>;
+  return (
+    <div style={{ marginTop: '10px' }}>
+      <label style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Nome do hotel ou pousada
+        <input className="r-input" autoFocus value={termo} onChange={(e) => setTermo(e.target.value)} style={campo} />
+      </label>
+      {achados.map((h) => (
+        <button key={h.id} type="button" className="r-btn" onClick={() => void informarHospedagem(v.viagem.id, h, v.viagem.data_ida, dataMais(v.viagem.data_ida, v.viagem.noites), null).then(() => { setAberto(false); recarregar(); })}
+          style={{ display: 'block', width: '100%', textAlign: 'left', minHeight: '48px', padding: '6px 0' }}>
+          <b style={{ fontSize: '15px' }}>{h.nome}</b>{h.endereco ? <span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{h.endereco}</span> : null}
+        </button>
+      ))}
+      {termo.trim().length >= 3 && !achados.length ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Não achamos. Tente outra parte do nome.</p> : null}
+    </div>
+  );
+}
+
 function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[]; pode: boolean; recarregar: () => void; destino: Destino | null }) {
   const [checkin, setCheckin] = useState(v.viagem.data_ida);
   const [checkout, setCheckout] = useState(dataMais(v.viagem.data_ida, v.viagem.noites));
@@ -455,10 +544,24 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
         <div style={{ border: '2px solid var(--texto)', padding: '10px 12px' }}>
           <div style={{ font: "700 11px 'Open Sans'", textTransform: 'uppercase', color: 'var(--verde)' }}>Hospedagem escolhida</div>
           <b style={{ font: "600 17px 'Lexend Exa'" }}>{v.hospedagem.nome}</b>
-          <div style={{ fontSize: '14px' }}>{euros(v.hospedagem.total_centavos)} no total{emReais(v.hospedagem.total_centavos)} · {v.hospedagem.checkin.split('-').reverse().join('/')} a {v.hospedagem.checkout.split('-').reverse().join('/')}</div>
-          <Info>{v.hospedagem.fonte}, cotado em {new Date(v.hospedagem.cotado_em).toLocaleDateString('pt-BR')}. Preços mudam até a reserva.</Info>
+          {v.hospedagem.fonte === 'informado por você'
+            ? <div style={{ fontSize: '14px' }}>{v.hospedagem.endereco ?? ''}</div>
+            : <>
+              <div style={{ fontSize: '14px' }}>{euros(v.hospedagem.total_centavos)} no total{emReais(v.hospedagem.total_centavos)} · {v.hospedagem.checkin.split('-').reverse().join('/')} a {v.hospedagem.checkout.split('-').reverse().join('/')}</div>
+              <Info>{v.hospedagem.fonte}, cotado em {new Date(v.hospedagem.cotado_em).toLocaleDateString('pt-BR')}. Preços mudam até a reserva.</Info>
+            </>}
+          {pode ? (
+            <div role="radiogroup" aria-label="Café da manhã incluso" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '8px', fontSize: '14px' }}>
+              Café da manhã incluso?
+              {([[true, 'Sim'], [false, 'Não']] as const).map(([val, nome]) => (
+                <button key={nome} type="button" role="radio" aria-checked={v.hospedagem!.cafe_incluso === val} className="r-btn" onClick={() => void marcarCafeIncluso(v.viagem.id, val).then(recarregar)}
+                  style={{ minHeight: '36px', padding: '0 12px', borderRadius: '18px', fontWeight: 600, ...(v.hospedagem!.cafe_incluso === val ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{nome}</button>
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : <p style={{ fontSize: '15px', lineHeight: '22px', margin: 0 }}>Onde você vai ficar?</p>}
+      {pode && v.viagem.destino_id ? <JaSeiOnde v={v} recarregar={recarregar} /> : null}
       {ligada === false ? (
         <div style={{ marginTop: '10px', padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '14px', lineHeight: '20px' }}>
           Já reservou? Anote o valor em <b>Dinheiro</b>. Para ver opções, abra Hospedagem no <b>Descobrir</b>.
@@ -675,7 +778,7 @@ function AbaGrupo({ v, pode, recarregar }: { v: ViagemCompleta; pode: boolean; r
           {!amigos.length ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: 0 }}>Adicione amigos em Perfil → Amigos para convidar. <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} style={botaoTexto}>Encontrar amigos</button></p> : null}
           <Rotulo>Quem pode ver</Rotulo>
           <Segmentos rotulo="Visibilidade" valor={v.viagem.visibilidade} aoMudar={(vis) => void atualizarViagem(v.viagem.id, { visibilidade: vis }).then(recarregar)}
-            opcoes={[{ id: 'privada', nome: 'Só participantes' }, { id: 'amigos', nome: 'Meus amigos também' }]} />
+            opcoes={[{ id: 'privada', nome: 'Só o grupo' }, { id: 'amigos', nome: 'Amigos' }, { id: 'publica', nome: 'Todos' }]} />
         </>
       ) : null}
       {pode ? (
