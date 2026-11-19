@@ -60,6 +60,11 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
       ) : lista ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Ninguém avaliou ainda.</p> : null}
 
       {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.startsWith('Avaliação') ? 'var(--verde)' : 'var(--vermelho)', margin: '6px 0 0' }}>{msg}</p> : null}
+      {msg?.startsWith('Avaliação') ? (
+        // Logo depois de avaliar é quando a pessoa mais topa mandar foto (D-069).
+        <button type="button" className="r-btn" onClick={() => window.dispatchEvent(new Event('bovair:mandar-foto'))}
+          style={{ marginTop: '8px', minHeight: '44px', padding: '0 16px', borderRadius: '22px', background: 'var(--fundo-escuro)', color: '#fff', font: "600 15px 'Open Sans'" }}>Tem uma foto daqui? Mandar foto</button>
+      ) : null}
 
       {!aberto ? (
         <button type="button" className="r-btn" onClick={abrir} style={{ width: '100%', height: '48px', marginTop: '10px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>

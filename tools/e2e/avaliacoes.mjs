@@ -29,6 +29,9 @@ await t.getByRole('radiogroup', { name: 'Acessibilidade' }).getByRole('radio', {
 await t.getByLabel(/Quanto gastou/).fill('0');
 await t.screenshot({ path: `${OUT}/01-formulario.png`, fullPage: true });
 await t.getByRole('button', { name: 'Publicar' }).click(); await t.waitForTimeout(3000);
+confere('depois de avaliar, convida a mandar foto', (await t.getByRole('button', { name: 'Tem uma foto daqui? Mandar foto' }).count()) === 1);
+await t.getByRole('button', { name: 'Tem uma foto daqui? Mandar foto' }).click(); await t.waitForTimeout(800);
+confere('o convite abre o envio de foto', (await t.locator('#mandar-foto').count()) === 1);
 confere('publicada e aparece na lista', (await t.getByText('Teste automático: lindo e gratuito.').count()) === 1 && (await t.getByRole('button', { name: 'Editar minha avaliação' }).count()) === 1);
 console.log('— Sem conta: vê a avaliação');
 a = await pagina(false);

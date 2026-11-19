@@ -797,3 +797,7 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   geradas do design e as de desenvolvimento) carregam sob demanda (`React.lazy`). Arquivo principal: de
   1,5 MB / 334 KB compactado para 481 KB / 144 KB (−57%). Início, Viagens e as telas de entrada continuam no
   arquivo principal para abrir na hora.
+
+## D-069 — Pedir foto logo depois da avaliação
+- Fotos são o que mais falta (lugares sem foto, faixa "Onde seus amigos estiveram" depende delas). Ao publicar
+  uma avaliação aparece "Tem uma foto daqui? Mandar foto", que abre o envio (com as mesmas regras e moderação).

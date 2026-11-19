@@ -57,6 +57,12 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
     void minhasFotos(placeId).then(setMinhas);
   };
   useEffect(carregar, [placeId, sessao]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Convite vindo da avaliação (D-069): abre o envio e já pede a foto.
+  useEffect(() => {
+    const abrir = () => { setAberto(true); setMsg(null); setTimeout(() => { document.getElementById('mandar-foto')?.scrollIntoView({ block: 'center' }); campo.current?.click(); }, 150); };
+    window.addEventListener('bovair:mandar-foto', abrir);
+    return () => window.removeEventListener('bovair:mandar-foto', abrir);
+  }, []);
   useEffect(() => { if (!arquivo) { setPrevia(null); return; } const u = URL.createObjectURL(arquivo); setPrevia(u); return () => URL.revokeObjectURL(u); }, [arquivo]);
 
   const enviar = async () => {
@@ -96,7 +102,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
           {sessao ? 'Mandar foto ou vídeo' : 'Entre para mandar fotos'}
         </button>
       ) : (
-        <div style={{ marginTop: '10px', padding: '12px', border: '2px solid var(--texto)' }}>
+        <div id="mandar-foto" style={{ marginTop: '10px', padding: '12px', border: '2px solid var(--texto)' }}>
           <input ref={campo} type="file" accept="image/*,video/mp4,video/quicktime,video/webm" onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} style={{ display: 'none' }} aria-label="Escolher foto" />
           {previa ? (arquivo?.type.startsWith('video/')
             ? <video src={previa} controls playsInline style={{ width: '100%', maxHeight: '260px', display: 'block', background: '#000' }} />
