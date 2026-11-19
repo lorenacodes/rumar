@@ -263,7 +263,7 @@ export async function candidatosRoteiro(destino: string, nivel?: 'economico' | '
     consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('tipo', ['theme_park', 'water_park', 'marina', 'zoo', 'aquarium']).not('fama', 'is', null).gte('relevancia', 0).order('fama', { ascending: false }).limit(15));
   }
   // Fugir do comum (D-078): os lugares curiosos e os mais reconhecidos da cidade entram na disputa.
-  if (diferente || nivel === 'conforto') {
+  if (diferente || nivel === 'conforto' || nivel === 'intermediario') {
     consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).not('curioso', 'is', null).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('fama', { ascending: false, nullsFirst: false }).limit(20));
   }
   // Comida da pessoa (D-041): restaurantes das cozinhas que ela adora ou que a dieta favorece,

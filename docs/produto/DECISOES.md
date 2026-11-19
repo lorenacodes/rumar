@@ -906,3 +906,14 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Limite real: em Recife a base ainda não tem curiosos, restaurantes reconhecidos nem hotéis com estrelas, e 690
   lugares do Brasil (Paço do Frevo, Cais do Sertão…) estavam sem fama calculada. Busca de fama disparada; o
   roteiro "diferente" melhora conforme os dados chegam.
+
+## D-079 — Fugir do comum em escala: orçamento + perfil
+- Pedido da fundadora: quanto menos econômico, mais o roteiro foge do comum e do barato; e não só pelo
+  orçamento, também pelo perfil do viajante.
+- Intensidade de 0 a 5 = nível (Econômico 0, Intermediário 1, Conforto 2) + "experiências diferentes" (+2) +
+  "menos turísticos" (+1) − "gosto de programas grátis" (−1).
+- Com intensidade maior: especial sobe (×1,2 por ponto), curioso sobe, reconhecido sobe (exceto para quem quer
+  menos turístico), comum cai (×1,5 por ponto) e grátis pouco conhecido cai (×0,8 por ponto).
+- O perfil direciona: o que combina com o estilo e os gostos da pessoa recebe o peso inteiro (×1,5); o resto,
+  menos (×0,6). Ex.: gastronômico no Conforto ganha restaurantes especiais; cultural ganha museus e curiosos.
+- Intermediário também passa a buscar os curiosos da cidade. Textos das opções de orçamento atualizados.

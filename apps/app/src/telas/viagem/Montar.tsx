@@ -242,8 +242,8 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
             <h1 style={titulo}>Quanto quer gastar com passeios?</h1>
             <div role="radiogroup" aria-label="Orçamento">
               <Opcao marcada={p.orcamento === 'economico'} aoTocar={() => muda({ orcamento: 'economico' })} titulo="Econômico" texto="Priorizar o que é barato ou grátis." />
-              <Opcao marcada={p.orcamento === 'intermediario'} aoTocar={() => muda({ orcamento: 'intermediario' })} titulo="Intermediário" texto="Pagar por algumas atrações que valem a pena." />
-              <Opcao marcada={p.orcamento === 'conforto'} aoTocar={() => muda({ orcamento: 'conforto' })} titulo="Conforto" texto="Sem se preocupar tanto com o preço." />
+              <Opcao marcada={p.orcamento === 'intermediario'} aoTocar={() => muda({ orcamento: 'intermediario' })} titulo="Intermediário" texto="Algumas atrações pagas e menos lugares comuns." />
+              <Opcao marcada={p.orcamento === 'conforto'} aoTocar={() => muda({ orcamento: 'conforto' })} titulo="Conforto" texto="Experiências especiais, quase nada do comum." />
             </div>
             <Grupo rotulo="Preferências">
               <Marcar marcada={p.gratuitos} aoTocar={() => muda({ gratuitos: !p.gratuitos })}>Gosto de programas grátis</Marcar>

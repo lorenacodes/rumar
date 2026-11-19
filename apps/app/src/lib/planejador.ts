@@ -206,6 +206,16 @@ export function filtrar(lugares: Lugar[], p: Preferencias): Lugar[] {
 }
 
 /** Pontos de afinidade de um lugar com o perfil, e os motivos em palavras. */
+/**
+ * Quanto a pessoa quer fugir do comum (0 a 5), pelo orçamento e pelo perfil (D-079):
+ * nível (Econômico 0, Intermediário 1, Conforto 2) + "experiências diferentes" (+2) + "menos turísticos" (+1)
+ * − "gosto de programas grátis" (−1).
+ */
+export function intensidadeDiferente(p: Preferencias): number {
+  const nivel = { economico: 0, intermediario: 1, conforto: 2 }[p.orcamento] ?? 0;
+  return Math.max(0, Math.min(5, nivel + (p.diferente ? 2 : 0) + (p.local ? 1 : 0) - (p.gratuitos ? 1 : 0)));
+}
+
 export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos: string[] } {
   let pontos = PESO_ESTILO[p.estilo][l.categoria] ?? 0;
   const doEstilo = pontos > 0;
@@ -237,22 +247,26 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
     if (l.custo === 0) pontos += 1;
   }
   if (p.orcamento === 'intermediario' && l.custo === 3) pontos -= 2;
-  if (p.orcamento === 'conforto') {
+  // Fugir do comum em escala (D-079): quanto menos econômico e mais o perfil pede, mais o curioso, o especial e
+  // o reconhecido sobem e mais o comum e o barato pouco conhecido caem. Econômico sem pedido especial = 0.
+  const intensidade = intensidadeDiferente(p);
+  if (intensidade > 0) {
+    // O que combina com o perfil (estilo e gostos) recebe o peso inteiro: o gastronômico ganha restaurantes
+    // especiais, o cultural ganha museus e lugares curiosos, quem quer praia ganha as praias reconhecidas.
+    const foco = combina ? 1.5 : 0.6;
     if (especial) {
-      pontos += 3;
-      motivos.push('nível da viagem');
+      pontos += intensidade * 1.2 * foco;
+      if (intensidade >= 2) motivos.push(p.orcamento === 'conforto' ? 'nível da viagem' : 'experiência especial');
     }
-    if (simples) pontos -= 3;
-    if (destaque) pontos += 1;
-    // Orçamento alto: grátis e pouco conhecido (praça, igrejinha, monumento) perde espaço.
-    if (l.custo === 0 && !destaque) pontos -= 3;
-  }
-  // Fugir do comum (D-078), e também quem viaja no nível Conforto: o curioso e o reconhecido sobem; o
-  // genérico (rede, lanchonete, ponto menor) cai.
-  if (p.diferente || p.orcamento === 'conforto') {
-    if (l.curioso) { pontos += p.diferente ? 5 : 3; motivos.push('experiência diferente'); }
-    if (fama >= 10) pontos += p.diferente ? 2 : 1;
-    if (simples) pontos -= p.diferente ? 4 : 2;
+    if (l.curioso) {
+      pontos += (1 + intensidade) * foco;
+      motivos.push('experiência diferente');
+    }
+    if (fama >= 10 && !p.local) pontos += Math.min(2, intensidade * 0.5);
+    if (destaque && intensidade >= 2) pontos += 1;
+    if (simples) pontos -= intensidade * 1.5;
+    // Grátis e pouco conhecido (praça, igrejinha, monumento) perde espaço quando a pessoa quer mais.
+    if (l.custo === 0 && !destaque && !l.curioso) pontos -= intensidade * 0.8;
   }
   if (p.gratuitos && l.custo === 0 && p.orcamento !== 'conforto') {
     pontos += p.orcamento === 'economico' ? 3 : 1;

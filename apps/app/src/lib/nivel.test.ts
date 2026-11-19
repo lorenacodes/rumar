@@ -75,6 +75,26 @@ describe('fugir do comum (D-078)', () => {
   });
 });
 
+describe('fugir do comum em escala, pelo orçamento e pelo perfil (D-079)', () => {
+  it('quanto menos econômico, mais o comum cai e o especial sobe', async () => {
+    const { afinidade, intensidadeDiferente } = await import('./planejador');
+    const rede = paraLugar(lugar('rede', 'restaurantes', 'restaurant', { nome: 'Outback Steakhouse', cozinha: 'steak' } as Partial<LugarBase>))!;
+    const especial = paraLugar(lugar('esp', 'restaurantes', 'restaurant', { cozinha: 'japanese', site: 'https://s', fama: 2 }))!;
+    const pts = (l: typeof rede, o: Preferencias['orcamento']) => afinidade(l, { ...base, gratuitos: false, orcamento: o }).pontos;
+    expect(intensidadeDiferente({ ...base, orcamento: 'economico' })).toBe(0);
+    expect(intensidadeDiferente({ ...base, orcamento: 'conforto', diferente: true, gratuitos: false, local: false })).toBe(4);
+    expect(pts(rede, 'economico')).toBeGreaterThan(pts(rede, 'intermediario'));
+    expect(pts(rede, 'intermediario')).toBeGreaterThan(pts(rede, 'conforto'));
+    expect(pts(especial, 'conforto') - pts(especial, 'intermediario')).toBeGreaterThan(0);
+  });
+  it('o perfil direciona: o gastronômico ganha mais com restaurante especial do que o cultural', async () => {
+    const { afinidade } = await import('./planejador');
+    const especial = paraLugar(lugar('esp', 'restaurantes', 'restaurant', { cozinha: 'japanese', site: 'https://s', fama: 2 }))!;
+    const ganho = (estilo: Preferencias['estilo']) => afinidade(especial, { ...base, estilo, orcamento: 'conforto' }).pontos - afinidade(especial, { ...base, estilo, orcamento: 'economico' }).pontos;
+    expect(ganho('gastronomico')).toBeGreaterThan(ganho('cultural'));
+  });
+});
+
 describe('orçamento alto não enche o roteiro de grátis (D-036)', () => {
   const conforto: Preferencias = { ...base, estilo: 'cultural', gostos: ['museus'], orcamento: 'conforto', gratuitos: true };
   it('grátis pouco conhecido perde para o lugar conhecido', async () => {
