@@ -7,7 +7,8 @@ import { nivelDoOrcamento, type Nivel, type NivelDoOrcamento } from './nivel';
 import { regrasDaDieta } from './comida';
 import { supabase } from './supabase';
 import { lugarPorId, LUGARES, DESTINO_CURADORIA } from './catalogo';
-import { candidatosRoteiro, lugaresPorIds } from './lugares';
+import { candidatosRoteiro, lugaresPorIds, reporLugares, type LugarBase } from './lugares';
+import { copiasOffline, guardarOffline, lerOffline, semRede } from './offline';
 import { mesclar, type Pessoa } from './grupo';
 import { planejar, type Preferencias } from './planejador';
 import type { Diagnostico } from './linhaDoTempo';
@@ -56,6 +57,8 @@ export interface ViagemCompleta {
   tarefas: TarefaSalva[];
   aportes: Aporte[];
   gastosReais: GastoReal[];
+  /** Aberta sem internet: quando a cópia guardada foi salva (D-067). */
+  offline?: number;
 }
 
 export async function eu(): Promise<string | null> {
@@ -68,10 +71,18 @@ async function registrar(tripId: string, texto: string) {
   if (uid) await supabase.from('trip_events').insert({ trip_id: tripId, autor: uid, texto: texto.slice(0, 200) });
 }
 
+/** Sem internet: as viagens guardadas neste aparelho (D-067). */
+function listaOffline(): { minhas: (Viagem & { papel: string; status: string })[]; deAmigos: Viagem[] } {
+  const minhas = copiasOffline<ViagemCompleta>().map((c) => ({ ...c.dados.viagem, papel: c.dados.papel ?? 'leitor', status: 'ativo' }))
+    .sort((a, b) => a.data_ida.localeCompare(b.data_ida));
+  return { minhas, deAmigos: [] };
+}
+
 /** Viagens em que participo (dono, editor, leitor ou convite pendente) e as compartilhadas por amigos. */
 export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: string; status: string })[]; deAmigos: Viagem[] }> {
   const uid = await eu();
   if (!uid) return { minhas: [], deAmigos: [] };
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return listaOffline();
   const [membros, todas, amizades] = await Promise.all([
     supabase.from('trip_members').select('trip_id, papel, status').eq('user_id', uid),
     supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade').order('data_ida'),
@@ -79,6 +90,7 @@ export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: stri
   ]);
   // Viagem pública de quem não é amigo não entra aqui (aparece só no perfil da pessoa, D-055).
   const amigos = new Set((amizades.data ?? []).map((a) => (a.requester === uid ? a.addressee : a.requester) as string));
+  if (!membros.data && semRede(membros.error)) return listaOffline();
   const meu = new Map((membros.data ?? []).map((m) => [m.trip_id as string, m]));
   const viagens = (todas.data ?? []) as Viagem[];
   return {
@@ -158,6 +170,14 @@ export async function registrarViagemFeita(dados: { destino: string; destinoId: 
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
   if (!uid) return null; // sem conta: nada a buscar (evita 9 pedidos recusados)
+  // Sem internet: abre a última versão guardada neste aparelho (D-067).
+  const copia = () => {
+    const c = lerOffline<ViagemCompleta>(id);
+    if (!c) return null;
+    reporLugares(c.lugares as LugarBase[]);
+    return { ...c.dados, offline: c.salvoEm };
+  };
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return copia();
   const [v, itens, membros, hosp, gastos, eventos, tarefas, aportes, reais] = await Promise.all([
     supabase.from('trips').select('id, user_id, destino, data_ida, noites, viajantes, orcamento_centavos, visibilidade, data_definida, moeda_destino, guardado_centavos, capacidade_mensal_centavos, reserva_pct, diagnostico, encerrada_em, avaliacao, comentario, moeda_planejamento, destino_id, nivel').eq('id', id).maybeSingle(),
     supabase.from('trip_items').select('*').eq('trip_id', id).order('dia').order('ordem'),
@@ -169,9 +189,9 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     supabase.from('trip_savings').select('id, valor_centavos, data, nota').eq('trip_id', id).order('data'),
     supabase.from('trip_spend').select('id, data, categoria, descricao, valor_centavos, moeda, forma, taxa, taxa_fonte, valor_ref_centavos, moeda_ref, pago_por, dividido_entre, criado_por').eq('trip_id', id).order('data').order('created_at'),
   ]);
-  if (!v.data) return null;
+  if (!v.data) return semRede(v.error) ? copia() : null;
   // Lugares da base (outras cidades) usados no roteiro: traz os dados para o app.
-  await lugaresPorIds(((itens.data ?? []) as Item[]).map((i) => i.place_id));
+  const lugaresDoRoteiro = await lugaresPorIds(((itens.data ?? []) as Item[]).map((i) => i.place_id));
   const nomes = await Promise.all(
     (membros.data ?? []).map(async (m) => {
       const { data } = await supabase.rpc('perfil_publico', { alvo: m.user_id });
@@ -179,7 +199,7 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     }),
   );
   const meu = nomes.find((m) => m.user_id === uid && m.status === 'ativo');
-  return {
+  const completa: ViagemCompleta = {
     viagem: v.data as Viagem,
     itens: (itens.data ?? []) as Item[],
     membros: nomes as Membro[],
@@ -192,6 +212,9 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     aportes: ((aportes.data ?? []) as Aporte[]).map((a) => ({ ...a, valor_centavos: Number(a.valor_centavos) })),
     gastosReais: ((reais.data ?? []) as GastoReal[]).map((g) => ({ ...g, valor_centavos: Number(g.valor_centavos), taxa: g.taxa === null ? null : Number(g.taxa), valor_ref_centavos: g.valor_ref_centavos === null ? null : Number(g.valor_ref_centavos) })),
   };
+  // Só guarda no aparelho as viagens de que a pessoa participa (não as de amigos que ela só olha).
+  if (completa.papel) guardarOffline(id, completa, lugaresDoRoteiro);
+  return completa;
 }
 
 // ---------------------------------------------------------------- edição do roteiro

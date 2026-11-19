@@ -237,6 +237,9 @@ export async function pedirCidade(destino: string): Promise<boolean> {
 }
 
 /** Lugares por id (de viagens e salvos), registrando no catálogo para o resto do app. */
+/** Repõe lugares guardados (viagem sem internet, D-067). */
+export function reporLugares(lista: LugarBase[]) { guardar(lista); }
+
 export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
   const faltam = [...new Set(ids)].filter((id) => id.startsWith('osm-') && !bases.has(id));
   for (let i = 0; i < faltam.length; i += 100) {

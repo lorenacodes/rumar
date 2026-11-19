@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { CODIGO_DIGITOS, CODIGO_VALIDADE_MIN, DEEP_LINK, VERSAO_TEXTOS_LEGAIS } from '../config';
 import { useFluxoConta } from './fluxo';
+import { apagarTudoOffline } from '../lib/offline';
 import { supabase } from '../lib/supabase';
 import { rotuloCidade, type Cidade } from '../lib/cidades';
 import { useEscolhas } from '../state/escolhas';
@@ -389,6 +390,7 @@ export async function sair(): Promise<void> {
   useEscolhas.setState({ valores: {}, consentimentoNecessidades: false });
   useViajante.getState().limpar();
   useFluxoConta.getState().set({ email: '', erros: 0, enviadoEm: 0 });
+  apagarTudoOffline(); // cópias das viagens guardadas para usar sem internet (D-067)
 }
 
 /** Sessão atual, atualizada em tempo real. `undefined` enquanto carrega. */

@@ -781,3 +781,13 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   restritivas no banco). Na tela, quem só olha não vê o quadro de custo nem as abas Etapas/Hospedagem/Dinheiro.
 - **Pendência:** orçamento, valor guardado e situação do passaporte ainda ficam na tabela `trips` (legíveis pela
   API para quem vê a viagem). Próximo passo: mover para uma tabela só dos participantes.
+
+## D-067 — Viagem sem internet
+- **Por quê:** no exterior muita gente fica sem dados móveis; antes, sem conexão a lista de viagens ficava
+  vazia e a viagem não abria.
+- **Como:** a última versão de cada viagem de que a pessoa participa (com os lugares do roteiro) fica guardada
+  no aparelho (até 5). Sem internet, "Suas viagens" mostra as guardadas e a viagem abre com o aviso "Sem
+  internet. Você está vendo a versão salva <data>. Mudanças só com conexão." Viagens de amigos que a pessoa só
+  olha não são guardadas. Ao sair da conta, as cópias são apagadas (dados pessoais no aparelho).
+- **Limite:** vale para o app instalado (APK). A versão web para iPhone ainda precisa de internet para abrir o
+  app; a viagem guardada aparece depois que ele abre.

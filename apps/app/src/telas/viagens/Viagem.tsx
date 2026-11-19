@@ -129,6 +129,11 @@ export function Viagem() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
         <QuemVe v={v} recarregar={recarregar} />
+        {v.offline ? (
+          <div role="status" style={{ marginTop: '8px', padding: '10px 12px', borderRadius: '10px', background: 'var(--fundo-escuro)', color: '#fff', fontSize: '14px', lineHeight: '19px' }}>
+            Sem internet. Você está vendo a versão salva {new Date(v.offline).toLocaleString('pt-BR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}. Mudanças só com conexão.
+          </div>
+        ) : null}
         {orc && !registrada && v.papel ? (
           <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>
