@@ -83,7 +83,10 @@ await A('/rest/v1/trip_spend', { method: 'POST', body: JSON.stringify({ trip_id:
 await A('/rest/v1/trip_lodging', { method: 'POST', body: JSON.stringify({ trip_id: t2, hotel_id: 'x', nome: 'Hotel Secreto', checkin: '2030-02-10', checkout: '2030-02-12', total_centavos: 0, moeda: 'BRL', fonte: 'informado por você' }) });
 const amigas = !vazio(await B(`/rest/v1/friendships?select=status&or=(requester.eq.${ana.id},addressee.eq.${ana.id})&status=eq.aceita`));
 if (amigas) {
-  ok('Bia (amiga) vê a viagem compartilhada', !vazio(await B(`/rest/v1/trips?id=eq.${t2}&select=id`)));
+  const resumo = (await B('/rest/v1/rpc/viagens_visiveis', { method: 'POST', body: JSON.stringify({ dono: ana.id }) })).corpo ?? [];
+  ok('Bia (amiga) vê o resumo da viagem compartilhada', Array.isArray(resumo) && resumo.some((x) => x.id === t2));
+  ok('o resumo não traz dinheiro nem passaporte', Array.isArray(resumo) && resumo.every((x) => !('orcamento_centavos' in x) && !('diagnostico' in x) && !('guardado_centavos' in x)));
+  ok('Bia (amiga) NÃO lê orçamento/passaporte da linha completa', vazio(await B(`/rest/v1/trips?id=eq.${t2}&select=orcamento_centavos,diagnostico`)));
   ok('Bia (amiga) NÃO vê os gastos reais', vazio(await B(`/rest/v1/trip_spend?trip_id=eq.${t2}&select=id`)));
   ok('Bia (amiga) NÃO vê onde a Ana dorme', vazio(await B(`/rest/v1/trip_lodging?trip_id=eq.${t2}&select=nome`)));
   ok('Bia (amiga) NÃO vê o histórico', vazio(await B(`/rest/v1/trip_events?trip_id=eq.${t2}&select=id`)));

@@ -11,7 +11,7 @@ Registro técnico das verificações e proteções. Atualizar a cada rodada.
 - Alertas do Supabase (Advisors → Security).
 
 ## Rodada de 19/11/2026
-- **Ataque controlado:** 26 tentativas, 26 bloqueadas.
+- **Ataque controlado:** 33 verificações (leitura, escrita, escalada, arquivos, amigos), todas bloqueadas.
 - **Corrigido — vazamento de preferências (LGPD, dado potencialmente sensível):** `preferencias_do_grupo` e
   `_v2` usavam `pode_ver_viagem`, que inclui amigos que só olham a viagem; eles podiam ler dieta e preferências
   de todos os participantes. Agora só participantes ativos (`papel_na_viagem`).
@@ -23,8 +23,11 @@ Registro técnico das verificações e proteções. Atualizar a cada rodada.
   denúncias 30, viagens 100, convites 60, avaliações 60, itens de roteiro 3.000 por pessoa em 24 h.
 - **Corrigido — amigos liam dinheiro e hotel de viagem compartilhada:** políticas restritivas em trip_spend,
   trip_expenses, trip_lodging, trip_savings, trip_tasks e trip_events (só participantes). Testado no ataque.
-- **Pendente:** colunas financeiras e de passaporte em `trips` (orcamento_centavos, guardado_centavos,
-  capacidade_mensal_centavos, diagnostico) ainda legíveis por quem vê a viagem. Mover para tabela própria.
+- **Corrigido — orçamento e passaporte legíveis por amigos:** a linha completa de `trips` (orcamento, guardado,
+  capacidade mensal, `diagnostico` com passaporte) agora só para dono, participantes e convidados (política
+  restritiva). Amigos e viagens públicas recebem um resumo seguro pela função `viagens_visiveis` (destino,
+  datas, pessoas). Regressão encontrada e corrigida no mesmo dia: convidado que ainda não aceitou deixou de ver
+  o convite (`privado.e_membro`).
 - **Conferido, sem falha:** funções do Google (`google_*`) recusam quem não é o servidor (`service_role`);
   funções públicas de busca/perfil exigem conta; arquivos de álbum privado não aparecem nem para amigos.
 

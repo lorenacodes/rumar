@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { desfazerAmizade, perfilPublico, type PessoaPublica } from '../../lib/social';
 import { supabase } from '../../lib/supabase';
-import { atualizarViagem, eu, listarViagens, type Viagem } from '../../lib/viagens';
+import { atualizarViagem, eu, listarViagens, viagensVisiveis, type Viagem } from '../../lib/viagens';
 import { FotoLugar } from '../../ui/foto';
 import { Avatar } from '../../ui/avatar';
 import { Voltar } from '../../ui/pecas';
@@ -27,10 +27,10 @@ export function Pessoa() {
   const carregar = () => {
     void perfilPublico(id).then(setP);
     void Promise.all([listarViagens(), eu()]).then(async ([v, uid]) => {
-      const juntos = new Set(v.minhas.filter((x) => x.user_id === id && x.status === 'ativo').map((x) => x.id));
-      // O banco só devolve o que posso ver: compartilhadas com amigos, públicas e as que fazemos juntos.
-      const { data: visiveis } = await supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade').eq('user_id', id).order('data_ida');
-      const dele = ((visiveis ?? []) as Viagem[]).filter((x) => x.visibilidade !== 'privada' || juntos.has(x.id)).map((x) => ({ ...x, juntos: juntos.has(x.id) }));
+      // Minhas viagens com ela (dados completos) + as dela que posso ver (resumo seguro, sem dinheiro).
+      const comigo = v.minhas.filter((x) => x.user_id === id && x.status === 'ativo');
+      const dela = await viagensVisiveis(id);
+      const dele = [...comigo.map((x) => ({ ...x, juntos: true })), ...dela.map((x) => ({ ...x, juntos: false }))];
       setViagens(dele);
       setMinhasPrivadas(v.minhas.filter((x) => x.user_id === uid && x.visibilidade === 'privada'));
       if (dele.length) {

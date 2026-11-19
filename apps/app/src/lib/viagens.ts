@@ -71,6 +71,13 @@ async function registrar(tripId: string, texto: string) {
   if (uid) await supabase.from('trip_events').insert({ trip_id: tripId, autor: uid, texto: texto.slice(0, 200) });
 }
 
+/** Viagens de outras pessoas que posso ver (amigos, públicas): só o resumo seguro, sem dinheiro nem documentos. */
+export async function viagensVisiveis(dono?: string): Promise<Viagem[]> {
+  const { data } = await supabase.rpc('viagens_visiveis', dono ? { dono } : {});
+  return ((data ?? []) as (Omit<Viagem, 'orcamento_centavos' | 'diagnostico'> & { registrada: boolean })[])
+    .map(({ registrada, ...v }) => ({ ...v, orcamento_centavos: null, diagnostico: registrada ? ({ registrada: true } as Diagnostico) : {} }));
+}
+
 /** Sem internet: as viagens guardadas neste aparelho (D-067). */
 function listaOffline(): { minhas: (Viagem & { papel: string; status: string })[]; deAmigos: Viagem[] } {
   const minhas = copiasOffline<ViagemCompleta>().map((c) => ({ ...c.dados.viagem, papel: c.dados.papel ?? 'leitor', status: 'ativo' }))
@@ -88,6 +95,7 @@ export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: stri
     supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade').order('data_ida'),
     supabase.from('friendships').select('requester, addressee').eq('status', 'aceita'),
   ]);
+  const visiveis = await viagensVisiveis();
   // Viagem pública de quem não é amigo não entra aqui (aparece só no perfil da pessoa, D-055).
   const amigos = new Set((amizades.data ?? []).map((a) => (a.requester === uid ? a.addressee : a.requester) as string));
   if (!membros.data && semRede(membros.error)) return listaOffline();
@@ -95,7 +103,7 @@ export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: stri
   const viagens = (todas.data ?? []) as Viagem[];
   return {
     minhas: viagens.filter((v) => meu.has(v.id)).map((v) => ({ ...v, papel: meu.get(v.id)!.papel as string, status: meu.get(v.id)!.status as string })),
-    deAmigos: viagens.filter((v) => !meu.has(v.id) && amigos.has(v.user_id)),
+    deAmigos: visiveis.filter((v) => !meu.has(v.id) && amigos.has(v.user_id)),
   };
 }
 
@@ -189,7 +197,14 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     supabase.from('trip_savings').select('id, valor_centavos, data, nota').eq('trip_id', id).order('data'),
     supabase.from('trip_spend').select('id, data, categoria, descricao, valor_centavos, moeda, forma, taxa, taxa_fonte, valor_ref_centavos, moeda_ref, pago_por, dividido_entre, criado_por').eq('trip_id', id).order('data').order('created_at'),
   ]);
-  if (!v.data) return semRede(v.error) ? copia() : null;
+  if (!v.data) {
+    if (semRede(v.error)) return copia();
+    // Viagem de amigo (ou pública) que só posso olhar: resumo seguro + roteiro.
+    const resumo = (await viagensVisiveis()).find((x) => x.id === id);
+    if (!resumo) return null;
+    await lugaresPorIds(((itens.data ?? []) as Item[]).map((i) => i.place_id));
+    return { viagem: resumo, itens: (itens.data ?? []) as Item[], membros: [], hospedagem: null, gastos: [], eventos: [], papel: null, pessoas: [], tarefas: [], aportes: [], gastosReais: [] };
+  }
   // Lugares da base (outras cidades) usados no roteiro: traz os dados para o app.
   const lugaresDoRoteiro = await lugaresPorIds(((itens.data ?? []) as Item[]).map((i) => i.place_id));
   const nomes = await Promise.all(

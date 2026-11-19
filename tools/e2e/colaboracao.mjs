@@ -78,7 +78,7 @@ await ana.goto(URL + `#/viagem/${idViagem}?aba=grupo`); await ana.waitForTimeout
 await ana.getByRole('button', { name: 'Planejar junto' }).first().click(); await ana.waitForTimeout(2000); await foto(ana, 'ana-convidou');
 console.log('— 11. A amiga entra e colabora');
 await bia.goto(URL + '#/viagens'); await bia.waitForTimeout(2500); await foto(bia, 'bia-convite');
-await bia.getByRole('button', { name: 'Entrar na viagem' }).click(); await bia.waitForTimeout(2000);
+while (await bia.getByRole('button', { name: 'Entrar na viagem' }).count()) { await bia.getByRole('button', { name: 'Entrar na viagem' }).first().click(); await bia.waitForTimeout(2000); }
 await bia.goto(URL + `#/viagem/${idViagem}?aba=grupo`); await bia.waitForTimeout(3500);
 await bia.getByRole('button', { name: /Refazer roteiro para o grupo/ }).click({ trial: true });
 bia.once('dialog', (d) => d.accept()); await bia.getByRole('button', { name: /Refazer roteiro para o grupo/ }).click(); await bia.waitForTimeout(6000);

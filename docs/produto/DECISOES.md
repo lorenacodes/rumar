@@ -779,8 +779,8 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Em viagem compartilhada com amigos (ou pública), amigos veem roteiro, mapa e álbum. Gastos, orçamento
   informado, economias, hospedagem (onde a pessoa dorme), tarefas e histórico: só participantes (políticas
   restritivas no banco). Na tela, quem só olha não vê o quadro de custo nem as abas Etapas/Hospedagem/Dinheiro.
-- **Pendência:** orçamento, valor guardado e situação do passaporte ainda ficam na tabela `trips` (legíveis pela
-  API para quem vê a viagem). Próximo passo: mover para uma tabela só dos participantes.
+- Orçamento, valor guardado e situação do passaporte também protegidos: amigos leem só um resumo (destino, datas,
+  pessoas) pela função `viagens_visiveis`.
 
 ## D-067 — Viagem sem internet
 - **Por quê:** no exterior muita gente fica sem dados móveis; antes, sem conexão a lista de viagens ficava

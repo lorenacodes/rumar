@@ -1,0 +1,22 @@
+/** Amigos (D-052/D-063/D-066): a Bia vê no Início e no perfil da Ana a viagem compartilhada; abre só roteiro e mapa. */
+import { chromium } from 'playwright';
+const URL = process.env.URL ?? 'http://localhost:8793/';
+const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
+const p = await (await b.newContext({ viewport: { width: 390, height: 1400 } })).newPage();
+p.on('pageerror', (e) => erros.push(e.message));
+await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.bia@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.goto(URL + '#/inicio'); await p.waitForTimeout(6000);
+const faixa = p.getByRole('list', { name: 'Onde seus amigos estiveram' });
+confere('Início: "Onde seus amigos estiveram" com cartão', (await faixa.getByRole('listitem').count()) > 0);
+await faixa.getByRole('button').first().click(); await p.waitForTimeout(5000);
+const t = await p.locator('main').innerText();
+confere('abre a viagem da amiga', /Olinda/.test(t));
+confere('quem só olha: sem custo nem abas de dinheiro/hospedagem', !/Custo estimado|Somado até agora/.test(t) && (await p.getByRole('radio', { name: 'Hospedagem' }).count()) === 0 && (await p.getByText('Hospedagem', { exact: true }).count()) === 0);
+confere('quem só olha: vê as fotos da viagem', (await p.locator('section[aria-label="Fotos da viagem"] img').count()) > 0);
+await p.goto(URL + '#/perfil/amigos'); await p.waitForTimeout(3000);
+await p.getByText('Ana', { exact: true }).first().click().catch(() => {}); await p.waitForTimeout(4000);
+confere('perfil da Ana lista viagens', /viage(m|ns)/.test(await p.locator('main').innerText()) && /Olinda/.test(await p.locator('main').innerText()));
+console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
+await b.close(); process.exit(erros.length ? 1 : 0);
