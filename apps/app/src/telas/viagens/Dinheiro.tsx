@@ -1,9 +1,10 @@
 import { Info } from '../../ui/info';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { faltaNoCusto, textoFalta, type Orcamento } from '../../lib/orcamento';
 import { converter, custo, dataBR, dinheiro, FONTES_CAMBIO, IOF, NOME_MOEDA, taxa } from '../../lib/moedas';
-import { adicionarAporte, adicionarGastoReal, atualizarViagem, removerAporte, removerGastoReal, type ViagemCompleta } from '../../lib/viagens';
+import { quemDeveAQuem } from '../../lib/divisao';
+import { adicionarAporte, adicionarGastoReal, atualizarViagem, eu as euId, removerAporte, removerGastoReal, type ViagemCompleta } from '../../lib/viagens';
 import { Aviso, BotaoContorno } from '../../ui/pecas';
 import { botaoTexto, campo, Rotulo, Segmentos } from './comum';
 import { compartilhar } from './Etapas';
@@ -267,6 +268,15 @@ function NaViagem({ v, j, orc, pode, recarregar }: { v: ViagemCompleta; j: Jorna
   const [erro, setErro] = useState<string | null>(null);
   const ref = j.moedaPlano;
   const moedas = [...new Set([j.moedaDestino, ref, 'BRL'])];
+  // Divisão do grupo (D-065): só aparece com 2 ou mais participantes.
+  const ativos = v.membros.filter((m) => m.status === 'ativo');
+  const grupo = ativos.length >= 2;
+  const [eu, setEu] = useState<string | null>(null);
+  useEffect(() => void euId().then(setEu), []);
+  const [pagoPor, setPagoPor] = useState<string>('');
+  const [entre, setEntre] = useState<string[]>([]);
+  const pagador = pagoPor || eu || '';
+  const divididoEntre = entre.length ? entre : ativos.map((m) => m.user_id);
 
   const salvar = async () => {
     const c = num(valor);
@@ -277,9 +287,10 @@ function NaViagem({ v, j, orc, pode, recarregar }: { v: ViagemCompleta; j: Jorna
       data, categoria, descricao: descricao.trim(), valor_centavos: c, moeda, forma,
       taxa: t ? Number(t.valor.toFixed(6)) : null, taxa_fonte: t?.fonte.slice(0, 120) ?? null,
       valor_ref_centavos: t ? Math.round(c * t.valor) : null, moeda_ref: ref,
+      ...(grupo ? { pago_por: pagador || null, dividido_entre: divididoEntre.length === ativos.length ? null : divididoEntre } : {}),
     });
     if (!ok) return setErro('Não deu para salvar. Confira a internet.');
-    setValor(''); setDescricao(''); setTaxaPaga(''); setErro(null);
+    setValor(''); setDescricao(''); setTaxaPaga(''); setErro(null); setEntre([]); setPagoPor('');
     recarregar();
   };
 
@@ -300,11 +311,34 @@ function NaViagem({ v, j, orc, pode, recarregar }: { v: ViagemCompleta; j: Jorna
             <input type="date" className="r-input" value={data} onChange={(e) => setData(e.target.value)} aria-label="Data do gasto" style={campo} />
             {moeda !== ref ? <input inputMode="decimal" className="r-input" placeholder={`Taxa que você pagou: ${ref} por 1 ${moeda} (opcional)`} value={taxaPaga} onChange={(e) => setTaxaPaga(e.target.value.replace(/[^\d,]/g, ''))} aria-label="Taxa paga (opcional)" style={campo} /> : null}
             {moeda !== ref ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Sem taxa informada, convertemos pela cotação de referência do Banco Central. O valor original fica guardado.</div> : null}
+            {grupo ? (
+              <>
+                <label style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Quem pagou
+                  <select value={pagador} onChange={(e) => setPagoPor(e.target.value)} style={{ ...campo, font: "500 16px 'Open Sans'" }}>
+                    {ativos.map((m) => <option key={m.user_id} value={m.user_id}>{m.user_id === eu ? 'Eu' : m.nome}</option>)}
+                  </select>
+                </label>
+                <div role="group" aria-label="Dividir entre">
+                  <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Dividir entre</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
+                    {ativos.map((m) => {
+                      const dentro = divididoEntre.includes(m.user_id);
+                      return (
+                        <button key={m.user_id} type="button" className="r-btn" aria-pressed={dentro}
+                          onClick={() => { const atual = divididoEntre; const novo = dentro ? atual.filter((x) => x !== m.user_id) : [...atual, m.user_id]; if (novo.length) setEntre(novo); }}
+                          style={{ minHeight: '40px', padding: '0 12px', borderRadius: '20px', font: "600 14px 'Open Sans'", ...(dentro ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{m.user_id === eu ? 'Eu' : m.nome.split(' ')[0]}</button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : null}
             {erro ? <Aviso>{erro}</Aviso> : null}
             <BotaoContorno onClick={() => void salvar()}>Anotar gasto</BotaoContorno>
           </div>
         </>
       ) : null}
+      {grupo ? <QuemDeve v={v} refMoeda={ref} eu={eu} /> : null}
       <Rotulo>Gastos anotados</Rotulo>
       {v.gastosReais.length ? [...v.gastosReais].reverse().map((g) => (
         <div key={g.id} style={{ borderTop: '1px dashed var(--linha)', padding: '6px 0', fontSize: '14px', lineHeight: '20px' }}>
@@ -313,7 +347,7 @@ function NaViagem({ v, j, orc, pode, recarregar }: { v: ViagemCompleta; j: Jorna
             <b>{dinheiro(g.valor_centavos, g.moeda)}</b>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--texto-sec)' }}>
-            <span>{dataBR(g.data)} · {CAT[g.categoria]} · {FORMA[g.forma]}</span>
+            <span>{dataBR(g.data)} · {CAT[g.categoria]} · {FORMA[g.forma]}{grupo && (g.pago_por ?? g.criado_por) ? ` · pago por ${nomeDe(v, g.pago_por ?? g.criado_por, eu)}` : ''}</span>
             <span>{g.moeda !== g.moeda_ref && g.valor_ref_centavos !== null ? `≈ ${dinheiro(g.valor_ref_centavos, g.moeda_ref ?? ref)}` : g.moeda !== g.moeda_ref ? 'sem conversão' : ''}</span>
           </div>
           {g.taxa_fonte && g.moeda !== g.moeda_ref ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Taxa {String(g.taxa).replace('.', ',')} · {g.taxa_fonte}</div> : null}
@@ -325,6 +359,31 @@ function NaViagem({ v, j, orc, pode, recarregar }: { v: ViagemCompleta; j: Jorna
 }
 
 /** Planejado × real por categoria, na moeda de planejamento. */
+const nomeDe = (v: ViagemCompleta, id: string | null | undefined, eu: string | null) => (id === eu ? 'você' : v.membros.find((m) => m.user_id === id)?.nome.split(' ')[0] ?? 'alguém');
+
+/** Quem deve a quem (D-065), na moeda de referência da viagem. */
+function QuemDeve({ v, refMoeda, eu }: { v: ViagemCompleta; refMoeda: string; eu: string | null }) {
+  const ativos = v.membros.filter((m) => m.status === 'ativo').map((m) => m.user_id);
+  const semConversao = v.gastosReais.filter((g) => g.moeda !== refMoeda && g.valor_ref_centavos === null).length;
+  const gastos = v.gastosReais
+    .map((g) => ({ valor: g.moeda === refMoeda ? g.valor_centavos : g.valor_ref_centavos ?? 0, pagoPor: g.pago_por ?? g.criado_por ?? '', entre: g.dividido_entre?.length ? g.dividido_entre : ativos }))
+    .filter((g) => g.valor > 0 && g.pagoPor);
+  const t = quemDeveAQuem(gastos, ativos);
+  if (!gastos.length) return null;
+  return (
+    <section aria-label="Quem deve a quem" style={{ marginTop: '14px', padding: '12px', borderRadius: '12px', background: 'var(--cartao-2)' }}>
+      <div style={{ font: "600 16px 'Lexend Exa'" }}>Quem deve a quem</div>
+      {t.length ? t.map((x) => (
+        <div key={`${x.de}-${x.para}`} style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', fontSize: '15px', padding: '6px 0', borderTop: '1px solid var(--linha)' }}>
+          <span><b>{nomeDe(v, x.de, eu).replace(/^você$/, 'Você')}</b> paga para <b>{nomeDe(v, x.para, eu)}</b></span>
+          <b>{dinheiro(x.valor, refMoeda)}</b>
+        </div>
+      )) : <div style={{ fontSize: '14px', color: 'var(--verde)', fontWeight: 600, marginTop: '4px' }}>Tudo certo: ninguém deve nada.</div>}
+      {semConversao ? <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>{semConversao === 1 ? '1 gasto sem conversão ficou fora da conta.' : `${semConversao} gastos sem conversão ficaram fora da conta.`}</div> : null}
+    </section>
+  );
+}
+
 export function planejadoReal(v: ViagemCompleta, j: Jornada, orc: Orcamento) {
   const t = taxa('BRL', j.moedaPlano);
   const plan = new Map<string, number>();

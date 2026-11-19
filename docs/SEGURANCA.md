@@ -21,6 +21,10 @@ Registro técnico das verificações e proteções. Atualizar a cada rodada.
   (site do lugar, autor da foto do Google, fontes de preço). A coleta também só grava http(s).
 - **Reforço — limite diário contra abuso por script** (`privado.limite_diario`): pedidos de amizade 40,
   denúncias 30, viagens 100, convites 60, avaliações 60, itens de roteiro 3.000 por pessoa em 24 h.
+- **Corrigido — amigos liam dinheiro e hotel de viagem compartilhada:** políticas restritivas em trip_spend,
+  trip_expenses, trip_lodging, trip_savings, trip_tasks e trip_events (só participantes). Testado no ataque.
+- **Pendente:** colunas financeiras e de passaporte em `trips` (orcamento_centavos, guardado_centavos,
+  capacidade_mensal_centavos, diagnostico) ainda legíveis por quem vê a viagem. Mover para tabela própria.
 - **Conferido, sem falha:** funções do Google (`google_*`) recusam quem não é o servidor (`service_role`);
   funções públicas de busca/perfil exigem conta; arquivos de álbum privado não aparecem nem para amigos.
 

@@ -37,7 +37,7 @@ export interface Viagem {
 }
 export interface TarefaSalva { id: string; chave: string | null; etapa: string; titulo: string | null; descricao: string | null; prazo: string | null; ordem: number; feita: boolean }
 export interface Aporte { id: string; valor_centavos: number; data: string; nota: string | null }
-export interface GastoReal { id: string; data: string; categoria: string; descricao: string; valor_centavos: number; moeda: string; forma: string; taxa: number | null; taxa_fonte: string | null; valor_ref_centavos: number | null; moeda_ref: string | null }
+export interface GastoReal { id: string; data: string; categoria: string; descricao: string; valor_centavos: number; moeda: string; forma: string; taxa: number | null; taxa_fonte: string | null; valor_ref_centavos: number | null; moeda_ref: string | null; pago_por?: string | null; dividido_entre?: string[] | null; criado_por?: string | null }
 export interface Item { id: string; trip_id: string; dia: number; periodo: string; ordem: number; place_id: string; situacao: string; adicionado_por: string | null; feito?: boolean; hora?: string | null }
 export interface Membro { user_id: string; papel: 'dono' | 'editor' | 'leitor'; status: 'convidado' | 'ativo'; nome: string }
 export interface Hospedagem { hotel_id: string; nome: string; endereco: string | null; lat: number | null; lon: number | null; foto: string | null; nota: number | null; checkin: string; checkout: string; total_centavos: number; moeda: string; fonte: string; cotado_em: string; cafe_incluso?: boolean | null }
@@ -167,7 +167,7 @@ export async function carregarViagem(id: string): Promise<ViagemCompleta | null>
     supabase.from('trip_events').select('id, texto, created_at, autor').eq('trip_id', id).order('created_at', { ascending: false }).limit(30),
     supabase.from('trip_tasks').select('id, chave, etapa, titulo, descricao, prazo, ordem, feita').eq('trip_id', id).order('ordem'),
     supabase.from('trip_savings').select('id, valor_centavos, data, nota').eq('trip_id', id).order('data'),
-    supabase.from('trip_spend').select('id, data, categoria, descricao, valor_centavos, moeda, forma, taxa, taxa_fonte, valor_ref_centavos, moeda_ref').eq('trip_id', id).order('data').order('created_at'),
+    supabase.from('trip_spend').select('id, data, categoria, descricao, valor_centavos, moeda, forma, taxa, taxa_fonte, valor_ref_centavos, moeda_ref, pago_por, dividido_entre, criado_por').eq('trip_id', id).order('data').order('created_at'),
   ]);
   if (!v.data) return null;
   // Lugares da base (outras cidades) usados no roteiro: traz os dados para o app.

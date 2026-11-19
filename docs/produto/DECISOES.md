@@ -766,3 +766,18 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   aparecem aqui em breve"; com a chave, aparecem os vídeos escolhidos, com miniatura, duração e canal.
 - Custo da chave: zero dentro da cota gratuita (10.000 unidades/dia; cada busca gasta 100; 5 idiomas × 8 temas a
   cada 14 dias).
+
+## D-065 — Dividir os gastos do grupo
+- **Por quê:** pesquisa de concorrentes: o TripIt é visto como app para viajar sozinho e "dividir gastos do
+  grupo" aparece como desejo recorrente; o Bo Vair já tem viagem em grupo e anotação de gastos.
+- **Como:** em Dinheiro → Na viagem, com 2+ participantes: "Quem pagou" (padrão: eu) e "Dividir entre" (padrão:
+  todos). Bloco "Quem deve a quem" com o mínimo de transferências, na moeda de referência da viagem (gasto em
+  outra moeda entra pelo valor convertido; sem conversão, fica fora e o app avisa). Centavos inteiros; o centavo
+  que sobra vai, em ordem fixa, para os primeiros. `lib/divisao.ts` com testes.
+
+## D-066 — Amigos veem o roteiro, não o dinheiro nem o hotel
+- Em viagem compartilhada com amigos (ou pública), amigos veem roteiro, mapa e álbum. Gastos, orçamento
+  informado, economias, hospedagem (onde a pessoa dorme), tarefas e histórico: só participantes (políticas
+  restritivas no banco). Na tela, quem só olha não vê o quadro de custo nem as abas Etapas/Hospedagem/Dinheiro.
+- **Pendência:** orçamento, valor guardado e situação do passaporte ainda ficam na tabela `trips` (legíveis pela
+  API para quem vê a viagem). Próximo passo: mover para uma tabela só dos participantes.

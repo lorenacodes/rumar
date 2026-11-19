@@ -76,6 +76,20 @@ await fetch(`${URL}/storage/v1/object/fotos-viagem`, { method: 'DELETE', headers
 const anonFoto = await fetch(`${URL}/storage/v1/object/list/fotos-perfil`, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ prefix: '' }) });
 ok('Sem conta NÃO lista fotos de perfil', ((await anonFoto.json().catch(() => [])) ?? []).length === 0);
 
+// Viagem compartilhada com AMIGOS: a Bia (amiga) vê o roteiro, mas não dinheiro, hotel nem histórico.
+const comp = await A('/rest/v1/trips', { method: 'POST', body: JSON.stringify({ user_id: ana.id, destino: 'Teste Amigos', data_ida: '2030-02-10', noites: 2, viajantes: 1, visibilidade: 'amigos' }) });
+const t2 = comp.corpo?.[0]?.id;
+await A('/rest/v1/trip_spend', { method: 'POST', body: JSON.stringify({ trip_id: t2, categoria: 'outros', descricao: 'segredo', valor_centavos: 100, moeda: 'BRL' }) });
+await A('/rest/v1/trip_lodging', { method: 'POST', body: JSON.stringify({ trip_id: t2, hotel_id: 'x', nome: 'Hotel Secreto', checkin: '2030-02-10', checkout: '2030-02-12', total_centavos: 0, moeda: 'BRL', fonte: 'informado por você' }) });
+const amigas = !vazio(await B(`/rest/v1/friendships?select=status&or=(requester.eq.${ana.id},addressee.eq.${ana.id})&status=eq.aceita`));
+if (amigas) {
+  ok('Bia (amiga) vê a viagem compartilhada', !vazio(await B(`/rest/v1/trips?id=eq.${t2}&select=id`)));
+  ok('Bia (amiga) NÃO vê os gastos reais', vazio(await B(`/rest/v1/trip_spend?trip_id=eq.${t2}&select=id`)));
+  ok('Bia (amiga) NÃO vê onde a Ana dorme', vazio(await B(`/rest/v1/trip_lodging?trip_id=eq.${t2}&select=nome`)));
+  ok('Bia (amiga) NÃO vê o histórico', vazio(await B(`/rest/v1/trip_events?trip_id=eq.${t2}&select=id`)));
+} else console.log('(Ana e Bia não são amigas agora: pulei os testes de viagem compartilhada)');
+await A(`/rest/v1/trips?id=eq.${t2}`, { method: 'DELETE' });
+
 // Limpeza
 await A(`/rest/v1/trips?id=eq.${trip}`, { method: 'DELETE' });
 ok('viagem de teste apagada', vazio(await A(`/rest/v1/trips?id=eq.${trip}&select=id`)));
