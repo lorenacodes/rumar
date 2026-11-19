@@ -1,44 +1,1255 @@
 {
  "fonte": "Curadoria Bo Vair (conhecimento geral, revisável). Não é lista oficial. Próximo passo: cruzar com o Mapa do Turismo Brasileiro (Ministério do Turismo).",
- "tipos": ["praia", "historica", "natureza", "gastronomia", "cultural", "rural", "aventura", "entretenimento"],
+ "tipos": [
+  "praia",
+  "historica",
+  "natureza",
+  "gastronomia",
+  "cultural",
+  "rural",
+  "aventura",
+  "entretenimento"
+ ],
  "brasil": [
-  ["Aracaju", "SE", "praia gastronomia cultural"], ["Canindé de São Francisco", "SE", "natureza aventura"], ["São Cristóvão", "SE", "historica"], ["Laranjeiras", "SE", "historica cultural"],
-  ["Maceió", "AL", "praia gastronomia"], ["Maragogi", "AL", "praia"], ["São Miguel dos Milagres", "AL", "praia"], ["Japaratinga", "AL", "praia"], ["Penedo", "AL", "historica"], ["Piranhas", "AL", "historica natureza"], ["Marechal Deodoro", "AL", "historica praia"],
-  ["Salvador", "BA", "praia historica cultural gastronomia"], ["Porto Seguro", "BA", "praia historica"], ["Santa Cruz Cabrália", "BA", "praia historica"], ["Mata de São João", "BA", "praia"], ["Lençóis", "BA", "natureza aventura historica"], ["Mucugê", "BA", "natureza historica"], ["Palmeiras", "BA", "natureza aventura"], ["Itacaré", "BA", "praia natureza aventura"], ["Maraú", "BA", "praia"], ["Cairu", "BA", "praia"], ["Ilhéus", "BA", "praia historica cultural"], ["Cachoeira", "BA", "historica cultural"], ["Prado", "BA", "praia"], ["Caravelas", "BA", "praia natureza"],
-  ["Recife", "PE", "praia cultural historica gastronomia"], ["Olinda", "PE", "historica cultural"], ["Ipojuca", "PE", "praia"], ["Fernando de Noronha", "PE", "praia natureza aventura"], ["Tamandaré", "PE", "praia"], ["Caruaru", "PE", "cultural gastronomia"], ["Gravatá", "PE", "rural gastronomia"], ["Bezerros", "PE", "cultural"], ["Triunfo", "PE", "natureza historica"], ["Petrolina", "PE", "rural gastronomia"],
-  ["João Pessoa", "PB", "praia historica"], ["Conde", "PB", "praia"], ["Campina Grande", "PB", "cultural"], ["Areia", "PB", "historica rural gastronomia"],
-  ["Natal", "RN", "praia aventura"], ["Tibau do Sul", "RN", "praia"], ["São Miguel do Gostoso", "RN", "praia aventura"], ["Galinhos", "RN", "praia natureza"], ["Extremoz", "RN", "praia"],
-  ["Fortaleza", "CE", "praia gastronomia cultural"], ["Jijoca de Jericoacoara", "CE", "praia natureza aventura"], ["Aracati", "CE", "praia"], ["Beberibe", "CE", "praia"], ["Aquiraz", "CE", "praia entretenimento"], ["Guaramiranga", "CE", "natureza rural"], ["Juazeiro do Norte", "CE", "cultural"], ["Camocim", "CE", "praia"],
-  ["Teresina", "PI", "cultural gastronomia"], ["Parnaíba", "PI", "praia natureza"], ["Luís Correia", "PI", "praia"], ["São Raimundo Nonato", "PI", "historica natureza"], ["Piracuruca", "PI", "natureza"],
-  ["São Luís", "MA", "historica cultural praia"], ["Barreirinhas", "MA", "natureza aventura"], ["Alcântara", "MA", "historica"], ["Carolina", "MA", "natureza aventura"], ["Santo Amaro do Maranhão", "MA", "natureza"],
-  ["Belém", "PA", "gastronomia cultural historica"], ["Soure", "PA", "praia natureza"], ["Salvaterra", "PA", "praia natureza"], ["Santarém", "PA", "natureza praia"], ["Salinópolis", "PA", "praia"],
-  ["Manaus", "AM", "natureza cultural historica"], ["Presidente Figueiredo", "AM", "natureza aventura"], ["Novo Airão", "AM", "natureza"], ["Parintins", "AM", "cultural"],
-  ["Macapá", "AP", "cultural"], ["Boa Vista", "RR", "natureza"], ["Rio Branco", "AC", "cultural natureza"], ["Porto Velho", "RO", "historica natureza"],
-  ["Palmas", "TO", "natureza"], ["Mateiros", "TO", "natureza aventura"], ["Ponte Alta do Tocantins", "TO", "natureza aventura"],
-  ["Goiânia", "GO", "gastronomia cultural"], ["Pirenópolis", "GO", "historica natureza"], ["Alto Paraíso de Goiás", "GO", "natureza aventura"], ["Cavalcante", "GO", "natureza aventura"], ["Caldas Novas", "GO", "entretenimento natureza"], ["Rio Quente", "GO", "entretenimento"], ["Goiás", "GO", "historica cultural"],
-  ["Brasília", "DF", "cultural"],
-  ["Cuiabá", "MT", "gastronomia natureza"], ["Chapada dos Guimarães", "MT", "natureza aventura"], ["Poconé", "MT", "natureza"], ["Nobres", "MT", "natureza aventura"],
-  ["Campo Grande", "MS", "gastronomia"], ["Bonito", "MS", "natureza aventura"], ["Jardim", "MS", "natureza aventura"], ["Corumbá", "MS", "natureza historica"], ["Miranda", "MS", "natureza"],
-  ["Belo Horizonte", "MG", "gastronomia cultural"], ["Ouro Preto", "MG", "historica cultural"], ["Tiradentes", "MG", "historica gastronomia"], ["Mariana", "MG", "historica"], ["São João del Rei", "MG", "historica"], ["Diamantina", "MG", "historica cultural"], ["Congonhas", "MG", "historica"], ["Sabará", "MG", "historica"], ["Brumadinho", "MG", "cultural"], ["Capitólio", "MG", "natureza aventura"], ["São Thomé das Letras", "MG", "natureza aventura"], ["Camanducaia", "MG", "rural natureza"], ["Gonçalves", "MG", "rural natureza"], ["Poços de Caldas", "MG", "entretenimento natureza"], ["Lima Duarte", "MG", "natureza"], ["São Roque de Minas", "MG", "natureza"], ["Santana do Riacho", "MG", "natureza aventura"],
-  ["Vitória", "ES", "praia gastronomia"], ["Vila Velha", "ES", "praia historica"], ["Guarapari", "ES", "praia"], ["Domingos Martins", "ES", "rural gastronomia"], ["Venda Nova do Imigrante", "ES", "rural gastronomia"], ["Conceição da Barra", "ES", "praia natureza"],
-  ["Rio de Janeiro", "RJ", "praia cultural natureza historica gastronomia entretenimento"], ["Armação dos Búzios", "RJ", "praia gastronomia"], ["Paraty", "RJ", "historica praia natureza"], ["Angra dos Reis", "RJ", "praia natureza"], ["Petrópolis", "RJ", "historica cultural gastronomia"], ["Arraial do Cabo", "RJ", "praia aventura"], ["Cabo Frio", "RJ", "praia"], ["Itatiaia", "RJ", "natureza aventura"], ["Teresópolis", "RJ", "natureza aventura"], ["Niterói", "RJ", "praia cultural"], ["Resende", "RJ", "rural natureza"], ["Nova Friburgo", "RJ", "natureza rural"], ["Vassouras", "RJ", "historica"],
-  ["São Paulo", "SP", "gastronomia cultural entretenimento"], ["Campos do Jordão", "SP", "natureza gastronomia rural"], ["Ubatuba", "SP", "praia natureza"], ["Ilhabela", "SP", "praia natureza aventura"], ["São Sebastião", "SP", "praia"], ["Santos", "SP", "praia historica"], ["Guarujá", "SP", "praia"], ["Brotas", "SP", "aventura natureza"], ["Holambra", "SP", "rural cultural"], ["Embu das Artes", "SP", "cultural"], ["Socorro", "SP", "aventura rural"], ["Águas de Lindóia", "SP", "natureza"], ["Olímpia", "SP", "entretenimento"], ["São Luiz do Paraitinga", "SP", "historica cultural"], ["Cunha", "SP", "rural natureza"], ["Santo Antônio do Pinhal", "SP", "rural natureza"], ["Vinhedo", "SP", "entretenimento"], ["Campinas", "SP", "cultural"], ["Bananal", "SP", "historica"],
-  ["Curitiba", "PR", "cultural gastronomia"], ["Foz do Iguaçu", "PR", "natureza aventura"], ["Morretes", "PR", "historica gastronomia"], ["Antonina", "PR", "historica"], ["Paranaguá", "PR", "historica praia"], ["Ponta Grossa", "PR", "natureza"], ["Guaratuba", "PR", "praia"],
-  ["Florianópolis", "SC", "praia gastronomia aventura"], ["Balneário Camboriú", "SC", "praia entretenimento"], ["Bombinhas", "SC", "praia natureza"], ["Blumenau", "SC", "cultural gastronomia"], ["Pomerode", "SC", "cultural historica"], ["Urubici", "SC", "natureza aventura rural"], ["Garopaba", "SC", "praia natureza"], ["Imbituba", "SC", "praia"], ["Penha", "SC", "entretenimento praia"], ["São Joaquim", "SC", "rural natureza gastronomia"], ["Laguna", "SC", "historica praia"], ["São Francisco do Sul", "SC", "historica praia"], ["Governador Celso Ramos", "SC", "praia"],
-  ["Porto Alegre", "RS", "cultural gastronomia"], ["Gramado", "RS", "gastronomia entretenimento natureza"], ["Canela", "RS", "natureza entretenimento"], ["Bento Gonçalves", "RS", "rural gastronomia"], ["Garibaldi", "RS", "rural gastronomia"], ["Cambará do Sul", "RS", "natureza aventura"], ["Nova Petrópolis", "RS", "rural cultural"], ["São Miguel das Missões", "RS", "historica"], ["Torres", "RS", "praia natureza"], ["Pelotas", "RS", "gastronomia historica"], ["Caxias do Sul", "RS", "gastronomia cultural"]
+  [
+   "Aracaju",
+   "SE",
+   "praia gastronomia cultural"
+  ],
+  [
+   "Canindé de São Francisco",
+   "SE",
+   "natureza aventura"
+  ],
+  [
+   "São Cristóvão",
+   "SE",
+   "historica"
+  ],
+  [
+   "Laranjeiras",
+   "SE",
+   "historica cultural"
+  ],
+  [
+   "Maceió",
+   "AL",
+   "praia gastronomia"
+  ],
+  [
+   "Maragogi",
+   "AL",
+   "praia"
+  ],
+  [
+   "São Miguel dos Milagres",
+   "AL",
+   "praia"
+  ],
+  [
+   "Japaratinga",
+   "AL",
+   "praia"
+  ],
+  [
+   "Penedo",
+   "AL",
+   "historica"
+  ],
+  [
+   "Piranhas",
+   "AL",
+   "historica natureza"
+  ],
+  [
+   "Marechal Deodoro",
+   "AL",
+   "historica praia"
+  ],
+  [
+   "Salvador",
+   "BA",
+   "praia historica cultural gastronomia"
+  ],
+  [
+   "Porto Seguro",
+   "BA",
+   "praia historica"
+  ],
+  [
+   "Santa Cruz Cabrália",
+   "BA",
+   "praia historica"
+  ],
+  [
+   "Mata de São João",
+   "BA",
+   "praia"
+  ],
+  [
+   "Lençóis",
+   "BA",
+   "natureza aventura historica"
+  ],
+  [
+   "Mucugê",
+   "BA",
+   "natureza historica"
+  ],
+  [
+   "Palmeiras",
+   "BA",
+   "natureza aventura"
+  ],
+  [
+   "Itacaré",
+   "BA",
+   "praia natureza aventura"
+  ],
+  [
+   "Maraú",
+   "BA",
+   "praia"
+  ],
+  [
+   "Cairu",
+   "BA",
+   "praia"
+  ],
+  [
+   "Ilhéus",
+   "BA",
+   "praia historica cultural"
+  ],
+  [
+   "Cachoeira",
+   "BA",
+   "historica cultural"
+  ],
+  [
+   "Prado",
+   "BA",
+   "praia"
+  ],
+  [
+   "Caravelas",
+   "BA",
+   "praia natureza"
+  ],
+  [
+   "Recife",
+   "PE",
+   "praia cultural historica gastronomia"
+  ],
+  [
+   "Olinda",
+   "PE",
+   "historica cultural"
+  ],
+  [
+   "Ipojuca",
+   "PE",
+   "praia"
+  ],
+  [
+   "Fernando de Noronha",
+   "PE",
+   "praia natureza aventura"
+  ],
+  [
+   "Tamandaré",
+   "PE",
+   "praia"
+  ],
+  [
+   "Caruaru",
+   "PE",
+   "cultural gastronomia"
+  ],
+  [
+   "Gravatá",
+   "PE",
+   "rural gastronomia"
+  ],
+  [
+   "Bezerros",
+   "PE",
+   "cultural"
+  ],
+  [
+   "Triunfo",
+   "PE",
+   "natureza historica"
+  ],
+  [
+   "Petrolina",
+   "PE",
+   "rural gastronomia"
+  ],
+  [
+   "João Pessoa",
+   "PB",
+   "praia historica"
+  ],
+  [
+   "Conde",
+   "PB",
+   "praia"
+  ],
+  [
+   "Campina Grande",
+   "PB",
+   "cultural"
+  ],
+  [
+   "Areia",
+   "PB",
+   "historica rural gastronomia"
+  ],
+  [
+   "Natal",
+   "RN",
+   "praia aventura"
+  ],
+  [
+   "Tibau do Sul",
+   "RN",
+   "praia"
+  ],
+  [
+   "São Miguel do Gostoso",
+   "RN",
+   "praia aventura"
+  ],
+  [
+   "Galinhos",
+   "RN",
+   "praia natureza"
+  ],
+  [
+   "Extremoz",
+   "RN",
+   "praia"
+  ],
+  [
+   "Fortaleza",
+   "CE",
+   "praia gastronomia cultural"
+  ],
+  [
+   "Jijoca de Jericoacoara",
+   "CE",
+   "praia natureza aventura"
+  ],
+  [
+   "Aracati",
+   "CE",
+   "praia"
+  ],
+  [
+   "Beberibe",
+   "CE",
+   "praia"
+  ],
+  [
+   "Aquiraz",
+   "CE",
+   "praia entretenimento"
+  ],
+  [
+   "Guaramiranga",
+   "CE",
+   "natureza rural"
+  ],
+  [
+   "Juazeiro do Norte",
+   "CE",
+   "cultural"
+  ],
+  [
+   "Camocim",
+   "CE",
+   "praia"
+  ],
+  [
+   "Teresina",
+   "PI",
+   "cultural gastronomia"
+  ],
+  [
+   "Parnaíba",
+   "PI",
+   "praia natureza"
+  ],
+  [
+   "Luís Correia",
+   "PI",
+   "praia"
+  ],
+  [
+   "São Raimundo Nonato",
+   "PI",
+   "historica natureza"
+  ],
+  [
+   "Piracuruca",
+   "PI",
+   "natureza"
+  ],
+  [
+   "São Luís",
+   "MA",
+   "historica cultural praia"
+  ],
+  [
+   "Barreirinhas",
+   "MA",
+   "natureza aventura"
+  ],
+  [
+   "Alcântara",
+   "MA",
+   "historica"
+  ],
+  [
+   "Carolina",
+   "MA",
+   "natureza aventura"
+  ],
+  [
+   "Santo Amaro do Maranhão",
+   "MA",
+   "natureza"
+  ],
+  [
+   "Belém",
+   "PA",
+   "gastronomia cultural historica"
+  ],
+  [
+   "Soure",
+   "PA",
+   "praia natureza"
+  ],
+  [
+   "Salvaterra",
+   "PA",
+   "praia natureza"
+  ],
+  [
+   "Santarém",
+   "PA",
+   "natureza praia"
+  ],
+  [
+   "Salinópolis",
+   "PA",
+   "praia"
+  ],
+  [
+   "Manaus",
+   "AM",
+   "natureza cultural historica"
+  ],
+  [
+   "Presidente Figueiredo",
+   "AM",
+   "natureza aventura"
+  ],
+  [
+   "Novo Airão",
+   "AM",
+   "natureza"
+  ],
+  [
+   "Parintins",
+   "AM",
+   "cultural"
+  ],
+  [
+   "Macapá",
+   "AP",
+   "cultural"
+  ],
+  [
+   "Boa Vista",
+   "RR",
+   "natureza"
+  ],
+  [
+   "Rio Branco",
+   "AC",
+   "cultural natureza"
+  ],
+  [
+   "Porto Velho",
+   "RO",
+   "historica natureza"
+  ],
+  [
+   "Palmas",
+   "TO",
+   "natureza"
+  ],
+  [
+   "Mateiros",
+   "TO",
+   "natureza aventura"
+  ],
+  [
+   "Ponte Alta do Tocantins",
+   "TO",
+   "natureza aventura"
+  ],
+  [
+   "Goiânia",
+   "GO",
+   "gastronomia cultural"
+  ],
+  [
+   "Pirenópolis",
+   "GO",
+   "historica natureza"
+  ],
+  [
+   "Alto Paraíso de Goiás",
+   "GO",
+   "natureza aventura"
+  ],
+  [
+   "Cavalcante",
+   "GO",
+   "natureza aventura"
+  ],
+  [
+   "Caldas Novas",
+   "GO",
+   "entretenimento natureza"
+  ],
+  [
+   "Rio Quente",
+   "GO",
+   "entretenimento"
+  ],
+  [
+   "Goiás",
+   "GO",
+   "historica cultural"
+  ],
+  [
+   "Brasília",
+   "DF",
+   "cultural"
+  ],
+  [
+   "Cuiabá",
+   "MT",
+   "gastronomia natureza"
+  ],
+  [
+   "Chapada dos Guimarães",
+   "MT",
+   "natureza aventura"
+  ],
+  [
+   "Poconé",
+   "MT",
+   "natureza"
+  ],
+  [
+   "Nobres",
+   "MT",
+   "natureza aventura"
+  ],
+  [
+   "Campo Grande",
+   "MS",
+   "gastronomia"
+  ],
+  [
+   "Bonito",
+   "MS",
+   "natureza aventura"
+  ],
+  [
+   "Jardim",
+   "MS",
+   "natureza aventura"
+  ],
+  [
+   "Corumbá",
+   "MS",
+   "natureza historica"
+  ],
+  [
+   "Miranda",
+   "MS",
+   "natureza"
+  ],
+  [
+   "Belo Horizonte",
+   "MG",
+   "gastronomia cultural"
+  ],
+  [
+   "Ouro Preto",
+   "MG",
+   "historica cultural"
+  ],
+  [
+   "Tiradentes",
+   "MG",
+   "historica gastronomia"
+  ],
+  [
+   "Mariana",
+   "MG",
+   "historica"
+  ],
+  [
+   "São João del Rei",
+   "MG",
+   "historica"
+  ],
+  [
+   "Diamantina",
+   "MG",
+   "historica cultural"
+  ],
+  [
+   "Congonhas",
+   "MG",
+   "historica"
+  ],
+  [
+   "Sabará",
+   "MG",
+   "historica"
+  ],
+  [
+   "Brumadinho",
+   "MG",
+   "cultural"
+  ],
+  [
+   "Capitólio",
+   "MG",
+   "natureza aventura"
+  ],
+  [
+   "São Thomé das Letras",
+   "MG",
+   "natureza aventura"
+  ],
+  [
+   "Camanducaia",
+   "MG",
+   "rural natureza"
+  ],
+  [
+   "Gonçalves",
+   "MG",
+   "rural natureza"
+  ],
+  [
+   "Poços de Caldas",
+   "MG",
+   "entretenimento natureza"
+  ],
+  [
+   "Lima Duarte",
+   "MG",
+   "natureza"
+  ],
+  [
+   "São Roque de Minas",
+   "MG",
+   "natureza"
+  ],
+  [
+   "Santana do Riacho",
+   "MG",
+   "natureza aventura"
+  ],
+  [
+   "Vitória",
+   "ES",
+   "praia gastronomia"
+  ],
+  [
+   "Vila Velha",
+   "ES",
+   "praia historica"
+  ],
+  [
+   "Guarapari",
+   "ES",
+   "praia"
+  ],
+  [
+   "Domingos Martins",
+   "ES",
+   "rural gastronomia"
+  ],
+  [
+   "Venda Nova do Imigrante",
+   "ES",
+   "rural gastronomia"
+  ],
+  [
+   "Conceição da Barra",
+   "ES",
+   "praia natureza"
+  ],
+  [
+   "Rio de Janeiro",
+   "RJ",
+   "praia cultural natureza historica gastronomia entretenimento"
+  ],
+  [
+   "Armação dos Búzios",
+   "RJ",
+   "praia gastronomia"
+  ],
+  [
+   "Paraty",
+   "RJ",
+   "historica praia natureza"
+  ],
+  [
+   "Angra dos Reis",
+   "RJ",
+   "praia natureza"
+  ],
+  [
+   "Petrópolis",
+   "RJ",
+   "historica cultural gastronomia"
+  ],
+  [
+   "Arraial do Cabo",
+   "RJ",
+   "praia aventura"
+  ],
+  [
+   "Cabo Frio",
+   "RJ",
+   "praia"
+  ],
+  [
+   "Itatiaia",
+   "RJ",
+   "natureza aventura"
+  ],
+  [
+   "Teresópolis",
+   "RJ",
+   "natureza aventura"
+  ],
+  [
+   "Niterói",
+   "RJ",
+   "praia cultural"
+  ],
+  [
+   "Resende",
+   "RJ",
+   "rural natureza"
+  ],
+  [
+   "Nova Friburgo",
+   "RJ",
+   "natureza rural"
+  ],
+  [
+   "Vassouras",
+   "RJ",
+   "historica"
+  ],
+  [
+   "São Paulo",
+   "SP",
+   "gastronomia cultural entretenimento"
+  ],
+  [
+   "Campos do Jordão",
+   "SP",
+   "natureza gastronomia rural"
+  ],
+  [
+   "Ubatuba",
+   "SP",
+   "praia natureza"
+  ],
+  [
+   "Ilhabela",
+   "SP",
+   "praia natureza aventura"
+  ],
+  [
+   "São Sebastião",
+   "SP",
+   "praia"
+  ],
+  [
+   "Santos",
+   "SP",
+   "praia historica"
+  ],
+  [
+   "Guarujá",
+   "SP",
+   "praia"
+  ],
+  [
+   "Brotas",
+   "SP",
+   "aventura natureza"
+  ],
+  [
+   "Holambra",
+   "SP",
+   "rural cultural"
+  ],
+  [
+   "Embu das Artes",
+   "SP",
+   "cultural"
+  ],
+  [
+   "Socorro",
+   "SP",
+   "aventura rural"
+  ],
+  [
+   "Águas de Lindóia",
+   "SP",
+   "natureza"
+  ],
+  [
+   "Olímpia",
+   "SP",
+   "entretenimento"
+  ],
+  [
+   "São Luiz do Paraitinga",
+   "SP",
+   "historica cultural"
+  ],
+  [
+   "Cunha",
+   "SP",
+   "rural natureza"
+  ],
+  [
+   "Santo Antônio do Pinhal",
+   "SP",
+   "rural natureza"
+  ],
+  [
+   "Vinhedo",
+   "SP",
+   "entretenimento"
+  ],
+  [
+   "Campinas",
+   "SP",
+   "cultural"
+  ],
+  [
+   "Bananal",
+   "SP",
+   "historica"
+  ],
+  [
+   "Curitiba",
+   "PR",
+   "cultural gastronomia"
+  ],
+  [
+   "Foz do Iguaçu",
+   "PR",
+   "natureza aventura"
+  ],
+  [
+   "Morretes",
+   "PR",
+   "historica gastronomia"
+  ],
+  [
+   "Antonina",
+   "PR",
+   "historica"
+  ],
+  [
+   "Paranaguá",
+   "PR",
+   "historica praia"
+  ],
+  [
+   "Ponta Grossa",
+   "PR",
+   "natureza"
+  ],
+  [
+   "Guaratuba",
+   "PR",
+   "praia"
+  ],
+  [
+   "Florianópolis",
+   "SC",
+   "praia gastronomia aventura"
+  ],
+  [
+   "Balneário Camboriú",
+   "SC",
+   "praia entretenimento"
+  ],
+  [
+   "Bombinhas",
+   "SC",
+   "praia natureza"
+  ],
+  [
+   "Blumenau",
+   "SC",
+   "cultural gastronomia"
+  ],
+  [
+   "Pomerode",
+   "SC",
+   "cultural historica"
+  ],
+  [
+   "Urubici",
+   "SC",
+   "natureza aventura rural"
+  ],
+  [
+   "Garopaba",
+   "SC",
+   "praia natureza"
+  ],
+  [
+   "Imbituba",
+   "SC",
+   "praia"
+  ],
+  [
+   "Penha",
+   "SC",
+   "entretenimento praia"
+  ],
+  [
+   "São Joaquim",
+   "SC",
+   "rural natureza gastronomia"
+  ],
+  [
+   "Laguna",
+   "SC",
+   "historica praia"
+  ],
+  [
+   "São Francisco do Sul",
+   "SC",
+   "historica praia"
+  ],
+  [
+   "Governador Celso Ramos",
+   "SC",
+   "praia"
+  ],
+  [
+   "Porto Alegre",
+   "RS",
+   "cultural gastronomia"
+  ],
+  [
+   "Gramado",
+   "RS",
+   "gastronomia entretenimento natureza"
+  ],
+  [
+   "Canela",
+   "RS",
+   "natureza entretenimento"
+  ],
+  [
+   "Bento Gonçalves",
+   "RS",
+   "rural gastronomia"
+  ],
+  [
+   "Garibaldi",
+   "RS",
+   "rural gastronomia"
+  ],
+  [
+   "Cambará do Sul",
+   "RS",
+   "natureza aventura"
+  ],
+  [
+   "Nova Petrópolis",
+   "RS",
+   "rural cultural"
+  ],
+  [
+   "São Miguel das Missões",
+   "RS",
+   "historica"
+  ],
+  [
+   "Torres",
+   "RS",
+   "praia natureza"
+  ],
+  [
+   "Pelotas",
+   "RS",
+   "gastronomia historica"
+  ],
+  [
+   "Caxias do Sul",
+   "RS",
+   "gastronomia cultural"
+  ]
  ],
  "exterior": [
-  ["fr-paris", "Paris", "Île-de-France", "FR", 48.8566, 2.3522, 8, "cultural gastronomia historica"],
-  ["pt-lisboa", "Lisboa", "Lisboa", "PT", 38.7223, -9.1393, 6, "cultural gastronomia historica"],
-  ["pt-porto", "Porto", "Porto", "PT", 41.1579, -8.6291, 5, "cultural gastronomia historica"],
-  ["pt-cascais", "Cascais", "Lisboa", "PT", 38.6979, -9.4215, 4, "praia historica"],
-  ["es-madri", "Madri", "Comunidade de Madri", "ES", 40.4168, -3.7038, 7, "cultural gastronomia"],
-  ["es-barcelona", "Barcelona", "Catalunha", "ES", 41.3874, 2.1686, 6, "praia cultural gastronomia"],
-  ["it-roma", "Roma", "Lácio", "IT", 41.9028, 12.4964, 7, "historica cultural gastronomia"],
-  ["gb-londres", "Londres", "Inglaterra", "GB", 51.5072, -0.1276, 9, "cultural historica"],
-  ["us-nova-york", "Nova York", "Nova York", "US", 40.7128, -74.006, 9, "cultural gastronomia entretenimento"],
-  ["ar-buenos-aires", "Buenos Aires", "Buenos Aires", "AR", -34.6037, -58.3816, 8, "cultural gastronomia"],
-  ["cl-santiago", "Santiago", "Região Metropolitana", "CL", -33.4489, -70.6693, 7, "cultural gastronomia natureza"],
-  ["uy-montevideu", "Montevidéu", "Montevidéu", "UY", -34.9011, -56.1645, 6, "praia cultural"]
+  [
+   "fr-paris",
+   "Paris",
+   "Île-de-France",
+   "FR",
+   48.8566,
+   2.3522,
+   8,
+   "cultural gastronomia historica"
+  ],
+  [
+   "pt-lisboa",
+   "Lisboa",
+   "Lisboa",
+   "PT",
+   38.7223,
+   -9.1393,
+   6,
+   "cultural gastronomia historica"
+  ],
+  [
+   "pt-porto",
+   "Porto",
+   "Porto",
+   "PT",
+   41.1579,
+   -8.6291,
+   5,
+   "cultural gastronomia historica"
+  ],
+  [
+   "pt-cascais",
+   "Cascais",
+   "Lisboa",
+   "PT",
+   38.6979,
+   -9.4215,
+   4,
+   "praia historica"
+  ],
+  [
+   "es-madri",
+   "Madri",
+   "Comunidade de Madri",
+   "ES",
+   40.4168,
+   -3.7038,
+   7,
+   "cultural gastronomia"
+  ],
+  [
+   "es-barcelona",
+   "Barcelona",
+   "Catalunha",
+   "ES",
+   41.3874,
+   2.1686,
+   6,
+   "praia cultural gastronomia"
+  ],
+  [
+   "it-roma",
+   "Roma",
+   "Lácio",
+   "IT",
+   41.9028,
+   12.4964,
+   7,
+   "historica cultural gastronomia"
+  ],
+  [
+   "gb-londres",
+   "Londres",
+   "Inglaterra",
+   "GB",
+   51.5072,
+   -0.1276,
+   9,
+   "cultural historica"
+  ],
+  [
+   "us-nova-york",
+   "Nova York",
+   "Nova York",
+   "US",
+   40.7128,
+   -74.006,
+   9,
+   "cultural gastronomia entretenimento"
+  ],
+  [
+   "ar-buenos-aires",
+   "Buenos Aires",
+   "Buenos Aires",
+   "AR",
+   -34.6037,
+   -58.3816,
+   8,
+   "cultural gastronomia"
+  ],
+  [
+   "cl-santiago",
+   "Santiago",
+   "Região Metropolitana",
+   "CL",
+   -33.4489,
+   -70.6693,
+   7,
+   "cultural gastronomia natureza"
+  ],
+  [
+   "uy-montevideu",
+   "Montevidéu",
+   "Montevidéu",
+   "UY",
+   -34.9011,
+   -56.1645,
+   6,
+   "praia cultural"
+  ]
+ ],
+ "polos_nota": "Polos turísticos dentro de municípios (praia, vila, distrito) que ficam longe do centro do município: viram destinos próprios (id br-<ibge do município>-<nome>). Coordenadas aproximadas, conferidas pela Wikipédia na carga (coluna wiki).",
+ "polos": [
+  [
+   "Porto de Galinhas",
+   "Ipojuca",
+   "PE",
+   -8.503,
+   -35.005,
+   6,
+   "praia gastronomia",
+   "Porto de Galinhas"
+  ],
+  [
+   "Praia dos Carneiros",
+   "Tamandaré",
+   "PE",
+   -8.705,
+   -35.08,
+   4,
+   "praia",
+   "Praia dos Carneiros"
+  ],
+  [
+   "Praia do Francês",
+   "Marechal Deodoro",
+   "AL",
+   -9.77,
+   -35.838,
+   4,
+   "praia",
+   "Praia do Francês"
+  ],
+  [
+   "Praia do Forte",
+   "Mata de São João",
+   "BA",
+   -12.578,
+   -38.0,
+   5,
+   "praia natureza",
+   "Praia do Forte"
+  ],
+  [
+   "Imbassaí",
+   "Mata de São João",
+   "BA",
+   -12.488,
+   -37.96,
+   4,
+   "praia natureza",
+   "Imbassaí"
+  ],
+  [
+   "Morro de São Paulo",
+   "Cairu",
+   "BA",
+   -13.378,
+   -38.913,
+   4,
+   "praia",
+   "Morro de São Paulo"
+  ],
+  [
+   "Boipeba",
+   "Cairu",
+   "BA",
+   -13.561,
+   -38.928,
+   4,
+   "praia natureza",
+   "Ilha de Boipeba"
+  ],
+  [
+   "Barra Grande",
+   "Maraú",
+   "BA",
+   -13.888,
+   -38.96,
+   5,
+   "praia",
+   "Barra Grande (Maraú)"
+  ],
+  [
+   "Arraial d'Ajuda",
+   "Porto Seguro",
+   "BA",
+   -16.493,
+   -39.073,
+   5,
+   "praia",
+   "Arraial d'Ajuda"
+  ],
+  [
+   "Trancoso",
+   "Porto Seguro",
+   "BA",
+   -16.59,
+   -39.096,
+   5,
+   "praia gastronomia",
+   "Trancoso"
+  ],
+  [
+   "Caraíva",
+   "Porto Seguro",
+   "BA",
+   -16.807,
+   -39.15,
+   4,
+   "praia natureza",
+   "Caraíva"
+  ],
+  [
+   "Vale do Capão",
+   "Palmeiras",
+   "BA",
+   -12.61,
+   -41.493,
+   5,
+   "natureza aventura",
+   "Caeté-Açu"
+  ],
+  [
+   "Canoa Quebrada",
+   "Aracati",
+   "CE",
+   -4.525,
+   -37.703,
+   4,
+   "praia",
+   "Canoa Quebrada"
+  ],
+  [
+   "Cumbuco",
+   "Caucaia",
+   "CE",
+   -3.627,
+   -38.733,
+   5,
+   "praia aventura",
+   "Cumbuco"
+  ],
+  [
+   "Morro Branco",
+   "Beberibe",
+   "CE",
+   -4.13,
+   -38.125,
+   4,
+   "praia",
+   "Morro Branco"
+  ],
+  [
+   "Porto das Dunas",
+   "Aquiraz",
+   "CE",
+   -3.835,
+   -38.39,
+   5,
+   "praia entretenimento",
+   "Porto das Dunas"
+  ],
+  [
+   "Pipa",
+   "Tibau do Sul",
+   "RN",
+   -6.229,
+   -35.047,
+   5,
+   "praia gastronomia",
+   "Praia da Pipa"
+  ],
+  [
+   "Genipabu",
+   "Extremoz",
+   "RN",
+   -5.7,
+   -35.215,
+   5,
+   "praia aventura",
+   "Genipabu"
+  ],
+  [
+   "Jacumã",
+   "Conde",
+   "PB",
+   -7.278,
+   -34.808,
+   5,
+   "praia",
+   "Jacumã"
+  ],
+  [
+   "Atins",
+   "Barreirinhas",
+   "MA",
+   -2.58,
+   -42.745,
+   4,
+   "praia natureza aventura",
+   "Atins"
+  ],
+  [
+   "Barra Grande do Piauí",
+   "Cajueiro da Praia",
+   "PI",
+   -2.905,
+   -41.415,
+   4,
+   "praia aventura",
+   "Barra Grande (Cajueiro da Praia)"
+  ]
  ]
 }

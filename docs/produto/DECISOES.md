@@ -697,3 +697,14 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Revisão (19/11):** na 1ª rodada, só ~1/3 das fotos "tiradas perto" eram do lugar certo (ex.: roedor na
   "Praia do Bode"). Agora toda foto precisa citar o nome do lugar no arquivo; as que não citam foram apagadas
   e esses lugares voltam para a busca com a regra nova.
+
+## D-058 — Polos turísticos como destinos próprios
+- **Por quê:** a coleta busca num raio a partir do centro do município. Porto de Galinhas fica a ~12 km do
+  centro de Ipojuca, Praia do Forte a ~30 km do de Mata de São João: esses lugares quase não tinham
+  restaurantes, praias e pousadas. E as pessoas procuram "Porto de Galinhas", não "Ipojuca".
+- **Como:** lista "polos" em `tools/dados/destinos-turisticos.json` (nome, município, UF, coordenada, raio,
+  tipos, artigo da Wikipédia). Viram destinos `br-<ibge do município>-<nome>`, com a coordenada conferida pela
+  Wikipédia na carga. Começou com 21 polos do Nordeste (Porto de Galinhas, Carneiros, Francês, Praia do Forte,
+  Imbassaí, Morro de São Paulo, Boipeba, Barra Grande, Arraial d'Ajuda, Trancoso, Caraíva, Vale do Capão,
+  Canoa Quebrada, Cumbuco, Morro Branco, Porto das Dunas, Pipa, Genipabu, Jacumã, Atins, Barra Grande do Piauí).
+- Modo "novos" no workflow Lugares: carrega os destinos e coleta as cidades pedidas numa só execução.

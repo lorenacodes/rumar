@@ -17,6 +17,25 @@ const RAW = 'https://raw.githubusercontent.com/kelvins/municipios-brasileiros/ma
 const baixar = async (u) => JSON.parse((await (await fetch(u)).text()).replace(/^\uFEFF/, ''));
 export const normalizar = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 
+/** Coordenadas de artigos da Wikipédia em português (em lotes de 50). Sem resposta: mapa vazio. */
+async function coordenadasWiki(titulos) {
+  const r = new Map();
+  for (let i = 0; i < titulos.length; i += 50) {
+    try {
+      const u = `https://pt.wikipedia.org/w/api.php?${new URLSearchParams({ action: 'query', prop: 'coordinates', redirects: '1', format: 'json', formatversion: '2', titles: titulos.slice(i, i + 50).join('|') })}`;
+      const j = await (await fetch(u, { headers: { 'User-Agent': 'BoVairBot/0.2 (app de viagem; https://github.com/lorenacodes/rumar)' } })).json();
+      const volta = new Map([...(j.query?.normalized ?? []), ...(j.query?.redirects ?? [])].map((x) => [x.to, x.from]));
+      for (const p of j.query?.pages ?? []) {
+        const c = p.coordinates?.[0];
+        if (!c) continue;
+        let t = p.title; while (volta.has(t)) t = volta.get(t);
+        r.set(t, { lat: c.lat, lon: c.lon });
+      }
+    } catch { /* sem Wikipédia: usa as aproximadas */ }
+  }
+  return r;
+}
+
 export async function gerarDestinos() {
   const cur = JSON.parse(readFileSync(join(ROOT, 'tools/dados/destinos-turisticos.json'), 'utf8'));
   const [mun, est] = await Promise.all([baixar(`${RAW}/municipios.json`), baixar(`${RAW}/estados.json`)]);
@@ -40,8 +59,21 @@ export async function gerarDestinos() {
   for (const [id, nome, reg, pais, lat, lon, raio, tipos] of cur.exterior) {
     itens.push({ id, nome, busca: normalizar(nome), regiao: reg, regiao_nome: reg, pais, lat, lon, capital: false, raio_km: raio, ibge: null, tipos: tipos.split(' '), tipos_fonte: 'curadoria', peso: 3 });
   }
+  // Polos turísticos (praia/vila/distrito longe do centro do município): destino próprio, peso 2.
+  const porNome = new Map(itens.filter((i) => i.pais === 'BR').map((i) => [`${i.busca}|${i.regiao}`, i]));
+  const coords = await coordenadasWiki((cur.polos ?? []).map((p) => p[7]).filter(Boolean));
+  for (const [nome, municipio, ufPolo, lat, lon, raio, tipos, wiki] of cur.polos ?? []) {
+    const m = porNome.get(`${normalizar(municipio)}|${ufPolo}`);
+    if (!m) { console.error(`Polo sem município: ${nome} (${municipio}/${ufPolo})`); continue; }
+    const w = wiki ? coords.get(wiki) : null;
+    // Usa a coordenada da Wikipédia se ela estiver perto da aproximada (até 25 km); senão, fica a aproximada.
+    const ok = w && Math.hypot(w.lat - lat, (w.lon - lon) * Math.cos((lat * Math.PI) / 180)) * 111 <= 25;
+    if (wiki && !ok) console.error(`Polo ${nome}: coordenada da Wikipédia ${w ? 'longe' : 'não achada'}; usando a aproximada.`);
+    itens.push({ id: `br-${m.ibge}-${normalizar(nome).replace(/ /g, '-')}`.slice(0, 63), nome, busca: normalizar(nome), regiao: m.regiao, regiao_nome: m.regiao_nome, pais: 'BR',
+      lat: ok ? w.lat : lat, lon: ok ? w.lon : lon, capital: false, raio_km: raio, ibge: null, tipos: tipos.split(' '), tipos_fonte: 'curadoria', peso: 2 });
+  }
   const faltou = cur.brasil.filter(([n, u]) => !achados.has(`${normalizar(n)}|${u}`)).map(([n, u]) => `${n}/${u}`);
-  return { itens, faltou, municipios: mun.length, exterior: cur.exterior.length, comTipos: achados.size };
+  return { itens, faltou, municipios: mun.length, exterior: cur.exterior.length, comTipos: achados.size, polos: (cur.polos ?? []).length };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
