@@ -142,6 +142,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
   const [fim, setFim] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [capas, setCapas] = useState<Map<CategoriaLugar, LugarBase>>(new Map());
+  const [quebradas, setQuebradas] = useState<Set<CategoriaLugar>>(new Set());
   const [viagemDoDestino, setViagemDoDestino] = useState<string | null>(viagem);
   const fundo = useRef<HTMLDivElement>(null);
 
@@ -214,7 +215,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
           const capa = capas.get(c);
           return (
             <button key={c} type="button" className="r-btn mural-selo" aria-pressed={categoria === c} onClick={() => setCategoria(categoria === c ? null : c)}>
-              <span className="mural-selo-borda"><span>{capa?.foto ? <img src={capa.foto} alt="" loading="lazy" /> : CATEGORIAS_LUGAR[c].nome[0]}</span></span>
+              <span className="mural-selo-borda"><span>{capa?.foto && !quebradas.has(c) ? <img src={capa.foto} alt="" loading="lazy" onError={() => setQuebradas((q) => new Set(q).add(c))} /> : CATEGORIAS_LUGAR[c].nome[0]}</span></span>
               {CATEGORIAS_LUGAR[c].nome.split(' ')[0]}
             </button>
           );

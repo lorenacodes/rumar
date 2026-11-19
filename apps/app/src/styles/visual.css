@@ -121,3 +121,95 @@ html:not(.modo-design) .voltar--foto {
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
+
+/* ------------------------------------------------------------------------------------------------
+ * D-076 — Visual moderno no padrão Material 3 (Google), mantendo cores, fontes e o jeito Bo Vair.
+ * Princípios: formas arredondadas e consistentes, alvos de toque de 48 px, campos preenchidos,
+ * resposta visível ao toque, navegação com ícone e rótulo, hierarquia clara.
+ * ---------------------------------------------------------------------------------------------- */
+html:not(.modo-design) {
+  --raio-cartao: 16px;
+  --raio-campo: 12px;
+}
+
+/* Botões com fundo e altura de botão (até 52 px): formato pílula (o do Google). Cartões tocáveis maiores
+   ficam com 16 px. */
+html:not(.modo-design) .tela .r-btn[style*="background"]:not(.postal-frente):not([role='tab'][style*="box-shadow"]):is([style*="height: 3"], [style*="height: 4"], [style*="height: 50px"], [style*="height: 52px"]),
+html:not(.modo-design) .botao-principal {
+  border-radius: 999px !important;
+}
+/* Cartões e painéis: 16 px. */
+html:not(.modo-design) .tela div[style*="background: var(--cartao-1)"]:not(:has(img)),
+html:not(.modo-design) .tela div[style*="background: var(--cartao-2)"]:not(:has(img)),
+html:not(.modo-design) .tela section[style*="background: var(--cartao-2)"],
+html:not(.modo-design) .tela div[style*="background: var(--fundo-escuro)"]:not(.gabinete):not(:has(img)) {
+  border-radius: var(--raio-cartao);
+}
+
+/* Resposta ao toque: escurece um pouco e encolhe 2% (sem atraso perceptível). */
+html:not(.modo-design) .r-btn {
+  transition: transform 120ms ease, filter 120ms ease, background-color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+html:not(.modo-design) .r-btn:not(:disabled):active {
+  transform: scale(0.98);
+  filter: brightness(0.94);
+}
+
+/* Campos preenchidos (Material "filled"): fundo suave, cantos arredondados, linha azul no foco. */
+html:not(.modo-design) .tela input.r-input:not([type='checkbox']):not([type='radio']):not([type='file']),
+html:not(.modo-design) .tela textarea.r-input,
+html:not(.modo-design) .tela select {
+  border: 0 !important;
+  border-radius: var(--raio-campo) !important;
+  background-color: var(--cartao-2) !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  min-height: 52px;
+  box-sizing: border-box;
+}
+html:not(.modo-design) .tela textarea.r-input { padding-top: 12px !important; padding-bottom: 12px !important; }
+html:not(.modo-design) .tela input.r-input:focus,
+html:not(.modo-design) .tela textarea.r-input:focus,
+html:not(.modo-design) .tela select:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--azul) !important;
+}
+/* Dentro de painéis suaves, o campo usa o fundo da tela para se destacar. */
+html:not(.modo-design) .tela [style*="background: var(--cartao-2)"] input.r-input,
+html:not(.modo-design) .tela [style*="background: var(--cartao-2)"] textarea.r-input {
+  background-color: var(--fundo) !important;
+}
+
+/* Fotos pequenas em listas: cantos arredondados. */
+html:not(.modo-design) .tela li img,
+html:not(.modo-design) .tela button > span > img:not([style*="height: 100%"]) {
+  border-radius: 12px;
+}
+
+/* Perfil: foto redonda e linhas de lista com 56 px (padrão de lista do Material). */
+html:not(.modo-design) .avatar-perfil { border-radius: 50%; }
+html:not(.modo-design) .linha-lista { min-height: 56px !important; }
+html:not(.modo-design) .linha-seta { font-size: 22px !important; font-weight: 400 !important; }
+
+/* Barra de abas: ícone + nome, pílula de destaque na aba ativa. */
+html:not(.modo-design) nav[aria-label='Abas'] {
+  box-shadow: 0 -1px 0 var(--linha);
+  border-top: 0 !important;
+}
+html:not(.modo-design) nav[aria-label='Abas'] .r-btn { box-shadow: none !important; }
+.aba-conteudo { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; }
+.aba-indicador { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 15px; transition: background-color 200ms ease; }
+.aba-indicador.ativo { background: color-mix(in srgb, var(--amarelo) 70%, transparent); color: var(--marinho); }
+
+/* Descobrir: lugar sem foto vira um cartão compacto e limpo (antes: papel pautado grande e vazio). */
+html:not(.modo-design) .postal-frente:has(.postal-sem-foto) { aspect-ratio: auto !important; margin: 0 20px; }
+html:not(.modo-design) .postal-sem-foto {
+  aspect-ratio: auto;
+  min-height: 112px;
+  padding: 16px;
+  background: var(--cartao-2);
+  border: 0;
+  border-radius: var(--raio-cartao);
+}
+html:not(.modo-design) .postal-sem-foto .vazio { display: none; }

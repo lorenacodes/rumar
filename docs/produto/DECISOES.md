@@ -859,3 +859,18 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Contador "1/10" no canto mostra que há mais fotos (sem a ponta do próximo cartão aparecendo).
 - Destaques 4:5; demais faixas 1:1; cartão do Descobrir 260 px de altura, também de ponta a ponta.
 - A faixa de destaques reinicia no primeiro quando os favoritos carregam (antes parava no meio).
+
+## D-076 — Visual moderno no padrão Material 3 (Google), com a cara do Bo Vair
+- Pedido da fundadora: "como se uma empresa do Google tivesse feito, simples para qualquer pessoa", mantendo a
+  autenticidade. Mantidos: cores (marinho, azul, amarelo, papel), fontes (Lexend Exa e Open Sans), títulos com
+  ponto final, postais e selos do Descobrir.
+- Mudou (só no app; a comparação com o design original segue igual):
+  - Barra de abas com ícone e nome, e pílula amarela na aba ativa (antes: só texto e um traço).
+  - Botões com fundo em formato pílula; cartões e painéis com 16 px de canto.
+  - Campos preenchidos (fundo suave, cantos de 12 px, contorno azul no foco), no lugar de linha embaixo e caixas
+    com borda preta.
+  - Resposta ao toque em todo botão (escurece e encolhe 2%).
+  - Perfil: foto redonda, linhas de lista com 56 px e seta maior.
+  - Descobrir: lugar sem foto vira cartão compacto (antes: papel pautado grande e vazio, parecia quebrado);
+    selo com imagem quebrada mostra a letra.
+- Acessibilidade conferida (0 problemas no teste automático).

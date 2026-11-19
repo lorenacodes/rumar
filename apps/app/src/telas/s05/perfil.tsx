@@ -33,7 +33,7 @@ function usePerfil(): Perfil | null | undefined {
 /** Quadrado amarelo com as iniciais (como no design) ou a foto da pessoa. */
 function Avatar({ nome, foto, lado, fonte }: { nome: string; foto?: string | null; lado: string; fonte: string }) {
   return (
-    <div style={{ width: lado, height: lado, flex: 'none', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: fonte, overflow: 'hidden' }} aria-hidden>
+    <div className="avatar-perfil" style={{ width: lado, height: lado, flex: 'none', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: fonte, overflow: 'hidden' }} aria-hidden>
       {foto ? <img src={foto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : iniciais(nome)}
     </div>
   );
@@ -41,12 +41,12 @@ function Avatar({ nome, foto, lado, fonte }: { nome: string; foto?: string | nul
 
 function Linha({ titulo, detalhe, onClick, minHeight = '42px' }: { titulo: string; detalhe?: string; onClick?: () => void; minHeight?: string }) {
   return (
-    <button type="button" className="r-btn alvo-toque" onClick={onClick} style={{ width: '100%', boxSizing: 'content-box', display: 'flex', alignItems: 'center', gap: '12px', minHeight, borderBottom: '1px solid var(--linha)' }}>
+    <button type="button" className="r-btn alvo-toque linha-lista" onClick={onClick} style={{ width: '100%', boxSizing: 'content-box', display: 'flex', alignItems: 'center', gap: '12px', minHeight, borderBottom: '1px solid var(--linha)' }}>
       <div style={{ flex: '1' }}>
         <div style={{ font: "600 16px 'Open Sans'" }}>{titulo}</div>
         {detalhe ? <div style={{ fontSize: '14px', lineHeight: '19px', color: 'var(--texto-sec)' }}>{detalhe}</div> : null}
       </div>
-      <span style={{ color: 'var(--texto-sec)', font: "600 14px 'Open Sans'", textAlign: 'right' }} aria-hidden>
+      <span className="linha-seta" style={{ color: 'var(--texto-sec)', font: "600 14px 'Open Sans'", textAlign: 'right' }} aria-hidden>
         ›
       </span>
     </button>

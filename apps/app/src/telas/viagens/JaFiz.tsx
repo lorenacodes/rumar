@@ -89,7 +89,7 @@ export function JaFiz() {
           <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             {([['amigos', 'Amigos'], ['publica', 'Todos'], ['privada', 'Só eu']] as const).map(([id, nome]) => (
               <button key={id} type="button" role="radio" aria-checked={quemVe === id} className="r-btn" onClick={() => setQuemVe(id)}
-                style={{ flex: 1, minHeight: '44px', borderRadius: '22px', font: "600 15px 'Open Sans'", ...(quemVe === id ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{nome}</button>
+                style={{ flex: 1, minHeight: '44px', borderRadius: '22px', textAlign: 'center', font: "600 15px 'Open Sans'", ...(quemVe === id ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{nome}</button>
             ))}
           </div>
           {quemVe === 'publica' ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Quem tem conta vê o roteiro e as fotos. Hotel e gastos, não.</p> : null}
