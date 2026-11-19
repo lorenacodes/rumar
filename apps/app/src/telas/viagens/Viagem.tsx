@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hojeLocal } from '../../lib/datas';
 import { BlocoNetworking } from '../descobrir/Networking';
 import { Experiencias } from '../descobrir/Experiencias';
+import { climaDaViagem, textoDoDia, type Clima } from '../../lib/clima';
+import { internacional } from '../../lib/linhaDoTempo';
+import { Mala } from './Mala';
 import { compartilharTexto } from '../../lib/curiosidades';
 import { Check } from '../../ui/check';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -98,6 +101,13 @@ export function Viagem() {
   }, [v, preferencias]);
   const itens = useMemo(() => (v?.itens ?? []).map((it) => ({ it, l: lugarPorId(it.place_id) })).filter((x): x is { it: Item; l: Lugar } => Boolean(x.l)), [v]);
   const [destino, setDestino] = useState<Destino | null>(null);
+  // Clima da viagem (D-088): previsão, clima típico ou o que fez.
+  const [clima, setClima] = useState<Clima | null>(null);
+  useEffect(() => {
+    setClima(null);
+    if (destino?.lat == null || destino.lon == null || !v) return;
+    void climaDaViagem(destino.lat, destino.lon, v.viagem.data_ida, v.viagem.noites).then(setClima);
+  }, [destino?.lat, destino?.lon, v?.viagem.data_ida, v?.viagem.noites]); // eslint-disable-line react-hooks/exhaustive-deps
   const [, setPool] = useState(0);
   const destinoId = v ? destinoDe(v) : null;
   useEffect(() => {
@@ -192,8 +202,12 @@ export function Viagem() {
         ) : null}
 
         {aba === 'etapas' && j && orc ? <AbaEtapas v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} resumoFinal={<PlanejadoReal v={v} j={j} orc={orc.o} comCompartilhar />} /> : null}
+        {aba === 'etapas' && j && v.papel && !registrada && j.etapa !== 'volta' && !j.ctx.encerrada ? (
+          <Mala tripId={v.viagem.id} noites={v.viagem.noites} internacional={internacional(j.ctx)} clima={clima} trabalho={v.viagem.motivo === 'trabalho'}
+            praia={Boolean(destino?.tipos?.includes('praia')) || itens.some((x) => x.l.tags.includes('beach'))} />
+        ) : null}
         {aba === 'roteiro' && registrada ? <LugaresOndeFui v={v} itens={itens} pode={pode} recarregar={recarregar} /> : null}
-        {aba === 'roteiro' && !registrada ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} /> : null}
+        {aba === 'roteiro' && !registrada ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} clima={clima} /> : null}
         {aba === 'mapa' ? (registrada ? <MapaOndeEstive v={v} itens={itens} /> : <AbaMapa v={v} dia={dia} itens={itens} />) : null}
         {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} destino={destino} /> : null}
         {aba === 'dinheiro' && orc && j ? <AbaDinheiro v={v} j={j} orc={orc.o} pode={pode} recarregar={recarregar} resumo={<AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} moeda={j.moedaPlano} />} /> : null}
@@ -416,7 +430,7 @@ function CafeDaManha({ v, dia, primeira, usados, pode, recarregar }: { v: Viagem
   );
 }
 
-function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[]; pode: boolean; grupo: ReturnType<typeof mesclar>; recarregar: () => void }) {
+function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar, clima }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[]; pode: boolean; grupo: ReturnType<typeof mesclar>; recarregar: () => void; clima: Clima | null }) {
   const navegar = useNavigate();
   const { alternarSalvo, salvos, preferencias } = useViajante();
   const [trocando, setTrocando] = useState<string | null>(null);
@@ -446,6 +460,15 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
       </div>
       <div style={{ fontSize: '15px', color: 'var(--texto)' }}>{dataLonga}</div>
       {resumo ? <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '2px' }}>{resumo}</div> : null}
+      {(() => {
+        const dc = clima?.dias.find((d) => d.data === dataMais(v.viagem.data_ida, dia - 1));
+        return dc && clima ? (
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600 }}>{clima.fonte === 'previsao' ? 'Previsão' : clima.fonte === 'tipico' ? 'Clima típico' : 'Fez'}: {textoDoDia(dc, clima.fonte)}</span>
+            <Info rotulo="Fonte">{clima.fonte === 'tipico' ? 'Mesmas datas do ano passado, ' : ''}Open-Meteo (CC BY 4.0). Pode mudar: confira perto da data.</Info>
+          </div>
+        ) : null;
+      })()}
       {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Dia livre. Adicione lugares quando quiser.</p> : null}
 
       {dia > 1 ? <CafeDaManha v={v} dia={dia} primeira={doDia[0]?.l ?? null} usados={usados} pode={pode} recarregar={recarregar} /> : null}

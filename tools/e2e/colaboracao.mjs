@@ -6,6 +6,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { apagarViagem } from './apagar.mjs';
 const OUT = process.env.E2E_OUT ?? 'tools/e2e/out';
 mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
@@ -96,4 +97,5 @@ console.log('    histórico:', (await texto(ana, 4000)).match(/ÚLTIMAS ALTERAÇ
 console.log('    total antes:', total1, '| agora:', (await texto(ana, 400)).match(/Custo estimado.*?R\$\s?[\d.]+/)?.[0]);
 console.log('ERROS:', erros.length ? '\n  ' + erros.join('\n  ') : 'nenhum');
 console.log('VIAGEM', idViagem);
+await apagarViagem(ana, idViagem);
 await b.close();

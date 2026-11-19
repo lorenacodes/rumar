@@ -6,6 +6,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { apagarViagem } from './apagar.mjs';
 const OUT = process.env.E2E_OUT ?? 'tools/e2e/out/orcamento';
 mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
@@ -63,6 +64,7 @@ await p.getByRole('button', { name: /^Mudar/ }).click();
 await p.getByRole('button', { name: /Voltar a seguir o orçamento/ }).click(); await p.waitForTimeout(6000);
 confere('volta para Conforto pelo orçamento', /Roteiro nível Conforto/.test(await texto()) && /Pelo orçamento/.test(await texto()));
 
+await apagarViagem(p, p.url().split('/viagem/')[1]?.split('?')[0]);
 await b.close();
 console.log(erros.length ? `\nERROS:\n${erros.join('\n')}` : '\nTudo certo.');
 process.exit(erros.length ? 1 : 0);

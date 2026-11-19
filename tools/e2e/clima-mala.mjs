@@ -1,0 +1,46 @@
+/** Clima e mala (D-088): resposta da Open-Meteo simulada no formato oficial; confere roteiro e mala. */
+import { chromium } from 'playwright';
+const URL = process.env.URL ?? 'http://localhost:8793/';
+const senha = process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA'); })();
+const OUT = process.env.OUT;
+const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+let pedidos = 0;
+await ctx.route(/open-meteo\.com/, (rota) => {
+  pedidos++;
+  const u = new globalThis.URL(rota.request().url());
+  const ini = u.searchParams.get('start_date'); const fim = u.searchParams.get('end_date');
+  const time = []; for (let d = new Date(`${ini}T12:00:00Z`); d <= new Date(`${fim}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 1)) time.push(d.toISOString().slice(0, 10));
+  const n = time.length;
+  rota.fulfill({ contentType: 'application/json', body: JSON.stringify({ daily: { time, temperature_2m_max: Array(n).fill(31.2), temperature_2m_min: Array(n).fill(24.4), precipitation_probability_max: Array(n).fill(60), precipitation_sum: Array(n).fill(3), weather_code: Array(n).fill(61) } }) });
+});
+const p = await ctx.newPage();
+p.on('pageerror', (e) => erros.push(e.message));
+await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('bovair.clima.') || k.startsWith('bovair.mala.')).forEach((k) => localStorage.removeItem(k)));
+await p.goto(URL + '#/viagens'); await p.waitForTimeout(3000);
+await p.getByRole('button', { name: /Salvador/ }).first().click(); await p.waitForTimeout(5000);
+await p.getByText('Roteiro', { exact: true }).first().click(); await p.waitForTimeout(3000);
+const rot = await p.locator('main').innerText();
+confere('roteiro mostra o clima do dia', /(Previsão|Clima típico|Fez): 31° \/ 24°/.test(rot));
+confere('consultou a Open-Meteo', pedidos >= 1);
+if (OUT) await p.screenshot({ path: `${OUT}/clima.png` });
+await p.getByText('Etapas', { exact: true }).first().click(); await p.waitForTimeout(2500);
+const mala = p.getByRole('region', { name: 'Mala' });
+confere('Etapas mostra a mala', await mala.isVisible().catch(() => false));
+await mala.getByRole('button', { name: /Mala/ }).click(); await p.waitForTimeout(500);
+const txt = await mala.innerText();
+confere('mala de praia e chuva (Salvador)', /Roupa de banho/.test(txt) && /Guarda-chuva/.test(txt) && /Protetor solar/.test(txt));
+const antes = (await mala.innerText()).match(/(\d+) de (\d+)/);
+await mala.getByRole('checkbox').first().click(); await p.waitForTimeout(300);
+const depois = (await mala.innerText()).match(/(\d+) de (\d+)/);
+confere('marcar um item conta na mala', antes && depois && Number(depois[1]) === Number(antes[1]) + 1);
+await p.reload(); await p.waitForTimeout(5000);
+await p.getByText('Etapas', { exact: true }).first().click().catch(() => {}); await p.waitForTimeout(2000);
+confere('marcação continua depois de reabrir', /1 de \d+ na mala/.test(await p.getByRole('region', { name: 'Mala' }).innerText().catch(() => '')));
+if (OUT) { await mala.getByRole('button', { name: /Mala/ }).click().catch(() => {}); await p.waitForTimeout(400); await p.getByRole('region', { name: 'Mala' }).screenshot({ path: `${OUT}/mala.png` }).catch(() => {}); }
+await p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('bovair.mala.')).forEach((k) => localStorage.removeItem(k)));
+console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
+await b.close(); process.exit(erros.length ? 1 : 0);

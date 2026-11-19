@@ -5,6 +5,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { apagarViagem } from './apagar.mjs';
 const OUT = 'tools/e2e/out/comida'; mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
@@ -34,7 +35,8 @@ await salvar();
 
 await p.goto(URL + '#/viagens/nova?d=br-3304557'); await p.waitForTimeout(3000);
 await p.getByRole('button', { name: /Criar viagem/ }).click(); await p.waitForURL(/viagem\//, { timeout: 30000 }); await p.waitForTimeout(3000);
-console.log('VIAGEM', p.url().split('/viagem/')[1]?.split('?')[0]);
+const idComida = p.url().split('/viagem/')[1]?.split('?')[0];
+console.log('VIAGEM', idComida);
 await p.goto(p.url().split('?')[0] + '?aba=roteiro'); await p.waitForTimeout(3000);
 const texto = await p.locator('main').innerText();
 confere('roteiro mostra motivo de comida (vegetariano ou japonesa)', /opção vegetariana|adora comida japonesa/.test(texto));
@@ -46,6 +48,7 @@ await p.getByRole('radio', { name: 'Como de tudo' }).click();
 await p.getByRole('group', { name: 'Cozinhas que adoro' }).getByRole('checkbox', { name: 'Japonesa e sushi' }).click();
 await p.getByRole('group', { name: 'Cozinhas que não quero' }).getByRole('checkbox', { name: 'Carnes e churrasco' }).click();
 await salvar();
+await apagarViagem(p, idComida);
 await b.close();
 console.log(erros.length ? `ERROS:\n${erros.join('\n')}` : 'Tudo certo.');
 process.exit(erros.length ? 1 : 0);

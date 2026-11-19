@@ -8,6 +8,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { apagarViagem } from './apagar.mjs';
 const OUT = process.env.E2E_OUT ?? 'tools/e2e/out';
 mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
@@ -147,5 +148,6 @@ confere('viagem encerrada', /Viagem encerrada/.test(t));
 await foto('encerrada');
 console.log('— Erros:', erros.length ? erros : 'nenhum');
 console.log('VIAGEM', id);
+await apagarViagem(p, id);
 await b.close();
 process.exit(erros.length ? 1 : 0);
