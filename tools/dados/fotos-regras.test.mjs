@@ -9,6 +9,8 @@ test('aceita quando o arquivo é do lugar', () => {
   assert.ok(cita('File:Ponte do imperador aracaju - panoramio.jpg', 'Ponte do Imperador'));
   assert.ok(cita('File:Pinacoteca do Ceará 12.jpg', 'Pinacoteca do Ceará'));
   assert.ok(cita('File:Feira do Alecrim – Natal (RN).jpg', 'Feira do Alecrim'));
+  assert.ok(cita('File:Praia da Malhada 2026.jpg', 'Praia da Malhada'));
+  assert.ok(cita('File:Casa dos Sete Candeeiros Salvador 2018-1333.jpg', 'Casa dos Sete Candeeiros'));
   assert.ok(cita('File:Cinesercla Shopping Premio 2.jpg', 'Cinesercla Shopping Prêmio'));
 });
 test('recusa os erros vistos na 1ª rodada', () => {
@@ -19,5 +21,7 @@ test('recusa os erros vistos na 1ª rodada', () => {
   assert.equal(cita('File:Kerodon rupestris 166325292.jpg', 'Praia do Bode'), false);
   assert.equal(cita('File:Apr2024. Recife City Museum aka Museu da Cidade do Recife - Forte das Cinco Pontas 20.jpg', 'Praça Frei Caneca'), false);
   assert.equal(cita('File:São Miguel Palace - Fernando de Noronha - Pernambuco - Brazil.jpg', 'Praça São Miguel'), false);
+  assert.equal(cita('File:Ideal Clube 08.jpg', 'Ideal Praia Hotel'), false);
+  assert.equal(cita('File:Seminário Santo Antônio.jpg', 'Largo de Santo Antônio'), false);
   assert.equal(cita('File:Oficina de Museu Portátil no Arquivo Público Municipal de Cachoeira (51993).jpg', 'Centro de Cultura'), false);
 });

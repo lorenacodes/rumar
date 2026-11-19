@@ -10,7 +10,8 @@ const GENERICO = new Set(['praia', 'igreja', 'restaurante', 'bar', 'cafe', 'muse
   'cuiaba', 'campo', 'curitiba', 'florianopolis', 'porto', 'alegre', 'vitoria', 'belo', 'horizonte', 'rio']);
 // Tipo de lugar: se o arquivo mostra outro tipo (avenida, igreja, estação...) e não o do lugar, não é a mesma coisa.
 const TIPOS = ['praca', 'largo', 'avenida', 'rua', 'igreja', 'capela', 'estacao', 'ponte', 'museu', 'teatro', 'praia', 'mercado', 'parque', 'forte', 'shopping',
-  'hotel', 'estatua', 'busto', 'coreto', 'farol', 'palacio', 'catedral', 'basilica', 'mosteiro', 'convento', 'cinema', 'aeroporto', 'universidade', 'escola'];
+  'hotel', 'estatua', 'busto', 'coreto', 'farol', 'palacio', 'catedral', 'basilica', 'mosteiro', 'convento', 'cinema', 'aeroporto', 'universidade', 'escola',
+  'seminario', 'clube', 'colegio', 'hospital', 'estadio', 'patio', 'reitoria', 'terminal', 'rodoviaria'];
 export const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 // Tipos em inglês nos nomes de arquivo viram o equivalente em português.
 const INGLES = { square: 'praca', avenue: 'avenida', street: 'rua', church: 'igreja', chapel: 'capela', station: 'estacao', bridge: 'ponte', museum: 'museu',
@@ -25,6 +26,8 @@ export function cita(titulo, nome) {
   if (!ps.length) return false;
   const achou = ps.filter((p) => t.includes(p) || t.some((x) => x.length >= 5 && (x.startsWith(p) || p.startsWith(x)))).length;
   if (achou < Math.min(2, ps.length) || achou < Math.ceil(ps.length / 2)) return false;
+  // Nome com uma só palavra própria e curta ("Ideal", "Flora"): fácil de coincidir com outro lugar.
+  if (ps.length === 1 && ps[0].length < 6) return false;
   const tiposNome = TIPOS.filter((x) => tokens(nome).includes(x));
   const tiposArq = TIPOS.filter((x) => t.includes(x));
   if (tiposArq.length && !tiposArq.some((x) => tiposNome.includes(x)) && (tiposNome.length || tiposArq.some((x) => x !== 'praia'))) return false;
