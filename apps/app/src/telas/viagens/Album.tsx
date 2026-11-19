@@ -6,7 +6,7 @@ import type { ViagemCompleta } from '../../lib/viagens';
 
 /** "Fotos da viagem" (D-059): álbum do grupo. Aparece quando a viagem começa; quem participa posta. */
 export function AlbumDaViagem({ v, lugares, pode }: { v: ViagemCompleta; lugares: Lugar[]; pode: boolean }) {
-  const [fotos, setFotos] = useState<FotoDaViagem[] | null>(null);
+  const [fotos, setFotos] = useState<FotoDaViagem[] | null | undefined>(undefined);
   const [aberto, setAberto] = useState(false);
   const [arquivos, setArquivos] = useState<File[]>([]);
   const [lugar, setLugar] = useState('');
@@ -22,7 +22,7 @@ export function AlbumDaViagem({ v, lugares, pode }: { v: ViagemCompleta; lugares
   useEffect(carregar, [v.viagem.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const hoje = new Date().toISOString().slice(0, 10);
-  if (v.viagem.data_ida > hoje) return null;
+  if (v.viagem.data_ida > hoje || !fotos) return null;
   if (!participa && !fotos?.length) return null;
   const nome = (uid: string) => v.membros.find((m) => m.user_id === uid)?.nome ?? 'Alguém do grupo';
   const opcoesLugar = [...new Map(lugares.map((l) => [l.id, l])).values()];

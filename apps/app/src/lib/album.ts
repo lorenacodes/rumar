@@ -9,10 +9,12 @@ import { supabase } from './supabase';
 const BALDE = 'fotos-viagem';
 export interface FotoDaViagem { id: string; user_id: string; caminho: string; tipo: 'foto' | 'video'; legenda: string | null; place_id: string | null; created_at: string; url: string; minha: boolean }
 
-export async function fotosDaViagem(tripId: string): Promise<FotoDaViagem[]> {
+/** Nulo quando o álbum não está disponível (tabela ainda não criada): a tela esconde a seção. */
+export async function fotosDaViagem(tripId: string): Promise<FotoDaViagem[] | null> {
   const { data: s } = await supabase.auth.getSession();
   const uid = s.session?.user.id;
-  const { data } = await supabase.from('viagem_fotos').select('id, user_id, caminho, tipo, legenda, place_id, created_at').eq('trip_id', tripId).order('created_at', { ascending: false }).limit(200);
+  const { data, error } = await supabase.from('viagem_fotos').select('id, user_id, caminho, tipo, legenda, place_id, created_at').eq('trip_id', tripId).order('created_at', { ascending: false }).limit(200);
+  if (error) return null;
   const linhas = (data ?? []) as Omit<FotoDaViagem, 'url' | 'minha'>[];
   if (!linhas.length) return [];
   const { data: urls } = await supabase.storage.from(BALDE).createSignedUrls(linhas.map((l) => l.caminho), 60 * 60 * 6);

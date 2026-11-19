@@ -70,7 +70,7 @@ export function JaFiz() {
         {futura ? <p style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '8px 0 0' }}>Essa data ainda não chegou. Para planejar, use Nova viagem.</p> : null}
         {erro ? <p role="alert" style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '8px 0 0' }}>{erro}</p> : null}
         <div style={{ marginTop: '20px' }}>
-          <BotaoPrincipal onClick={() => void salvar()} disabled={!destino || futura || salvando}>{salvando ? 'Salvando…' : sessao ? 'Salvar e postar fotos' : 'Entre para salvar'}</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => void salvar()} disabled={!destino || futura || salvando}>{salvando ? 'Salvando…' : sessao ? 'Salvar viagem' : 'Entre para salvar'}</BotaoPrincipal>
         </div>
       </div>
     </main>
