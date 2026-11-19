@@ -26,6 +26,7 @@ on:
     paths:
       - .github/workflows/fotos-commons.yml
       - tools/dados/fotos-commons.mjs
+      - tools/dados/fotos-regras.mjs
 
 permissions:
   contents: read
