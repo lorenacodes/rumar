@@ -85,7 +85,7 @@ bia.once('dialog', (d) => d.accept()); await bia.getByRole('button', { name: /Re
 await bia.goto(URL + `#/viagem/${idViagem}?aba=roteiro`); await bia.waitForTimeout(3500); await foto(bia, 'bia-roteiro-grupo');
 console.log('    bia vê:', (await texto(bia, 900)).match(/Agrada a[^.]*\./g)?.slice(0, 3).join(' | '));
 await bia.getByRole('tab', { name: /Dia 2/ }).click(); await bia.waitForTimeout(500);
-await bia.getByRole('button', { name: 'Editar ▾' }).first().click(); await bia.waitForTimeout(300);
+await bia.getByRole('button', { name: 'Mais', exact: true }).first().click(); await bia.waitForTimeout(300);
 const tirar = bia.getByRole('button', { name: /^Tirar / }).first(); const qual = await tirar.getAttribute('aria-label');
 await tirar.click(); await bia.waitForTimeout(2500);
 console.log('    bia', qual);

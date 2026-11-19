@@ -130,10 +130,10 @@ await foto('dinheiro-na-viagem');
 
 console.log('— Roteiro: feito e horário');
 await p.getByRole('tab', { name: 'Roteiro' }).click(); await p.waitForTimeout(800);
-const marcar = p.getByRole('button', { name: 'Marcar feito' }).first();
-if (await marcar.count()) { await marcar.click(); await p.waitForTimeout(2500); confere('item marcado como feito', (await p.getByRole('button', { name: 'Feito', exact: true }).count()) > 0); }
+const marcar = p.locator('button[aria-pressed="false"]', { hasText: 'Feito' }).first();
+if (await marcar.count()) { await marcar.click(); await p.waitForTimeout(2500); confere('item marcado como feito', (await p.locator('button[aria-pressed="true"]', { hasText: 'Feito' }).count()) > 0); }
 else console.log('   (dia 1 sem itens)');
-await p.getByRole('button', { name: 'Editar ▾' }).first().click().catch(() => {}); await p.waitForTimeout(300);
+await p.getByRole('button', { name: 'Mais', exact: true }).first().click().catch(() => {}); await p.waitForTimeout(300);
 const hora = p.locator('input[type="time"]').first();
 if (await hora.count()) { await hora.fill('10:15'); await hora.blur(); await p.waitForTimeout(2500); confere('horário alterado', /10h15/.test(await texto())); }
 
