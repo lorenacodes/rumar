@@ -847,3 +847,8 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Foto de lugar com 2 denúncias sai do ar e volta para a Moderação (Aprovar/Recusar).
 - Foto de álbum com 2 denúncias some para todos, menos para quem postou; a Moderação decide Apagar ou Manter.
 - Ainda não: perguntar Wi-Fi em lugar registrado só pelo nome (sem ficha na base).
+
+## D-074 — Fotos maiores no Início
+- Pedido da fundadora. Destaques: 88% da tela (até 400 px). Cartões de "No Brasil", "Lá fora" e "Lugares
+  curiosos": 200 px, formato retrato (4:5). Faixas de amigos e "Viagens da galera": 260 px. Cartão do
+  Descobrir: 200 px de altura. Cartões alinhados pelo topo.

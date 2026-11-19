@@ -58,7 +58,7 @@ function CartaoGrande({ d, favorito }: { d: DestinoCartao; favorito: boolean }) 
   const abrir = useAbrirDestino();
   return (
     <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}, ${d.pais}: ver o que viver lá`}
-      style={{ position: 'relative', flex: 'none', width: '78%', maxWidth: '320px', aspectRatio: '4 / 5', overflow: 'hidden', scrollSnapAlign: 'start', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))', textAlign: 'left' }}>
+      style={{ position: 'relative', flex: 'none', width: '88%', maxWidth: '400px', aspectRatio: '4 / 5', overflow: 'hidden', scrollSnapAlign: 'start', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))', textAlign: 'left' }}>
       <FotoDestino nome={d.foto ?? d.nome} credito={false} />
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.72) 100%)' }} />
       <span style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 2, color: '#fff' }}>
@@ -73,8 +73,8 @@ function CartaoGrande({ d, favorito }: { d: DestinoCartao; favorito: boolean }) 
 function CartaoPequeno({ d }: { d: DestinoCartao }) {
   const abrir = useAbrirDestino();
   return (
-    <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}: ver o que viver lá`} style={{ flex: 'none', width: '148px', textAlign: 'left' }}>
-      <span style={{ position: 'relative', display: 'block', width: '148px', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}><FotoDestino nome={d.foto ?? d.nome} credito={false} /></span>
+    <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}: ver o que viver lá`} style={{ flex: 'none', width: '200px', textAlign: 'left' }}>
+      <span style={{ position: 'relative', display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--cartao-2)' }}><FotoDestino nome={d.foto ?? d.nome} credito={false} /></span>
       <b style={{ display: 'block', font: "600 15px/20px 'Lexend Exa'", marginTop: '6px' }}>{d.nome}</b>
       <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{chamada(d)}</span>
     </button>
@@ -94,8 +94,8 @@ function AmigosEstiveram() {
         {itens.map((c) => (
           <div role="listitem" key={`${c.tipo}-${c.trip_id ?? c.place_id}-${c.user_id}`} style={{ display: 'contents' }}>
             <button type="button" className="r-btn" onClick={() => navegar(c.trip_id ? `/viagem/${c.trip_id}` : `/lugar/${c.place_id}`)}
-              aria-label={`${c.nome} esteve em ${c.titulo}`} style={{ flex: 'none', width: '200px', textAlign: 'left', scrollSnapAlign: 'start' }}>
-              <span style={{ position: 'relative', display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+              aria-label={`${c.nome} esteve em ${c.titulo}`} style={{ flex: 'none', width: '260px', textAlign: 'left', scrollSnapAlign: 'start' }}>
+              <span style={{ position: 'relative', display: 'block', width: '260px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
                 <img src={c.url} alt="" loading="lazy" onError={() => setItens((l) => l.filter((x) => x !== c))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 10px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -133,8 +133,8 @@ function ViagensDaGalera() {
         {itens.map((c) => (
           <div role="listitem" key={c.trip_id} style={{ display: 'contents' }}>
             <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${c.trip_id}?aba=roteiro`)} aria-label={`Viagem de ${c.nome} para ${c.destino}`}
-              style={{ flex: 'none', width: '200px', textAlign: 'left', scrollSnapAlign: 'start' }}>
-              <span style={{ position: 'relative', display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+              style={{ flex: 'none', width: '260px', textAlign: 'left', scrollSnapAlign: 'start' }}>
+              <span style={{ position: 'relative', display: 'block', width: '260px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
                 <img src={c.url} alt="" loading="lazy" onError={() => setItens((l) => l.filter((x) => x !== c))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 10px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -177,8 +177,8 @@ function Curiosos() {
       <div role="list" aria-label="Lugares curiosos" style={fileira}>
         {itens.map((c) => (
           <div role="listitem" key={c.id} style={{ display: 'contents' }}>
-            <button type="button" className="r-btn" onClick={() => navegar(c.mundo ? `/curiosos?c=${c.id}` : `/lugar/${c.id}`)} style={{ flex: 'none', width: '148px', textAlign: 'left' }}>
-              <span style={{ display: 'block', width: '148px', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}>
+            <button type="button" className="r-btn" onClick={() => navegar(c.mundo ? `/curiosos?c=${c.id}` : `/lugar/${c.id}`)} style={{ flex: 'none', width: '200px', textAlign: 'left' }}>
+              <span style={{ display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--cartao-2)' }}>
                 <img src={c.foto} alt={`Foto de ${c.nome}`} loading="lazy" onError={() => setItens((l) => l.filter((x) => x.id !== c.id))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(1.1) contrast(1.05)' }} />
               </span>
               <b style={{ font: "600 14px/19px 'Lexend Exa'", marginTop: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{c.nome}</b>
@@ -192,7 +192,7 @@ function Curiosos() {
 }
 
 const Rot = ({ t }: { t: string }) => <h2 style={{ font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em', margin: '22px 0 8px' }}>{t}</h2>;
-const fileira = { display: 'flex', gap: '10px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 6px', scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
+const fileira = { display: 'flex', alignItems: 'flex-start', gap: '10px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 6px', scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
 /** Avisos de quem tem conta: o que espera resposta e o que falta para aproveitar o app. */
 function Pendencias({ convites, pedidos, semUsuario, semJeito }: { convites: number; pedidos: number; semUsuario: boolean; semJeito: boolean }) {
   const navegar = useNavigate();
@@ -318,7 +318,7 @@ export function Inicio() {
           </button>
         ) : sessao && viagem ? (
           <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} aria-label={`Próxima viagem: ${viagem.destino}`}
-            style={{ position: 'relative', display: 'block', width: '100%', height: '150px', marginTop: '14px', overflow: 'hidden', textAlign: 'left', background: 'var(--fundo-escuro)' }}>
+            style={{ position: 'relative', display: 'block', width: '100%', height: '200px', marginTop: '14px', overflow: 'hidden', textAlign: 'left', background: 'var(--fundo-escuro)' }}>
             {DESTINOS_COM_FOTO.includes(viagem.destino) ? <FotoDestino nome={viagem.destino} credito={false} /> : null}
             <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(90deg, rgba(11,31,75,.88) 0%, rgba(11,31,75,.35) 75%)' }} />
             <span style={{ position: 'absolute', left: 16, top: 14, right: 16, zIndex: 2, color: '#fff' }}>
