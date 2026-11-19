@@ -694,3 +694,6 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - **Limite honesto:** restaurantes e lojas quase nunca têm foto livre; para eles, fotos de quem foi ou Google
   (pago, com teto mensal) quando a fundadora decidir.
 - Workflow "Fotos por localização" (fotos-commons.yml): todo dia até 1.000 fotos novas, região por região (Nordeste primeiro, depois Sudeste, Sul, Centro-Oeste e Norte), turísticos mais conhecidos antes do resto; à mão por cidade. Começou por Pernambuco. Uma tarefa diária do agente confere a qualidade, cobre os estados atrasados e para quando a meta for atingida.
+- **Revisão (19/11):** na 1ª rodada, só ~1/3 das fotos "tiradas perto" eram do lugar certo (ex.: roedor na
+  "Praia do Bode"). Agora toda foto precisa citar o nome do lugar no arquivo; as que não citam foram apagadas
+  e esses lugares voltam para a busca com a regra nova.

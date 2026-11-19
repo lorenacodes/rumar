@@ -1,9 +1,8 @@
 /**
  * Fotos por localização (D-057): para lugares sem foto, procura no Wikimedia Commons imagens tiradas
  * perto das coordenadas e grava a melhor (licença livre). Regras para não pôr foto errada:
- * - pontos turísticos, praias, parques e museus: aceita foto cujo nome cite o lugar ou, sem isso,
- *   uma bem perto (praia até 250 m, parque 120 m, demais 40 m);
- * - restaurantes, bares, cafés, hotéis e lojas: só se o nome do arquivo citar o lugar (até 150 m);
+ * - só aceita foto cujo nome do arquivo cite o lugar (palavras próprias do nome, não "praia", "igreja"...);
+ *   pontos turísticos dentro do raio da busca, restaurantes, bares, cafés e hotéis até 150 m;
  * - nunca mapa, logo, bandeira, brasão ou diagrama; só CC0, CC BY, CC BY-SA ou domínio público.
  * Roda no GitHub Actions (workflow "Fotos por localização"); grava pela função importar-lugares com OIDC, sem chave.
  * Uso: node tools/dados/fotos-commons.mjs [--pais br] [--regiao nordeste] [--meta 1000] [--destinos ids] [--limite 1000] [--minutos 150]
@@ -46,7 +45,6 @@ async function commons(params) {
 
 const TURISTICO = new Set(['praias', 'parques', 'atracoes', 'historico', 'museus', 'cultura', 'mercados', 'lazer']);
 const RAIO = { praias: 400, parques: 250, atracoes: 150, historico: 150, museus: 150, cultura: 150, mercados: 120, lazer: 150 };
-const PERTO = { praias: 250, parques: 120 };
 const RUIM = /\b(map|mapa|locator|location|logo|bandeira|flag|bras[aã]o|coat of arms|diagram|planta baixa|floor plan|sign|placa|cart[aã]o|ticket|menu|card[aá]pio|screenshot|document|selo|stamp)\b/i;
 const EXT = /\.(jpe?g|png|webp)$/i;
 const LIVRE = /^(cc0|cc[- ]by(-sa)?( \d\.\d)?|cc[- ]by[- ]sa( \d\.\d)?|public domain|pd\b|pdm|no restrictions)/i;
@@ -56,11 +54,9 @@ const palavras = (nome) => [...new Set(norm(nome).split(/[^a-z0-9]+/).filter((w)
 const cita = (titulo, nome) => { const t = norm(titulo); const ps = palavras(nome); return ps.length > 0 && ps.filter((p) => t.includes(p)).length >= Math.min(2, ps.length); };
 
 function candidatos(l, achados) {
+  // Só foto cujo nome do arquivo cite o lugar (D-057, revisão de 19/11: "foto tirada perto" trazia lugar errado).
   const turistico = TURISTICO.has(l.categoria);
-  const lista = achados.filter((a) => EXT.test(a.title) && !RUIM.test(a.title));
-  const citam = lista.filter((a) => cita(a.title, l.nome) && (turistico || a.dist <= 150));
-  if (citam.length || !turistico) return citam.slice(0, 3);
-  return lista.filter((a) => a.dist <= (PERTO[l.categoria] ?? 40)).slice(0, 3);
+  return achados.filter((a) => EXT.test(a.title) && !RUIM.test(a.title) && cita(a.title, l.nome) && (turistico || a.dist <= 150)).slice(0, 3);
 }
 
 const destinos = (arg('destinos', '') || '').split(',').map((s) => s.trim()).filter(Boolean);
