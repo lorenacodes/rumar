@@ -55,9 +55,10 @@ export function Viagem() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
   const [params, setParams] = useSearchParams();
-  const pedida = params.get('aba') ?? 'etapas';
-  const aba = (pedida === 'orcamento' ? 'dinheiro' : pedida) as Aba;
   const [v, setV] = useState<ViagemCompleta | null | undefined>(undefined);
+  const registrada = Boolean((v?.viagem.diagnostico as { registrada?: boolean } | undefined)?.registrada);
+  const pedida = params.get('aba') ?? (registrada ? 'roteiro' : 'etapas');
+  const aba = (registrada && ['etapas', 'hospedagem', 'dinheiro', 'orcamento'].includes(pedida) ? 'roteiro' : pedida === 'orcamento' ? 'dinheiro' : pedida) as Aba;
   const [dia, setDia] = useState(1);
   const local = useLocation();
   const recarregar = useCallback(() => void carregarViagem(id).then(setV), [id]);
@@ -125,7 +126,7 @@ export function Viagem() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
         <QuemVe v={v} recarregar={recarregar} />
-        {orc ? (
+        {orc && !registrada ? (
           <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>
               <span style={{ display: 'block', fontSize: '13px', color: 'var(--sobre-escuro-sec)' }}>{orc.o.provavelBRL > 0 && parcial ? 'Somado até agora' : 'Custo estimado'} {orc.o.semCambio ? '(falta o câmbio)' : ''}</span>
@@ -146,7 +147,10 @@ export function Viagem() {
         <AlbumDaViagem v={v} lugares={itens.map((x) => x.l)} pode={pode || v.papel === 'leitor'} />
         <div style={{ marginTop: '12px' }}>
           <Segmentos rotulo="Partes da viagem" valor={aba} aoMudar={(a) => setParams({ aba: a }, { replace: true })}
-            opcoes={[{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
+            opcoes={registrada
+              // Viagem só registrada (D-060): lugares visitados, mapa e quem foi junto.
+              ? [{ id: 'roteiro', nome: 'Lugares' }, { id: 'mapa', nome: 'Mapa' }, { id: 'grupo', nome: `Quem foi (${v.membros.filter((m) => m.status === 'ativo').length})` }]
+              : [{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
         </div>
         {aba === 'roteiro' || aba === 'mapa' ? (
           <div role="tablist" aria-label="Dias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>

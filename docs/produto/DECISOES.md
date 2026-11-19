@@ -719,3 +719,10 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   foto é da pessoa e não mostra rostos de outros.
 - Arquivos em balde privado `fotos-viagem` (<user>/<viagem>_<id>); a exclusão da conta apaga; a exportação
   de dados inclui o álbum. O dono da viagem pode tirar uma foto do álbum.
+
+## D-060 — Registrar viagem que já fiz
+- **Por quê:** a fundadora quer postar fotos de viagens feitas antes do app (sem roteiro planejado nele).
+- **Como:** em Viagens, "Registrar viagem que já fiz": destino, mês, ano, noites e pessoas. Cria a viagem já
+  encerrada, sem roteiro nem custos, e abre direto nas Fotos da viagem. Nela, só as abas Lugares (os lugares
+  visitados, que a pessoa pode acrescentar e avaliar), Mapa e Quem foi. Aparece no perfil em "Já foi" para os
+  amigos, se ela escolher mostrar.

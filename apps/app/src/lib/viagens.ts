@@ -143,6 +143,18 @@ export async function criarViagem(dados: { destino: string; destinoId?: string |
   return data.id as string;
 }
 
+/** Viagem que a pessoa já fez fora do app (D-060): só para guardar fotos e lembranças. Sem roteiro nem custos. */
+export async function registrarViagemFeita(dados: { destino: string; destinoId: string | null; dataIda: string; noites: number; viajantes: number }): Promise<string | null> {
+  const uid = await eu();
+  if (!uid) return null;
+  const { data, error } = await supabase.from('trips')
+    .insert({ user_id: uid, destino: dados.destino, destino_id: dados.destinoId, data_ida: dados.dataIda, noites: dados.noites, viajantes: dados.viajantes, orcamento_centavos: null, data_definida: true, encerrada_em: new Date().toISOString(), diagnostico: { registrada: true } })
+    .select('id').single();
+  if (error || !data) return null;
+  await registrar(data.id as string, 'Registrou uma viagem que já fez.');
+  return data.id as string;
+}
+
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
   if (!uid) return null; // sem conta: nada a buscar (evita 9 pedidos recusados)

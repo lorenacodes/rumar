@@ -62,6 +62,7 @@ export function Viagens() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Viagens</div>
         <h1 style={titulo}>Suas viagens.</h1>
         <div style={{ marginTop: '12px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Nova viagem ↗</BotaoPrincipal></div>
+        <button type="button" className="r-btn" onClick={() => navegar('/viagens/ja-fiz')} style={{ display: 'block', minHeight: '44px', marginTop: '4px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Registrar viagem que já fiz</button>
         {convites.length ? (
           <>
             <Rotulo>Convites</Rotulo>
