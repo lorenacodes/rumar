@@ -264,6 +264,8 @@ export function Inicio() {
   const [hoje, setHoje] = useState<{ dia: number; total: number; paradas: string[]; clima: string | null } | null>(null);
   // Lembrete do bolso (D-089): a próxima viagem ainda não começou e faz 30 dias sem registrar nada guardado.
   const [lembrarGuardar, setLembrarGuardar] = useState(false);
+  // Depois da viagem (D-091): nos 14 dias seguintes, convite para avaliar os lugares e postar fotos.
+  const [voltou, setVoltou] = useState<Viagem | null>(null);
 
   useEffect(() => {
     if (!sessao) return;
@@ -277,6 +279,9 @@ export function Inicio() {
       // Próxima viagem = a que ainda não terminou (inclui a que está acontecendo agora).
       const proxima = v.minhas.filter((x) => x.status === 'ativo' && fim(x) >= agora).sort((a, b) => a.data_ida.localeCompare(b.data_ida))[0] ?? null;
       setViagem(proxima);
+      const recente = v.minhas.filter((x) => x.status === 'ativo' && fim(x) < agora && Math.round((Date.parse(`${agora}T12:00:00Z`) - Date.parse(`${fim(x)}T12:00:00Z`)) / 86_400_000) <= 14)
+        .sort((a, b) => fim(b).localeCompare(fim(a)))[0] ?? null;
+      setVoltou(recente);
       setPend({ convites: v.minhas.filter((x) => x.status === 'convidado').length, pedidos: amizades.filter((a) => a.status === 'pendente' && !a.enviadaPorMim).length, semUsuario: !usuario?.username });
       if (proxima && proxima.data_ida <= agora) {
         const dia = Math.round((Date.parse(`${agora}T12:00:00Z`) - Date.parse(`${proxima.data_ida}T12:00:00Z`)) / 86_400_000) + 1;
@@ -353,6 +358,14 @@ export function Inicio() {
               <span style={{ display: 'block', font: "600 16px 'Open Sans'", marginTop: '2px' }}>{dias === 0 ? 'É hoje!' : dias === 1 ? 'Falta 1 dia' : `Faltam ${dias} dias`}</span>
               <span style={{ display: 'block', fontSize: '13px', opacity: 0.85, marginTop: '6px' }}>{lembrarGuardar ? 'Guardou algo este mês? Toque para anotar ›' : 'Etapas, roteiro e dinheiro ›'}</span>
             </span>
+          </button>
+        ) : null}
+
+        {sessao && voltou ? (
+          <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${voltou.id}?aba=roteiro`)}
+            style={{ display: 'block', width: '100%', marginTop: '14px', padding: '14px 16px', borderRadius: '16px', background: 'var(--cartao-1)', textAlign: 'left' }}>
+            <b style={{ display: 'block', font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi {voltou.destino}?</b>
+            <span style={{ display: 'block', fontSize: '14px', marginTop: '2px' }}>Avalie os lugares e poste as fotos ›</span>
           </button>
         ) : null}
 
