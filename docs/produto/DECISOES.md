@@ -931,3 +931,11 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - O conteúdo fica só no banco (tabela `experiencias`), nunca no repositório público. Começo: 12 em Pernambuco
   (Recife, Olinda, Porto de Galinhas, Carneiros). A tarefa diária pesquisa 6 a 10 por dia, polo a polo do Nordeste,
   e revisa 3 antigas por dia.
+
+## D-081 — Início: fotos grandes, mas com a ponta da próxima à vista (desfaz D-075)
+- A fundadora viu no celular e reprovou as fotos de ponta a ponta: uma foto por tela obriga a rolar muito e
+  esconde o que existe. Volta o carrossel com a ponta do próximo cartão (sem contador).
+- Tamanhos: destaques 80% da largura (até 360 px), quadrados; demais faixas 58% (até 260 px), retrato 3:4;
+  cantos de 16 px; nome sobre a foto. Ainda maiores que o original (148 px).
+- Corrigido: no Android, o conteúdo aparecia por baixo da barra de abas, na faixa dos botões do sistema
+  (o selo "Seu favorito"). A barra agora pinta o fundo abaixo dela.
