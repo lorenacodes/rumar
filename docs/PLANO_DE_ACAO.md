@@ -205,3 +205,8 @@ antes de investir mais. Vou te dizer isso com clareza se acontecer.
 - Hotéis: [LiteAPI — comissão](https://docs.liteapi.travel/docs/revenue-management-and-commission), [Booking.com Demand API](https://developers.booking.com/demand/docs/getting-started/prerequisites)
 - Airbnb sem API aberta: [BNBCalc](https://www.bnbcalc.com/help/articles/does-airbnb-have-an-api)
 - Fotos: [Unsplash API](https://unsplash.com/documentation), [regras](https://help.unsplash.com/api-guidelines/unsplash-api-guidelines)
+
+
+## Princípio: difícil de copiar (19/11/2026)
+Tudo o que exige pesquisa (experiências, preços com fonte, dicas de maré e horário) entra no app e fica no banco,
+não no repositório público. Código se copia em dias; pesquisa conferida e atualizada leva meses.

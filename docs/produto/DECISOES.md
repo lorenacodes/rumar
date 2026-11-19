@@ -917,3 +917,17 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - O perfil direciona: o que combina com o estilo e os gostos da pessoa recebe o peso inteiro (×1,5); o resto,
   menos (×0,6). Ex.: gastronômico no Conforto ganha restaurantes especiais; cultural ganha museus e curiosos.
 - Intermediário também passa a buscar os curiosos da cidade. Textos das opções de orçamento atualizados.
+
+## D-080 — Experiências pesquisadas pelo Bo Vair (e o princípio "difícil de copiar")
+- **Princípio de produto (pedido da fundadora):** tudo o que exige pesquisa e é difícil de copiar deve estar no
+  app. É o que faz alguém preferir o Bo Vair a pesquisar no Google.
+- Nova camada "Experiências": coisas para fazer, não só lugares (catamarã pelos rios, jangada às piscinas
+  naturais, ateliê Brennand). Cada uma com site oficial quando existe e preço só com fonte, link e data
+  ("De onde vem o preço"); sem fonte, "Preço: confirme no local".
+- Onde aparece: Descobrir da cidade e roteiro da viagem ("Experiências para esta viagem"), incluindo bate-voltas
+  até 80 km. Ordem pelo jeito de viajar e pelo orçamento (econômico vê o grátis primeiro; conforto e quem quer
+  fugir do comum veem primeiro o diferente que combina com o estilo). No roteiro automático, o lugar de uma
+  experiência ganha preferência ("experiência recomendada").
+- O conteúdo fica só no banco (tabela `experiencias`), nunca no repositório público. Começo: 12 em Pernambuco
+  (Recife, Olinda, Porto de Galinhas, Carneiros). A tarefa diária pesquisa 6 a 10 por dia, polo a polo do Nordeste,
+  e revisa 3 antigas por dia.

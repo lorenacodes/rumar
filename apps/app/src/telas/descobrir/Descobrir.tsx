@@ -21,6 +21,7 @@ import { Voltar } from '../../ui/pecas';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa } from '../../ui/Mapa';
 import { ConviteCuriosidades, FeedGeral, FeedLugares } from './Feed';
+import { Experiencias } from './Experiencias';
 import { BlocoNetworking } from './Networking';
 
 const P = PRECOS as unknown as Precos;
@@ -286,6 +287,7 @@ export function Descobrir() {
             ) : null}
 
             {feed && preferencias?.networking ? <BlocoNetworking destinoId={destino.id} cidade={destino.nome} area={preferencias.area} /> : null}
+            {feed ? <Experiencias destino={destino} cidade={destino.nome} preferencias={preferencias ?? null} /> : null}
             {feed ? <FeedLugares destino={destino} aoAbrir={abrir} viagem={viagem} /> : null}
             {!feed && filtro === 'para-voce' && !termo && !comPreco && !gratis && itens.length ? (
               <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '12px 0 0' }}>

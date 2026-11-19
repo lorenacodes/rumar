@@ -46,6 +46,8 @@ export interface Lugar {
   destino?: string;
   /** Sinal de nível (lugares da base, sem preço): -1 simples, 0 neutro, 1 especial. Só ordena. */
   nivel?: -1 | 0 | 1;
+  /** É uma experiência pesquisada pelo Bo Vair (D-080). */
+  experiencia?: boolean;
   /** Curiosidade do lugar (Wikidata), quando é um lugar curioso (D-038). */
   curioso?: string | null;
   /** Fama (nº de Wikipédias com artigo): lugares reconhecidos sobem (D-036). */
@@ -267,6 +269,12 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
     if (simples) pontos -= intensidade * 1.5;
     // Grátis e pouco conhecido (praça, igrejinha, monumento) perde espaço quando a pessoa quer mais.
     if (l.custo === 0 && !destaque && !l.curioso) pontos -= intensidade * 0.8;
+  }
+  // Experiência pesquisada pelo Bo Vair (D-080): sobe quando combina com a pessoa, mais ainda quanto mais ela
+  // quer fugir do comum.
+  if (l.experiencia && (combina || intensidade >= 2)) {
+    pontos += 2 + intensidade;
+    motivos.push('experiência recomendada');
   }
   if (p.gratuitos && l.custo === 0 && p.orcamento !== 'conforto') {
     pontos += p.orcamento === 'economico' ? 3 : 1;

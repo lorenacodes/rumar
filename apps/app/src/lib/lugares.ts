@@ -8,6 +8,7 @@
 import { sinalNivel } from './nivel';
 import { gruposDeCozinha, TERMOS_COZINHA, type Cozinha } from './comida';
 import { supabase } from './supabase';
+import { lugaresDeExperiencia } from './experiencias';
 import { registrarLugares } from './catalogo';
 import type { Categoria, Lugar, Periodo } from './planejador';
 
@@ -279,12 +280,15 @@ export async function candidatosRoteiro(destino: string, nivel?: 'economico' | '
     consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('categoria', ['restaurantes', 'cafes'])
       .overlaps('dieta_opcoes', ['vegetariano', 'vegano', 'so_vegetariano', 'so_vegano']).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(25));
   }
+  // Experiências pesquisadas (D-080): os lugares delas entram na disputa e ganham preferência no roteiro.
+  const exp = await lugaresDeExperiencia(destino).catch(() => new Set<string>());
+  if (exp.size) consultas.push(supabase.from('lugares').select(COLS).in('id', [...exp]));
   const res = await Promise.all(consultas);
   const vistos = new Set<string>();
   const todos = res.flatMap((r) => (r.data ?? []) as LugarBase[]).filter((b) => (vistos.has(b.id) ? false : (vistos.add(b.id), true)));
   guardar(todos);
   // Sem categoria de roteiro (cinema, teatro, balada, rede): fica no Descobrir, fora do roteiro automático.
-  return todos.filter((b) => !FORA_DO_ROTEIRO.has(b.tipo)).map(paraLugar).filter((l) => l !== null) as Lugar[];
+  return todos.filter((b) => !FORA_DO_ROTEIRO.has(b.tipo)).map(paraLugar).filter((l) => l !== null).map((l) => (exp.has(l!.id) ? { ...l!, experiencia: true } : l)) as Lugar[];
 }
 
 /** Busca por nome um lugar da cidade (restaurante, ponto turístico, hotel...), para registrar onde a pessoa foi (D-061). */

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BlocoNetworking } from '../descobrir/Networking';
+import { Experiencias } from '../descobrir/Experiencias';
 import { Check } from '../../ui/check';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -412,6 +413,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
     <section style={{ marginTop: '14px' }}>
       {dia === 1 && pode && v.viagem.data_ida <= new Date().toISOString().slice(0, 10) ? <OndeFui v={v} recarregar={recarregar} /> : null}
       {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
+      {dia === 1 && v.viagem.destino_id ? <Experiencias destino={{ id: v.viagem.destino_id }} cidade={v.viagem.destino} preferencias={grupo ?? preferencias ?? null} titulo="Experiências para esta viagem" max={3} /> : null}
       {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
       <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
       <div style={{ fontSize: '15px', color: 'var(--texto)' }}>{dataLonga}</div>
