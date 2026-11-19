@@ -1,7 +1,7 @@
 name: Fotos por localização
 
 # Fotos por localização (D-057): procura no Wikimedia Commons fotos livres tiradas perto dos lugares
-# que não têm foto. Todo dia, os 3.000 mais relevantes ainda não procurados (cada um é revisto a cada
+# que não têm foto. Todo dia, 3.000 do Brasil (turísticos mais conhecidos primeiro) ainda não procurados (cada um é revisto a cada
 # 90 dias). Rodar à mão escolhendo cidades: campo "destinos". OIDC do GitHub; nenhuma chave.
 on:
   workflow_dispatch:
@@ -10,6 +10,10 @@ on:
         description: 'IDs das cidades separados por vírgula (vazio = todas)'
         required: false
         default: 'br-2611606,br-2609600,br-2605459,br-2604106,br-2607208'
+      pais:
+        description: 'País (prefixo do id, ex.: br). Vazio = todos'
+        required: false
+        default: 'br'
       limite:
         description: 'Quantos lugares procurar'
         required: false
@@ -43,4 +47,5 @@ jobs:
         env:
           DESTINOS: ${{ github.event_name == 'push' && 'br-2611606,br-2609600,br-2605459,br-2604106,br-2607208' || inputs.destinos || '' }}
           LIMITE: ${{ inputs.limite || '3000' }}
-        run: node tools/dados/fotos-commons.mjs --destinos "$DESTINOS" --limite "$LIMITE"
+          PAIS: ${{ github.event_name == 'workflow_dispatch' && inputs.pais || 'br' }}
+        run: node tools/dados/fotos-commons.mjs --pais "$PAIS" --destinos "$DESTINOS" --limite "$LIMITE"

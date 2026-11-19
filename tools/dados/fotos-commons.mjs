@@ -6,7 +6,7 @@
  * - restaurantes, bares, cafés, hotéis e lojas: só se o nome do arquivo citar o lugar (até 150 m);
  * - nunca mapa, logo, bandeira, brasão ou diagrama; só CC0, CC BY, CC BY-SA ou domínio público.
  * Roda no GitHub Actions (workflow "Fotos por localização"); grava pela função importar-lugares com OIDC, sem chave.
- * Uso: node tools/dados/fotos-commons.mjs [--destinos br-2611606,br-2609600] [--limite 1500]
+ * Uso: node tools/dados/fotos-commons.mjs [--pais br] [--destinos br-2611606,br-2609600] [--limite 1500]
  */
 const FUNCAO = 'https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/importar-lugares';
 const API = 'https://commons.wikimedia.org/w/api.php';
@@ -65,8 +65,15 @@ function candidatos(l, achados) {
 
 const destinos = (arg('destinos', '') || '').split(',').map((s) => s.trim()).filter(Boolean);
 const limite = Number(arg('limite', '1500'));
-const { itens } = await banco({ acao: 'fotos_pendentes', destinos, limite });
-console.log(`${itens.length} lugares sem foto para procurar${destinos.length ? ` em ${destinos.join(', ')}` : ''}`);
+const prefixo = arg('pais', '') ? `${arg('pais', '')}-` : undefined;
+// Ordem (pedido da fundadora): no país escolhido, primeiro os turísticos mais conhecidos; depois o resto.
+let { itens } = await banco({ acao: 'fotos_pendentes', destinos, prefixo, turisticos: true, limite });
+if (itens.length < limite) {
+  const vistos = new Set(itens.map((i) => i.id));
+  const resto = (await banco({ acao: 'fotos_pendentes', destinos, prefixo, limite: limite - itens.length + 200 })).itens.filter((i) => !vistos.has(i.id));
+  itens = [...itens, ...resto].slice(0, limite);
+}
+console.log(`${itens.length} lugares sem foto para procurar${destinos.length ? ` em ${destinos.join(', ')}` : prefixo ? ` (${prefixo}*)` : ''}`);
 
 let achadas = 0;
 const porCidade = new Map();

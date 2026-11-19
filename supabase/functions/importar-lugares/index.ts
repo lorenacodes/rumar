@@ -15,7 +15,7 @@
 //   { acao: 'curiosidades_gravar', itens: Curiosidade[] }      → curiosidades do mundo (D-039)
 //   { acao: 'coletadas' }                                      → cidades com lugares (para as opções de dieta)
 //   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
-//   { acao: 'fotos_pendentes', destinos?, limite }             → lugares sem foto ainda não procurados (D-057)
+//   { acao: 'fotos_pendentes', destinos?, prefixo?, turisticos?, limite } → lugares sem foto ainda não procurados (D-057)
 //   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
@@ -147,7 +147,10 @@ Deno.serve(async (req) => {
       .or(`foto_tentada_em.is.null,foto_tentada_em.lt.${antes}`).not('categoria', 'in', '(transporte)');
     const destinos = Array.isArray(p.destinos) ? (p.destinos as unknown[]).filter((d): d is string => typeof d === 'string').slice(0, 50) : [];
     if (destinos.length) q = q.in('destino_id', destinos);
-    const { data, error } = await q.order('relevancia', { ascending: false }).limit(limite);
+    // País (prefixo do id, ex.: "br-") e só os turísticos primeiro (praias, atrações, centro histórico, museus, parques).
+    if (typeof p.prefixo === 'string' && /^[a-z]{2}-$/.test(p.prefixo)) q = q.like('destino_id', `${p.prefixo}%`);
+    if (p.turisticos === true) q = q.in('categoria', ['praias', 'atracoes', 'historico', 'museus', 'parques', 'cultura', 'mercados']);
+    const { data, error } = await q.order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(limite);
     if (error) return json({ erro: error.message }, 500);
     return json({ itens: data ?? [] });
   }
