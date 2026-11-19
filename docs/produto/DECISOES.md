@@ -708,3 +708,14 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   Imbassaí, Morro de São Paulo, Boipeba, Barra Grande, Arraial d'Ajuda, Trancoso, Caraíva, Vale do Capão,
   Canoa Quebrada, Cumbuco, Morro Branco, Porto das Dunas, Pipa, Genipabu, Jacumã, Atins, Barra Grande do Piauí).
 - Modo "novos" no workflow Lugares: carrega os destinos e coleta as cidades pedidas numa só execução.
+
+## D-059 — Fotos da viagem (álbum do grupo)
+- **Por quê:** a fundadora não conseguia postar fotos de uma viagem já feita (só havia o envio escondido na
+  página de cada lugar).
+- **Como:** "Fotos da viagem" no topo da viagem, quando ela começa: participantes postam várias fotos e vídeos
+  de uma vez (até 20 por vez, 60 por dia; vídeo até 20 s), com lugar e legenda opcionais. Quem vê: grupo e
+  amigos que podem ver a viagem; **não fica público** nem em viagem pública (rostos e onde a pessoa esteve).
+  Sem moderação. Opção "mostrar também na página do lugar": aí vai para a moderação, com a declaração de que a
+  foto é da pessoa e não mostra rostos de outros.
+- Arquivos em balde privado `fotos-viagem` (<user>/<viagem>_<id>); a exclusão da conta apaga; a exportação
+  de dados inclui o álbum. O dono da viagem pode tirar uma foto do álbum.

@@ -27,6 +27,7 @@ import { FotoLugar } from '../../ui/foto';
 import { Mapa, type Ponto } from '../../ui/Mapa';
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { Info } from '../../ui/info';
+import { AlbumDaViagem } from './Album';
 import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rotulo, Segmentos, Selo } from './comum';
 
 type Aba = 'etapas' | 'roteiro' | 'mapa' | 'hospedagem' | 'dinheiro' | 'grupo';
@@ -142,6 +143,7 @@ export function Viagem() {
             </span>
           </button>
         ) : null}
+        <AlbumDaViagem v={v} lugares={itens.map((x) => x.l)} pode={pode || v.papel === 'leitor'} />
         <div style={{ marginTop: '12px' }}>
           <Segmentos rotulo="Partes da viagem" valor={aba} aoMudar={(a) => setParams({ aba: a }, { replace: true })}
             opcoes={[{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
@@ -237,12 +239,12 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
   const hoje = new Date().toISOString().slice(0, 10);
   if (v.viagem.data_ida > hoje) return null;
   const vistos = new Set<string>();
-  const lugares = itens.filter(({ l }) => l.id.startsWith('osm-') && (vistos.has(l.id) ? false : (vistos.add(l.id), true)))
+  const lugares = itens.filter(({ l }) => (vistos.has(l.id) ? false : (vistos.add(l.id), true)))
     .sort((a, b) => Number(Boolean(b.it.feito)) - Number(Boolean(a.it.feito))).slice(0, 8);
   return (
     <section aria-label="Como foi" style={{ marginBottom: '14px', padding: '14px', background: 'var(--cartao-2)' }}>
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi?</h2>
-      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares e mostre suas fotos e vídeos.</p>
+      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares. Fotos vão em Fotos da viagem, no topo.</p>
       <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
         {lugares.map(({ l, it }) => (
           <li key={l.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>

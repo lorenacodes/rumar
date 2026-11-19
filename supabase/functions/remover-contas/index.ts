@@ -39,6 +39,9 @@ Deno.serve(async (req) => {
     // Fotos de lugares enviadas pela pessoa (os registros saem pela chave estrangeira).
     const { data: arquivos } = await db.storage.from('fotos-enviadas').list(user_id, { limit: 1000 });
     if (arquivos?.length) await db.storage.from('fotos-enviadas').remove(arquivos.map((a) => `${user_id}/${a.name}`));
+    // Fotos do álbum das viagens (D-059).
+    const { data: album } = await db.storage.from('fotos-viagem').list(user_id, { limit: 1000 });
+    if (album?.length) await db.storage.from('fotos-viagem').remove(album.map((a) => `${user_id}/${a.name}`));
     const { error: e } = await db.auth.admin.deleteUser(user_id);
     if (e) falhas.push(e.message);
     else removidas++;

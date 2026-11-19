@@ -56,7 +56,7 @@ export async function meusDados(): Promise<Record<string, unknown>> {
     supabase.from('fotos_enviadas').select('id, place_id, tipo, legenda, status, created_at, caminho').eq('user_id', uid),
   ]);
   const ids = (membros.data ?? []).map((m) => m.trip_id as string);
-  const tabelas = ['trips', 'trip_items', 'trip_lodging', 'trip_expenses', 'trip_tasks', 'trip_savings', 'trip_spend'] as const;
+  const tabelas = ['trips', 'trip_items', 'trip_lodging', 'trip_expenses', 'trip_tasks', 'trip_savings', 'trip_spend', 'viagem_fotos'] as const;
   const viagens: Record<string, unknown> = {};
   if (ids.length) {
     const r = await Promise.all(tabelas.map((t) => (t === 'trips' ? supabase.from(t).select('*').in('id', ids) : supabase.from(t).select('*').in('trip_id', ids))));
