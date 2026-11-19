@@ -36,7 +36,20 @@ confere('abre a viagem', /#\/viagem\//.test(bia.url()));
 confere('vê as fotos do álbum', (await bia.locator('section[aria-label="Fotos da viagem"] img').count()) > 0);
 confere('não vê gastos', !(await bia.getByRole('tab', { name: /Dinheiro/ }).count()));
 
-await t.reload(); await t.waitForTimeout(4000);
+// Denúncia (D-073): com 2 denúncias a foto some para os outros; quem postou continua vendo.
+const viagemUrl = bia.url();
+const denuncia = async (p) => {
+  if (p.url() !== viagemUrl) await p.goto(viagemUrl); await p.waitForTimeout(5000);
+  await p.locator('section[aria-label="Fotos da viagem"] button').last().click(); await p.waitForTimeout(800);
+  await p.getByRole('dialog', { name: 'Foto' }).getByRole('button', { name: 'Denunciar' }).click(); await p.waitForTimeout(2000);
+};
+await denuncia(bia);
+const ana = await entrar('e2e.ana@bovair.com.br');
+await denuncia(ana);
+await bia.reload(); await bia.waitForTimeout(5000);
+confere('2 denúncias: foto some para os outros', (await bia.locator('section[aria-label="Fotos da viagem"] img').count()) === 0);
+await t.reload(); await t.waitForTimeout(5000);
+confere('quem postou ainda vê a foto', (await t.locator('section[aria-label="Fotos da viagem"] img').count()) > 0);
 await t.getByRole('button', { name: 'Apagar viagem' }).click(); await t.waitForTimeout(4000);
 confere('viagem apagada', /#\/viagens$/.test(t.url()));
 await bia.goto(URL + '#/viagens/galera'); await bia.waitForTimeout(4000);

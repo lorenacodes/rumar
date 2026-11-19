@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { apagarDaViagem, fotosDaViagem, postarNaViagem, type FotoDaViagem } from '../../lib/album';
 import { atualizarViagem } from '../../lib/viagens';
+import { denunciar } from '../../lib/avaliacoes';
 import type { Lugar } from '../../lib/planejador';
 import type { ViagemCompleta } from '../../lib/viagens';
 
@@ -120,6 +121,7 @@ export function AlbumDaViagem({ v, lugares, pode, recarregar }: { v: ViagemCompl
             <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
               <button type="button" className="r-btn" onClick={() => setVendo(null)} style={{ color: '#fff', fontWeight: 600, minHeight: '44px' }}>Fechar</button>
               {vendo.minha || v.papel === 'dono' ? <button type="button" className="r-btn" onClick={() => { if (window.confirm('Apagar esta foto da viagem?')) void apagarDaViagem(vendo).then(() => { setVendo(null); carregar(); }); }} style={{ color: '#ff9b9b', fontWeight: 600, minHeight: '44px' }}>Apagar</button> : null}
+              {!vendo.minha ? <button type="button" className="r-btn" onClick={() => { if (window.confirm('Denunciar esta foto? A moderação vai olhar.')) void denunciar('foto', vendo.id, 'álbum').then(() => setVendo(null)); }} style={{ color: '#fff', opacity: 0.8, minHeight: '44px' }}>Denunciar</button> : null}
             </div>
           </div>
         </div>

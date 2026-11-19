@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
 import { linkSeguro } from '../../lib/seguro';
+import { denunciar } from '../../lib/avaliacoes';
 import { apagarMinhaFoto, enviarFoto, fotoGoogle, fotosAprovadas, minhasFotos, type FotoEnviada, type FotoGoogle } from '../../lib/fotosEnviadas';
 
 /** Capa da página do lugar quando não há foto livre: 1º foto aprovada de quem foi, 2º Google (se ligado). */
@@ -51,6 +52,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
   const [declaro, setDeclaro] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [denunciadas, setDenunciadas] = useState<string[]>([]);
   const campo = useRef<HTMLInputElement>(null);
   const carregar = () => {
     void fotosAprovadas([placeId]).then((m) => setFotos(m.get(placeId) ?? []));
@@ -81,12 +83,17 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Fotos de quem foi</h2>
       {fotos.length ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginTop: '8px' }}>
-          {fotos.slice(0, 12).map((f) => (
+          {fotos.filter((f) => !denunciadas.includes(f.id)).slice(0, 12).map((f) => (
             <figure key={f.id} style={{ margin: 0, position: 'relative' }}>
               {f.tipo === 'video'
                 ? <video src={f.url} controls playsInline preload="metadata" aria-label={f.legenda ?? `Vídeo em ${nome}`} style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', display: 'block', background: '#000' }} />
                 : <img src={f.url} alt={f.legenda ?? `${f.tipo === 'prato' ? 'Prato' : 'Foto'} em ${nome}`} loading="lazy" style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', display: 'block' }} />}
               <figcaption style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '10px 4px 2px', background: 'linear-gradient(transparent, rgba(0,0,0,.6))', color: '#fff', fontSize: '10px', lineHeight: '13px' }}>{f.tipo === 'prato' ? 'Prato · ' : ''}{f.usuario ? `@${f.usuario}` : ''}</figcaption>
+              {sessao && !minhas.some((m) => m.id === f.id) ? (
+                <button type="button" className="r-btn" aria-label="Denunciar foto"
+                  onClick={() => { if (window.confirm('Denunciar esta foto? A moderação vai olhar.')) void denunciar('foto', f.id, 'página do lugar').then((ok) => ok && setDenunciadas((d) => [...d, f.id])); }}
+                  style={{ position: 'absolute', top: '2px', right: '2px', minHeight: '28px', padding: '0 6px', borderRadius: '6px', background: 'rgba(0,0,0,.55)', color: '#fff', fontSize: '10px', fontWeight: 600 }}>Denunciar</button>
+              ) : null}
             </figure>
           ))}
         </div>
@@ -94,7 +101,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
 
       {pendentes ? <p role="status" style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>{pendentes === 1 ? '1 foto sua está em análise.' : `${pendentes} fotos suas estão em análise.`}</p> : null}
       {recusadas.length ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{recusadas.length === 1 ? '1 foto sua não foi aprovada.' : `${recusadas.length} fotos suas não foram aprovadas.`} <button type="button" className="r-btn" onClick={() => void Promise.all(recusadas.map((r) => apagarMinhaFoto(r.id, r.caminho))).then(carregar)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Apagar</button></p> : null}
-      {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.startsWith('Recebemos') ? 'var(--verde)' : 'var(--vermelho)', margin: '6px 0 0' }}>{msg}</p> : null}
+      {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.startsWith('Foto publicada') ? 'var(--verde)' : 'var(--vermelho)', margin: '6px 0 0' }}>{msg}</p> : null}
 
       {!aberto ? (
         <button type="button" className="r-btn" onClick={() => (sessao ? (setAberto(true), setMsg(null)) : navegar('/entrar'))}

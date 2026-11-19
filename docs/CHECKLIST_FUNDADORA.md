@@ -24,7 +24,8 @@
   - [ ] Nos e-mails "Confirm signup" e "Change email address", usar o código `{{ .Token }}`.
   - [ ] Redirect URL: `com.bovair.app://auth`.
 - [ ] **1.3 Testar criar conta no APK** com o seu e-mail principal e me contar o resultado. Isso também libera a
-      sua **Moderação de fotos** (Perfil → Moderação de fotos), onde você aprova as fotos enviadas.
+      sua **Moderação** (Perfil → Moderação de fotos). As fotos aparecem na hora; lá chegam só as denunciadas
+      (2 denúncias tiram a foto do ar). Olhe 1 vez por semana.
 
 - [ ] **1.4 Teste com o pessoal do trabalho** — guia e mensagem pronta em `docs/TESTADORES.md`. Faça depois do 1.1.
       Peça "relatório dos testadores" quando quiser ver os números (só contagens, sem dados pessoais).

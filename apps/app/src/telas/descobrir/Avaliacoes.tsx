@@ -193,6 +193,11 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
                     {fotos.map((m) => <a key={m.id} href={m.url} target="_blank" rel="noopener noreferrer"><Miniatura url={m.url} video={m.tipo === 'video'} /></a>)}
                   </div>
                 ) : null}
+                {fotos.length && !a.minha && sessao ? (
+                  <button type="button" className="r-btn" disabled={denunciadas.includes(`m-${a.id}`)}
+                    onClick={() => { if (window.confirm('Denunciar as fotos desta avaliação?')) void Promise.all(fotos.map((m) => denunciar('foto', m.id, 'avaliação'))).then(() => setDenunciadas((d) => [...d, `m-${a.id}`])); }}
+                    style={{ fontSize: '12px', color: 'var(--texto-sec)', minHeight: '32px', marginRight: '12px' }}>{denunciadas.includes(`m-${a.id}`) ? 'Fotos denunciadas' : 'Denunciar fotos'}</button>
+                ) : null}
                 {meta.length ? <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '6px' }}>{meta.join(' · ')}</div> : null}
                 {!a.minha && sessao ? (
                   <button type="button" className="r-btn" disabled={denunciadas.includes(a.id)} onClick={() => void denunciar('avaliacao', a.id).then((ok) => ok && setDenunciadas((d) => [...d, a.id]))}

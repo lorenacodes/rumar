@@ -117,6 +117,21 @@ export async function moderar(id: string, status: 'aprovada' | 'recusada'): Prom
   return !error;
 }
 
+/** Fotos de álbum de viagem com 2+ denúncias (somem para os outros até a decisão). */
+export async function fotosViagemDenunciadas(): Promise<{ id: string; trip_id: string; caminho: string; legenda: string | null; denuncias: number; url: string }[]> {
+  const { data } = await supabase.rpc('fotos_viagem_denunciadas');
+  const linhas = (data ?? []) as { id: string; trip_id: string; caminho: string; legenda: string | null; denuncias: number }[];
+  if (!linhas.length) return [];
+  const { data: urls } = await supabase.storage.from('fotos-viagem').createSignedUrls(linhas.map((l) => l.caminho), 3600);
+  const m = new Map((urls ?? []).filter((u) => u.signedUrl && u.path).map((u) => [u.path!, u.signedUrl as string]));
+  return linhas.map((l) => ({ ...l, denuncias: Number(l.denuncias), url: m.get(l.caminho) ?? '' }));
+}
+/** Manter: tira as denúncias. Apagar: tira a foto do álbum. */
+export async function decidirFotoViagem(id: string, apagar: boolean): Promise<boolean> {
+  const { error } = apagar ? await supabase.from('viagem_fotos').delete().eq('id', id) : await supabase.from('denuncias').delete().eq('alvo', 'foto').eq('alvo_id', id);
+  return !error;
+}
+
 // ---------------------------------------------------------------- Google Places (opcional)
 const google = new Map<string, FotoGoogle | null>();
 /** Foto do Google para a página do lugar. Nulo quando não ligado, sem foto ou teto do mês atingido. */

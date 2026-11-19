@@ -840,3 +840,10 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Fotos automáticas: a busca diária começa pelos lugares onde alguém disse que foi (roteiro, viagem
   registrada, avaliação), tenta de novo a cada 7 dias e também procura pelo nome do lugar no Commons
   (só vale arquivo com coordenada a até 2 km e nome que cite o lugar).
+
+## D-073 — "Denunciar" em toda foto de usuário
+- Revisão do D-072: com foto publicada na hora, faltava como denunciar. Agora há "Denunciar" nas fotos da
+  página do lugar, nas fotos das avaliações, no álbum da viagem e no feed.
+- Foto de lugar com 2 denúncias sai do ar e volta para a Moderação (Aprovar/Recusar).
+- Foto de álbum com 2 denúncias some para todos, menos para quem postou; a Moderação decide Apagar ou Manter.
+- Ainda não: perguntar Wi-Fi em lugar registrado só pelo nome (sem ficha na base).
