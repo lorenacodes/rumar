@@ -12,10 +12,11 @@ import { meuUsuario } from '../../lib/usuario';
 import { lugarPorId } from '../../lib/catalogo';
 import { useViajante } from '../../state/viajante';
 import { hojeISO } from '../viagens/jornada';
-import { carregarViagem, listarViagens, type Viagem } from '../../lib/viagens';
+import { carregarViagem, listarViagens, textoMotivo, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
 import { curiosidades } from '../../lib/curiosidades';
 import { amigosEstiveram, type AmigoEsteve } from '../../lib/amigos';
+import { feedViagens, type PostViagem } from '../../lib/feed';
 import { lugaresCuriosos, nomesDestinos } from '../../lib/lugares';
 import { Avatar } from '../../ui/avatar';
 import { Estrelas } from '../../ui/estrelas';
@@ -106,6 +107,42 @@ function AmigosEstiveram() {
                     {c.nota ? <Estrelas nota={c.nota} tamanho={12} /> : null}
                     <span>{c.tipo === 'viagem' ? `${c.fotos} ${c.fotos === 1 ? 'foto' : 'fotos'}` : c.cidade ?? ''}</span>
                   </span>
+                </span>
+              </span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/** Faixa "Viagens da galera" (D-071): prévia do feed; o último cartão abre o feed inteiro. */
+function ViagensDaGalera() {
+  const navegar = useNavigate();
+  const [itens, setItens] = useState<PostViagem[]>([]);
+  useEffect(() => void feedViagens(8).then(setItens), []);
+  if (!itens.length) return null;
+  return (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <Rot t="Viagens da galera" />
+        <button type="button" className="r-btn" onClick={() => navegar('/viagens/galera')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Ver todas</button>
+      </div>
+      <div role="list" aria-label="Viagens da galera" style={fileira}>
+        {itens.map((c) => (
+          <div role="listitem" key={c.trip_id} style={{ display: 'contents' }}>
+            <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${c.trip_id}?aba=roteiro`)} aria-label={`Viagem de ${c.nome} para ${c.destino}`}
+              style={{ flex: 'none', width: '200px', textAlign: 'left', scrollSnapAlign: 'start' }}>
+              <span style={{ position: 'relative', display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+                <img src={c.url} alt="" loading="lazy" onError={() => setItens((l) => l.filter((x) => x !== c))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 10px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Avatar userId={c.user_id} nome={c.nome} tamanho={24} />
+                    <b style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nome.split(' ')[0]}</b>
+                  </span>
+                  <b style={{ display: 'block', font: "600 15px/19px 'Lexend Exa'", marginTop: '4px' }}>{c.destino}</b>
+                  <span style={{ display: 'block', fontSize: '12px', marginTop: '2px' }}>{textoMotivo(c) ?? (c.fotos ? `${c.fotos} ${c.fotos === 1 ? 'foto' : 'fotos'}` : `${c.lugares} lugares`)}</span>
                 </span>
               </span>
             </button>
@@ -304,6 +341,7 @@ export function Inicio() {
 
         <Rot t="No Brasil" />
         <div role="list" aria-label="Destinos no Brasil" style={fileira}>{brasil.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+        {sessao ? <ViagensDaGalera /> : null}
         {sessao ? <AmigosEstiveram /> : null}
         <Curiosos />
         <Rot t="Lá fora" />

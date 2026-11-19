@@ -814,3 +814,15 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Não havia como apagar uma viagem. O dono agora vê "Apagar viagem" (com confirmação) na aba Grupo ou em Lugares.
   Os arquivos de fotos do dono são apagados; os de outras pessoas ficam na pasta delas, invisíveis, e saem quando
   elas excluem a conta.
+
+## D-071 — Feed "Viagens da galera"
+- Pedido da fundadora: um feed de viagens das pessoas. Fora do design original (tela nova, `/viagens/galera`).
+- Entra: viagens de amigos (Amigos ou Todos) e de qualquer pessoa que marcou Todos. Ficam fora as minhas e as
+  viagens em que participo. Ordem: atividade mais recente (última foto do álbum ou criação).
+- Sempre com foto: a mais recente do álbum; sem álbum, a foto de um lugar do roteiro. Sem foto, não entra.
+- Cartão: pessoa (abre o perfil), período, destino, motivo/evento, fotos e lugares. Toque abre roteiro e álbum,
+  sem hotel nem gastos.
+- Início ganhou a faixa "Viagens da galera" (8 cartões e "Ver todas"), só para quem tem conta.
+- Segurança: "Denunciar foto" no cartão; foto com 2 denúncias sai da capa automaticamente. Ainda falta mostrar
+  essas denúncias na tela de Moderação (hoje ela trata fotos de lugares e avaliações).
+- Sem conta: não vê o feed (pede para entrar). Página aberta na internet fica para depois.

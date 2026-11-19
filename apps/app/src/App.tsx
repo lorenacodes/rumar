@@ -70,6 +70,7 @@ const Lugar = sob(() => import('./telas/descobrir/Lugar'), 'Lugar');
 const Destinos = sob(() => import('./telas/destinos/Destinos'), 'Destinos');
 const Pessoa = sob(() => import('./telas/social/Pessoa'), 'Pessoa');
 const Social = sob(() => import('./telas/social/Social'), 'Social');
+const FeedViagens = sob(() => import('./telas/social/FeedViagens'), 'FeedViagens');
 const Curiosos = sob(() => import('./telas/curiosos/Curiosos'), 'Curiosos');
 const Moderar = sob(() => import('./telas/s05/Moderar'), 'Moderar');
 const NovaViagem = sob(() => import('./telas/viagens/NovaViagem'), 'NovaViagem');
@@ -132,6 +133,7 @@ const filhos: RouteObject[] = [
   { path: '/viagens', element: <Viagens /> },
   { path: '/viagens/nova', element: <NovaViagem /> },
   { path: '/viagens/ja-fiz', element: <JaFiz /> },
+  { path: '/viagens/galera', element: <FeedViagens /> },
   { path: '/viagem/:id', element: <Viagem /> },
   { path: '/perfil/amigos', element: <Social /> },
   { path: '/perfil/avaliacoes', element: <MinhasAvaliacoes /> },
