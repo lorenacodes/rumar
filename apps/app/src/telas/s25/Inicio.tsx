@@ -5,7 +5,8 @@ import { useDemo } from '../../dev/demo';
 
 import { carregarDaConta, carregarPerfil, useSessao } from '../../conta/servico';
 import DESTINOS from '../../dados/destinos.json';
-import { destinoPorNome } from '../../lib/lugares';
+import { destinoPorId, destinoPorNome } from '../../lib/lugares';
+import { climaDaViagem, textoDoDia } from '../../lib/clima';
 import { cancelarExclusao, estadoExclusao } from '../../lib/privacidade';
 import { meusFavoritos, minhasAmizades, type Favorito } from '../../lib/social';
 import { meuUsuario } from '../../lib/usuario';
@@ -260,7 +261,9 @@ export function Inicio() {
   const [exclusao, setExclusao] = useState<Date | null>(null);
   const { preferencias } = useViajante();
   const [pend, setPend] = useState<{ convites: number; pedidos: number; semUsuario: boolean } | null>(null);
-  const [hoje, setHoje] = useState<{ dia: number; total: number; paradas: string[] } | null>(null);
+  const [hoje, setHoje] = useState<{ dia: number; total: number; paradas: string[]; clima: string | null } | null>(null);
+  // Lembrete do bolso (D-089): a próxima viagem ainda não começou e faz 30 dias sem registrar nada guardado.
+  const [lembrarGuardar, setLembrarGuardar] = useState(false);
 
   useEffect(() => {
     if (!sessao) return;
@@ -279,8 +282,25 @@ export function Inicio() {
         const dia = Math.round((Date.parse(`${agora}T12:00:00Z`) - Date.parse(`${proxima.data_ida}T12:00:00Z`)) / 86_400_000) + 1;
         const completa = await carregarViagem(proxima.id);
         const paradas = (completa?.itens ?? []).filter((i) => i.dia === dia).sort((a, b) => a.ordem - b.ordem).map((i) => lugarPorId(i.place_id)?.nome).filter(Boolean) as string[];
-        setHoje({ dia, total: proxima.noites + 1, paradas });
-      } else setHoje(null);
+        setHoje({ dia, total: proxima.noites + 1, paradas, clima: null });
+        // Clima de hoje no destino (D-089).
+        const d = proxima.destino_id ? await destinoPorId(proxima.destino_id) : null;
+        if (d?.lat != null && d.lon != null) {
+          const c = await climaDaViagem(d.lat, d.lon, proxima.data_ida, proxima.noites);
+          const dc = c?.dias.find((x) => x.data === agora);
+          if (c && dc) setHoje((h) => (h ? { ...h, clima: textoDoDia(dc, c.fonte) } : h));
+        }
+        setLembrarGuardar(false);
+      } else {
+        setHoje(null);
+        if (proxima) {
+          const completa = await carregarViagem(proxima.id);
+          const ultimo = (completa?.aportes ?? []).map((a) => a.data).sort().at(-1);
+          const temMeta = Boolean(proxima.orcamento_centavos || proxima.capacidade_mensal_centavos || completa?.gastos.length);
+          const dias = ultimo ? Math.round((Date.parse(`${agora}T12:00:00Z`) - Date.parse(`${ultimo}T12:00:00Z`)) / 86_400_000) : Infinity;
+          setLembrarGuardar(Boolean(completa?.papel) && temMeta && dias >= 30);
+        }
+      }
     })();
     void estadoExclusao().then((e) => setExclusao(e?.apagaEm ?? null));
   }, [sessao]);
@@ -316,7 +336,7 @@ export function Inicio() {
             style={{ display: 'block', width: '100%', marginTop: '14px', padding: '14px 16px', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Você está viajando</span>
             <span style={{ display: 'block', font: "600 24px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>Hoje em {viagem.destino}</span>
-            <span style={{ display: 'block', fontSize: '14px', color: 'var(--sobre-escuro-sec)' }}>Dia {Math.min(hoje.dia, hoje.total)} de {hoje.total}</span>
+            <span style={{ display: 'block', fontSize: '14px', color: 'var(--sobre-escuro-sec)' }}>Dia {Math.min(hoje.dia, hoje.total)} de {hoje.total}{hoje.clima ? ` · ${hoje.clima}` : ''}</span>
             {hoje.paradas.length ? (
               <span style={{ display: 'block', marginTop: '8px', fontSize: '15px', lineHeight: '22px' }}>{hoje.paradas.slice(0, 4).map((n, i) => <span key={n} style={{ display: 'block' }}>{i + 1}. {n}</span>)}</span>
             ) : <span style={{ display: 'block', marginTop: '8px', fontSize: '14px' }}>Dia livre no roteiro. Toque para adicionar lugares.</span>}
@@ -331,7 +351,7 @@ export function Inicio() {
               <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Sua próxima viagem</span>
               <span style={{ display: 'block', font: "600 26px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>{viagem.destino}</span>
               <span style={{ display: 'block', font: "600 16px 'Open Sans'", marginTop: '2px' }}>{dias === 0 ? 'É hoje!' : dias === 1 ? 'Falta 1 dia' : `Faltam ${dias} dias`}</span>
-              <span style={{ display: 'block', fontSize: '13px', opacity: 0.85, marginTop: '6px' }}>Etapas, roteiro e dinheiro ›</span>
+              <span style={{ display: 'block', fontSize: '13px', opacity: 0.85, marginTop: '6px' }}>{lembrarGuardar ? 'Guardou algo este mês? Toque para anotar ›' : 'Etapas, roteiro e dinheiro ›'}</span>
             </span>
           </button>
         ) : null}

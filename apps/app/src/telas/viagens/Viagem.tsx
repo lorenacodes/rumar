@@ -173,7 +173,8 @@ export function Viagem() {
             </span>
           </button>
         ) : null}
-        <AlbumDaViagem v={v} lugares={itens.map((x) => x.l)} pode={pode || v.papel === 'leitor'} recarregar={recarregar} />
+        {/* Álbum só a partir do início da viagem (D-089): antes disso, a viagem é planejamento. */}
+        {registrada || v.viagem.data_ida <= hojeLocal() ? <AlbumDaViagem v={v} lugares={itens.map((x) => x.l)} pode={pode || v.papel === 'leitor'} recarregar={recarregar} /> : null}
         <div style={{ marginTop: '12px' }}>
           <Segmentos rotulo="Partes da viagem" valor={aba} aoMudar={(a) => setParams({ aba: a }, { replace: true })}
             opcoes={!v.papel

@@ -20,6 +20,8 @@ p.on('pageerror', (e) => erros.push(e.message));
 await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('bovair.clima.') || k.startsWith('bovair.mala.')).forEach((k) => localStorage.removeItem(k)));
+await p.goto(URL + '#/inicio'); await p.waitForTimeout(6000);
+confere('Início: clima de hoje no cartão da viagem', /Dia \d+ de \d+ · 31° \/ 24°/.test(await p.locator('main').innerText()));
 await p.goto(URL + '#/viagens'); await p.waitForTimeout(3000);
 await p.getByRole('button', { name: /Salvador/ }).first().click(); await p.waitForTimeout(5000);
 await p.getByText('Roteiro', { exact: true }).first().click(); await p.waitForTimeout(3000);

@@ -2,6 +2,16 @@
 import { chromium } from 'playwright';
 const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+// Prepara (e apaga no fim): a Ana tem uma viagem a Olinda, vista por amigos, com uma foto no álbum.
+import { readFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+const SB = 'https://iunrivtuhwaytmwclmui.supabase.co'; const PK = 'sb_publishable_d6lqjjWeuf81otJOT2xKFA_eWPaY0oG';
+const login = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: PK, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'e2e.ana@bovair.com.br', password: process.env.E2E_SENHA }) })).json();
+const H = { apikey: PK, Authorization: `Bearer ${login.access_token}`, 'Content-Type': 'application/json', Prefer: 'return=representation' };
+const tripOlinda = (await (await fetch(`${SB}/rest/v1/trips`, { method: 'POST', headers: H, body: JSON.stringify({ user_id: login.user.id, destino: 'Olinda', destino_id: 'br-2609600', data_ida: '2026-10-10', noites: 2, viajantes: 1, visibilidade: 'amigos', diagnostico: { registrada: true }, encerrada_em: new Date().toISOString() }) })).json())[0]?.id;
+const caminhoFoto = `${login.user.id}/${tripOlinda}_${randomUUID()}.jpg`;
+await fetch(`${SB}/storage/v1/object/fotos-viagem/${caminhoFoto}`, { method: 'POST', headers: { apikey: PK, Authorization: H.Authorization, 'Content-Type': 'image/jpeg' }, body: readFileSync('tools/e2e/foto-teste.jpg') });
+await fetch(`${SB}/rest/v1/viagem_fotos`, { method: 'POST', headers: H, body: JSON.stringify({ trip_id: tripOlinda, user_id: login.user.id, caminho: caminhoFoto, tipo: 'foto' }) });
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
 const p = await (await b.newContext({ viewport: { width: 390, height: 1400 } })).newPage();
 p.on('pageerror', (e) => erros.push(e.message));
@@ -18,5 +28,7 @@ confere('quem só olha: vê as fotos da viagem', (await p.locator('section[aria-
 await p.goto(URL + '#/perfil/amigos'); await p.waitForTimeout(3000);
 await p.getByText('Ana', { exact: true }).first().click().catch(() => {}); await p.waitForTimeout(4000);
 confere('perfil da Ana lista viagens', /viage(m|ns)/.test(await p.locator('main').innerText()) && /Olinda/.test(await p.locator('main').innerText()));
+await fetch(`${SB}/rest/v1/trips?id=eq.${tripOlinda}`, { method: 'DELETE', headers: H });
+await fetch(`${SB}/storage/v1/object/fotos-viagem`, { method: 'DELETE', headers: H, body: JSON.stringify({ prefixes: [caminhoFoto] }) });
 console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
 await b.close(); process.exit(erros.length ? 1 : 0);
