@@ -188,6 +188,12 @@ if (avalAlheia) {
 ok('Bia NÃO vê a fila de fotos de álbum denunciadas', vazio(await B('/rest/v1/rpc/fotos_viagem_denunciadas', { method: 'POST', body: '{}' })));
 ok('Bia NÃO lê denúncias', vazio(await B('/rest/v1/denuncias?select=id&limit=1')));
 
+// D-085: registros de erro são só escrita.
+ok('Sem conta NÃO lê os registros de erro', vazio(await anon('/rest/v1/erros_app?select=id&limit=1')));
+ok('Usuária NÃO lê os registros de erro', vazio(await B('/rest/v1/erros_app?select=id&limit=1')));
+const errGrande = await anon('/rest/v1/erros_app', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ mensagem: 'x'.repeat(5000) }) });
+ok('registro de erro gigante é recusado', errGrande.status >= 400);
+
 // Injeção e XSS
 const inj = await B('/rest/v1/rpc/buscar_pessoas', { method: 'POST', body: JSON.stringify({ termo: "a' or 1=1 --" }) });
 ok('busca de pessoas não aceita injeção (não devolve todo mundo)', inj.status < 500 && (Array.isArray(inj.corpo) ? inj.corpo.length < 20 : true));

@@ -20,7 +20,7 @@ for (let i = 0; i < n && !id; i++) {
 confere('achou viagem em grupo da Ana', Boolean(id));
 await p.goto(URL + `#/viagem/${id}?aba=dinheiro`); await p.waitForTimeout(3500);
 await p.getByRole('radio', { name: 'Na viagem' }).click().catch(async () => p.getByText('Na viagem', { exact: true }).click()); await p.waitForTimeout(800);
-await p.screenshot({ path: process.env.S + '/divisao.png' }); console.log('   membros:', await p.evaluate(() => document.body.innerText.match(/Grupo \((\d+)\)/)?.[1])); confere('mostra "Quem pagou" e "Dividir entre" (grupo)', (await p.getByText('Quem pagou').count()) > 0 && (await p.getByRole('group', { name: 'Dividir entre' }).count()) > 0);
+await p.screenshot({ path: (process.env.S ?? 'tools/e2e/out') + '/divisao.png' }); console.log('   membros:', await p.evaluate(() => document.body.innerText.match(/Grupo \((\d+)\)/)?.[1])); confere('mostra "Quem pagou" e "Dividir entre" (grupo)', (await p.getByText('Quem pagou').count()) > 0 && (await p.getByRole('group', { name: 'Dividir entre' }).count()) > 0);
 const desc = `Jantar teste ${Date.now() % 10000}`;
 await p.getByLabel('Valor do gasto').fill('100'); await p.getByLabel('Moeda').selectOption('EUR').catch(() => {});
 await p.getByLabel('Descrição').fill(desc);

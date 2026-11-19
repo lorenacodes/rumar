@@ -33,6 +33,12 @@ export async function minhasAmizades(): Promise<Amizade[]> {
 
 export async function pedirAmizade(id: string) {
   const uid = await eu();
+  // Se a outra pessoa já me pediu, aceito o pedido dela (D-085: um vínculo só por par).
+  const { data: dela } = await supabase.from('friendships').select('status').eq('requester', id).eq('addressee', uid).maybeSingle();
+  if (dela) {
+    if (dela.status !== 'aceita') await responderAmizade(id, true);
+    return true;
+  }
   return !(await supabase.from('friendships').insert({ requester: uid, addressee: id })).error;
 }
 export async function responderAmizade(requester: string, aceitar: boolean) {

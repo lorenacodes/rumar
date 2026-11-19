@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { BlocoNetworking } from '../descobrir/Networking';
 import { Experiencias } from '../descobrir/Experiencias';
 import { Check } from '../../ui/check';
@@ -279,7 +280,7 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
 /** "Como foi?" (D-047): depois que a viagem começa, avaliar os lugares e mandar fotos e vídeos. */
 function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[] }) {
   const navegar = useNavigate();
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = hojeLocal();
   const vistos = new Set<string>();
   const hotelId = v.hospedagem?.hotel_id.startsWith('lugar:') ? v.hospedagem.hotel_id.slice(6) : null;
   const todos = [
@@ -411,7 +412,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
 
   return (
     <section style={{ marginTop: '14px' }}>
-      {dia === 1 && pode && v.viagem.data_ida <= new Date().toISOString().slice(0, 10) ? <OndeFui v={v} recarregar={recarregar} /> : null}
+      {dia === 1 && pode && v.viagem.data_ida <= hojeLocal() ? <OndeFui v={v} recarregar={recarregar} /> : null}
       {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
       {dia === 1 && v.viagem.destino_id ? <Experiencias destino={{ id: v.viagem.destino_id }} cidade={v.viagem.destino} preferencias={grupo ?? preferencias ?? null} titulo="Experiências para esta viagem" max={3} /> : null}
       {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}

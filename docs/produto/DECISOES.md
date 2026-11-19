@@ -971,3 +971,18 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Verificação: "Minhas fotos" ganhou "Apagar" (LGPD); o teste de fotos agora apaga o que posta (duas fotos de
   teste tinham ficado públicas e foram retiradas). Fundo provisório dos destaques do Início em azul-marinho
   (texto branco legível enquanto a foto carrega).
+
+## D-085 — Análise completa (parte técnica): fuso horário, concorrência, monitoria de erros
+- Fuso: 13 lugares calculavam "hoje" em UTC; no Brasil, das 21h à meia-noite o app achava que já era amanhã
+  ("Faltam X dias" errado, viagem "começando" um dia antes, registro de viagem recusando data válida). Agora tudo
+  usa hojeLocal() (lib/datas.ts), com teste.
+- Concorrência (tools/seguranca/concorrencia.mjs, requisições simultâneas reais, contas de teste): 20 depósitos
+  simultâneos sem perda; edição simultânea da mesma viagem consistente (última gravação vale); 12 itens em
+  paralelo; 8 avaliações simultâneas = 1; convites repetidos = 1 linha; limite diário de fotos respeitado com
+  30 envios ao mesmo tempo; carga leve (150 req., 25 simultâneas): p50 ~200 ms, p95 ~470 ms, 0 erros.
+- Amizade: pedido cruzado (A→B e B→A) podia gerar duas linhas. Índice único por par e o app aceita o pedido
+  que já existe.
+- Monitoria de erros sem serviço externo: tabela erros_app (sem dados pessoais; e-mail, números e links trocados
+  por marcadores; até 5 por sessão; teto de 2.000/hora), captura de erros não tratados e tela "Algo deu errado"
+  com "Tentar de novo" (antes, erro na tela = tela branca). A rotina diária passa a conferir os erros.
+- Limpeza: arquivos de teste que tinham ido para o repositório (offline.png, undefined/) removidos.

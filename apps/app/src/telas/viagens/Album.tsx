@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 
 import { apagarDaViagem, fotosDaViagem, postarNaViagem, type FotoDaViagem } from '../../lib/album';
 import { atualizarViagem } from '../../lib/viagens';
@@ -23,7 +24,7 @@ export function AlbumDaViagem({ v, lugares, pode, recarregar }: { v: ViagemCompl
   const carregar = () => void fotosDaViagem(v.viagem.id).then(setFotos);
   useEffect(carregar, [v.viagem.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = hojeLocal();
   if (v.viagem.data_ida > hoje || !fotos) return null;
   if (!participa && !fotos?.length) return null;
   const nome = (uid: string) => v.membros.find((m) => m.user_id === uid)?.nome ?? 'Alguém do grupo';

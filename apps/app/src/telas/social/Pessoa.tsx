@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { desfazerAmizade, perfilPublico, type PessoaPublica } from '../../lib/social';
@@ -45,7 +46,7 @@ export function Pessoa() {
   useEffect(carregar, [id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (p === undefined) return <main className="tela" aria-busy="true" />;
 
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = hojeLocal();
   const grupos = (['agora', 'proximas', 'foi'] as Fase[]).map((f) => ({ f, lista: viagens.filter((v) => fase(v, hoje) === f).sort((a, b) => (f === 'foi' ? b.data_ida.localeCompare(a.data_ida) : a.data_ida.localeCompare(b.data_ida))) })).filter((g) => g.lista.length);
   const cidades = new Set(viagens.filter((v) => fase(v, hoje) !== 'proximas').map((v) => v.destino)).size;
   const nome = p?.display_name ?? 'Pessoa';

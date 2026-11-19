@@ -17,7 +17,7 @@ await p.getByRole('button', { name: /Rio de Janeiro/ }).first().click(); await p
 const t = await p.locator('main').innerText(); await p.getByRole('radio', { name: 'Roteiro' }).click().catch(() => p.getByText('Roteiro', { exact: true }).first().click()); await p.waitForTimeout(1500);
 confere('sem internet: a viagem abre com aviso', /Sem internet\. Você está vendo a versão salva/.test(t));
 confere('sem internet: o roteiro aparece', (await p.locator('ol[aria-label^="Paradas"] li').count()) > 0);
-await p.screenshot({ path: `${process.env.S ?? '.'}/offline.png`, clip: { x: 0, y: 0, width: 390, height: 700 } });
+await p.screenshot({ path: `${process.env.S ?? 'tools/e2e/out'}/offline.png`, clip: { x: 0, y: 0, width: 390, height: 700 } });
 await ctx.setOffline(false);
 await p.goto(URL + '#/perfil/sair'); await p.waitForTimeout(1500);
 const botao = p.getByRole('button', { name: /^Sair/ }).last(); if (await botao.count()) { await botao.click(); await p.waitForTimeout(2500); }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { cobertura, destinoPorId, pedirCidade, rotuloDestino, type Destino } from '../../lib/lugares';
@@ -16,7 +17,7 @@ import { useViajante } from '../../state/viajante';
 import { Aviso, BotaoPrincipal, Rodape, Voltar } from '../../ui/pecas';
 import { campo, Rotulo, Segmentos } from './comum';
 
-const hoje = (dias = 0) => new Date(Date.now() + dias * 86_400_000).toISOString().slice(0, 10);
+const hoje = (dias = 0) => hojeLocal(dias);
 
 /** Nova viagem: destino, datas, viajantes e orçamento. O roteiro nasce do perfil de viajante. */
 export function NovaViagem() {

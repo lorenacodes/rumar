@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
@@ -36,7 +37,7 @@ export function Viagens() {
   }
 
   const situacao = (v: Viagem): { texto: string; cor: string } => {
-    const hoje = new Date().toISOString().slice(0, 10);
+    const hoje = hojeLocal();
     const fim = new Date(Date.parse(`${v.data_ida}T12:00:00Z`) + v.noites * 86_400_000).toISOString().slice(0, 10);
     if (hoje > fim) return { texto: 'Viagem feita', cor: 'var(--texto-sec)' };
     if (hoje >= v.data_ida) return { texto: 'Acontecendo agora', cor: 'var(--verde)' };

@@ -3,6 +3,7 @@
  * cada mudança (data, destino, orçamento, diagnóstico, depósitos). Nada fica "congelado".
  */
 import DESTINOS from '../../dados/destinos.json';
+import { hojeLocal } from '../../lib/datas';
 import { etapaAtual, gerarTarefas, internacional, TAXA_PASSAPORTE, type Contexto, type Etapa, type Tarefa } from '../../lib/linhaDoTempo';
 import { converter, paisPorCodigo, paisPorNome, taxa, type Pais } from '../../lib/moedas';
 import { diasEntre, planejarPoupanca, type Plano } from '../../lib/poupanca';
@@ -34,10 +35,7 @@ export interface Jornada {
   plano: Plano | null;
 }
 
-export const hojeISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
+export const hojeISO = () => hojeLocal();
 
 export function paisDoDestino(nome: string): Pais | null {
   const d = (DESTINOS as { destinos: { nome: string; pais: string }[] }).destinos.find((x) => x.nome === nome);

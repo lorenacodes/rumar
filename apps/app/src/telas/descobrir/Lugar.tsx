@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { Check } from '../../ui/check';
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -37,7 +38,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
   useEffect(() => {
     if (!sessao) return;
     void listarViagens().then((v) => {
-      const hoje = new Date().toISOString().slice(0, 10);
+      const hoje = hojeLocal();
       // Só viagens para a cidade deste lugar (e que ainda não acabaram).
       const editaveis = v.minhas.filter((x) => x.status === 'ativo' && x.papel !== 'leitor' && (!destinoId || x.destino_id === destinoId) && x.data_ida >= new Date(Date.parse(hoje) - x.noites * 864e5).toISOString().slice(0, 10));
       setViagens(editaveis);

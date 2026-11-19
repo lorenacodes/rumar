@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { Check } from '../../ui/check';
 import { useNavigate } from 'react-router-dom';
 
@@ -151,7 +152,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
     if (viagem) return;
     // Quem já tem viagem para esta cidade adiciona direto no roteiro dela.
     void listarViagens().then(({ minhas }) => {
-      const hoje = new Date().toISOString().slice(0, 10);
+      const hoje = hojeLocal();
       const v = minhas.find((x) => x.destino_id === destino.id && x.status === 'ativo' && x.papel !== 'leitor' && x.data_ida >= hoje);
       setViagemDoDestino(v?.id ?? null);
     });

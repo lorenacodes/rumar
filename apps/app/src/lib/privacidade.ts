@@ -4,6 +4,7 @@
  * remover-contas (agendada) apaga a conta e tudo o que depende dela.
  */
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { hojeLocal } from './datas';
 import { Share } from '@capacitor/share';
 import { Capacitor } from '@capacitor/core';
 
@@ -75,7 +76,7 @@ export async function meusDados(): Promise<Record<string, unknown>> {
 export async function baixarMeusDados(): Promise<'ok' | 'erro'> {
   try {
     const dados = JSON.stringify(await meusDados(), null, 2);
-    const nome = `bovair-meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
+    const nome = `bovair-meus-dados-${hojeLocal()}.json`;
     if (Capacitor.isNativePlatform()) {
       const r = await Filesystem.writeFile({ path: nome, data: dados, directory: Directory.Cache, encoding: Encoding.UTF8 });
       await Share.share({ title: 'Meus dados no Bo Vair', url: r.uri, dialogTitle: 'Salvar ou enviar seus dados' });

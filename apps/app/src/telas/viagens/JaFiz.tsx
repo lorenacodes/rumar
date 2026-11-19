@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
@@ -27,7 +28,7 @@ export function JaFiz() {
   const [erro, setErro] = useState<string | null>(null);
   const anos = Array.from({ length: 30 }, (_, i) => agora.getFullYear() - i);
   const dataIda = `${ano}-${String(mes + 1).padStart(2, '0')}-01`;
-  const futura = dataIda > agora.toISOString().slice(0, 10);
+  const futura = dataIda > hojeLocal();
 
   const salvar = async () => {
     if (!sessao) return navegar('/entrar');

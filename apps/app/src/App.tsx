@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
 import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, useParams, type RouteObject } from 'react-router-dom';
+import { TelaDeErro } from './ui/TelaDeErro';
 
 
 import { App as CapApp } from '@capacitor/app';
@@ -167,7 +168,7 @@ if (__DEV_TELAS__) {
 }
 
 // Hash router: funciona igual dentro do Capacitor (arquivos locais) e no navegador.
-const router = createHashRouter([{ element: <Raiz />, children: filhos }]);
+const router = createHashRouter([{ element: <Raiz />, errorElement: <TelaDeErro />, children: filhos.map((f) => ({ ...f, errorElement: <TelaDeErro /> })) }]);
 
 export function App() {
   return <RouterProvider router={router} />;

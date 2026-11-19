@@ -1,5 +1,6 @@
 /** Curiosidades do mundo (D-039): lugares curiosos do planeta, com resumo da Wikipédia em português. */
 import { Capacitor } from '@capacitor/core';
+import { hojeLocal } from './datas';
 import { Share } from '@capacitor/share';
 
 import { supabase } from './supabase';
@@ -14,7 +15,7 @@ export interface Curiosidade {
 }
 
 /** Semente do dia: a ordem muda todo dia (sempre há algo novo para ver), mas é estável na sessão. */
-export const sementeDoDia = () => new Date().toISOString().slice(0, 10);
+export const sementeDoDia = () => hojeLocal();
 
 export async function curiosidades(pagina: number, porPagina = 10): Promise<Curiosidade[]> {
   const { data } = await supabase.rpc('curiosidades_feed', { pagina, por_pagina: porPagina, semente: sementeDoDia(), sem_sombrios: false });

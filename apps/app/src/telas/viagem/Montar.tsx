@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { NOME_COZINHA, NOME_DIETA, ORDEM_COZINHAS, type Dieta } from '../../lib/comida';
 import { NOME_AREA, ORDEM_AREAS } from '../../lib/networking';
 import { Info } from '../../ui/info';
@@ -47,10 +48,7 @@ const PADRAO: Preferencias = {
   dieta: 'tudo', cozinhasAmo: [], cozinhasEvito: [], provar: true, networking: false, area: null,
 };
 
-function hojeMais(dias: number): string {
-  const d = new Date(Date.now() + dias * 86_400_000);
-  return d.toISOString().slice(0, 10);
-}
+const hojeMais = (dias: number): string => hojeLocal(dias);
 
 /** Linha de escolha única, no visual da 3.1 do design. */
 function Opcao({ marcada, aoTocar, titulo, texto }: { marcada: boolean; aoTocar: () => void; titulo: string; texto?: string }) {

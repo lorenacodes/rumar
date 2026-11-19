@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { hojeLocal } from '../../lib/datas';
 import { Check } from '../../ui/check';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -100,7 +101,7 @@ export function Descobrir() {
     if (destino) return;
     void (async () => {
       const [favs, viagens, destaque] = await Promise.all([meusFavoritos().catch(() => []), listarViagens().catch(() => ({ minhas: [] })), cidadesEmDestaque(16)]);
-      const hoje = new Date().toISOString().slice(0, 10);
+      const hoje = hojeLocal();
       const minhas = [
         ...viagens.minhas.filter((v) => v.destino_id && v.data_ida >= hoje).map((v) => ({ destino_id: v.destino_id!, nome: v.destino })),
         ...favs.filter((f) => f.destino_id).map((f) => ({ destino_id: f.destino_id!, nome: f.nome })),
