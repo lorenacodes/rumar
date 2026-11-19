@@ -153,7 +153,7 @@ export function Viagem() {
               ? [{ id: 'roteiro', nome: 'Lugares' }, { id: 'mapa', nome: 'Mapa' }, { id: 'grupo', nome: `Quem foi (${v.membros.filter((m) => m.status === 'ativo').length})` }]
               : [{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
         </div>
-        {aba === 'roteiro' || aba === 'mapa' ? (
+        {(aba === 'roteiro' && !registrada) || aba === 'mapa' ? (
           <div role="tablist" aria-label="Dias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
             {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
               const d = new Date(`${dataMais(v.viagem.data_ida, n - 1)}T12:00:00Z`);
@@ -170,7 +170,8 @@ export function Viagem() {
         ) : null}
 
         {aba === 'etapas' && j && orc ? <AbaEtapas v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} resumoFinal={<PlanejadoReal v={v} j={j} orc={orc.o} comCompartilhar />} /> : null}
-        {aba === 'roteiro' ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} /> : null}
+        {aba === 'roteiro' && registrada ? <LugaresOndeFui v={v} itens={itens} pode={pode} recarregar={recarregar} /> : null}
+        {aba === 'roteiro' && !registrada ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} /> : null}
         {aba === 'mapa' ? <AbaMapa v={v} dia={dia} itens={itens} /> : null}
         {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} destino={destino} /> : null}
         {aba === 'dinheiro' && orc && j ? <AbaDinheiro v={v} j={j} orc={orc.o} pode={pode} recarregar={recarregar} resumo={<AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} moeda={j.moedaPlano} />} /> : null}
@@ -249,7 +250,7 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
   return (
     <section aria-label="Como foi" style={{ marginBottom: '14px', padding: '14px', background: 'var(--cartao-2)' }}>
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi?</h2>
-      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares. Fotos vão em Fotos da viagem, no topo.</p>
+      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares onde você foi.</p>
       <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
         {v.hospedagem?.hotel_id.startsWith('lugar:') ? (
           <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
@@ -267,6 +268,17 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
       {v.viagem.destino_id ? (
         <button type="button" className="r-btn alvo-toque" onClick={() => navegar(`/descobrir?d=${v.viagem.destino_id}&modo=lista`)} style={{ marginTop: '6px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Avaliar outro lugar de {v.viagem.destino} ›</button>
       ) : null}
+    </section>
+  );
+}
+
+/** Viagem só registrada (D-060/061): onde foi e como foi, sem dias nem nível de roteiro. */
+function LugaresOndeFui({ v, itens, pode, recarregar }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[]; pode: boolean; recarregar: () => void }) {
+  return (
+    <section style={{ marginTop: '14px' }}>
+      {pode ? <OndeFui v={v} recarregar={recarregar} /> : null}
+      {itens.length || v.hospedagem ? <ComoFoi v={v} itens={itens} /> : null}
+      {!itens.length && !v.hospedagem && !pode ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Nenhum lugar registrado.</p> : null}
     </section>
   );
 }

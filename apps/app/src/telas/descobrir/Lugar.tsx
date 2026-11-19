@@ -58,6 +58,10 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
     );
   }
   if (!carregou) return null;
+  // Veio de uma viagem que já passou (registrar onde foi, D-061): não oferece planejar de novo.
+  if (params.get('viagem') && !viagens.some((x) => x.id === params.get('viagem'))) {
+    return <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--verde)', margin: '14px 0 0' }}>Salvo na sua viagem. Conte como foi abaixo.</p>;
+  }
   if (!viagens.length) {
     return (
       <div style={caixa}>
