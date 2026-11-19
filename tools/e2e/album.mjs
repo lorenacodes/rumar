@@ -1,0 +1,25 @@
+/** Álbum da viagem (D-059): posta uma foto numa viagem já feita, vê a miniatura e apaga. */
+import { chromium } from 'playwright';
+const URL = process.env.URL ?? 'http://localhost:8793/';
+const senha = process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA'); })();
+const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
+const p = await (await b.newContext({ viewport: { width: 390, height: 1200 } })).newPage();
+p.on('pageerror', (e) => erros.push(e.message));
+await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.goto(URL + '#/viagens'); await p.waitForTimeout(3000);
+await p.getByRole('button', { name: /Recife/ }).first().click(); await p.waitForTimeout(4000);
+const antes = await p.locator('section[aria-label="Fotos da viagem"] img').count();
+await p.getByRole('button', { name: 'Postar fotos' }).click();
+await p.getByLabel('Escolher fotos e vídeos').setInputFiles('tools/e2e/foto-teste.jpg');
+await p.getByLabel(/Legenda/).fill('Teste automático do álbum');
+await p.getByRole('button', { name: 'Postar', exact: true }).click(); await p.waitForTimeout(6000);
+confere('foto postada', /Foto postada/.test((await p.locator('[role=status]').first().textContent().catch(() => '')) ?? ''));
+confere('miniatura aparece', (await p.locator('section[aria-label="Fotos da viagem"] img').count()) === antes + 1);
+p.on('dialog', (d) => d.accept());
+await p.locator('section[aria-label="Fotos da viagem"] button[aria-label="Teste automático do álbum"]').first().click(); await p.waitForTimeout(800);
+await p.getByRole('button', { name: 'Apagar', exact: true }).click(); await p.waitForTimeout(3000);
+confere('foto apagada', (await p.locator('section[aria-label="Fotos da viagem"] img').count()) === antes);
+console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
+await b.close(); process.exit(erros.length ? 1 : 0);

@@ -32,7 +32,7 @@ export async function fotosAprovadas(ids: string[]): Promise<Map<string, FotoEnv
 }
 
 /** Reduz para no máximo 1600 px e JPEG (menos dados, sem metadados de localização da câmera). */
-async function preparar(arquivo: File): Promise<Blob> {
+export async function preparar(arquivo: File): Promise<Blob> {
   const img = await createImageBitmap(arquivo);
   const escala = Math.min(1, 1600 / Math.max(img.width, img.height));
   const c = document.createElement('canvas');
@@ -43,7 +43,7 @@ async function preparar(arquivo: File): Promise<Blob> {
 }
 
 /** Duração de um vídeo (segundos), lida no aparelho. */
-function duracao(arquivo: File): Promise<number> {
+export function duracao(arquivo: File): Promise<number> {
   return new Promise((ok) => {
     const v = document.createElement('video');
     v.preload = 'metadata';

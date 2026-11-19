@@ -3,7 +3,7 @@
  * Não é público e não passa por moderação. Opcional: mandar a foto também para a página do lugar
  * (aí ela entra na fila de moderação, como as outras fotos de lugares).
  */
-import { enviarFoto, VIDEO_MAX_MB, VIDEO_MAX_SEGUNDOS } from './fotosEnviadas';
+import { duracao, enviarFoto, preparar, VIDEO_MAX_MB, VIDEO_MAX_SEGUNDOS } from './fotosEnviadas';
 import { supabase } from './supabase';
 
 const BALDE = 'fotos-viagem';
@@ -20,26 +20,6 @@ export async function fotosDaViagem(tripId: string): Promise<FotoDaViagem[] | nu
   const { data: urls } = await supabase.storage.from(BALDE).createSignedUrls(linhas.map((l) => l.caminho), 60 * 60 * 6);
   const mapa = new Map((urls ?? []).filter((u) => u.signedUrl && u.path).map((u) => [u.path!, u.signedUrl as string]));
   return linhas.filter((l) => mapa.has(l.caminho)).map((l) => ({ ...l, url: mapa.get(l.caminho)!, minha: l.user_id === uid }));
-}
-
-/** Reduz a foto para no máximo 1600 px em JPEG (menos dados, sem a localização da câmera). */
-async function preparar(arquivo: File): Promise<Blob> {
-  const img = await createImageBitmap(arquivo);
-  const escala = Math.min(1, 1600 / Math.max(img.width, img.height));
-  const c = document.createElement('canvas');
-  c.width = Math.round(img.width * escala);
-  c.height = Math.round(img.height * escala);
-  c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
-  return new Promise((ok, erro) => c.toBlob((b) => (b ? ok(b) : erro(new Error('imagem'))), 'image/jpeg', 0.85));
-}
-function duracao(arquivo: File): Promise<number> {
-  return new Promise((ok) => {
-    const v = document.createElement('video');
-    v.preload = 'metadata';
-    v.onloadedmetadata = () => { ok(v.duration); URL.revokeObjectURL(v.src); };
-    v.onerror = () => ok(Number.NaN);
-    v.src = URL.createObjectURL(arquivo);
-  });
 }
 
 export async function postarNaViagem(tripId: string, arquivo: File, opcoes: { legenda?: string; placeId?: string | null; tambemNoLugar?: boolean } = {}): Promise<{ ok: true } | { ok: false; mensagem: string }> {
