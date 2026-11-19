@@ -76,6 +76,27 @@ O que protege de verdade:
 
 ---
 
+## É diferencial no mercado? (pesquisa de 19/11/2026)
+
+**Recurso por recurso, não.** Já existem: divisão de gastos (Wanderlog, grátis), viagem sem internet (Wanderlog,
+só no plano pago ~US$ 40/ano), roteiro com IA e compra (Mindtrip, Layla), meta de "quanto guardar por mês"
+(Mobills, Granna, calculadora da Nomad).
+Fontes: [Wanderlog](https://wanderlog.com/travel-budget-expense-splitting-app), [Stippl x Wanderlog](https://docs.stippl.io/blog/stippl-vs-wanderlog),
+[Analytics Insight](https://www.analyticsinsight.net/artificial-intelligence/best-ai-travel-planners-in-2026-features-prices-and-what-they-offer),
+[Skyscanner](https://www.skyscanner.com.br/noticias/custos-de-viagem-melhores-aplicativos), [Nomad](https://www.nomadglobal.com/portal/calculadoras/investir-para-viajar).
+
+**A combinação, para quem viaja a partir do Brasil, pode ser:** planejar começando pelo dinheiro, custo total em
+reais (IOF, passaporte, seguro), prazos de documentos, roteiro pelo jeito de viajar, grupo com divisão de gastos
+e privacidade, destinos brasileiros a fundo, tudo em português e grátis. Não encontramos quem junte isso.
+
+**Fraquezas reais:** tudo é copiável por quem já é grande; dados ainda fracos (≈10% dos turísticos com foto,
+preços estimados, poucas avaliações); sem receita e sem compra dentro do app.
+
+**O que fazer:** posicionar como "o app que planeja sua viagem a partir do seu bolso"; investir no que demora a ser
+copiado (avaliações e fotos de brasileiros sobre o Brasil; a jornada de meses até o embarque); com os 12
+testadores, medir se voltam na semana seguinte e se usam a parte do dinheiro. Se só usarem o roteiro, o
+diferencial não se confirmou.
+
 ## Custo mensal real hoje (atualizado em 19/11/2026)
 
 Dólar de referência: R$ 5,81 (Banco Central, 18/11/2026). Fontes: [preços do Supabase](https://supabase.com/docs/guides/platform/billing-on-supabase),
