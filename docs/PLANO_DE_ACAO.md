@@ -76,6 +76,47 @@ O que protege de verdade:
 
 ---
 
+## Custo mensal real hoje (atualizado em 19/11/2026)
+
+Dólar de referência: R$ 5,81 (Banco Central, 18/11/2026). Fontes: [preços do Supabase](https://supabase.com/docs/guides/platform/billing-on-supabase),
+[cobrança do GitHub Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions),
+[mudanças de preço do Actions em 2026](https://resources.github.com/actions/2026-pricing-changes-for-github-actions/).
+
+| Item | Hoje | Limite incluído | Quando passa a custar mais |
+|---|---|---|---|
+| Supabase Pro | US$ 25 ≈ **R$ 145/mês** (já pago) | 100 GB de arquivos, 250 GB de tráfego, 8 GB de banco, 100 mil usuários ativos/mês | Muito longe disso: hoje o banco tem ~110 mil lugares e poucos usuários |
+| GitHub Actions (automações: fotos, lugares, testes, APK) | **R$ 0** com o repositório **público** | Ilimitado em público | **Se fechar o repositório:** ~2.000 min/mês grátis; o Bo Vair usa ~8 a 11 mil → ~6 a 9 mil min × US$ 0,006 ≈ **R$ 200 a 300/mês** (estimativa; as fontes de 2026 divergem no formato da franquia) |
+| Fotos do Google (opcional) | R$ 0 (sem chave) | Teto de 900/mês na função = dentro da cota grátis | Só se aumentar o teto |
+| YouTube (aulas) | R$ 0 | 10 mil unidades/dia | Não chega perto |
+| LiteAPI (hotéis) | R$ 0 (sem chave) | Ambiente de teste grátis | Ao ligar a chave de produção: confirmar condições no cadastro |
+| Apple (iPhone nativo) | — | — | US$ 99/ano ≈ R$ 575 (só se for para a App Store) |
+| Google Play | US$ 25 uma vez ≈ R$ 145 | — | — |
+
+**Decisão que mexe no custo:** fechar o repositório protege o código contra cópia, mas custa ~R$ 200 a 300/mês
+em automações (e tira a versão web grátis do GitHub Pages). Alternativas para fechar sem esse custo: reduzir a
+busca diária de fotos (é ~60% dos minutos) ou rodar as automações menos vezes. Em 19/11 os testes deixaram de
+rodar duas vezes por mudança (no branch e no main), o que já corta parte desse uso.
+
+**Custo para manter no ar, sem crescer:** ≈ **R$ 145/mês** (só o Supabase), enquanto o repositório for público.
+
+## Dá dinheiro? Atualização de 19/11/2026
+
+- **Ainda não há nenhuma fonte de receita ligada no app.** Todas dependem de cadastros que só a fundadora pode
+  fazer (afiliados de seguro, hotel, passagem) ou de usuários pagando.
+- **Seguro-viagem é a fonte mais promissora e mais coerente com o produto** (a pessoa precisa dele para viajar e o
+  app já cobra esse item no custo total): a Assist Card anunciou programa de afiliados com 40% de comissão por venda
+  no lançamento ([Brasilturis, 06/2025](https://brasilturis.com.br/2025/06/10/assist-card-lanca-programa-de-afiliados-e-preve-pagar-r-4-milhoes-em-comissoes/));
+  a Allianz Travel tem programa na Awin. Não encontrei a taxa da Travelpayouts para seguro/hotel no Brasil:
+  confirmar no painel depois do cadastro.
+- **Ponto de equilíbrio do custo atual (premissas, não previsão):** para pagar R$ 145/mês com seguro, se uma apólice
+  média render ~R$ 40 de comissão (premissa a confirmar), bastam ~4 vendas por mês. Para pagar também
+  R$ 250/mês de automações (repositório fechado), ~10 vendas por mês.
+- **O que o app já tem de diferente e pode virar receita depois:** planejamento pelo dinheiro da pessoa, viagem em
+  grupo com divisão de gastos, viagem sem internet, roteiro com refeições e o jeito de viajar, e privacidade forte
+  (amigos não veem dinheiro nem hotel). Nenhum desses é cobrado; cobrar antes de ter uso é arriscado.
+- **Próximo passo de maior retorno:** cadastrar um afiliado de seguro-viagem e ligar o link na etapa "Seguro" da
+  viagem (trabalho de 1 dia depois que o link existir).
+
 ## Onde colocar os R$ 500
 
 | Item | Custo | Quando | Por quê |

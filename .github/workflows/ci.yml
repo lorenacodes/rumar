@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Só no branch de trabalho: o main recebe o mesmo conteúdo logo depois, e o app busca o APK de
+  # apk-teste-fase-0-base. Rodar nos dois dobrava os minutos (custo se o repositório ficar privado).
   push:
-    branches: [main, 'fase-*']
+    branches: ['fase-*']
   pull_request:
 
 jobs:
