@@ -10,9 +10,14 @@
 
 ## 1. Urgente: sem isso, gente de verdade não consegue usar
 
-- [ ] **1.1 E-mail próprio para o cadastro (SMTP)** — sem isso, pessoas novas não recebem o código e não criam
-      conta (o e-mail de teste do Supabase tem limite baixo). Caminho mais barato: conta grátis no Resend
-      (3.000 e-mails/mês) + domínio do item 5.1. Eu passo o passo a passo quando o domínio existir.
+- [ ] **1.1 E-mail próprio para o cadastro (SMTP)** — o envio grátis do Supabase é para testes (poucos e-mails por
+      hora, pode não entregar para pessoas de fora). **Jeito grátis, sem domínio e sem MEI: usar um Gmail.**
+      1. Crie um Gmail só para o app (ex.: bovair.app@gmail.com) e ligue a verificação em 2 etapas.
+      2. Conta Google → Segurança → **Senhas de app** → criar "Bo Vair" → copie a senha de 16 letras.
+      3. Supabase → Authentication → Emails → **SMTP Settings** → ligar: host `smtp.gmail.com`, porta `465`,
+         usuário = o Gmail, senha = a senha de app, remetente "Bo Vair". Salvar.
+      4. Me avise: eu testo um cadastro. (Gmail aguenta ~500 e-mails por dia, sobra para o teste.)
+      Depois, com o domínio (7.1), dá para trocar pelo Resend com e-mail @bovair.com.br.
 - [ ] **1.2 Ajustes no Supabase (Authentication)**, 10 minutos:
   - [ ] Ligar **"Leaked password protection"** (proteção contra senhas vazadas; está no plano Pro que você paga).
   - [ ] Senha mínima de 8 caracteres com letras e números.
@@ -20,6 +25,9 @@
   - [ ] Redirect URL: `com.bovair.app://auth`.
 - [ ] **1.3 Testar criar conta no APK** com o seu e-mail principal e me contar o resultado. Isso também libera a
       sua **Moderação de fotos** (Perfil → Moderação de fotos), onde você aprova as fotos enviadas.
+
+- [ ] **1.4 Teste com o pessoal do trabalho** — guia e mensagem pronta em `docs/TESTADORES.md`. Faça depois do 1.1.
+      Peça "relatório dos testadores" quando quiser ver os números (só contagens, sem dados pessoais).
 
 ## 2. iPhone (grátis)
 
