@@ -5,7 +5,7 @@
  *   uma bem perto (praia até 250 m, parque 120 m, demais 40 m);
  * - restaurantes, bares, cafés, hotéis e lojas: só se o nome do arquivo citar o lugar (até 150 m);
  * - nunca mapa, logo, bandeira, brasão ou diagrama; só CC0, CC BY, CC BY-SA ou domínio público.
- * Roda no GitHub Actions (workflow "Fotos"); grava pela função importar-lugares com OIDC, sem chave.
+ * Roda no GitHub Actions (workflow "Fotos por localização"); grava pela função importar-lugares com OIDC, sem chave.
  * Uso: node tools/dados/fotos-commons.mjs [--destinos br-2611606,br-2609600] [--limite 1500]
  */
 const FUNCAO = 'https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/importar-lugares';

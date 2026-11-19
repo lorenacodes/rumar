@@ -1,46 +1,33 @@
-name: Fotos
+name: Fotos dos lugares
 
-# Fotos por localização (D-057): procura no Wikimedia Commons fotos livres tiradas perto dos lugares
-# que não têm foto. Todo dia, os 3.000 mais relevantes ainda não procurados (cada um é revisto a cada
-# 90 dias). Rodar à mão escolhendo cidades: campo "destinos". OIDC do GitHub; nenhuma chave.
+# Resolve as fotos dos destinos e lugares na Wikipédia/Wikimedia Commons (com autor e
+# licença) e grava em apps/app/src/dados/fotos.json e tools/dados/out/fotos.sql.
+# Roda quando a lista de lugares muda ou sob demanda.
 on:
   workflow_dispatch:
-    inputs:
-      destinos:
-        description: 'IDs das cidades separados por vírgula (vazio = todas)'
-        required: false
-        default: 'br-2611606,br-2609600,br-2605459,br-2604106,br-2607208'
-      limite:
-        description: 'Quantos lugares procurar'
-        required: false
-        default: '3000'
-  schedule:
-    - cron: '41 6 * * *'
   push:
-    branches: [main]
+    branches: [fase-0-base]
     paths:
-      - .github/workflows/fotos.yml
-      - tools/dados/fotos-commons.mjs
+      - tools/dados/fotos.mjs
+      - apps/app/src/dados/catalogo.json
 
 permissions:
-  contents: read
-  id-token: write
-
-concurrency:
-  group: fotos
-  cancel-in-progress: false
+  contents: write
 
 jobs:
   fotos:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Pernambuco primeiro (no push) ou o que foi pedido
-        env:
-          DESTINOS: ${{ github.event_name == 'push' && 'br-2611606,br-2609600,br-2605459,br-2604106,br-2607208' || inputs.destinos || '' }}
-          LIMITE: ${{ inputs.limite || '3000' }}
-        run: node tools/dados/fotos-commons.mjs --destinos "$DESTINOS" --limite "$LIMITE"
+      - run: node tools/dados/fotos.mjs
+      - name: Guardar o resultado no repositório
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/app/src/dados/fotos.json apps/app/src/dados/lugares-osm.json apps/app/public/fotos tools/dados/out/fotos.sql
+          git diff --cached --quiet || git commit -m "Fotos e localização dos lugares atualizadas (Wikimedia Commons e OpenStreetMap)"
+          git pull --rebase origin fase-0-base
+          git push
