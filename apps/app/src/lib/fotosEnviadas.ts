@@ -1,6 +1,6 @@
 /**
  * Fotos de lugares e pratos enviadas por quem foi (D-034). O arquivo fica em armazenamento privado e
- * só aparece para todos depois de aprovado pela moderação. Crédito público: só o @.
+ * aparece na hora (D-072); com 2 denúncias sai do ar e volta para a moderação. Crédito público: só o @.
  * Fotos do Google Places (opcional, com teto mensal) vêm da função "foto-google".
  */
 import { supabase } from './supabase';
@@ -55,7 +55,7 @@ export function duracao(arquivo: File): Promise<number> {
 export const VIDEO_MAX_SEGUNDOS = 20;
 export const VIDEO_MAX_MB = 25;
 
-export async function enviarFoto(placeId: string, arquivo: File, tipo: 'lugar' | 'prato', legenda: string): Promise<{ ok: true } | { ok: false; mensagem: string }> {
+export async function enviarFoto(placeId: string, arquivo: File, tipo: 'lugar' | 'prato', legenda: string, avaliacaoId: string | null = null): Promise<{ ok: true } | { ok: false; mensagem: string }> {
   const { data: s } = await supabase.auth.getSession();
   const uid = s.session?.user.id;
   if (!uid) return { ok: false, mensagem: 'Entre na sua conta para enviar fotos.' };
@@ -77,10 +77,11 @@ export async function enviarFoto(placeId: string, arquivo: File, tipo: 'lugar' |
   const caminho = `${uid}/${crypto.randomUUID()}.${ext}`;
   const up = await supabase.storage.from(BALDE).upload(caminho, blob, { contentType: tipoArquivo, upsert: false });
   if (up.error) return { ok: false, mensagem: 'Não deu para enviar a foto. Confira a internet e tente de novo.' };
-  const { error } = await supabase.from('fotos_enviadas').insert({ place_id: placeId, user_id: uid, caminho, tipo: video ? 'video' : tipo, legenda: legenda.trim() || null, declaracoes: true });
+  const { error } = await supabase.from('fotos_enviadas').insert({ place_id: placeId, user_id: uid, caminho, tipo: video ? 'video' : tipo, legenda: legenda.trim() || null, declaracoes: true, avaliacao_id: avaliacaoId });
+  cache.delete(placeId);
   if (error) {
     await supabase.storage.from(BALDE).remove([caminho]);
-    return { ok: false, mensagem: /Limite/.test(error.message) ? 'Você chegou ao limite de 20 fotos por dia.' : 'Não deu para registrar a foto.' };
+    return { ok: false, mensagem: /Limite/.test(error.message) ? 'Você chegou ao limite de 20 fotos por dia.' : /Até 3/.test(error.message) ? 'Até 3 fotos ou vídeos por avaliação.' : 'Não deu para registrar a foto.' };
   }
   return { ok: true };
 }

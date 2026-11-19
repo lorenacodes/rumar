@@ -16,6 +16,7 @@ import {
   marcarFeito, montarRoteiro, nivelDaViagem, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
   textoMotivo,
   apagarViagem,
+  copiaRapida,
 } from '../../lib/viagens';
 import { converter, dinheiro, taxa } from '../../lib/moedas';
 import { NOME_NIVEL, TEXTO_NIVEL, type Nivel } from '../../lib/nivel';
@@ -30,6 +31,8 @@ import { Mapa, type Ponto } from '../../ui/Mapa';
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { Info } from '../../ui/info';
 import { linkSeguro } from '../../lib/seguro';
+import { minhasNotas } from '../../lib/avaliacoes';
+import { Estrelas } from '../../ui/estrelas';
 import { AlbumDaViagem } from './Album';
 import { OndeFui } from './OndeFui';
 import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rotulo, Segmentos, Selo } from './comum';
@@ -59,7 +62,8 @@ export function Viagem() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
   const [params, setParams] = useSearchParams();
-  const [v, setV] = useState<ViagemCompleta | null | undefined>(undefined);
+  // Abre na hora com a cópia deste aparelho; a versão do servidor chega logo depois.
+  const [v, setV] = useState<ViagemCompleta | null | undefined>(() => copiaRapida(id));
   const registrada = Boolean((v?.viagem.diagnostico as { registrada?: boolean } | undefined)?.registrada);
   const pedida = params.get('aba') ?? (registrada || (v && !v.papel) ? 'roteiro' : 'etapas');
   const soOlha = v ? !v.papel : false;
@@ -70,6 +74,7 @@ export function Viagem() {
   // Sempre fresco: ao abrir/navegar, ao vivo (Realtime), ao voltar para o app e, por
   // garantia, a cada 15 s enquanto a tela está visível (se o ao vivo cair, ninguém fica
   // olhando uma versão velha da viagem).
+  useEffect(() => setV((atual) => (atual?.viagem.id === id ? atual : copiaRapida(id))), [id]);
   useEffect(() => {
     recarregar();
   }, [recarregar, local.key]);
@@ -163,10 +168,11 @@ export function Viagem() {
               ? [{ id: 'roteiro', nome: registrada ? 'Lugares' : 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }]
               : registrada
               // Viagem só registrada (D-060): lugares visitados, mapa e quem foi junto.
-              ? [{ id: 'roteiro', nome: 'Lugares' }, { id: 'mapa', nome: 'Mapa' }, { id: 'grupo', nome: `Quem foi (${v.membros.filter((m) => m.status === 'ativo').length})` }]
+              // Quem foi junto só aparece se foi mais de uma pessoa.
+              ? [{ id: 'roteiro', nome: 'Lugares' }, { id: 'mapa', nome: 'Mapa' }, ...(v.viagem.viajantes > 1 || v.membros.length > 1 ? [{ id: 'grupo', nome: `Quem foi (${v.membros.filter((m) => m.status === 'ativo').length})` }] : [])]
               : [{ id: 'etapas', nome: 'Etapas' }, { id: 'roteiro', nome: 'Roteiro' }, { id: 'mapa', nome: 'Mapa' }, { id: 'hospedagem', nome: 'Hospedagem' }, { id: 'dinheiro', nome: 'Dinheiro' }, { id: 'grupo', nome: `Grupo (${v.membros.filter((m) => m.status === 'ativo').length})` }]} />
         </div>
-        {(aba === 'roteiro' && !registrada) || aba === 'mapa' ? (
+        {!registrada && (aba === 'roteiro' || aba === 'mapa') ? (
           <div role="tablist" aria-label="Dias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
             {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
               const d = new Date(`${dataMais(v.viagem.data_ida, n - 1)}T12:00:00Z`);
@@ -185,7 +191,7 @@ export function Viagem() {
         {aba === 'etapas' && j && orc ? <AbaEtapas v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} resumoFinal={<PlanejadoReal v={v} j={j} orc={orc.o} comCompartilhar />} /> : null}
         {aba === 'roteiro' && registrada ? <LugaresOndeFui v={v} itens={itens} pode={pode} recarregar={recarregar} /> : null}
         {aba === 'roteiro' && !registrada ? <AbaRoteiro v={v} dia={dia} itens={itens} pode={pode} grupo={grupo} recarregar={recarregar} /> : null}
-        {aba === 'mapa' ? <AbaMapa v={v} dia={dia} itens={itens} /> : null}
+        {aba === 'mapa' ? (registrada ? <MapaOndeEstive v={v} itens={itens} /> : <AbaMapa v={v} dia={dia} itens={itens} />) : null}
         {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} destino={destino} /> : null}
         {aba === 'dinheiro' && orc && j ? <AbaDinheiro v={v} j={j} orc={orc.o} pode={pode} recarregar={recarregar} resumo={<AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} moeda={j.moedaPlano} />} /> : null}
         {aba === 'grupo' ? <AbaGrupo v={v} pode={pode} recarregar={recarregar} /> : null}
@@ -273,27 +279,37 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
 function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[] }) {
   const navegar = useNavigate();
   const hoje = new Date().toISOString().slice(0, 10);
-  if (v.viagem.data_ida > hoje) return null;
   const vistos = new Set<string>();
-  const lugares = itens.filter(({ l }) => (vistos.has(l.id) ? false : (vistos.add(l.id), true)))
-    .sort((a, b) => Number(Boolean(b.it.feito)) - Number(Boolean(a.it.feito))).slice(0, 8);
+  const hotelId = v.hospedagem?.hotel_id.startsWith('lugar:') ? v.hospedagem.hotel_id.slice(6) : null;
+  const todos = [
+    ...(hotelId ? [{ id: hotelId, nome: v.hospedagem!.nome, sub: 'Onde você ficou' }] : []),
+    ...itens.filter(({ l }) => (vistos.has(l.id) ? false : (vistos.add(l.id), true))).map(({ l, it }) => ({ id: l.id, nome: l.nome, sub: it.feito ? 'Você foi' : '' })),
+  ];
+  const chave = todos.map((x) => x.id).join(',');
+  const [notas, setNotas] = useState<Map<string, number> | null>(null);
+  useEffect(() => { void minhasNotas(chave.split(',').filter(Boolean)).then(setNotas); }, [chave]);
+  if (v.viagem.data_ida > hoje) return null;
+  // Primeiro o que falta avaliar; os avaliados mostram a nota e "Editar".
+  const lista = [...todos].sort((a, b) => Number(notas?.has(a.id) ?? false) - Number(notas?.has(b.id) ?? false)).slice(0, 12);
+  const faltam = notas ? todos.filter((x) => !notas.has(x.id)).length : null;
   return (
     <section aria-label="Como foi" style={{ marginBottom: '14px', padding: '14px', background: 'var(--cartao-2)' }}>
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi?</h2>
-      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares onde você foi.</p>
+      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>{faltam === 0 ? 'Você avaliou todos. Obrigado!' : 'Avalie os lugares onde você foi.'}</p>
       <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
-        {v.hospedagem?.hotel_id.startsWith('lugar:') ? (
-          <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
-            <span style={{ minWidth: 0 }}><b style={{ display: 'block', fontSize: '15px' }}>{v.hospedagem.nome}</b><span style={{ fontSize: '12px', color: 'var(--texto-sec)' }}>Onde você ficou</span></span>
-            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${v.hospedagem!.hotel_id.slice(6)}#avaliar=1`)} style={{ flex: 'none', minHeight: '44px', padding: '0 12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Avaliar</button>
-          </li>
-        ) : null}
-        {lugares.map(({ l, it }) => (
-          <li key={l.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
-            <span style={{ minWidth: 0 }}><b style={{ display: 'block', fontSize: '15px' }}>{l.nome}</b>{it.feito ? <span style={{ fontSize: '12px', color: 'var(--verde)' }}>Você foi</span> : null}</span>
-            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}#avaliar=1`)} style={{ flex: 'none', minHeight: '44px', padding: '0 12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Avaliar</button>
-          </li>
-        ))}
+        {lista.map((x) => {
+          const nota = notas?.get(x.id);
+          return (
+            <li key={x.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
+              <span style={{ minWidth: 0 }}>
+                <b style={{ display: 'block', fontSize: '15px' }}>{x.nome}</b>
+                {nota ? <Estrelas nota={nota} tamanho={13} /> : x.sub ? <span style={{ fontSize: '12px', color: x.sub === 'Você foi' ? 'var(--verde)' : 'var(--texto-sec)' }}>{x.sub}</span> : null}
+              </span>
+              <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${x.id}?viagem=${v.viagem.id}#avaliar=1`)}
+                style={{ flex: 'none', minHeight: '44px', padding: '0 12px', font: "600 14px 'Open Sans'", ...(nota ? { color: 'var(--azul)' } : { background: 'var(--amarelo)', color: 'var(--botao-principal-texto)' }) }}>{nota ? 'Editar' : 'Avaliar'}</button>
+            </li>
+          );
+        })}
       </ul>
       {v.viagem.destino_id ? (
         <button type="button" className="r-btn alvo-toque" onClick={() => navegar(`/descobrir?d=${v.viagem.destino_id}&modo=lista`)} style={{ marginTop: '6px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Avaliar outro lugar de {v.viagem.destino} ›</button>
@@ -495,6 +511,33 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
 const acao = { minHeight: '36px', padding: '0 10px', border: '1px solid var(--linha)', font: "600 13px 'Open Sans'" } as const;
 
 // ---------------------------------------------------------------- Mapa
+/** Viagem registrada (D-072): mapa da cidade com todos os lugares onde a pessoa disse que esteve, sem dias. */
+function MapaOndeEstive({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[] }) {
+  const navegar = useNavigate();
+  const [sel, setSel] = useState<string | null>(null);
+  const vistos = new Set<string>();
+  const lugares = itens.filter(({ l }) => temCoord(l) && (vistos.has(l.id) ? false : (vistos.add(l.id), true)));
+  const pontos: Ponto[] = [
+    ...lugares.map(({ l }) => ({ id: l.id, lat: l.lat!, lon: l.lon!, rotulo: '●', titulo: l.nome, tipo: 'parada' as const })),
+    ...(v.hospedagem?.lat && v.hospedagem.lon ? [{ id: 'hotel', lat: v.hospedagem.lat, lon: v.hospedagem.lon, rotulo: 'H', titulo: v.hospedagem.nome, tipo: 'hotel' as const }] : []),
+  ];
+  const escolhido = sel && sel !== 'hotel' ? lugares.find((x) => x.l.id === sel)?.l : null;
+  if (!pontos.length) return <p style={{ marginTop: '14px', fontSize: '15px', color: 'var(--texto-sec)' }}>Marque em Lugares onde você foi. Eles aparecem aqui.</p>;
+  return (
+    <section style={{ marginTop: '12px' }}>
+      <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginBottom: '8px' }}>{lugares.length} {lugares.length === 1 ? 'lugar' : 'lugares'} onde você esteve em {v.viagem.destino}</div>
+      <Mapa pontos={pontos} altura="min(56vh, 420px)" aoEscolher={setSel} selecionado={sel} />
+      <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>Mapa © OpenStreetMap · OpenFreeMap. H = hospedagem.</div>
+      {escolhido ? (
+        <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${escolhido.id}`)} style={{ display: 'flex', gap: '10px', width: '100%', textAlign: 'left', marginTop: '10px', padding: '10px', border: '1px solid var(--linha)' }}>
+          <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={escolhido.id} proporcao="1 / 1" credito={false} /></span>
+          <span style={{ flex: 1 }}><b style={{ font: "600 16px 'Lexend Exa'" }}>{escolhido.nome}</b><span style={{ display: 'block', fontSize: '14px', color: 'var(--azul)', fontWeight: 600 }}>Ver o lugar</span></span>
+        </button>
+      ) : sel === 'hotel' && v.hospedagem ? <p style={{ fontSize: '14px' }}><b>{v.hospedagem.nome}</b> · onde você ficou</p> : null}
+    </section>
+  );
+}
+
 function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[] }) {
   const navegar = useNavigate();
   const [sel, setSel] = useState<string | null>(null);

@@ -37,7 +37,7 @@ export function CapaAlternativa({ placeId, nome }: { placeId: string; nome: stri
   return null;
 }
 
-/** "Fotos de quem foi": galeria aprovada + enviar (lugar ou prato), com declarações e moderação. */
+/** "Fotos de quem foi": galeria aprovada + enviar (lugar ou prato), com declarações; denúncia leva à moderação. */
 export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nome: string; comida: boolean }) {
   const sessao = useSessao();
   const navegar = useNavigate();
@@ -70,7 +70,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
     setEnviando(true);
     const r = await enviarFoto(placeId, arquivo, tipo, legenda);
     setEnviando(false);
-    if (r.ok) { setMsg('Recebemos! A foto aparece depois de aprovada.'); setArquivo(null); setLegenda(''); setDeclaro(false); setAberto(false); carregar(); }
+    if (r.ok) { setMsg('Foto publicada. Obrigado!'); setArquivo(null); setLegenda(''); setDeclaro(false); setAberto(false); carregar(); }
     else setMsg(r.mensagem);
   };
   const pendentes = minhas.filter((m) => m.status === 'pendente').length;
@@ -92,7 +92,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
         </div>
       ) : <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{comida ? 'Já comeu aqui? Mostre o prato.' : 'Já foi? Mostre como é.'}</p>}
 
-      {pendentes ? <p role="status" style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>{pendentes === 1 ? '1 foto sua esperando aprovação.' : `${pendentes} fotos suas esperando aprovação.`}</p> : null}
+      {pendentes ? <p role="status" style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>{pendentes === 1 ? '1 foto sua está em análise.' : `${pendentes} fotos suas estão em análise.`}</p> : null}
       {recusadas.length ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{recusadas.length === 1 ? '1 foto sua não foi aprovada.' : `${recusadas.length} fotos suas não foram aprovadas.`} <button type="button" className="r-btn" onClick={() => void Promise.all(recusadas.map((r) => apagarMinhaFoto(r.id, r.caminho))).then(carregar)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Apagar</button></p> : null}
       {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.startsWith('Recebemos') ? 'var(--verde)' : 'var(--vermelho)', margin: '6px 0 0' }}>{msg}</p> : null}
 
@@ -124,7 +124,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
           </label>
           <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
             <button type="button" className="r-btn" onClick={() => (setAberto(false), setArquivo(null))} style={{ flex: 1, height: '48px', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>Cancelar</button>
-            <button type="button" className="r-btn" disabled={!arquivo || !declaro || enviando} onClick={() => void enviar()} style={{ flex: 2, height: '48px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'", opacity: !arquivo || !declaro ? 0.5 : 1 }}>{enviando ? 'Enviando…' : 'Enviar para aprovação'}</button>
+            <button type="button" className="r-btn" disabled={!arquivo || !declaro || enviando} onClick={() => void enviar()} style={{ flex: 2, height: '48px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'", opacity: !arquivo || !declaro ? 0.5 : 1 }}>{enviando ? 'Enviando…' : 'Publicar foto'}</button>
           </div>
         </div>
       )}

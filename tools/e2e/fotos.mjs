@@ -26,17 +26,17 @@ if (ETAPA === '1') {
   confere('página do restaurante convida a mostrar o prato', (await t.getByText('Já comeu aqui? Mostre o prato.').count()) === 1);
   await t.getByRole('button', { name: /Mandar foto/ }).click();
   await t.locator('input[type=file]').setInputFiles('apps/app/public/fotos/destaque-sao-paulo.jpg'); await t.waitForTimeout(800);
-  confere('enviar fica desligado sem a declaração', await t.getByRole('button', { name: 'Enviar para aprovação' }).isDisabled());
+  confere('enviar fica desligado sem a declaração', await t.getByRole('button', { name: 'Publicar foto' }).isDisabled());
   await t.getByRole('radio', { name: 'Prato ou bebida' }).click();
   await t.getByLabel(/Nome do prato/).fill('Teste automático (apagar)');
   await t.locator('input[type=checkbox]').check();
   await t.screenshot({ path: `${OUT}/01-formulario.png`, fullPage: true });
-  await t.getByRole('button', { name: 'Enviar para aprovação' }).click(); await t.waitForTimeout(5000);
-  confere('recebida e esperando aprovação', (await t.getByText(/Recebemos!/).count()) === 1 && (await t.getByText(/esperando aprovação/).count()) === 1);
+  await t.getByRole('button', { name: 'Publicar foto' }).click(); await t.waitForTimeout(5000);
+  confere('publicada na hora (D-072)', (await t.getByText(/Foto publicada/).count()) === 1);
   await t.screenshot({ path: `${OUT}/02-enviada.png`, fullPage: true });
   const a = await pagina(false);
   await a.goto(URL + `#/lugar/${LUGAR}`); await a.waitForTimeout(3500);
-  confere('sem conta, foto pendente NÃO aparece', (await a.locator('section[aria-label="Fotos de quem foi"] img').count()) === 0);
+  confere('sem conta, a foto já aparece', (await a.locator('section[aria-label="Fotos de quem foi"] img').count()) >= 1);
 } else if (ETAPA === '3') {
   // Depois de marcar como recusada no banco: Tempo vê o aviso e apaga (limpa o teste).
   const t = await pagina(true);

@@ -77,7 +77,7 @@ export function AlbumDaViagem({ v, lugares, pode, recarregar }: { v: ViagemCompl
             <>
               <label style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', fontSize: '14px', lineHeight: '19px', marginTop: '10px' }}>
                 <input type="checkbox" checked={noLugar} onChange={(e) => setNoLugar(e.target.checked)} style={{ width: '22px', height: '22px', flex: 'none' }} />
-                <span>Mostrar também na página do lugar, para todos (passa por aprovação)</span>
+                <span>Mostrar também na página do lugar, para todos</span>
               </label>
               {noLugar ? (
                 <label style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', fontSize: '13px', lineHeight: '18px', marginTop: '8px' }}>

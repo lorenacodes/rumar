@@ -23,6 +23,25 @@ await p.getByPlaceholder(/Ex.: um restaurante de/).fill('Bairro do Recife Teste'
 await p.waitForTimeout(2500);
 await p.getByRole('button', { name: /Registrar "Bairro do Recife Teste"/ }).click(); await p.waitForTimeout(3000);
 confere('lugar livre registrado', await p.getByText('Bairro do Recife Teste').first().isVisible().catch(() => false));
+confere('só eu: sem aba "Quem foi"', !(await p.getByRole('radio', { name: /Quem foi/ }).count()) && !(await p.getByRole('tab', { name: /Quem foi/ }).count()));
+// Fui aqui num lugar de verdade, avaliar e voltar: tem que mostrar "Editar", não "Avaliar" de novo.
+await p.getByPlaceholder(/Ex.: um restaurante de/).fill('Restaurante'); await p.waitForTimeout(2500);
+const nomeLugar = (await p.locator('section[aria-label="Onde você foi"] b').first().textContent())?.trim();
+await p.getByRole('button', { name: 'Fui aqui' }).first().click(); await p.waitForTimeout(5000);
+await p.getByRole('radio', { name: '4 de 5' }).click();
+await p.getByRole('button', { name: 'Publicar' }).click(); await p.waitForTimeout(3000);
+await p.goBack(); await p.waitForTimeout(400);
+confere('volta sem "Carregando a viagem"', !(await p.getByText('Carregando a viagem').count()));
+await p.waitForTimeout(4000);
+const linha = p.locator('section[aria-label="Como foi"] li', { hasText: nomeLugar ?? '' }).first();
+confere('lugar avaliado mostra "Editar"', (await linha.getByRole('button', { name: 'Editar' }).count()) === 1);
+await p.getByText('Mapa', { exact: true }).click(); await p.waitForTimeout(3000);
+confere('mapa sem os dias', !(await p.getByRole('tablist', { name: 'Dias' }).count()));
+confere('mapa com os lugares onde esteve', await p.getByText(/onde você esteve em/).isVisible().catch(() => false));
+await p.getByText('Lugares', { exact: true }).click(); await p.waitForTimeout(1500);
+await linha.getByRole('button', { name: 'Editar' }).click(); await p.waitForTimeout(4000);
+await p.getByRole('button', { name: 'Apagar minha avaliação' }).click(); await p.waitForTimeout(2500);
+await p.goBack(); await p.waitForTimeout(4000);
 await p.getByRole('button', { name: 'Apagar viagem' }).click(); await p.waitForTimeout(4000);
 confere('viagem apagada', /#\/viagens$/.test(p.url()));
 console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');

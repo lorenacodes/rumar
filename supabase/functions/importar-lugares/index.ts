@@ -15,7 +15,7 @@
 //   { acao: 'curiosidades_gravar', itens: Curiosidade[] }      → curiosidades do mundo (D-039)
 //   { acao: 'coletadas' }                                      → cidades com lugares (para as opções de dieta)
 //   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
-//   { acao: 'fotos_pendentes', destinos?, prefixo?, ufs?: [de, ate], turisticos?, limite } → lugares sem foto ainda não procurados (D-057)
+//   { acao: 'fotos_pendentes', destinos?, prefixo?, ufs?: [de, ate], turisticos?, visitados?, limite } → lugares sem foto ainda não procurados (D-057)
 //   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
 //   { acao: 'fotos_revisar', depois?, limite }                 → fotos achadas pela busca (para revisar com a regra atual)
 //   { acao: 'fotos_limpar', ids }                              → tira fotos achadas que não passam na regra (volta para a busca)
@@ -144,19 +144,43 @@ Deno.serve(async (req) => {
   }
   if (p.acao === 'fotos_pendentes') {
     const limite = Math.min(Math.max(Number(p.limite) || 500, 1), 3000);
-    const antes = new Date(Date.now() - 90 * 86_400_000).toISOString();
-    let q = db.from('lugares').select('id, nome, categoria, tipo, lat, lon, destino_id').eq('ativo', true).is('foto', null).not('lat', 'is', null)
-      .or(`foto_tentada_em.is.null,foto_tentada_em.lt.${antes}`).not('categoria', 'in', '(transporte)');
-    const destinos = Array.isArray(p.destinos) ? (p.destinos as unknown[]).filter((d): d is string => typeof d === 'string').slice(0, 50) : [];
-    if (destinos.length) q = q.in('destino_id', destinos);
-    // País (prefixo do id, ex.: "br-") e só os turísticos primeiro (praias, atrações, centro histórico, museus, parques).
-    if (typeof p.prefixo === 'string' && /^[a-z]{2}-$/.test(p.prefixo)) q = q.like('destino_id', `${p.prefixo}%`);
-    // Região do Brasil pela faixa do código IBGE do estado (ex.: Nordeste = 21 a 29), contígua em cada região.
-    if (Array.isArray(p.ufs) && p.ufs.length === 2 && p.ufs.every((u: unknown) => typeof u === 'number' && u >= 11 && u <= 53)) {
-      q = q.gte('destino_id', `br-${p.ufs[0]}`).lt('destino_id', `br-${p.ufs[1] + 1}`);
+    // Lugares onde alguém disse que foi (roteiro, viagem registrada ou avaliação) vêm primeiro e são tentados de novo a cada 7 dias (D-072).
+    const visitados = p.visitados === true;
+    const antes = new Date(Date.now() - (visitados ? 7 : 90) * 86_400_000).toISOString();
+    let ids: string[] = [];
+    if (visitados) {
+      const [itens, avals] = await Promise.all([
+        db.from('trip_items').select('place_id').not('place_id', 'like', 'livre-%').limit(20000),
+        db.from('avaliacoes').select('place_id').limit(20000),
+      ]);
+      ids = [...new Set([...(itens.data ?? []), ...(avals.data ?? [])].map((r) => String(r.place_id)))].filter((i) => /^[a-z0-9_-]{2,90}$/.test(i)).slice(0, 3000);
+      if (!ids.length) return json({ itens: [] });
     }
-    if (p.turisticos === true) q = q.in('categoria', ['praias', 'atracoes', 'historico', 'museus', 'parques', 'cultura', 'mercados']);
-    const { data, error } = await q.order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(limite);
+    const consulta = () => {
+      let q = db.from('lugares').select('id, nome, categoria, tipo, lat, lon, destino_id').eq('ativo', true).is('foto', null).not('lat', 'is', null)
+        .or(`foto_tentada_em.is.null,foto_tentada_em.lt.${antes}`).not('categoria', 'in', '(transporte)');
+      const destinos = Array.isArray(p.destinos) ? (p.destinos as unknown[]).filter((d): d is string => typeof d === 'string').slice(0, 50) : [];
+      if (destinos.length) q = q.in('destino_id', destinos);
+      // País (prefixo do id, ex.: "br-") e só os turísticos primeiro (praias, atrações, centro histórico, museus, parques).
+      if (typeof p.prefixo === 'string' && /^[a-z]{2}-$/.test(p.prefixo)) q = q.like('destino_id', `${p.prefixo}%`);
+      // Região do Brasil pela faixa do código IBGE do estado (ex.: Nordeste = 21 a 29), contígua em cada região.
+      if (Array.isArray(p.ufs) && p.ufs.length === 2 && p.ufs.every((u: unknown) => typeof u === 'number' && u >= 11 && u <= 53)) {
+        q = q.gte('destino_id', `br-${p.ufs[0]}`).lt('destino_id', `br-${p.ufs[1] + 1}`);
+      }
+      if (p.turisticos === true) q = q.in('categoria', ['praias', 'atracoes', 'historico', 'museus', 'parques', 'cultura', 'mercados']);
+      return q;
+    };
+    if (visitados) {
+      // Em blocos de 200 ids (endereço da consulta não pode ficar enorme).
+      const todos: unknown[] = [];
+      for (let k = 0; k < ids.length && todos.length < limite; k += 200) {
+        const { data, error } = await consulta().in('id', ids.slice(k, k + 200)).limit(limite);
+        if (error) return json({ erro: error.message }, 500);
+        todos.push(...(data ?? []));
+      }
+      return json({ itens: todos.slice(0, limite) });
+    }
+    const { data, error } = await consulta().order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(limite);
     if (error) return json({ erro: error.message }, 500);
     return json({ itens: data ?? [] });
   }

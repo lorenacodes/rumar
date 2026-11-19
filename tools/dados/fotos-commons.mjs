@@ -50,6 +50,11 @@ const RAIO = { praias: 400, parques: 250, atracoes: 150, historico: 150, museus:
 const RUIM = /\b(map|mapa|locator|location|logo|bandeira|flag|bras[aã]o|coat of arms|diagram|planta baixa|floor plan|sign|placa|cart[aã]o|ticket|menu|card[aá]pio|screenshot|document|selo|stamp)\b/i;
 const EXT = /\.(jpe?g|png|webp)$/i;
 const LIVRE = /^(cc0|cc[- ]by(-sa)?( \d\.\d)?|cc[- ]by[- ]sa( \d\.\d)?|public domain|pd\b|pdm|no restrictions)/i;
+function distanciaM(a, b, c, d) {
+  const r = Math.PI / 180;
+  const x = (d - b) * r * Math.cos(((a + c) / 2) * r); const y = (c - a) * r;
+  return Math.sqrt(x * x + y * y) * 6_371_000;
+}
 function candidatos(l, achados) {
   // Só foto cujo nome do arquivo cite o lugar (D-057, revisão de 19/11: "foto tirada perto" trazia lugar errado).
   const turistico = TURISTICO.has(l.categoria);
@@ -93,13 +98,23 @@ async function pendentes(ufs) {
 let achadas = 0;
 let procurados = 0;
 const porCidade = new Map();
-async function processar(itens) {
+async function processar(itens, porNome = false) {
   for (let k = 0; k < itens.length; k += 50) {
     const lote = itens.slice(k, k + 50);
     const escolhas = new Map();
     for (const l of lote) {
       const r = await commons({ action: 'query', list: 'geosearch', gscoord: `${l.lat}|${l.lon}`, gsradius: String(RAIO[l.categoria] ?? 150), gsnamespace: '6', gslimit: '15' });
-      const c = candidatos(l, r?.query?.geosearch ?? []);
+      let c = candidatos(l, r?.query?.geosearch ?? []);
+      if (!c.length && porNome) {
+        // Busca por nome nos arquivos do Commons. Para não pegar outro lugar com o mesmo nome (ex.: "Igreja Matriz"),
+        // só vale arquivo com coordenada a até 2 km do lugar e cujo nome cite o lugar.
+        const s = await commons({ action: 'query', generator: 'search', gsrsearch: l.nome, gsrnamespace: '6', gsrlimit: '10', prop: 'coordinates' });
+        c = (s?.query?.pages ?? []).filter((x) => {
+          const co = x.coordinates?.[0];
+          return co && EXT.test(x.title) && !RUIM.test(x.title) && cita(x.title, l.nome) && distanciaM(l.lat, l.lon, co.lat, co.lon) <= 2000;
+        }).slice(0, 3).map((x) => ({ title: x.title }));
+        await espera(250);
+      }
       if (c.length) escolhas.set(l.id, c.map((x) => x.title));
       await espera(250);
     }
@@ -127,6 +142,16 @@ async function processar(itens) {
     console.log(`  ${Math.min(k + 50, itens.length)}/${itens.length}: +${r.ok} fotos (total ${achadas})`);
   }
 }
+// 1º: lugares onde alguém disse que foi (D-072). Além da busca por perto, procura pelo nome + cidade.
+{
+  const { itens } = await banco({ acao: 'fotos_pendentes', visitados: true, limite: 3000 });
+  if (itens.length) {
+    console.log(`Visitados por usuários: ${itens.length} lugares sem foto`);
+    await processar(itens, true);
+    procurados += itens.length;
+  }
+}
+
 for (const regiao of ordem) {
   const ufs = regiao ? REGIOES[regiao] : undefined;
   while (Date.now() < fimEm) {

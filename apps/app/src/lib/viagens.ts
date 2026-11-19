@@ -178,6 +178,14 @@ export async function registrarViagemFeita(dados: { destino: string; destinoId: 
   return data.id as string;
 }
 
+/** Cópia salva neste aparelho para mostrar na hora enquanto a versão nova chega (D-072). */
+export function copiaRapida(id: string): ViagemCompleta | undefined {
+  const c = lerOffline<ViagemCompleta>(id);
+  if (!c) return undefined;
+  reporLugares(c.lugares as LugarBase[]);
+  return c.dados;
+}
+
 export async function carregarViagem(id: string): Promise<ViagemCompleta | null> {
   const uid = await eu();
   if (!uid) return null; // sem conta: nada a buscar (evita 9 pedidos recusados)

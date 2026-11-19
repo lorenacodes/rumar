@@ -826,3 +826,17 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Segurança: "Denunciar foto" no cartão; foto com 2 denúncias sai da capa automaticamente. Ainda falta mostrar
   essas denúncias na tela de Moderação (hoje ela trata fotos de lugares e avaliações).
 - Sem conta: não vê o feed (pede para entrar). Página aberta na internet fica para depois.
+
+## D-072 — Avaliações, fotos de quem foi e viagem registrada (pedidos de 19/11)
+- Foto de lugar enviada por usuário aparece na hora. Com 2 denúncias sai do ar e volta para a Moderação.
+  (Antes toda foto esperava aprovação.) Risco aceito: uma foto ruim fica no ar até ser denunciada.
+- Avaliação: pergunta "Tem Wi-Fi livre?" (Sim/Não), campo de comentário cresce com o texto e aceita até
+  3 fotos ou vídeos, com a declaração de que são da pessoa e podem aparecer na página do lugar. Apagar a
+  avaliação apaga as mídias. Visual refeito: resumo em cartão, fatos em pílulas, cada avaliação em cartão.
+- Viagem: "Como foi?" mostra a nota e "Editar" nos lugares já avaliados, não pede de novo.
+- Viagem registrada: mapa sem dias, com todos os lugares onde a pessoa esteve; aba "Quem foi" só aparece
+  se foi mais de uma pessoa.
+- Voltar para a viagem abre na hora com a cópia do aparelho e atualiza em seguida (antes: "Carregando...").
+- Fotos automáticas: a busca diária começa pelos lugares onde alguém disse que foi (roteiro, viagem
+  registrada, avaliação), tenta de novo a cada 7 dias e também procura pelo nome do lugar no Commons
+  (só vale arquivo com coordenada a até 2 km e nome que cite o lugar).
