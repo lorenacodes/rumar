@@ -15,6 +15,8 @@
 //   { acao: 'curiosidades_gravar', itens: Curiosidade[] }      → curiosidades do mundo (D-039)
 //   { acao: 'coletadas' }                                      → cidades com lugares (para as opções de dieta)
 //   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
+//   { acao: 'fotos_pendentes', destinos?, limite }             → lugares sem foto ainda não procurados (D-057)
+//   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -137,6 +139,32 @@ Deno.serve(async (req) => {
       if (data?.length) ok++;
     }
     return json({ ok });
+  }
+  if (p.acao === 'fotos_pendentes') {
+    const limite = Math.min(Math.max(Number(p.limite) || 500, 1), 3000);
+    const antes = new Date(Date.now() - 90 * 86_400_000).toISOString();
+    let q = db.from('lugares').select('id, nome, categoria, tipo, lat, lon, destino_id').eq('ativo', true).is('foto', null).not('lat', 'is', null)
+      .or(`foto_tentada_em.is.null,foto_tentada_em.lt.${antes}`).not('categoria', 'in', '(transporte)');
+    const destinos = Array.isArray(p.destinos) ? (p.destinos as unknown[]).filter((d): d is string => typeof d === 'string').slice(0, 50) : [];
+    if (destinos.length) q = q.in('destino_id', destinos);
+    const { data, error } = await q.order('relevancia', { ascending: false }).limit(limite);
+    if (error) return json({ erro: error.message }, 500);
+    return json({ itens: data ?? [] });
+  }
+  if (p.acao === 'fotos_gravar') {
+    const FOTO = /^https:\/\/(upload|commons)\.wikimedia\.org\//;
+    const PAGINA = /^https:\/\/commons\.wikimedia\.org\//;
+    const itens = ((p.itens ?? []) as { id: string; foto?: string; foto_pagina?: string }[]).slice(0, 1000);
+    const agora = new Date().toISOString();
+    const sem = itens.filter((i) => !(typeof i.foto === 'string' && FOTO.test(i.foto))).map((i) => String(i.id));
+    for (let k = 0; k < sem.length; k += 200) await db.from('lugares').update({ foto_tentada_em: agora }).in('id', sem.slice(k, k + 200));
+    let ok = 0;
+    for (const i of itens.filter((x) => typeof x.foto === 'string' && FOTO.test(x.foto))) {
+      const pagina = typeof i.foto_pagina === 'string' && PAGINA.test(i.foto_pagina) ? i.foto_pagina.slice(0, 400) : null;
+      const { data } = await db.from('lugares').update({ foto: i.foto!.slice(0, 400), foto_pagina: pagina, foto_busca: true, foto_tentada_em: agora }).eq('id', String(i.id)).is('foto', null).select('id');
+      if (data?.length) ok++;
+    }
+    return json({ ok, procurados: itens.length });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });

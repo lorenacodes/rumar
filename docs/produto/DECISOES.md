@@ -682,3 +682,15 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   de R$ 500. Caminho grátis: a versão web no GitHub Pages (workflow "Web (iPhone)"), que no Safari vira app em
   "Compartilhar → Adicionar à Tela de Início" (manifesto, ícone e tela cheia). Limites: sem App Store, e
   notificações só em iOS 16.4+ depois de instalado. GitHub Pages grátis só com repositório público.
+
+## D-057 — Fotos por localização (Wikimedia Commons)
+- **Por quê:** só ~6% dos lugares tinham foto (Recife 21 de 926; Ipojuca 0 de 78).
+- **Como:** para cada lugar sem foto, procura no Commons imagens tiradas perto das coordenadas. Pontos
+  turísticos, praias, parques e museus aceitam foto que cite o nome do lugar ou uma bem perto (praia até
+  250 m, parque 120 m, demais 40 m). Restaurantes, bares, cafés e hotéis só com o nome do lugar no arquivo.
+  Nunca mapa, logo, bandeira ou placa. Só CC0, CC BY, CC BY-SA e domínio público; crédito pelo link da página.
+- **Proteção:** a coleta do OpenStreetMap não apaga a foto achada (gatilho no banco); se o OSM trouxer foto
+  própria, ela passa a valer.
+- **Limite honesto:** restaurantes e lojas quase nunca têm foto livre; para eles, fotos de quem foi ou Google
+  (pago, com teto mensal) quando a fundadora decidir.
+- Workflow "Fotos": todo dia 3.000 lugares; à mão por cidade. Começou por Pernambuco.
