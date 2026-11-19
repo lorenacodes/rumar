@@ -5,7 +5,7 @@
 -- apaga a pasta da pessoa).
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('fotos-viagem', 'fotos-viagem', false, 26214400, array['image/jpeg', 'image/webp', 'video/mp4', 'video/quicktime', 'video/webm'])
-on conflict (id) do update set public = false, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+on conflict (id) do nothing;
 
 create table if not exists public.viagem_fotos (
   id uuid primary key default gen_random_uuid(),
@@ -41,14 +41,13 @@ begin
   end if;
   return new;
 end $$;
-drop trigger if exists limite_album on public.viagem_fotos;
 create trigger limite_album before insert on public.viagem_fotos for each row execute function privado.limite_album();
 
 create or replace function privado.pode_ver_arquivo_viagem(caminho text) returns boolean
 language sql stable security definer set search_path = '' as $$
   select exists (select 1 from public.viagem_fotos f where f.caminho = pode_ver_arquivo_viagem.caminho and privado.pode_ver_viagem(f.trip_id));
 $$;
-revoke execute on function privado.pode_ver_arquivo_viagem(text) from anon, public;
+-- (anon não tem acesso ao esquema privado, então não chama esta função)
 grant execute on function privado.pode_ver_arquivo_viagem(text) to authenticated;
 
 create policy "viagem: enviar na propria pasta" on storage.objects for insert to authenticated
