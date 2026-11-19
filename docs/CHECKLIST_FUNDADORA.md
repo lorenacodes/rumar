@@ -41,6 +41,12 @@
 - [ ] **4.2 Contas grátis:** Travelpayouts (passagens), LiteAPI (hotéis), Unsplash (fotos). Avise e eu peço as
       chaves por formulário seguro.
 - [ ] **4.3 Conversar com um contador sobre CNPJ** antes de receber comissões (software em geral não pode ser MEI).
+- [ ] **4.4 Parceria com banco/fintech (depois dos testadores):** quando houver números de uso (quantos voltam
+      na 2ª e 3ª semana, quantos usam o cofrinho), procurar bancos que combinam com "viajar pelo bolso":
+      Nubank (caixinhas), Inter (porquinho), C6/Nomad/Wise (viagem internacional). Eu preparo a apresentação com
+      os números. Ordem: testadores → números → bancos/fintechs → investidores.
+- [ ] **4.5 (Só se o cofrinho for usado) conexão com a conta pelo Open Finance** (Pluggy ou Belvo): pedir orçamento;
+      provavelmente exige CNPJ. Não fazer antes de ver se as pessoas usam o cofrinho manual.
 
 ## 5. Chaves que ligam o que já está pronto
 
@@ -77,6 +83,8 @@
 - [ ] **8.1 Registrar "Bo Vair" no INPI**, classe 9 (aplicativo): R$ 440 com desconto para pessoa física/MEI/ME
       (confirmar na tabela oficial). É o próximo gasto a planejar.
 - [ ] **8.2 Acordo de confidencialidade (NDA)** antes de mostrar o projeto em detalhe. Peça que eu redija.
+      Na primeira conversa com investidor ou banco: mostrar problema, público e números, não código nem detalhes.
+      Lembrete: o maior risco de cópia hoje é o repositório público (decisão 3.1), não os investidores.
 
 ## 9. Conferências rápidas (10 min no celular)
 
