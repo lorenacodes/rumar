@@ -6,14 +6,10 @@ import { meuUsuario } from '../../lib/usuario';
 import { buscarPessoas, minhasAmizades, pedirAmizade, responderAmizade, type Amizade, type PessoaPublica } from '../../lib/social';
 import { listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
+import { Avatar } from '../../ui/avatar';
 import { BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { campo, periodo, Rotulo } from '../viagens/comum';
 
-const Inicial = ({ nome }: { nome: string }) => (
-  <span aria-hidden style={{ width: '44px', height: '44px', flex: 'none', background: 'var(--amarelo)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 16px 'Lexend Exa'", color: 'var(--botao-principal-texto)' }}>
-    {nome.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
-  </span>
-);
 
 /** Amigos (dentro do Perfil, D-032): encontrar pessoas, pedidos de amizade, amigos e as viagens que eles compartilharam. */
 export function Social() {
@@ -82,7 +78,7 @@ export function Social() {
               const r = relacao(p.user_id);
               return (
                 <li key={p.user_id} style={linha}>
-                  <Inicial nome={p.display_name} />
+                  <Avatar userId={p.user_id} nome={p.display_name} tamanho={44} />
                   <span style={{ flex: 1 }}><b>{p.display_name}</b><span style={sub}>{[p.username ? `@${p.username}` : null, p.origin_city].filter(Boolean).join(' · ')}</span></span>
                   {r ? <span style={sub}>{r.status === 'aceita' ? 'Amigos' : 'Pedido enviado'}</span> : (
                     <button type="button" className="r-btn" onClick={() => void pedirAmizade(p.user_id).then(carregar)} style={acao}>Adicionar</button>
@@ -98,7 +94,7 @@ export function Social() {
             <Rotulo>Pedidos de amizade</Rotulo>
             {recebidos.map((a) => (
               <div key={a.outro.user_id} style={linha}>
-                <Inicial nome={a.outro.display_name} />
+                <Avatar userId={a.outro.user_id} nome={a.outro.display_name} tamanho={44} />
                 <span style={{ flex: 1 }}><b>{a.outro.display_name}</b>{a.outro.username ? <span style={sub}>@{a.outro.username}</span> : null}</span>
                 <button type="button" className="r-btn" onClick={() => void responderAmizade(a.outro.user_id, true).then(carregar)} style={{ ...acao, background: 'var(--amarelo)', border: 0 }}>Aceitar</button>
                 <button type="button" className="r-btn" onClick={() => void responderAmizade(a.outro.user_id, false).then(carregar)} style={acao}>Recusar</button>
@@ -109,7 +105,7 @@ export function Social() {
         <Rotulo>Amigos ({amigos.length})</Rotulo>
         {amigos.map((a) => (
           <button key={a.outro.user_id} type="button" className="r-btn" onClick={() => navegar(`/pessoa/${a.outro.user_id}`)} style={{ ...linha, width: '100%', textAlign: 'left' }}>
-            <Inicial nome={a.outro.display_name} />
+            <Avatar userId={a.outro.user_id} nome={a.outro.display_name} tamanho={44} />
             <span style={{ flex: 1 }}><b>{a.outro.display_name}</b><span style={sub}>{[a.outro.username ? `@${a.outro.username}` : null, a.outro.origin_city].filter(Boolean).join(' · ')}</span></span>
             <span aria-hidden>›</span>
           </button>

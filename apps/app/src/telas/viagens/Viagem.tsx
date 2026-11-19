@@ -145,7 +145,7 @@ export function Viagem() {
             </span>
           </button>
         ) : null}
-        <AlbumDaViagem v={v} lugares={itens.map((x) => x.l)} pode={pode || v.papel === 'leitor'} />
+        <AlbumDaViagem v={v} lugares={itens.map((x) => x.l)} pode={pode || v.papel === 'leitor'} recarregar={recarregar} />
         <div style={{ marginTop: '12px' }}>
           <Segmentos rotulo="Partes da viagem" valor={aba} aoMudar={(a) => setParams({ aba: a }, { replace: true })}
             opcoes={registrada

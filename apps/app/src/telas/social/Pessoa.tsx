@@ -5,6 +5,7 @@ import { desfazerAmizade, perfilPublico, type PessoaPublica } from '../../lib/so
 import { supabase } from '../../lib/supabase';
 import { atualizarViagem, eu, listarViagens, type Viagem } from '../../lib/viagens';
 import { FotoLugar } from '../../ui/foto';
+import { Avatar } from '../../ui/avatar';
 import { Voltar } from '../../ui/pecas';
 import { periodo, Rotulo } from '../viagens/comum';
 
@@ -57,7 +58,7 @@ export function Pessoa() {
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 24px' }}>
         <Voltar para="/perfil/amigos" />
         <div style={{ display: 'flex', gap: '14px', alignItems: 'center', marginTop: '8px' }}>
-          <span aria-hidden="true" style={{ width: '64px', height: '64px', flex: 'none', borderRadius: '50%', background: 'var(--fundo-escuro)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "600 26px 'Lexend Exa'" }}>{nome.charAt(0).toUpperCase()}</span>
+          <Avatar userId={id} nome={nome} tamanho={64} />
           <span style={{ minWidth: 0 }}>
             <h1 style={{ margin: 0, font: "600 24px/29px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{nome}</h1>
             <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{[p?.username ? `@${p.username}` : null, p?.origin_city].filter(Boolean).join(' · ')}</span>

@@ -20,6 +20,7 @@ export function JaFiz() {
   const [ano, setAno] = useState(agora.getFullYear());
   const [noites, setNoites] = useState(3);
   const [pessoas, setPessoas] = useState(1);
+  const [quemVe, setQuemVe] = useState<'amigos' | 'privada'>('amigos');
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const anos = Array.from({ length: 30 }, (_, i) => agora.getFullYear() - i);
@@ -30,7 +31,7 @@ export function JaFiz() {
     if (!sessao) return navegar('/entrar');
     if (!destino || futura) return;
     setSalvando(true);
-    const id = await registrarViagemFeita({ destino: destino.nome, destinoId: destino.id, dataIda, noites, viajantes: pessoas });
+    const id = await registrarViagemFeita({ destino: destino.nome, destinoId: destino.id, dataIda, noites, viajantes: pessoas, visibilidade: quemVe });
     setSalvando(false);
     if (id) navegar(`/viagem/${id}?aba=roteiro`, { replace: true });
     else setErro('Não deu para salvar. Tente de novo.');
@@ -66,6 +67,15 @@ export function JaFiz() {
           <label style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Pessoas
             <input type="number" inputMode="numeric" min={1} max={20} value={pessoas} onChange={(e) => setPessoas(Math.min(20, Math.max(1, Number(e.target.value) || 1)))} className="r-input" style={seletor} />
           </label>
+        </div>
+        <div role="radiogroup" aria-label="Quem vê" style={{ marginTop: '16px' }}>
+          <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Quem vê as fotos</div>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+            {([['amigos', 'Meus amigos'], ['privada', 'Só eu']] as const).map(([id, nome]) => (
+              <button key={id} type="button" role="radio" aria-checked={quemVe === id} className="r-btn" onClick={() => setQuemVe(id)}
+                style={{ flex: 1, minHeight: '44px', borderRadius: '22px', font: "600 15px 'Open Sans'", ...(quemVe === id ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{nome}</button>
+            ))}
+          </div>
         </div>
         {futura ? <p style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '8px 0 0' }}>Essa data ainda não chegou. Para planejar, use Nova viagem.</p> : null}
         {erro ? <p role="alert" style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '8px 0 0' }}>{erro}</p> : null}

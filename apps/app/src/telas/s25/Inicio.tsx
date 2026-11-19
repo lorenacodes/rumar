@@ -15,7 +15,10 @@ import { hojeISO } from '../viagens/jornada';
 import { carregarViagem, listarViagens, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
 import { curiosidades } from '../../lib/curiosidades';
+import { amigosEstiveram, type AmigoEsteve } from '../../lib/amigos';
 import { lugaresCuriosos, nomesDestinos } from '../../lib/lugares';
+import { Avatar } from '../../ui/avatar';
+import { Estrelas } from '../../ui/estrelas';
 import { DESTINOS_COM_FOTO, FotoDestino } from '../../ui/foto';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 
@@ -74,6 +77,42 @@ function CartaoPequeno({ d }: { d: DestinoCartao }) {
       <b style={{ display: 'block', font: "600 15px/20px 'Lexend Exa'", marginTop: '6px' }}>{d.nome}</b>
       <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{chamada(d)}</span>
     </button>
+  );
+}
+
+/** "Onde seus amigos estiveram" (D-063): só o que tem foto (álbum das viagens e fotos de lugares aprovadas). */
+function AmigosEstiveram() {
+  const navegar = useNavigate();
+  const [itens, setItens] = useState<AmigoEsteve[]>([]);
+  useEffect(() => void amigosEstiveram(20).then(setItens), []);
+  if (!itens.length) return null;
+  return (
+    <>
+      <Rot t="Onde seus amigos estiveram" />
+      <div role="list" aria-label="Onde seus amigos estiveram" style={fileira}>
+        {itens.map((c) => (
+          <div role="listitem" key={`${c.tipo}-${c.trip_id ?? c.place_id}-${c.user_id}`} style={{ display: 'contents' }}>
+            <button type="button" className="r-btn" onClick={() => navegar(c.trip_id ? `/viagem/${c.trip_id}` : `/lugar/${c.place_id}`)}
+              aria-label={`${c.nome} esteve em ${c.titulo}`} style={{ flex: 'none', width: '200px', textAlign: 'left', scrollSnapAlign: 'start' }}>
+              <span style={{ position: 'relative', display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+                <img src={c.url} alt="" loading="lazy" onError={() => setItens((l) => l.filter((x) => x !== c))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 10px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Avatar userId={c.user_id} nome={c.nome} tamanho={24} />
+                    <b style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nome.split(' ')[0]}</b>
+                  </span>
+                  <b style={{ display: 'block', font: "600 15px/19px 'Lexend Exa'", marginTop: '4px' }}>{c.titulo}</b>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', marginTop: '2px' }}>
+                    {c.nota ? <Estrelas nota={c.nota} tamanho={12} /> : null}
+                    <span>{c.tipo === 'viagem' ? `${c.fotos} ${c.fotos === 1 ? 'foto' : 'fotos'}` : c.cidade ?? ''}</span>
+                  </span>
+                </span>
+              </span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -265,6 +304,7 @@ export function Inicio() {
 
         <Rot t="No Brasil" />
         <div role="list" aria-label="Destinos no Brasil" style={fileira}>{brasil.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+        {sessao ? <AmigosEstiveram /> : null}
         <Curiosos />
         <Rot t="Lá fora" />
         <div role="list" aria-label="Destinos no exterior" style={fileira}>{fora.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>

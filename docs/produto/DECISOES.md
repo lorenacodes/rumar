@@ -746,3 +746,15 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   do design (lá a seta enfeita botões principais).
 - **Página do lugar:** "Ver no mapa" virou "Como chegar" (abre a rota no Google Maps); "+ Quero ir" virou
   "+ Salvar"/"Salvo" (a lista continua se chamando "Quero ir").
+
+## D-063 — "Onde seus amigos estiveram" e fotos de perfil visíveis
+- **Fotos de perfil:** estavam num balde privado em que cada um só lia a própria; as outras pessoas viam só a
+  inicial. Agora quem tem conta vê a foto dos outros (para reconhecer amigos na busca, nas listas, no perfil e
+  nos cartões). Sem conta, ninguém vê. Componente `ui/avatar.tsx`.
+- **Início, para quem tem conta:** faixa "Onde seus amigos estiveram", só com o que tem foto: fotos do álbum de
+  viagens dos amigos que a pessoa pode ver e fotos aprovadas que os amigos mandaram para a página de um lugar
+  (com as estrelas da avaliação deles, se houver). Toque abre a viagem (só para ver) ou o lugar. Sem fotos de
+  amigos, a faixa não aparece.
+- **Para a faixa não nascer vazia:** "Registrar viagem que já fiz" pergunta "Quem vê as fotos" já em "Meus
+  amigos" (dá para trocar para "Só eu"); no álbum de viagem privada aparece "Seus amigos não veem esta viagem ·
+  Mostrar para amigos".

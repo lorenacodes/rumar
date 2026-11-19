@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { apagarDaViagem, fotosDaViagem, postarNaViagem, type FotoDaViagem } from '../../lib/album';
+import { atualizarViagem } from '../../lib/viagens';
 import type { Lugar } from '../../lib/planejador';
 import type { ViagemCompleta } from '../../lib/viagens';
 
 /** "Fotos da viagem" (D-059): álbum do grupo. Aparece quando a viagem começa; quem participa posta. */
-export function AlbumDaViagem({ v, lugares, pode }: { v: ViagemCompleta; lugares: Lugar[]; pode: boolean }) {
+export function AlbumDaViagem({ v, lugares, pode, recarregar }: { v: ViagemCompleta; lugares: Lugar[]; pode: boolean; recarregar?: () => void }) {
   const [fotos, setFotos] = useState<FotoDaViagem[] | null | undefined>(undefined);
   const [aberto, setAberto] = useState(false);
   const [arquivos, setArquivos] = useState<File[]>([]);
@@ -48,6 +49,11 @@ export function AlbumDaViagem({ v, lugares, pode }: { v: ViagemCompleta; lugares
         <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Fotos da viagem{fotos?.length ? ` (${fotos.length})` : ''}</h2>
         {pode && participa && !aberto ? <button type="button" className="r-btn" onClick={() => { setAberto(true); setMsg(null); }} style={{ minHeight: '40px', padding: '0 14px', borderRadius: '20px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Postar fotos</button> : null}
       </div>
+      {v.papel === 'dono' && v.viagem.visibilidade === 'privada' && fotos.length ? (
+        <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Seus amigos não veem esta viagem.{' '}
+          <button type="button" className="r-btn" onClick={() => void atualizarViagem(v.viagem.id, { visibilidade: 'amigos' }).then(() => recarregar?.())} style={{ color: 'var(--azul)', fontWeight: 600, fontSize: '13px', minHeight: '32px' }}>Mostrar para amigos</button>
+        </p>
+      ) : null}
       {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.includes('postad') && !msg.includes(' de ') ? 'var(--verde)' : 'var(--texto)', margin: '6px 0 0' }}>{msg}</p> : null}
 
       {aberto ? (
