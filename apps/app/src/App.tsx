@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
 import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, useParams, type RouteObject } from 'react-router-dom';
 
-import { TELAS } from './telas/registro';
 
 import { App as CapApp } from '@capacitor/app';
 
 import { ouvirLinks } from './conta/deepLink';
 import { sessaoTerminouSozinha } from './conta/servico';
-import { DevIndice, DevTela } from './dev/DevTelas';
 import { supabase } from './lib/supabase';
 import { usePlano } from './state/plano';
 import { EmBreve } from './telas/provisorias';
@@ -27,24 +25,11 @@ import { Tela5_10, Tela5_11, Tela5_12, Tela5_16, Tela5_8, Tela5_9 } from './tela
 import { Tela28_7 } from './telas/s28/Tela28_7';
 import { AvisoAtualizar } from './ui/atualizar';
 import { SemInternet } from './ui/semInternet';
-import { Descobrir } from './telas/descobrir/Descobrir';
-import { Lugar } from './telas/descobrir/Lugar';
-import { Destinos } from './telas/destinos/Destinos';
-import { Pessoa } from './telas/social/Pessoa';
-import { Social } from './telas/social/Social';
-import { Curiosos } from './telas/curiosos/Curiosos';
-import { Moderar } from './telas/s05/Moderar';
-import { NovaViagem } from './telas/viagens/NovaViagem';
-import { JaFiz } from './telas/viagens/JaFiz';
-import { MinhasAvaliacoes } from './telas/s05/MinhasAvaliacoes';
-import { Viagem } from './telas/viagens/Viagem';
 import { Viagens } from './telas/viagens/Viagens';
-import { Montar } from './telas/viagem/Montar';
 import { Inicio } from './telas/s25/Inicio';
 import { Moeda } from './telas/s05/Moeda';
 import { Usuario } from './telas/s05/Usuario';
 import { Ajuda, AvisoPrivacidade, Privacidade, Sobre, Termos } from './telas/s05/Conta';
-import { Idioma } from './telas/viagens/Idioma';
 
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
 function Raiz() {
@@ -68,19 +53,44 @@ function Raiz() {
   }, [navegar]);
   return (
     <>
-      <Outlet />
+      <Suspense fallback={<main className="tela" aria-busy="true" />}>
+        <Outlet />
+      </Suspense>
       <AvisoAtualizar />
       <SemInternet />
     </>
   );
 }
 
+// Telas carregadas sob demanda (desempenho): baixam só quando a pessoa entra nelas.
+const sob = <T extends Record<string, unknown>>(carregar: () => Promise<T>, nome: keyof T) =>
+  lazy(async () => ({ default: (await carregar())[nome] as ComponentType<Record<string, unknown>> }));
+const Descobrir = sob(() => import('./telas/descobrir/Descobrir'), 'Descobrir');
+const Lugar = sob(() => import('./telas/descobrir/Lugar'), 'Lugar');
+const Destinos = sob(() => import('./telas/destinos/Destinos'), 'Destinos');
+const Pessoa = sob(() => import('./telas/social/Pessoa'), 'Pessoa');
+const Social = sob(() => import('./telas/social/Social'), 'Social');
+const Curiosos = sob(() => import('./telas/curiosos/Curiosos'), 'Curiosos');
+const Moderar = sob(() => import('./telas/s05/Moderar'), 'Moderar');
+const NovaViagem = sob(() => import('./telas/viagens/NovaViagem'), 'NovaViagem');
+const JaFiz = sob(() => import('./telas/viagens/JaFiz'), 'JaFiz');
+const MinhasAvaliacoes = sob(() => import('./telas/s05/MinhasAvaliacoes'), 'MinhasAvaliacoes');
+const Viagem = sob(() => import('./telas/viagens/Viagem'), 'Viagem');
+const Montar = sob(() => import('./telas/viagem/Montar'), 'Montar');
+const Idioma = sob(() => import('./telas/viagens/Idioma'), 'Idioma');
+const DevIndice = sob(() => import('./dev/DevTelas'), 'DevIndice');
+const DevTela = sob(() => import('./dev/DevTelas'), 'DevTela');
+/** Telas geradas do design, pelo id (/tela/2.1): o registro (grande) também vem sob demanda. */
+const TelaDoRegistro = lazy(async () => {
+  const { TELAS } = await import('./telas/registro');
+  return { default: function TelaDoRegistro({ id }: { id: string }) { const Tela = TELAS[id]; return Tela ? <Tela key={id} /> : <Navigate to={`/em-breve/${id}`} replace />; } };
+});
+
 /** Telas geradas do design, pelo id (/tela/2.1). */
 function TelaPorId({ id: fixo }: { id?: string }) {
   const { id: daRota = '' } = useParams();
   const id = fixo ?? daRota;
-  const Tela = TELAS[id];
-  return Tela ? <Tela key={id} /> : <Navigate to={`/em-breve/${id}`} replace />;
+  return <TelaDoRegistro id={id} />;
 }
 
 /** Primeira tela: conferência de idade, ou o início se ela já foi feita. */

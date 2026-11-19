@@ -791,3 +791,9 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   olha não são guardadas. Ao sair da conta, as cópias são apagadas (dados pessoais no aparelho).
 - **Limite:** vale para o app instalado (APK). A versão web para iPhone ainda precisa de internet para abrir o
   app; a viagem guardada aparece depois que ele abre.
+
+## D-068 — App mais leve na abertura
+- Telas grandes ou de uso ocasional (viagem, descobrir, lugar, curiosidades, montar, idioma, amigos, as telas
+  geradas do design e as de desenvolvimento) carregam sob demanda (`React.lazy`). Arquivo principal: de
+  1,5 MB / 334 KB compactado para 481 KB / 144 KB (−57%). Início, Viagens e as telas de entrada continuam no
+  arquivo principal para abrir na hora.
