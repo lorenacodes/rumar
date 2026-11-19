@@ -852,3 +852,10 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Pedido da fundadora. Destaques: 88% da tela (até 400 px). Cartões de "No Brasil", "Lá fora" e "Lugares
   curiosos": 200 px, formato retrato (4:5). Faixas de amigos e "Viagens da galera": 260 px. Cartão do
   Descobrir: 200 px de altura. Cartões alinhados pelo topo.
+
+## D-075 — Fotos do Início de ponta a ponta
+- Pedido da fundadora ("o principal para gerar desejo"). Todas as faixas de foto do Início ocupam a largura
+  total da tela, uma foto por vez, deslizando para o lado. Nome e detalhes ficam sobre a foto, com sombra.
+- Contador "1/10" no canto mostra que há mais fotos (sem a ponta do próximo cartão aparecendo).
+- Destaques 4:5; demais faixas 1:1; cartão do Descobrir 260 px de altura, também de ponta a ponta.
+- A faixa de destaques reinicia no primeiro quando os favoritos carregam (antes parava no meio).

@@ -54,29 +54,34 @@ function useAbrirDestino() {
 }
 
 /** Cartão grande com foto, para o carrossel principal. */
-function CartaoGrande({ d, favorito }: { d: DestinoCartao; favorito: boolean }) {
+function CartaoGrande({ d, favorito, i = 0, total = 0 }: { d: DestinoCartao; favorito: boolean; i?: number; total?: number }) {
   const abrir = useAbrirDestino();
   return (
     <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}, ${d.pais}: ver o que viver lá`}
-      style={{ position: 'relative', flex: 'none', width: '88%', maxWidth: '400px', aspectRatio: '4 / 5', overflow: 'hidden', scrollSnapAlign: 'start', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))', textAlign: 'left' }}>
+      style={{ position: 'relative', flex: 'none', width: '100%', aspectRatio: '4 / 5', overflow: 'hidden', scrollSnapAlign: 'start', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))', textAlign: 'left' }}>
       <FotoDestino nome={d.foto ?? d.nome} credito={false} />
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.72) 100%)' }} />
-      <span style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 2, color: '#fff' }}>
+      <Contador i={i} total={total} />
+      <span style={{ position: 'absolute', left: 20, right: 20, bottom: 18, zIndex: 2, color: '#fff' }}>
         {favorito ? <span style={{ display: 'inline-block', font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', padding: '2px 6px', marginBottom: '6px' }}>Seu favorito</span> : null}
-        <span style={{ display: 'block', font: "600 26px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{d.nome}</span>
+        <span style={{ display: 'block', font: "600 30px/34px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{d.nome}</span>
         <span style={{ display: 'block', fontSize: '14px', opacity: 0.92 }}>{d.pais} · {chamada(d)}</span>
       </span>
     </button>
   );
 }
 
-function CartaoPequeno({ d }: { d: DestinoCartao }) {
+function CartaoPequeno({ d, i = 0, total = 0 }: { d: DestinoCartao; i?: number; total?: number }) {
   const abrir = useAbrirDestino();
   return (
-    <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}: ver o que viver lá`} style={{ flex: 'none', width: '200px', textAlign: 'left' }}>
-      <span style={{ position: 'relative', display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--cartao-2)' }}><FotoDestino nome={d.foto ?? d.nome} credito={false} /></span>
-      <b style={{ display: 'block', font: "600 15px/20px 'Lexend Exa'", marginTop: '6px' }}>{d.nome}</b>
-      <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{chamada(d)}</span>
+    <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}: ver o que viver lá`}
+      style={{ position: 'relative', flex: 'none', width: '100%', aspectRatio: '1 / 1', overflow: 'hidden', scrollSnapAlign: 'start', background: 'var(--cartao-2)' }}>
+      <FotoDestino nome={d.foto ?? d.nome} credito={false} />
+      <Contador i={i} total={total} />
+      <span style={sombraTexto}>
+        <b style={{ display: 'block', font: "600 24px/28px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{d.nome}</b>
+        <span style={{ display: 'block', fontSize: '14px', opacity: 0.92 }}>{chamada(d)}</span>
+      </span>
     </button>
   );
 }
@@ -91,18 +96,19 @@ function AmigosEstiveram() {
     <>
       <Rot t="Onde seus amigos estiveram" />
       <div role="list" aria-label="Onde seus amigos estiveram" style={fileira}>
-        {itens.map((c) => (
+        {itens.map((c, i) => (
           <div role="listitem" key={`${c.tipo}-${c.trip_id ?? c.place_id}-${c.user_id}`} style={{ display: 'contents' }}>
             <button type="button" className="r-btn" onClick={() => navegar(c.trip_id ? `/viagem/${c.trip_id}` : `/lugar/${c.place_id}`)}
-              aria-label={`${c.nome} esteve em ${c.titulo}`} style={{ flex: 'none', width: '260px', textAlign: 'left', scrollSnapAlign: 'start' }}>
-              <span style={{ position: 'relative', display: 'block', width: '260px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+              aria-label={`${c.nome} esteve em ${c.titulo}`} style={{ flex: 'none', width: '100%', textAlign: 'left', scrollSnapAlign: 'start' }}>
+              <span style={{ position: 'relative', display: 'block', width: '100%', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}>
                 <img src={c.url} alt="" loading="lazy" onError={() => setItens((l) => l.filter((x) => x !== c))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 10px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
+                <Contador i={i} total={itens.length} />
+                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '48px 20px 16px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Avatar userId={c.user_id} nome={c.nome} tamanho={24} />
                     <b style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nome.split(' ')[0]}</b>
                   </span>
-                  <b style={{ display: 'block', font: "600 15px/19px 'Lexend Exa'", marginTop: '4px' }}>{c.titulo}</b>
+                  <b style={{ display: 'block', font: "600 24px/28px 'Lexend Exa'", marginTop: '6px' }}>{c.titulo}</b>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', marginTop: '2px' }}>
                     {c.nota ? <Estrelas nota={c.nota} tamanho={12} /> : null}
                     <span>{c.tipo === 'viagem' ? `${c.fotos} ${c.fotos === 1 ? 'foto' : 'fotos'}` : c.cidade ?? ''}</span>
@@ -130,18 +136,19 @@ function ViagensDaGalera() {
         <button type="button" className="r-btn" onClick={() => navegar('/viagens/galera')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Ver todas</button>
       </div>
       <div role="list" aria-label="Viagens da galera" style={fileira}>
-        {itens.map((c) => (
+        {itens.map((c, i) => (
           <div role="listitem" key={c.trip_id} style={{ display: 'contents' }}>
             <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${c.trip_id}?aba=roteiro`)} aria-label={`Viagem de ${c.nome} para ${c.destino}`}
-              style={{ flex: 'none', width: '260px', textAlign: 'left', scrollSnapAlign: 'start' }}>
-              <span style={{ position: 'relative', display: 'block', width: '260px', aspectRatio: '4 / 5', overflow: 'hidden', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+              style={{ flex: 'none', width: '100%', textAlign: 'left', scrollSnapAlign: 'start' }}>
+              <span style={{ position: 'relative', display: 'block', width: '100%', aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--cartao-2)' }}>
                 <img src={c.url} alt="" loading="lazy" onError={() => setItens((l) => l.filter((x) => x !== c))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 10px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
+                <Contador i={i} total={itens.length} />
+                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '48px 20px 16px', background: 'linear-gradient(transparent, rgba(0,0,0,.72))', color: '#fff' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Avatar userId={c.user_id} nome={c.nome} tamanho={24} />
                     <b style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nome.split(' ')[0]}</b>
                   </span>
-                  <b style={{ display: 'block', font: "600 15px/19px 'Lexend Exa'", marginTop: '4px' }}>{c.destino}</b>
+                  <b style={{ display: 'block', font: "600 24px/28px 'Lexend Exa'", marginTop: '6px' }}>{c.destino}</b>
                   <span style={{ display: 'block', fontSize: '12px', marginTop: '2px' }}>{textoMotivo(c) ?? (c.fotos ? `${c.fotos} ${c.fotos === 1 ? 'foto' : 'fotos'}` : `${c.lugares} lugares`)}</span>
                 </span>
               </span>
@@ -175,14 +182,16 @@ function Curiosos() {
         <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/curiosos')} style={{ color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Ver todos ›</button>
       </div>
       <div role="list" aria-label="Lugares curiosos" style={fileira}>
-        {itens.map((c) => (
+        {itens.map((c, i) => (
           <div role="listitem" key={c.id} style={{ display: 'contents' }}>
-            <button type="button" className="r-btn" onClick={() => navegar(c.mundo ? `/curiosos?c=${c.id}` : `/lugar/${c.id}`)} style={{ flex: 'none', width: '200px', textAlign: 'left' }}>
-              <span style={{ display: 'block', width: '200px', aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--cartao-2)' }}>
-                <img src={c.foto} alt={`Foto de ${c.nome}`} loading="lazy" onError={() => setItens((l) => l.filter((x) => x.id !== c.id))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(1.1) contrast(1.05)' }} />
+            <button type="button" className="r-btn" onClick={() => navegar(c.mundo ? `/curiosos?c=${c.id}` : `/lugar/${c.id}`)}
+              style={{ position: 'relative', flex: 'none', width: '100%', aspectRatio: '1 / 1', overflow: 'hidden', scrollSnapAlign: 'start', background: 'var(--cartao-2)' }}>
+              <img src={c.foto} alt={`Foto de ${c.nome}`} loading="lazy" onError={() => setItens((l) => l.filter((x) => x.id !== c.id))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(1.1) contrast(1.05)' }} />
+              <Contador i={i} total={itens.length} />
+              <span style={sombraTexto}>
+                <b style={{ font: "600 22px/27px 'Lexend Exa'", overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{c.nome}</b>
+                <span style={{ display: 'block', fontSize: '14px', opacity: 0.92 }}>{c.onde}</span>
               </span>
-              <b style={{ font: "600 14px/19px 'Lexend Exa'", marginTop: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{c.nome}</b>
-              <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{c.onde}</span>
             </button>
           </div>
         ))}
@@ -192,7 +201,13 @@ function Curiosos() {
 }
 
 const Rot = ({ t }: { t: string }) => <h2 style={{ font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em', margin: '22px 0 8px' }}>{t}</h2>;
-const fileira = { display: 'flex', alignItems: 'flex-start', gap: '10px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 6px', scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
+// Fotos de ponta a ponta (D-075): uma por vez, deslizando; o contador mostra que há mais.
+const fileira = { display: 'flex', alignItems: 'flex-start', gap: 0, overflowX: 'auto', margin: '0 -20px', padding: 0, scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
+const sombraTexto = { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 2, padding: '48px 20px 16px', background: 'linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.72))', color: '#fff', textAlign: 'left' } as const;
+function Contador({ i, total }: { i: number; total: number }) {
+  if (total < 2) return null;
+  return <span aria-hidden="true" style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 2, padding: '3px 9px', borderRadius: '12px', background: 'rgba(0,0,0,.55)', color: '#fff', font: "600 12px 'Open Sans'" }}>{i + 1}/{total}</span>;
+}
 /** Avisos de quem tem conta: o que espera resposta e o que falta para aproveitar o app. */
 function Pendencias({ convites, pedidos, semUsuario, semJeito }: { convites: number; pedidos: number; semUsuario: boolean; semJeito: boolean }) {
   const navegar = useNavigate();
@@ -318,7 +333,7 @@ export function Inicio() {
           </button>
         ) : sessao && viagem ? (
           <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} aria-label={`Próxima viagem: ${viagem.destino}`}
-            style={{ position: 'relative', display: 'block', width: '100%', height: '200px', marginTop: '14px', overflow: 'hidden', textAlign: 'left', background: 'var(--fundo-escuro)' }}>
+            style={{ position: 'relative', display: 'block', width: 'calc(100% + 40px)', height: '260px', margin: '14px -20px 0', overflow: 'hidden', textAlign: 'left', background: 'var(--fundo-escuro)' }}>
             {DESTINOS_COM_FOTO.includes(viagem.destino) ? <FotoDestino nome={viagem.destino} credito={false} /> : null}
             <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(90deg, rgba(11,31,75,.88) 0%, rgba(11,31,75,.35) 75%)' }} />
             <span style={{ position: 'absolute', left: 16, top: 14, right: 16, zIndex: 2, color: '#fff' }}>
@@ -330,8 +345,9 @@ export function Inicio() {
           </button>
         ) : null}
 
-        <div role="list" aria-label="Destinos em destaque" style={{ ...fileira, marginTop: '14px' }}>
-          {destaques.slice(0, 10).map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoGrande d={d} favorito={favs.some((f) => f.nome === d.nome)} /></div>)}
+        {/* Remonta quando a ordem muda (favoritos chegam depois): senão o deslize fica preso no meio. */}
+        <div key={destaques.slice(0, 10).map((d) => d.nome).join('|')} role="list" aria-label="Destinos em destaque" style={{ ...fileira, marginTop: '14px' }}>
+          {destaques.slice(0, 10).map((d, i, l) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoGrande d={d} favorito={favs.some((f) => f.nome === d.nome)} i={i} total={l.length} /></div>)}
         </div>
         <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Fotos: Wikimedia Commons.</p>
 
@@ -340,12 +356,12 @@ export function Inicio() {
         ) : null}
 
         <Rot t="No Brasil" />
-        <div role="list" aria-label="Destinos no Brasil" style={fileira}>{brasil.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+        <div role="list" aria-label="Destinos no Brasil" style={fileira}>{brasil.map((d, i) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} i={i} total={brasil.length} /></div>)}</div>
         {sessao ? <ViagensDaGalera /> : null}
         {sessao ? <AmigosEstiveram /> : null}
         <Curiosos />
         <Rot t="Lá fora" />
-        <div role="list" aria-label="Destinos no exterior" style={fileira}>{fora.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
+        <div role="list" aria-label="Destinos no exterior" style={fileira}>{fora.map((d, i) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} i={i} total={fora.length} /></div>)}</div>
 
         <button type="button" className="r-btn" onClick={() => navegar(sessao ? '/destinos' : '/descobrir')} style={{ minHeight: '44px', marginTop: '10px', color: 'var(--azul)', fontWeight: 600 }}>
           {sessao ? (favs.length ? 'Mudar meus destinos favoritos' : 'Marcar destinos que quero conhecer') : 'Buscar qualquer cidade do Brasil ou do mundo'}
