@@ -90,6 +90,10 @@
 
 ## 8. Proteção da marca
 
+- [ ] **8.0 Decidir o nome: Bo Vair ou Voalar (antes do INPI e do domínio).** Conferir em 5 min:
+      busca.inpi.gov.br → Marcas → "Voalar" (radical) nas classes 9 e 42, e registro.br → "voalar.com.br".
+      Atenção à "Voalle" (software, mesma classe): som parecido, pode gerar oposição. Se estiver livre e você
+      escolher Voalar, me avise: eu troco o nome no app (o código interno pode continuar).
 - [ ] **8.1 Registrar "Bo Vair" no INPI**, classe 9 (aplicativo): R$ 440 com desconto para pessoa física/MEI/ME
       (confirmar na tabela oficial). É o próximo gasto a planejar.
 - [ ] **8.2 Acordo de confidencialidade (NDA)** antes de mostrar o projeto em detalhe. Peça que eu redija.
