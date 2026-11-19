@@ -9,6 +9,7 @@ import { adicionarItem, listarViagens, type Viagem } from '../../lib/viagens';
 import { CATEGORIAS, DESTINO_CURADORIA, enderecoCurto, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
 import { basePorId, CATEGORIAS_LUGAR, destinoPorId, lugaresPorIds, nomeTipo } from '../../lib/lugares';
 import { dinheiro, paisPorCodigo } from '../../lib/moedas';
+import { linkSeguro } from '../../lib/seguro';
 import { linkWhatsApp } from '../../lib/whatsapp';
 import { BotaoWhatsApp } from '../../ui/whatsapp';
 import { afinidade } from '../../lib/planejador';
@@ -139,7 +140,7 @@ export function Lugar() {
           </button>
         </div>
         <AdicionarAViagem placeId={l.id} slots={l.slots} destinoId={DESTINO_CURADORIA} cidade="Paris" />
-        {l.site ? <a href={l.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site oficial ↗</a> : null}
+        {linkSeguro(l.site) ? <a href={linkSeguro(l.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site oficial ↗</a> : null}
         <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>
           {l.osm ? <>Endereço e horário: <a href={l.osm} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a>{OSM_ATUALIZADO_EM ? `, ${OSM_ATUALIZADO_EM.split('-').reverse().join('/')}` : ''}. </> : null}
           Lugar escolhido pela curadoria do Bo Vair.
@@ -189,7 +190,7 @@ function LugarDaBase() {
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Reserve pela aba Hospedagem da sua viagem.' : 'Não entra no roteiro.'}</p>}
         <Avaliacoes placeId={id} nome={b.nome} moeda={paisPorCodigo(b.destino_id.slice(0, 2).toUpperCase())?.moeda ?? 'BRL'} />
         <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
-        {b.site ? <a href={b.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
+        {linkSeguro(b.site) ? <a href={linkSeguro(b.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
         <Info style={{ marginTop: '14px' }}>
           Dados: <a href={`https://www.openstreetmap.org/${b.fonte_id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a> (© colaboradores, ODbL){b.dados_de ? `, ${b.dados_de.split('-').reverse().join('/')}` : ''}. Mapa colaborativo{b.verificado ? ', conferido pela curadoria do Bo Vair' : ''}: confira horário e preço antes de ir. Estrelas de hotel são a classificação oficial, não nota de clientes.
         </Info>

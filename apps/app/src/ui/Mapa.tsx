@@ -1,4 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
+// MapLibre 6 carrega o worker pelo endereço do próprio módulo; no app empacotado, o Vite copia o arquivo e
+// passamos o endereço (sem isso o mapa fica em branco: "Worker failed to load").
+import urlDoWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 
 import type { Map as MapaLibre, Marker } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
@@ -30,13 +33,14 @@ export function Mapa({ pontos, linha = false, altura = '320px', aoEscolher, sele
 
   useEffect(() => {
     let vivo = true;
-    void import('maplibre-gl').then(({ default: maplibregl }) => {
+    void import('maplibre-gl').then((maplibregl) => {
       if (!vivo || !caixa.current || mapa.current) return;
+      maplibregl.setWorkerUrl(urlDoWorker);
       try {
         const m = new maplibregl.Map({ container: caixa.current, style: ESTILO, center: [2.3488, 48.8534], zoom: 12, attributionControl: { compact: true } });
         m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
         m.on('load', () => vivo && setPronto(true));
-        m.on('error', (e) => {
+        m.on('error', (e: { error?: { message?: string } }) => {
           if (String(e?.error?.message ?? '').includes('Failed to fetch')) setErro(true);
         });
         mapa.current = m;
@@ -54,7 +58,7 @@ export function Mapa({ pontos, linha = false, altura = '320px', aoEscolher, sele
   useEffect(() => {
     const m = mapa.current;
     if (!m || !pronto) return;
-    void import('maplibre-gl').then(({ default: maplibregl }) => {
+    void import('maplibre-gl').then((maplibregl) => {
       for (const mk of marcadores.current) mk.remove();
       marcadores.current = pontos.map((p) => {
         const el = document.createElement('button');

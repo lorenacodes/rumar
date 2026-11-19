@@ -27,6 +27,7 @@ import { FotoLugar } from '../../ui/foto';
 import { Mapa, type Ponto } from '../../ui/Mapa';
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { Info } from '../../ui/info';
+import { linkSeguro } from '../../lib/seguro';
 import { AlbumDaViagem } from './Album';
 import { OndeFui } from './OndeFui';
 import { botaoTexto, campo, dataMais, euros, periodo as textoPeriodo, reais, Rotulo, Segmentos, Selo } from './comum';
@@ -731,7 +732,7 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCom
                     <b style={{ whiteSpace: 'nowrap' }}>{l.semPreco ? 'sem preço' : l.moeda === 'EUR' ? (l.min === l.max ? euros(l.min) : `${euros(l.min)}–${euros(l.max)}`) : reais(l.min)}</b>
                   </div>
                   <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: 'var(--texto-sec)' }}>
-                    <Selo tipo={l.selo} /> {l.url ? <a href={l.url} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{l.fonte}</a> : l.fonte}
+                    <Selo tipo={l.selo} /> {linkSeguro(l.url) ? <a href={linkSeguro(l.url)!} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{l.fonte}</a> : l.fonte}
                   </div>
                   {c.id === 'outros' && pode ? <button type="button" className="r-btn" onClick={() => void removerGasto(v.viagem.id, v.gastos[i]!.id).then(recarregar)} style={{ color: 'var(--vermelho)', fontSize: '13px', minHeight: '36px' }}>Remover</button> : null}
                 </div>

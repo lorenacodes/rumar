@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
+import { linkSeguro } from '../../lib/seguro';
 import { apagarMinhaFoto, enviarFoto, fotoGoogle, fotosAprovadas, minhasFotos, type FotoEnviada, type FotoGoogle } from '../../lib/fotosEnviadas';
 
 /** Capa da página do lugar quando não há foto livre: 1º foto aprovada de quem foi, 2º Google (se ligado). */
@@ -28,7 +29,7 @@ export function CapaAlternativa({ placeId, nome }: { placeId: string; nome: stri
       <figure style={{ margin: 0 }}>
         <img src={g.url} alt={`Foto de ${nome}`} referrerPolicy="no-referrer" style={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', display: 'block' }} />
         <figcaption style={{ fontSize: '11px', color: 'var(--texto-sec)', padding: '2px 20px 0', textAlign: 'right' }}>
-          Foto: {g.autores.length ? g.autores.map((a, i) => <span key={a.nome}>{i ? ', ' : ''}{a.link ? <a href={a.link} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{a.nome}</a> : a.nome}</span>) : 'autor no Google'} · Google
+          Foto: {g.autores.length ? g.autores.map((a, i) => <span key={a.nome}>{i ? ', ' : ''}{linkSeguro(a.link) ? <a href={linkSeguro(a.link)!} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{a.nome}</a> : a.nome}</span>) : 'autor no Google'} · Google
         </figcaption>
       </figure>
     );
