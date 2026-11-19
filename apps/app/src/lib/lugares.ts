@@ -88,7 +88,7 @@ export const ORDEM_CATEGORIAS = Object.keys(CATEGORIAS_LUGAR) as CategoriaLugar[
 const TIPO: Record<string, string> = {
   restaurant: 'Restaurante', fast_food: 'Lanchonete', food_court: 'Praça de alimentação', bar: 'Bar', pub: 'Pub', biergarten: 'Cervejaria ao ar livre', cafe: 'Café', ice_cream: 'Sorveteria',
   pastry: 'Confeitaria', confectionery: 'Doceria', chocolate: 'Chocolateria', hotel: 'Hotel', guest_house: 'Pousada', hostel: 'Hostel', apartment: 'Apartamento', chalet: 'Chalé', camp_site: 'Camping',
-  museum: 'Museu', park: 'Parque', garden: 'Jardim', nature_reserve: 'Reserva natural', national_park: 'Parque nacional', beach: 'Praia', attraction: 'Atração', viewpoint: 'Mirante',
+  museum: 'Museu', park: 'Parque', garden: 'Jardim', nature_reserve: 'Reserva natural', national_park: 'Parque nacional', beach: 'Praia', attraction: 'Atração', viewpoint: 'Mirante', bairro: 'Bairro',
   theatre: 'Teatro', arts_centre: 'Centro cultural', cinema: 'Cinema', gallery: 'Galeria', mall: 'Shopping', department_store: 'Loja de departamentos', gift: 'Presentes', craft: 'Artesanato', art: 'Arte',
   souvenir: 'Lembranças', marketplace: 'Mercado', farm: 'Produtos da roça', nightclub: 'Balada', events_venue: 'Casa de eventos', music_venue: 'Casa de shows', zoo: 'Zoológico', aquarium: 'Aquário',
   theme_park: 'Parque temático', artwork: 'Obra de arte', water_park: 'Parque aquático', marina: 'Marina', station: 'Estação', bus_station: 'Rodoviária', ferry_terminal: 'Terminal de barcos', aerodrome: 'Aeroporto',
@@ -287,7 +287,7 @@ export async function candidatosRoteiro(destino: string, nivel?: 'economico' | '
 export async function procurarNaCidade(destino: string, termo: string): Promise<LugarBase[]> {
   const t = termo.trim().replace(/[,()%]/g, '');
   if (t.length < 2) return [];
-  const { data } = await supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('ativo', true).ilike('nome', `%${t}%`)
+  const { data } = await supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('ativo', true).or(`nome.ilike.%${t}%,bairro.ilike.%${t}%`)
     .not('categoria', 'in', '(transporte)').order('relevancia', { ascending: false }).limit(12);
   const lista = (data ?? []) as LugarBase[];
   guardar(lista);
@@ -301,7 +301,7 @@ function guardar(lista: LugarBase[]) {
 
 /** Converte um lugar da base no formato do planejador (roteiro, mapa, orçamento). */
 /** Tipos que não entram no roteiro automático: dependem de ingresso para um show/sessão ou são redes. */
-const FORA_DO_ROTEIRO = new Set(['cinema', 'theatre', 'nightclub', 'events_venue', 'music_venue', 'fast_food', 'food_court', 'department_store']);
+const FORA_DO_ROTEIRO = new Set(['bairro', 'cinema', 'theatre', 'nightclub', 'events_venue', 'music_venue', 'fast_food', 'food_court', 'department_store']);
 
 /** Estátuas, bustos, placas, chafarizes, relógios: ficam no Descobrir e perdem força no roteiro. */
 const PONTOS_MENORES = new Set(['historic_monument', 'historic_memorial', 'memorial', 'artwork', 'fountain', 'clock', 'historic_city_gate']);

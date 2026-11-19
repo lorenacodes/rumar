@@ -34,7 +34,8 @@ export const CATEGORIAS = {
   museus: { limite: 300, filtros: ['tourism=museum'] },
   parques: { limite: 400, filtros: ['leisure~"^(park|garden|nature_reserve)$"', 'boundary=national_park'] },
   praias: { limite: 300, filtros: ['natural=beach'] },
-  atracoes: { limite: 500, filtros: ['tourism~"^(attraction|viewpoint)$"'] },
+  // Bairros conhecidos (com verbete na Wikidata), ex.: Bairro do Recife. Só para achar e registrar; fora do roteiro (D-070).
+  atracoes: { limite: 600, filtros: ['tourism~"^(attraction|viewpoint)$"', 'place~"^(suburb|quarter|neighbourhood)$"][wikidata'] },
   historico: { limite: 500, filtros: ['historic~"^(monument|castle|fort|ruins|church|building|archaeological_site|city_gate|manor|monastery|palace)$"'] },
   cultura: { limite: 400, filtros: ['amenity~"^(theatre|arts_centre|cinema)$"', 'tourism=gallery'] },
   compras: { limite: 400, filtros: ['shop~"^(mall|department_store|gift|craft|art|souvenir)$"'] },
@@ -62,6 +63,7 @@ export function opcoesDeDieta(t) {
 }
 
 function tipoDe(t) {
+  if (/^(suburb|quarter|neighbourhood)$/.test(t.place ?? '') && !t.tourism) return 'bairro';
   if (t.office === 'coworking') return 'coworking_space';
   return t.amenity ?? t.tourism ?? t.leisure ?? (t.natural === 'beach' ? 'beach' : null) ?? (t.historic ? `historic_${t.historic}` : null) ?? t.shop ?? t.railway ?? t.aeroway ?? (t.office ? `office_${t.office}` : null) ?? (t.boundary === 'national_park' ? 'national_park' : 'outro');
 }

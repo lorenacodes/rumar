@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
 import { rotuloDestino, type Destino } from '../../lib/lugares';
-import { registrarViagemFeita } from '../../lib/viagens';
+import { NOME_MOTIVO, registrarViagemFeita, type Viagem } from '../../lib/viagens';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { campo } from './comum';
@@ -20,7 +20,9 @@ export function JaFiz() {
   const [ano, setAno] = useState(agora.getFullYear());
   const [noites, setNoites] = useState(3);
   const [pessoas, setPessoas] = useState(1);
-  const [quemVe, setQuemVe] = useState<'amigos' | 'privada'>('amigos');
+  const [quemVe, setQuemVe] = useState<'amigos' | 'publica' | 'privada'>('amigos');
+  const [motivo, setMotivo] = useState<NonNullable<Viagem['motivo']>>('passeio');
+  const [evento, setEvento] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const anos = Array.from({ length: 30 }, (_, i) => agora.getFullYear() - i);
@@ -31,7 +33,7 @@ export function JaFiz() {
     if (!sessao) return navegar('/entrar');
     if (!destino || futura) return;
     setSalvando(true);
-    const id = await registrarViagemFeita({ destino: destino.nome, destinoId: destino.id, dataIda, noites, viajantes: pessoas, visibilidade: quemVe });
+    const id = await registrarViagemFeita({ destino: destino.nome, destinoId: destino.id, dataIda, noites, viajantes: pessoas, visibilidade: quemVe, motivo, evento: motivo === 'evento' ? evento : null });
     setSalvando(false);
     if (id) navegar(`/viagem/${id}?aba=roteiro`, { replace: true });
     else setErro('Não deu para salvar. Tente de novo.');
@@ -68,14 +70,29 @@ export function JaFiz() {
             <input type="number" inputMode="numeric" min={1} max={20} value={pessoas} onChange={(e) => setPessoas(Math.min(20, Math.max(1, Number(e.target.value) || 1)))} className="r-input" style={seletor} />
           </label>
         </div>
+        <div role="radiogroup" aria-label="Por que foi" style={{ marginTop: '16px' }}>
+          <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Por que foi?</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+            {(Object.entries(NOME_MOTIVO) as [NonNullable<Viagem['motivo']>, string][]).map(([id, nome]) => (
+              <button key={id} type="button" role="radio" aria-checked={motivo === id} className="r-btn" onClick={() => setMotivo(id)}
+                style={{ minHeight: '40px', padding: '0 14px', borderRadius: '20px', font: "600 14px 'Open Sans'", ...(motivo === id ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{nome}</button>
+            ))}
+          </div>
+          {motivo === 'evento' ? (
+            <label style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '10px' }}>Qual evento?
+              <input className="r-input" maxLength={80} value={evento} onChange={(e) => setEvento(e.target.value)} placeholder="Ex.: REC'n'Play" style={seletor} />
+            </label>
+          ) : null}
+        </div>
         <div role="radiogroup" aria-label="Quem vê" style={{ marginTop: '16px' }}>
           <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Quem vê as fotos</div>
           <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-            {([['amigos', 'Meus amigos'], ['privada', 'Só eu']] as const).map(([id, nome]) => (
+            {([['amigos', 'Amigos'], ['publica', 'Todos'], ['privada', 'Só eu']] as const).map(([id, nome]) => (
               <button key={id} type="button" role="radio" aria-checked={quemVe === id} className="r-btn" onClick={() => setQuemVe(id)}
                 style={{ flex: 1, minHeight: '44px', borderRadius: '22px', font: "600 15px 'Open Sans'", ...(quemVe === id ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{nome}</button>
             ))}
           </div>
+          {quemVe === 'publica' ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Quem tem conta vê o roteiro e as fotos. Hotel e gastos, não.</p> : null}
         </div>
         {futura ? <p style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '8px 0 0' }}>Essa data ainda não chegou. Para planejar, use Nova viagem.</p> : null}
         {erro ? <p role="alert" style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '8px 0 0' }}>{erro}</p> : null}

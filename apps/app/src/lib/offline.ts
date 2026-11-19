@@ -26,6 +26,10 @@ export function lerOffline<T>(id: string): Copia<T> | null {
   } catch { return null; }
 }
 
+export function apagarOffline(id: string) {
+  try { localStorage.removeItem(PREFIXO + id); } catch { /* nada a fazer */ }
+}
+
 export function apagarTudoOffline() {
   try { for (const k of Object.keys(localStorage)) if (k.startsWith(PREFIXO)) localStorage.removeItem(k); } catch { /* nada a fazer */ }
 }

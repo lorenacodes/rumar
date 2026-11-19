@@ -801,3 +801,16 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 ## D-069 — Pedir foto logo depois da avaliação
 - Fotos são o que mais falta (lugares sem foto, faixa "Onde seus amigos estiveram" depende delas). Ao publicar
   uma avaliação aparece "Tem uma foto daqui? Mandar foto", que abre o envio (com as mesmas regras e moderação).
+
+## D-070 — Viagem que já fiz: motivo, "Todos", lugar livre, bairros e apagar viagem
+- Pedido da fundadora: dizer que foi para um evento (REC'n'Play), mostrar para qualquer pessoa e registrar o
+  Bairro do Recife, que não aparecia.
+- "Por que foi?" (Passeio, Evento, Trabalho, Família, Estudo, Outro) e "Qual evento?". Aparece no topo da viagem
+  e no perfil ("Evento: REC'n'Play"). Passeio é o padrão e não aparece.
+- "Quem vê" ganhou "Todos": quem tem conta vê roteiro e fotos (álbum também). Hotel e gastos continuam só do grupo.
+- Lugar que não está na base: "Registrar \"nome\"" guarda um item livre (`trip_items.nome_livre`, até 80 letras).
+- Busca também pelo bairro do lugar. A coleta passa a trazer bairros com verbete na Wikidata (tipo "bairro"):
+  aparecem na busca e no Descobrir, mas ficam fora do roteiro automático.
+- Não havia como apagar uma viagem. O dono agora vê "Apagar viagem" (com confirmação) na aba Grupo ou em Lugares.
+  Os arquivos de fotos do dono são apagados; os de outras pessoas ficam na pasta delas, invisíveis, e saem quando
+  elas excluem a conta.

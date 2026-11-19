@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { desfazerAmizade, perfilPublico, type PessoaPublica } from '../../lib/social';
 import { supabase } from '../../lib/supabase';
-import { atualizarViagem, eu, listarViagens, viagensVisiveis, type Viagem } from '../../lib/viagens';
+import { atualizarViagem, eu, listarViagens, textoMotivo, viagensVisiveis, type Viagem } from '../../lib/viagens';
 import { FotoLugar } from '../../ui/foto';
 import { Avatar } from '../../ui/avatar';
 import { Voltar } from '../../ui/pecas';
@@ -80,7 +80,7 @@ export function Pessoa() {
                 <span style={{ width: '72px', flex: 'none', borderRadius: '10px', overflow: 'hidden' }}><FotoLugar id={v.destino} proporcao="1 / 1" credito={false} compacto /></span>
                 <span style={{ minWidth: 0, flex: 1 }}>
                   <span style={{ display: 'block', font: "600 18px/23px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
-                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{periodo(v.data_ida, v.noites)}</span>
+                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{[periodo(v.data_ida, v.noites), textoMotivo(v)].filter(Boolean).join(' · ')}</span>
                   <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: f === 'agora' ? 'var(--verde)' : 'var(--azul)' }}>
                     {[paradas.get(v.id) ? `${paradas.get(v.id)} ${paradas.get(v.id) === 1 ? 'parada' : 'paradas'} no roteiro` : 'Roteiro ainda vazio', v.juntos ? 'vocês vão juntos' : null].filter(Boolean).join(' · ')}
                   </span>

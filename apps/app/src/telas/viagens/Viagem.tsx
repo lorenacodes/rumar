@@ -14,6 +14,8 @@ import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
   acompanhar, adicionarGasto, adicionarItem, informarHospedagem, marcarCafeIncluso, procurarHospedagem, hoteisLigados, atualizarViagem, buscarHoteis, carregarViagem, confirmarSugestao, convidar, escolherHotel,
   marcarFeito, montarRoteiro, nivelDaViagem, moverItem, mudarHora, removerGasto, removerItem, trocarItem, type Busca, type Item, type ViagemCompleta,
+  textoMotivo,
+  apagarViagem,
 } from '../../lib/viagens';
 import { converter, dinheiro, taxa } from '../../lib/moedas';
 import { NOME_NIVEL, TEXTO_NIVEL, type Nivel } from '../../lib/nivel';
@@ -128,6 +130,7 @@ export function Viagem() {
         <Voltar para="/viagens" />
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
+        {textoMotivo(v.viagem) ? <div style={{ marginTop: '2px', fontSize: '15px', fontWeight: 600, color: 'var(--texto-sec)' }}>{textoMotivo(v.viagem)}</div> : null}
         <QuemVe v={v} recarregar={recarregar} />
         {v.offline ? (
           <div role="status" style={{ marginTop: '8px', padding: '10px 12px', borderRadius: '10px', background: 'var(--fundo-escuro)', color: '#fff', fontSize: '14px', lineHeight: '19px' }}>
@@ -186,10 +189,27 @@ export function Viagem() {
         {aba === 'hospedagem' ? <AbaHospedagem v={v} itens={itens} pode={pode} recarregar={recarregar} destino={destino} /> : null}
         {aba === 'dinheiro' && orc && j ? <AbaDinheiro v={v} j={j} orc={orc.o} pode={pode} recarregar={recarregar} resumo={<AbaOrcamento v={v} orc={orc} itens={itens} pode={pode} recarregar={recarregar} moeda={j.moedaPlano} />} /> : null}
         {aba === 'grupo' ? <AbaGrupo v={v} pode={pode} recarregar={recarregar} /> : null}
+        {v.papel === 'dono' && !v.offline && (aba === 'grupo' || (registrada && aba === 'roteiro')) ? <ApagarViagem id={v.viagem.id} /> : null}
         <div style={{ height: '24px' }} />
       </div>
       <Abas ativa="viagem" />
     </main>
+  );
+}
+
+/** Só o dono vê. Pede confirmação; apaga roteiro, fotos e gastos de todos (D-070). */
+function ApagarViagem({ id }: { id: string }) {
+  const navegar = useNavigate();
+  const [erro, setErro] = useState(false);
+  const apagar = async () => {
+    if (!window.confirm('Apagar a viagem para todos? Roteiro, fotos e gastos somem.')) return;
+    if (await apagarViagem(id)) navegar('/viagens', { replace: true }); else setErro(true);
+  };
+  return (
+    <div style={{ marginTop: '28px', textAlign: 'center' }}>
+      <button type="button" className="r-btn" onClick={() => void apagar()} style={{ minHeight: '44px', color: 'var(--vermelho)', font: "600 15px 'Open Sans'" }}>Apagar viagem</button>
+      {erro ? <p role="alert" style={{ fontSize: '14px', color: 'var(--vermelho)', margin: '4px 0 0' }}>Não deu para apagar. Tente de novo.</p> : null}
+    </div>
   );
 }
 
@@ -313,7 +333,7 @@ function QuemVe({ v, recarregar }: { v: ViagemCompleta; recarregar: () => void }
       </button>
       {aberto ? (
         <div role="radiogroup" aria-label="Quem pode ver" style={{ display: 'grid', gap: '6px', marginTop: '4px' }}>
-          {([['privada', 'Só o grupo', 'Só quem está na viagem.'], ['amigos', 'Amigos', 'Seus amigos veem o roteiro.'], ['publica', 'Todos', 'Qualquer pessoa com conta vê o roteiro. Hotel e gastos não.']] as const).map(([id, nome, texto]) => (
+          {([['privada', 'Só o grupo', 'Só quem está na viagem.'], ['amigos', 'Amigos', 'Seus amigos veem roteiro e fotos.'], ['publica', 'Todos', 'Quem tem conta vê roteiro e fotos. Hotel e gastos, não.']] as const).map(([id, nome, texto]) => (
             <button key={id} type="button" role="radio" aria-checked={v.viagem.visibilidade === id} className="r-btn"
               onClick={() => void atualizarViagem(v.viagem.id, { visibilidade: id }).then(() => { setAberto(false); recarregar(); })}
               style={{ textAlign: 'left', padding: '10px 12px', borderRadius: '10px', background: v.viagem.visibilidade === id ? 'var(--fundo-escuro)' : 'var(--cartao-2)', color: v.viagem.visibilidade === id ? '#fff' : 'var(--texto)' }}>
