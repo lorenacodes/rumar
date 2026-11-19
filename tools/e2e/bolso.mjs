@@ -5,7 +5,8 @@ const senha = process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENH
 const OUT = process.env.OUT;
 const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
-const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage();
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, permissions: ['clipboard-read', 'clipboard-write'] });
+const p = await ctx.newPage();
 p.on('pageerror', (e) => erros.push(e.message)); p.on('dialog', (d) => d.accept());
 await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
@@ -32,6 +33,12 @@ await bolso.getByRole('button', { name: 'Guardei dinheiro' }).click();
 await bolso.getByLabel(/Quanto guardou/).fill('200');
 await bolso.getByRole('button', { name: 'Salvar' }).click(); await p.waitForTimeout(4000);
 confere('registra o que guardou', /700/.test(await bolso.innerText()));
+// D-087: compartilhar o roteiro (no navegador de teste, copia o texto).
+await p.getByRole('tab', { name: 'Roteiro' }).click().catch(() => p.getByText('Roteiro', { exact: true }).first().click()); await p.waitForTimeout(2500);
+await p.evaluate(() => { Object.defineProperty(navigator, 'share', { value: undefined, configurable: true }); });
+await p.getByRole('button', { name: 'Compartilhar' }).first().click(); await p.waitForTimeout(1000);
+const copiado = await p.evaluate(() => navigator.clipboard.readText()).catch(() => '');
+confere('compartilhar copia o roteiro com os dias', /Roteiro: Recife/.test(copiado) && /Dia 1/.test(copiado) && !/R\$/.test(copiado));
 await p.getByText(/^Grupo/).first().click(); await p.waitForTimeout(1500);
 await p.getByRole('button', { name: 'Apagar viagem' }).click(); await p.waitForTimeout(4000);
 confere('viagem de teste apagada', /#\/viagens$/.test(p.url()));

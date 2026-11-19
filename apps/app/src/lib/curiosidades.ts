@@ -40,3 +40,15 @@ export async function compartilharCuriosidade(c: Curiosidade): Promise<'ok' | 'c
   }
 }
 
+
+/** Compartilhar um texto qualquer (D-087): folha nativa, Web Share ou copiar. */
+export async function compartilharTexto(titulo: string, texto: string): Promise<'ok' | 'copiado' | 'cancelado'> {
+  try {
+    if (Capacitor.isNativePlatform()) { await Share.share({ title: titulo, text: texto, dialogTitle: titulo }); return 'ok'; }
+    if (navigator.share) { await navigator.share({ title: titulo, text: texto }); return 'ok'; }
+    await navigator.clipboard.writeText(texto);
+    return 'copiado';
+  } catch {
+    return 'cancelado';
+  }
+}

@@ -996,3 +996,8 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Rotina diária passa a conferir a tabela de erros do app.
 - Índice para o feed de viagens (só viagens visíveis).
 - Nenhum serviço externo novo: o registro de erros próprio cobre a fase de teste sem custo e sem fornecedor.
+
+## D-087 — Compartilhar o roteiro
+- Botão "Compartilhar" no roteiro: manda o roteiro inteiro em texto (dias, horários e lugares) pelo WhatsApp ou
+  outro app; no navegador, copia. Sem hotel nem gastos. Nos concorrentes, exportar costuma ser pago (PDF no
+  Wanderlog Pro).

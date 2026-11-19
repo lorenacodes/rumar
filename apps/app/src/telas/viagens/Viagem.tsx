@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hojeLocal } from '../../lib/datas';
 import { BlocoNetworking } from '../descobrir/Networking';
 import { Experiencias } from '../descobrir/Experiencias';
+import { compartilharTexto } from '../../lib/curiosidades';
 import { Check } from '../../ui/check';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -331,6 +332,29 @@ function LugaresOndeFui({ v, itens, pode, recarregar }: { v: ViagemCompleta; ite
   );
 }
 
+/** Compartilhar o roteiro inteiro como texto (D-087), para mandar no WhatsApp ou guardar. Sem hotel nem gastos. */
+function BotaoCompartilharRoteiro({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[] }) {
+  const [aviso, setAviso] = useState<string | null>(null);
+  const texto = () => {
+    const dias = [...new Set(itens.map((x) => x.it.dia))].sort((a, b) => a - b);
+    const linhas = [`Roteiro: ${v.viagem.destino} · ${textoPeriodo(v.viagem.data_ida, v.viagem.noites)}`];
+    for (const d of dias) {
+      const data = new Date(`${dataMais(v.viagem.data_ida, d - 1)}T12:00:00Z`).toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).replace('.', '');
+      linhas.push('', `Dia ${d} (${data})`);
+      for (const { it, l } of itens.filter((x) => x.it.dia === d).sort((a, b) => a.it.ordem - b.it.ordem)) linhas.push(`${it.hora ? `${it.hora.slice(0, 5).replace(':', 'h')} ` : ''}${l.nome}`);
+    }
+    linhas.push('', 'Feito no Bo Vair.');
+    return linhas.join('\n');
+  };
+  return (
+    <span>
+      <button type="button" className="r-btn" onClick={() => void compartilharTexto(`Roteiro: ${v.viagem.destino}`, texto()).then((r) => { if (r === 'copiado') { setAviso('Roteiro copiado'); setTimeout(() => setAviso(null), 2500); } })}
+        style={{ minHeight: '40px', padding: '0 14px', borderRadius: '20px', background: 'var(--cartao-1)', font: "600 14px 'Open Sans'" }}>Compartilhar</button>
+      {aviso ? <span role="status" style={{ display: 'block', fontSize: '12px', color: 'var(--verde)', textAlign: 'right' }}>{aviso}</span> : null}
+    </span>
+  );
+}
+
 /** Rótulo embaixo do horário: refeição quando é restaurante, senão a parte do dia. */
 function rotuloDoHorario(it: Item, l: Lugar): string {
   const h = it.hora?.slice(0, 2) ?? '';
@@ -416,7 +440,10 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
       {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
       {dia === 1 && v.viagem.destino_id ? <Experiencias destino={{ id: v.viagem.destino_id }} cidade={v.viagem.destino} preferencias={grupo ?? preferencias ?? null} titulo="Experiências para esta viagem" max={3} /> : null}
       {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
-      <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+        <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
+        {itens.length ? <BotaoCompartilharRoteiro v={v} itens={itens} /> : null}
+      </div>
       <div style={{ fontSize: '15px', color: 'var(--texto)' }}>{dataLonga}</div>
       {resumo ? <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '2px' }}>{resumo}</div> : null}
       {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Dia livre. Adicione lugares quando quiser.</p> : null}
