@@ -617,3 +617,21 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   (para tecnologia/engenharia/ciência, hackerspaces e hubs antes) e atalhos que abrem a busca de eventos da
   área na cidade (Meetup, Eventbrite e, no Brasil, Sympla). Selo "Trabalho" no mural só para essas pessoas;
   esses lugares não entram no "Para você" de quem viaja a lazer.
+
+## D-047 — Avaliações, vídeos e "Como foi?"
+- **Data:** 19/11/2026
+- **Status:** ✅ Pedido da fundadora (viajou para o REC'n'Play em Recife e queria postar fotos e vídeos e
+  avaliar os lugares com estrelas, comentário, se é acessível e quanto custou).
+- **Avaliações** (`avaliacoes`): nota 1–5 (estrelas desenhadas em SVG, sem emoji), comentário (até 600),
+  acessível sim/em parte/não, quanto gastou por pessoa. Uma por pessoa por lugar (editar e apagar). Publica
+  na hora; "Denunciar" em cada uma; a moderação vê as denunciadas e esconde. Crédito: só o @. A página do
+  lugar mostra média, quantidade, acessibilidade (o que a maioria disse) e gasto típico (mediana).
+- **Vídeos curtos:** junto com as fotos de quem foi, até 20 s e 25 MB, com a mesma moderação.
+  **Custo:** Supabase grátis = 1 GB de arquivos (~40 vídeos no limite); depois, plano pago US$ 25/mês
+  (~R$ 145, 100 GB). Avisar a fundadora quando chegar perto.
+- **"Como foi?":** quando a viagem começa, o roteiro mostra os lugares (os marcados como feitos primeiro)
+  com "Avaliar" e o atalho "Avaliar outro lugar de <cidade>".
+
+## D-048 — Início que diz o que o app faz
+- Para quem não tem conta ou não tem viagem: bloco "Como uma agência, no seu bolso — Sua viagem inteira num
+  lugar só" (Roteiro, Dinheiro, Hospedagem e prazos, Com amigos) e "Planejar uma viagem", antes dos destinos.

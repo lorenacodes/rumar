@@ -8,12 +8,13 @@ import { adicionarItem, listarViagens, type Viagem } from '../../lib/viagens';
 
 import { CATEGORIAS, DESTINO_CURADORIA, enderecoCurto, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
 import { basePorId, CATEGORIAS_LUGAR, destinoPorId, lugaresPorIds, nomeTipo } from '../../lib/lugares';
-import { dinheiro } from '../../lib/moedas';
+import { dinheiro, paisPorCodigo } from '../../lib/moedas';
 import { afinidade } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
 import { Info } from '../../ui/info';
+import { Avaliacoes } from './Avaliacoes';
 import { CapaAlternativa, FotosDeQuemFoi } from './FotosDoLugar';
 import { useSessao } from '../../conta/servico';
 
@@ -180,6 +181,7 @@ function LugarDaBase() {
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? <><Check />Quero ir</> : '+ Quero ir'}</button>
         </div>
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Reserve pela aba Hospedagem da sua viagem.' : 'Não entra no roteiro.'}</p>}
+        <Avaliacoes placeId={id} nome={b.nome} moeda={paisPorCodigo(b.destino_id.slice(0, 2).toUpperCase())?.moeda ?? 'BRL'} />
         <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
         {b.site ? <a href={b.site} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
         <Info style={{ marginTop: '14px' }}>

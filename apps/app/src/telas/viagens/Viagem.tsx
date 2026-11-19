@@ -230,6 +230,33 @@ function NivelDoRoteiro({ v, pode, recarregar }: { v: ViagemCompleta; pode: bool
 }
 
 // ---------------------------------------------------------------- Roteiro (lista editável)
+/** "Como foi?" (D-047): depois que a viagem começa, avaliar os lugares e mandar fotos e vídeos. */
+function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar }[] }) {
+  const navegar = useNavigate();
+  const hoje = new Date().toISOString().slice(0, 10);
+  if (v.viagem.data_ida > hoje) return null;
+  const vistos = new Set<string>();
+  const lugares = itens.filter(({ l }) => l.id.startsWith('osm-') && (vistos.has(l.id) ? false : (vistos.add(l.id), true)))
+    .sort((a, b) => Number(Boolean(b.it.feito)) - Number(Boolean(a.it.feito))).slice(0, 8);
+  return (
+    <section aria-label="Como foi" style={{ marginBottom: '14px', padding: '14px', background: 'var(--cartao-2)' }}>
+      <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi?</h2>
+      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>Avalie os lugares e mostre suas fotos e vídeos.</p>
+      <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
+        {lugares.map(({ l, it }) => (
+          <li key={l.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--linha)', padding: '4px 0' }}>
+            <span style={{ minWidth: 0 }}><b style={{ display: 'block', fontSize: '15px' }}>{l.nome}</b>{it.feito ? <span style={{ fontSize: '12px', color: 'var(--verde)' }}>Você foi</span> : null}</span>
+            <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?avaliar=1`)} style={{ flex: 'none', minHeight: '44px', padding: '0 12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Avaliar</button>
+          </li>
+        ))}
+      </ul>
+      {v.viagem.destino_id ? (
+        <button type="button" className="r-btn alvo-toque" onClick={() => navegar(`/descobrir?d=${v.viagem.destino_id}&modo=lista`)} style={{ marginTop: '6px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Avaliar outro lugar de {v.viagem.destino} ›</button>
+      ) : null}
+    </section>
+  );
+}
+
 function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompleta; dia: number; itens: { it: Item; l: Lugar }[]; pode: boolean; grupo: ReturnType<typeof mesclar>; recarregar: () => void }) {
   const navegar = useNavigate();
   const { alternarSalvo, salvos, preferencias } = useViajante();
@@ -243,6 +270,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
 
   return (
     <section style={{ marginTop: '14px' }}>
+      {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
       <NivelDoRoteiro v={v} pode={pode} recarregar={recarregar} />
       {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
       <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>

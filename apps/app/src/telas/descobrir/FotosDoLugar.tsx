@@ -10,7 +10,7 @@ export function CapaAlternativa({ placeId, nome }: { placeId: string; nome: stri
   const [g, setG] = useState<FotoGoogle | null>(null);
   useEffect(() => {
     void fotosAprovadas([placeId]).then((m) => {
-      const f = m.get(placeId)?.[0] ?? null;
+      const f = m.get(placeId)?.find((x) => x.tipo !== 'video') ?? null;
       setEnviada(f);
       if (!f) void fotoGoogle(placeId).then(setG);
     });
@@ -76,7 +76,9 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginTop: '8px' }}>
           {fotos.slice(0, 12).map((f) => (
             <figure key={f.id} style={{ margin: 0, position: 'relative' }}>
-              <img src={f.url} alt={f.legenda ?? `${f.tipo === 'prato' ? 'Prato' : 'Foto'} em ${nome}`} loading="lazy" style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', display: 'block' }} />
+              {f.tipo === 'video'
+                ? <video src={f.url} controls playsInline preload="metadata" aria-label={f.legenda ?? `Vídeo em ${nome}`} style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', display: 'block', background: '#000' }} />
+                : <img src={f.url} alt={f.legenda ?? `${f.tipo === 'prato' ? 'Prato' : 'Foto'} em ${nome}`} loading="lazy" style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', display: 'block' }} />}
               <figcaption style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '10px 4px 2px', background: 'linear-gradient(transparent, rgba(0,0,0,.6))', color: '#fff', fontSize: '10px', lineHeight: '13px' }}>{f.tipo === 'prato' ? 'Prato · ' : ''}{f.usuario ? `@${f.usuario}` : ''}</figcaption>
             </figure>
           ))}
@@ -90,13 +92,15 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
       {!aberto ? (
         <button type="button" className="r-btn" onClick={() => (sessao ? (setAberto(true), setMsg(null)) : navegar('/entrar'))}
           style={{ width: '100%', height: '48px', marginTop: '10px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'" }}>
-          {sessao ? 'Mandar foto' : 'Entre para mandar fotos'}
+          {sessao ? 'Mandar foto ou vídeo' : 'Entre para mandar fotos'}
         </button>
       ) : (
         <div style={{ marginTop: '10px', padding: '12px', border: '2px solid var(--texto)' }}>
-          <input ref={campo} type="file" accept="image/*" capture="environment" onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} style={{ display: 'none' }} aria-label="Escolher foto" />
-          {previa ? <img src={previa} alt="Prévia da foto" style={{ width: '100%', maxHeight: '260px', objectFit: 'cover', display: 'block' }} /> : null}
-          <button type="button" className="r-btn" onClick={() => campo.current?.click()} style={{ width: '100%', height: '46px', marginTop: previa ? '8px' : 0, background: 'var(--cartao-2)', font: "600 15px 'Open Sans'" }}>{previa ? 'Trocar foto' : 'Tirar ou escolher foto'}</button>
+          <input ref={campo} type="file" accept="image/*,video/mp4,video/quicktime,video/webm" onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} style={{ display: 'none' }} aria-label="Escolher foto" />
+          {previa ? (arquivo?.type.startsWith('video/')
+            ? <video src={previa} controls playsInline style={{ width: '100%', maxHeight: '260px', display: 'block', background: '#000' }} />
+            : <img src={previa} alt="Prévia da foto" style={{ width: '100%', maxHeight: '260px', objectFit: 'cover', display: 'block' }} />) : null}
+          <button type="button" className="r-btn" onClick={() => campo.current?.click()} style={{ width: '100%', height: '46px', marginTop: previa ? '8px' : 0, background: 'var(--cartao-2)', font: "600 15px 'Open Sans'" }}>{previa ? 'Trocar' : 'Escolher foto ou vídeo (até 20 s)'}</button>
           {comida ? (
             <div role="radiogroup" aria-label="A foto é de quê" style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
               {(['prato', 'lugar'] as const).map((t) => (
@@ -109,7 +113,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
           </label>
           <label style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', fontSize: '13px', lineHeight: '18px', marginTop: '10px' }}>
             <input type="checkbox" checked={declaro} onChange={(e) => setDeclaro(e.target.checked)} style={{ width: '22px', height: '22px', flex: 'none', marginTop: '1px' }} />
-            <span>A foto é minha, foi tirada aqui e não mostra rostos de outras pessoas. <a href="#/termos" style={{ color: 'var(--azul)' }}>Regras</a></span>
+            <span>A foto ou vídeo é meu, foi feito aqui e não mostra rostos de outras pessoas. <a href="#/termos" style={{ color: 'var(--azul)' }}>Regras</a></span>
           </label>
           <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
             <button type="button" className="r-btn" onClick={() => (setAberto(false), setArquivo(null))} style={{ flex: 1, height: '48px', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>Cancelar</button>

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useDemo } from '../../dev/demo';
+
 import { carregarDaConta, carregarPerfil, useSessao } from '../../conta/servico';
 import DESTINOS from '../../dados/destinos.json';
 import { destinoPorNome } from '../../lib/lugares';
@@ -143,9 +145,33 @@ const diasAte = (iso: string) => Math.round((Date.parse(`${iso}T12:00:00`) - Dat
  * Início: dá vontade de viajar logo na primeira tela (fotos de destinos), mostra a próxima
  * viagem com contagem regressiva para quem tem conta e convida a criar conta sem bloquear nada.
  */
+/** O que o app faz (D-048): para quem ainda não tem viagem — "como uma agência, no seu bolso". */
+function OQueFaz() {
+  const navegar = useNavigate();
+  const itens: [string, string][] = [
+    ['Roteiro', 'feito do seu jeito, dia a dia'],
+    ['Dinheiro', 'quanto custa e quanto guardar'],
+    ['Hospedagem e prazos', 'documentos, reservas e lembretes'],
+    ['Com amigos', 'planejem juntos e dividam os custos'],
+  ];
+  return (
+    <section aria-label="O que o Bo Vair faz" style={{ marginTop: '14px', padding: '18px 16px', background: 'var(--fundo-escuro)', color: '#fff' }}>
+      <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Como uma agência, no seu bolso</div>
+      <div style={{ font: "600 24px/29px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Sua viagem inteira num lugar só.</div>
+      <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 12px' }}>
+        {itens.map(([t, d]) => (
+          <li key={t}><b style={{ display: 'block', fontSize: '15px' }}>{t}</b><span style={{ fontSize: '13px', lineHeight: '17px', color: 'var(--sobre-escuro-sec)' }}>{d}</span></li>
+        ))}
+      </ul>
+      <button type="button" className="r-btn" onClick={() => navegar('/viagens/nova')} style={{ width: '100%', height: '50px', marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 16px 'Open Sans'" }}>Planejar uma viagem ↗</button>
+    </section>
+  );
+}
+
 export function Inicio() {
   const navegar = useNavigate();
   const sessao = useSessao();
+  const useDemoInicio = useDemo();
   const [nome, setNome] = useState<string | null>(null);
   const [favs, setFavs] = useState<Favorito[]>([]);
   const [viagem, setViagem] = useState<Viagem | null | undefined>(undefined);
@@ -193,6 +219,8 @@ export function Inicio() {
             <button type="button" className="r-btn" onClick={() => void cancelarExclusao().then(() => setExclusao(null))} style={{ color: 'var(--azul)', fontWeight: 600, minHeight: '36px' }}>Desistir da exclusão</button>
           </div>
         ) : null}
+
+        {!useDemoInicio && (!sessao || viagem === null) ? <OQueFaz /> : null}
         <h1 style={{ margin: '14px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>
           {sessao && hoje ? `Boa viagem${primeiroNome ? `, ${primeiroNome}` : ''}!` : sessao && primeiroNome ? `Olá, ${primeiroNome}. Para onde agora?` : 'Para onde você quer ir?'}
         </h1>

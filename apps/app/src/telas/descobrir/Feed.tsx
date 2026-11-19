@@ -169,7 +169,7 @@ export function FeedLugares({ destino, aoAbrir, viagem }: { destino: Destino; ao
       if (!vivo) return;
       let novos = itens.map((i) => {
         const p = deBase(i);
-        const f = enviadas.get(i.id)?.[0];
+        const f = enviadas.get(i.id)?.find((x: { tipo: string }) => x.tipo !== 'video');
         return f ? { ...p, foto: f.url, fotoPagina: null, creditoEnviada: f.usuario ? `@${f.usuario}` : 'quem foi' } : p;
       });
       if (pagina === 0 && destino.id === DESTINO_CURADORIA && !categoria) novos = [...LUGARES.filter((l) => temFoto(l.id)).map(deCuradoria), ...novos];
