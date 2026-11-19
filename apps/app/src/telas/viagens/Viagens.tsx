@@ -62,7 +62,11 @@ export function Viagens() {
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Viagens</div>
         <h1 style={titulo}>Suas viagens.</h1>
         <div style={{ marginTop: '12px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Nova viagem</BotaoPrincipal></div>
-        <button type="button" className="r-btn" onClick={() => navegar('/viagens/ja-fiz')} style={{ display: 'block', minHeight: '44px', marginTop: '4px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Registrar viagem que já fiz</button>
+        {/* Segunda ação à vista (D-077): botão tonal do mesmo tamanho, não um link perdido. */}
+        <button type="button" className="r-btn" onClick={() => navegar('/viagens/ja-fiz')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', height: '52px', marginTop: '10px', background: 'var(--cartao-1)', color: 'var(--texto)', font: "600 16px 'Open Sans'" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="1.8" /><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M8 6l1.5-2h5L16 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+          Registrar viagem que já fiz
+        </button>
         {convites.length ? (
           <>
             <Rotulo>Convites</Rotulo>

@@ -35,7 +35,7 @@ await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout
 
 console.log('— Nova viagem com R$ 15.000');
 await p.goto(URL + '#/viagens/nova?d=br-3304557'); await p.waitForTimeout(2000);
-await p.locator('#orc').fill('15000'); await p.waitForTimeout(300);
+await p.getByRole('button', { name: 'Já sei o valor total' }).click(); await p.locator('#orc').fill('15000'); await p.waitForTimeout(300);
 const t1 = await texto();
 confere('campo de orçamento fora do "Mais detalhes"', await p.locator('#orc').isVisible());
 confere('prévia: R$ 2.500 por pessoa por dia, nível Conforto', /2\.500 por pessoa por dia: o roteiro será de nível Conforto/.test(t1));

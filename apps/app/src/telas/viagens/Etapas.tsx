@@ -5,10 +5,74 @@ import { useNavigate } from 'react-router-dom';
 
 import { ETAPAS, dataBR, internacional, type Diagnostico, type Etapa, type TipoPrazo } from '../../lib/linhaDoTempo';
 import { dinheiro } from '../../lib/moedas';
-import { atualizarViagem, criarTarefa, marcarTarefaPessoal, marcarTarefaSistema, ordenarTarefas, removerTarefa, type ViagemCompleta } from '../../lib/viagens';
+import { adicionarAporte, atualizarViagem, criarTarefa, marcarTarefaPessoal, marcarTarefaSistema, ordenarTarefas, removerTarefa, type ViagemCompleta } from '../../lib/viagens';
 import { Aviso, BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 import { botaoTexto, campo, Rotulo, Segmentos } from './comum';
 import type { Jornada, TarefaVista } from './jornada';
+import { mesAno, preverPoupanca } from '../../lib/previsao';
+import { GraficoPrevisao } from '../../ui/GraficoPrevisao';
+
+/**
+ * O bolso da viagem (D-077), no topo: quando a pessoa junta o dinheiro (gráfico), o botão "Guardei"
+ * à vista e um lembrete quando faz um mês sem registrar.
+ */
+function BolsoDaViagem({ v, j, pode, recarregar, irPara }: { v: ViagemCompleta; j: Jornada; pode: boolean; recarregar: () => void; irPara: (aba: string) => void }) {
+  const [aberto, setAberto] = useState(false);
+  const [valor, setValor] = useState('');
+  const [salvo, setSalvo] = useState<string | null>(null);
+  const m = j.moedaPlano;
+  const f0 = (c: number) => dinheiro(c, m, 0);
+  const caixa = { marginTop: '12px', padding: '14px 16px', background: 'var(--cartao-2)' } as const;
+  if (j.ctx.encerrada || j.etapa === 'durante' || j.etapa === 'volta') return null;
+  if (!j.plano) {
+    return (
+      <div style={caixa}>
+        <b style={{ display: 'block', font: "600 17px/23px 'Lexend Exa'" }}>Quanto custa essa viagem?</b>
+        <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '2px' }}>Anote passagem e hospedagem. O app calcula quando você consegue ir.</div>
+        {pode ? <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ marginTop: '10px', minHeight: '44px', padding: '0 18px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>Anotar custos</button> : null}
+      </div>
+    );
+  }
+  const mensal = v.viagem.capacidade_mensal_centavos ?? 0;
+  const prev = preverPoupanca({ hoje: j.ctx.hoje, dataIda: v.viagem.data_ida, meta: j.plano.meta, guardado: j.guardado, mensal });
+  const ultimo = v.aportes.map((a) => a.data).sort().at(-1) ?? null;
+  const diasSem = ultimo ? Math.round((Date.parse(j.ctx.hoje) - Date.parse(ultimo)) / 86_400_000) : null;
+  const lembrar = j.plano.falta > 0 && (diasSem === null || diasSem >= 30);
+  const num = (t: string) => Math.round(Number(t.replace(/\./g, '').replace(',', '.')) * 100) || 0;
+  const guardar = async () => {
+    const c = num(valor); if (c <= 0) return;
+    if (await adicionarAporte(v.viagem.id, c, null)) { setSalvo(`Boa! ${f0(c)} a mais para ${v.viagem.destino}.`); setValor(''); setAberto(false); recarregar(); }
+  };
+  return (
+    <section aria-label="Dinheiro da viagem" style={caixa}>
+      <b style={{ display: 'block', font: "600 17px/23px 'Lexend Exa'" }}>
+        {j.plano.falta === 0 ? 'Dinheiro da viagem garantido.'
+          : lembrar ? 'Guardou algo para a viagem este mês?'
+          : !mensal ? `Faltam ${f0(j.plano.falta)}.`
+          : prev.cabe ? `Você junta tudo em ${mesAno(prev.dataMeta!)}.`
+          : `Na data, faltariam ${f0(j.plano.meta - prev.naViagem)}.`}
+      </b>
+      <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '2px' }}>
+        {f0(j.guardado)} de {f0(j.plano.meta)}
+        {j.plano.falta && !mensal ? ` · guarde ${f0(prev.mensalNecessario)} por mês` : ''}
+        {j.plano.falta && mensal && !prev.cabe ? ` · guarde ${f0(prev.mensalNecessario)} por mês${prev.dataMeta ? ` ou viaje em ${mesAno(prev.dataMeta)}` : ''}` : ''}
+      </div>
+      {j.plano.falta ? <GraficoPrevisao p={prev} meta={j.plano.meta} moeda={m} dataViagem={v.viagem.data_ida} /> : null}
+      {salvo ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--verde)', margin: '6px 0 0' }}>{salvo}</p> : null}
+      {pode && j.plano.falta ? (aberto ? (
+        <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+          <input className="r-input" inputMode="decimal" autoFocus placeholder={`Quanto guardou (${m})`} aria-label={`Quanto guardou em ${m}`} value={valor} onChange={(e) => setValor(e.target.value.replace(/[^\d.,]/g, ''))} style={{ ...campo, flex: 1 }} />
+          <button type="button" className="r-btn" onClick={() => void guardar()} style={{ flex: 'none', minHeight: '48px', padding: '0 18px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>Salvar</button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+          <button type="button" className="r-btn" onClick={() => setAberto(true)} style={{ minHeight: '44px', padding: '0 18px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>Guardei dinheiro</button>
+          <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ minHeight: '44px', padding: '0 18px', background: 'var(--cartao-1)', font: "600 15px 'Open Sans'" }}>{mensal ? 'Ver detalhes' : 'Quanto guardo por mês?'}</button>
+        </div>
+      )) : null}
+    </section>
+  );
+}
 
 const TIPO: Record<TipoPrazo, string> = { oficial: 'Regra oficial', viagem: 'Pela data da viagem', sugestao: 'Sugestão', a_confirmar: 'A confirmar' };
 const PRIOR: Record<string, string> = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
@@ -59,6 +123,8 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
           </div>
         ) : null}
       </div>
+
+      <BolsoDaViagem v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} />
 
       {alertasDoc.length ? <Aviso>Documentos pendentes: {alertasDoc.map((t) => t.titulo).join('; ')}.</Aviso> : null}
       {vencidas.length ? <Aviso cor="var(--ambar)">Passou do prazo: {vencidas.map((t) => t.titulo).join('; ')}.</Aviso> : null}

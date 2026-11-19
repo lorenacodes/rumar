@@ -874,3 +874,21 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   - Descobrir: lugar sem foto vira cartão compacto (antes: papel pautado grande e vazio, parecia quebrado);
     selo com imagem quebrada mostra a letra.
 - Acessibilidade conferida (0 problemas no teste automático).
+
+## D-077 — O bolso no centro: quanto custa, quando dá para ir e "Guardei dinheiro"
+- Crítica da fundadora: o app pedia "quanto quer gastar" sem dizer quanto custa, não mostrava em quanto tempo
+  dá para viajar e não pedia para registrar o que foi guardado. A proposta (viajar pelo bolso) não aparecia.
+- Nova viagem, em 3 blocos: destino e datas → "Quanto custa?" → "Quando você consegue ir?".
+  - Custo por partes, com atalho para pesquisar o preço: passagem por pessoa ("Pesquisar voos"), hospedagem por
+    noite ("Pesquisar hotéis") e dia a dia por pessoa. O app soma e mostra "Para viajar com tranquilidade" =
+    soma + 10% para imprevistos (a mesma reserva da meta da viagem). "Já sei o valor total" continua possível.
+  - Não inventamos um "valor mínimo": para o Brasil ainda não há fonte de preço de passagem e hotel. Quando as
+    chaves de Travelpayouts e LiteAPI existirem (checklist 4.2/5.2), o app preenche sozinho.
+  - "Já guardei" e "Consigo guardar por mês" saíram do "Mais detalhes" e geram na hora a previsão: frase curta
+    ("Você junta tudo em abr de 2027") + gráfico (linha do que terá guardado, meta tracejada, data da viagem;
+    tocar mostra o valor do mês). Se não fecha, diz quanto guardar por mês e oferece "Viajar em <mês>".
+  - As partes informadas viram gastos da viagem (selo "informado por você").
+- Viagem (Etapas): no topo, o bolso com a mesma previsão, botão "Guardei dinheiro" à vista e lembrete
+  "Guardou algo para a viagem este mês?" quando passa 30 dias sem registro. O gráfico também está em Dinheiro.
+- "Registrar viagem que já fiz" virou botão de verdade (52 px, com ícone), não um link azul solto.
+- Previsão sem juros nem inflação, dito na tela.

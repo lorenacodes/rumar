@@ -48,7 +48,8 @@
       Opções: Assist Card (anunciou 40% por venda), Allianz Travel (na Awin), ou Travelpayouts. Me mande só o
       **link de afiliado** (não é segredo) e eu coloco na etapa "Seguro" da viagem (≈ 1 dia de trabalho).
 - [ ] **4.2 Contas grátis:** Travelpayouts (passagens), LiteAPI (hotéis), Unsplash (fotos). Avise e eu peço as
-      chaves por formulário seguro.
+      chaves por formulário seguro. **Importante para o orçamento:** com passagem e hotel com preço real, o app
+      passa a dizer sozinho "quanto custa no mínimo" (hoje a pessoa pesquisa e anota).
 - [ ] **4.3 Conversar com um contador sobre CNPJ** antes de receber comissões (software em geral não pode ser MEI).
 - [ ] **4.4 Parceria com banco/fintech (depois dos testadores):** quando houver números de uso (quantos voltam
       na 2ª e 3ª semana, quantos usam o cofrinho), procurar bancos que combinam com "viajar pelo bolso":

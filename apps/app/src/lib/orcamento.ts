@@ -187,7 +187,7 @@ export function sugerirAjustes(e: Entrada, orc: Orcamento, limiteBRL: number): S
  * Essenciais: passagem, hospedagem e alimentação (da fonte ou informados pela pessoa),
  * e passeios do roteiro sem preço confirmado.
  */
-export function faltaNoCusto(o: Orcamento, gastos: { categoria: string }[]): { itens: string[]; passeiosSemPreco: number } {
+export function faltaNoCusto(o: Orcamento, gastos: { categoria: string; descricao?: string }[]): { itens: string[]; passeiosSemPreco: number } {
   const cat = (id: Categoria['id']) => o.categorias.find((c) => c.id === id);
   const temCat = (id: Categoria['id']) => (cat(id)?.maxBRL ?? 0) > 0;
   const informou = (c: string) => gastos.some((g) => g.categoria === c);
@@ -195,7 +195,9 @@ export function faltaNoCusto(o: Orcamento, gastos: { categoria: string }[]): { i
   if (!informou('passagem')) itens.push('passagem');
   if (!temCat('hospedagem') && !informou('hospedagem')) itens.push('hospedagem');
   if (!temCat('alimentacao') && !informou('alimentacao')) itens.push('alimentação');
-  const passeiosSemPreco = cat('lazer')?.linhas.filter((l) => l.semPreco).length ?? 0;
+  // "Comida, passeios e transporte por dia" informado na criação (D-077) cobre os passeios sem preço.
+  const diaADia = gastos.some((g) => /passeios/i.test(g.descricao ?? ''));
+  const passeiosSemPreco = diaADia ? 0 : cat('lazer')?.linhas.filter((l) => l.semPreco).length ?? 0;
   return { itens, passeiosSemPreco };
 }
 

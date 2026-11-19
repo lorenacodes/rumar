@@ -43,7 +43,7 @@ await ana.getByRole('button', { name: /Nova viagem/ }).click(); await ana.waitFo
 if (await ana.getByRole('button', { name: 'Trocar', exact: true }).count()) await ana.getByRole('button', { name: 'Trocar', exact: true }).click();
 await ana.locator('#busca-destino-geral').fill('Paris'); await ana.waitForTimeout(1500); await ana.getByRole('list', { name: 'Cidades encontradas' }).getByRole('button').filter({ hasText: /França/ }).first().click(); await ana.waitForTimeout(800);
 await ana.getByRole('button', { name: 'Mais uma pessoa' }).click();
-await ana.getByText('Mais detalhes (opcional)').click(); await ana.locator('#orc').fill('12000'); await foto(ana, 'nova-viagem');
+await ana.getByRole('button', { name: 'Já sei o valor total' }).click(); await ana.locator('#orc').fill('12000'); await foto(ana, 'nova-viagem');
 await ana.getByRole('button', { name: /Criar viagem/ }).click(); await ana.waitForTimeout(6000); await foto(ana, 'viagem-roteiro');
 const idViagem = ana.url().split('/viagem/')[1]?.split('?')[0];
 console.log('    viagem:', idViagem, '|', await texto(ana, 260));

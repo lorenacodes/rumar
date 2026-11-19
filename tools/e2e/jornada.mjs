@@ -41,7 +41,7 @@ await p.goto(URL + '#/viagens/nova?d=fr-paris'); await p.waitForTimeout(1500);
 await p.getByRole('tab', { name: 'Ainda é uma previsão' }).click();
 await p.locator('#ida').fill(mais(75));
 await p.getByText('Mais detalhes (opcional)').click();
-await p.locator('#orc').fill('9000');
+await p.getByRole('button', { name: 'Já sei o valor total' }).click(); await p.locator('#orc').fill('9000');
 await p.locator('#guardado').fill('2000');
 await p.locator('#mensal').fill('300');
 await p.getByRole('tab', { name: 'Tenho', exact: true }).click();

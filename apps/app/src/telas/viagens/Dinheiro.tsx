@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { faltaNoCusto, textoFalta, type Orcamento } from '../../lib/orcamento';
 import { converter, custo, dataBR, dinheiro, FONTES_CAMBIO, IOF, NOME_MOEDA, taxa } from '../../lib/moedas';
 import { quemDeveAQuem } from '../../lib/divisao';
+import { preverPoupanca } from '../../lib/previsao';
+import { GraficoPrevisao } from '../../ui/GraficoPrevisao';
 import { adicionarAporte, adicionarGastoReal, atualizarViagem, eu as euId, removerAporte, removerGastoReal, type ViagemCompleta } from '../../lib/viagens';
 import { Aviso, BotaoContorno } from '../../ui/pecas';
 import { botaoTexto, campo, Rotulo, Segmentos } from './comum';
@@ -104,6 +106,7 @@ function Economia({ v, j, pode, recarregar, semPrecos }: { v: ViagemCompleta; j:
       <div style={{ font: "600 24px 'Lexend Exa'" }}>{p.falta ? `Faltam ${f(p.falta)}` : 'Meta atingida'}</div>
       <div aria-hidden="true" style={{ height: '8px', background: 'var(--linha)', marginTop: '8px' }}><div style={{ height: '8px', width: `${Math.round(p.progresso * 100)}%`, background: 'var(--verde)' }} /></div>
       <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '4px' }}>{f(j.guardado)} guardados de {f(p.meta)} ({Math.round(p.progresso * 100)}%)</div>
+      {p.falta ? <GraficoPrevisao p={preverPoupanca({ hoje: j.ctx.hoje, dataIda: v.viagem.data_ida, meta: p.meta, guardado: j.guardado, mensal: v.viagem.capacidade_mensal_centavos ?? 0 })} meta={p.meta} moeda={m} dataViagem={v.viagem.data_ida} /> : null}
 
       <Rotulo>Como a meta é calculada</Rotulo>
       <table style={{ width: '100%', fontSize: '14px', borderCollapse: 'collapse' }}>
