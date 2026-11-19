@@ -46,6 +46,8 @@ export interface Lugar {
   destino?: string;
   /** Sinal de nível (lugares da base, sem preço): -1 simples, 0 neutro, 1 especial. Só ordena. */
   nivel?: -1 | 0 | 1;
+  /** Curiosidade do lugar (Wikidata), quando é um lugar curioso (D-038). */
+  curioso?: string | null;
   /** Fama (nº de Wikipédias com artigo): lugares reconhecidos sobem (D-036). */
   fama?: number;
   /** Grupos de cozinha (restaurantes, bares, cafés) e país do destino, para a comida (D-041). */
@@ -76,6 +78,8 @@ export interface Preferencias {
   cozinhasAmo?: Cozinha[];
   cozinhasEvito?: Cozinha[];
   provar?: boolean;
+  /** Fugir do comum (D-078): experiências diferentes, curiosas e reconhecidas; o genérico perde espaço. */
+  diferente?: boolean;
   /** Viaja também a trabalho / para networking, e a área (D-046). */
   networking?: boolean;
   area?: import('./networking').Area | null;
@@ -242,6 +246,13 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
     if (destaque) pontos += 1;
     // Orçamento alto: grátis e pouco conhecido (praça, igrejinha, monumento) perde espaço.
     if (l.custo === 0 && !destaque) pontos -= 3;
+  }
+  // Fugir do comum (D-078), e também quem viaja no nível Conforto: o curioso e o reconhecido sobem; o
+  // genérico (rede, lanchonete, ponto menor) cai.
+  if (p.diferente || p.orcamento === 'conforto') {
+    if (l.curioso) { pontos += p.diferente ? 5 : 3; motivos.push('experiência diferente'); }
+    if (fama >= 10) pontos += p.diferente ? 2 : 1;
+    if (simples) pontos -= p.diferente ? 4 : 2;
   }
   if (p.gratuitos && l.custo === 0 && p.orcamento !== 'conforto') {
     pontos += p.orcamento === 'economico' ? 3 : 1;

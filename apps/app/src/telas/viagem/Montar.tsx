@@ -248,6 +248,7 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
             <Grupo rotulo="Preferências">
               <Marcar marcada={p.gratuitos} aoTocar={() => muda({ gratuitos: !p.gratuitos })}>Gosto de programas grátis</Marcar>
               <Marcar marcada={p.local} aoTocar={() => muda({ local: !p.local })}>Prefiro lugares menos turísticos</Marcar>
+              <Marcar marcada={p.diferente === true} aoTocar={() => muda({ diferente: !p.diferente })}>Quero experiências diferentes, fora do comum</Marcar>
             </Grupo>
             <Subtitulo>Para se locomover</Subtitulo>
             <Grupo rotulo="Deslocamento">

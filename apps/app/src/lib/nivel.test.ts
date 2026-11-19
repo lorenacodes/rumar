@@ -33,16 +33,24 @@ describe('nível de gasto pelo orçamento', () => {
   });
   it('sinal do lugar vem do tipo e da cozinha, sem inventar preço', () => {
     expect(sinalNivel({ tipo: 'ice_cream', cozinha: null, estrelas: null, site: null })).toBe(-1);
-    expect(sinalNivel({ tipo: 'theme_park', cozinha: null, estrelas: null, site: null })).toBe(1);
-    expect(sinalNivel({ tipo: 'restaurant', cozinha: 'japanese', estrelas: null, site: 'https://x' })).toBe(1);
+    // D-078: só o tipo não basta; precisa ser reconhecido (Wikipédia), curioso ou hotel 4+ estrelas.
+    expect(sinalNivel({ tipo: 'theme_park', cozinha: null, estrelas: null, site: null })).toBe(0);
+    expect(sinalNivel({ tipo: 'theme_park', cozinha: null, estrelas: null, site: null, fama: 3 })).toBe(1);
+    expect(sinalNivel({ tipo: 'aquarium', cozinha: null, estrelas: null, site: null, nome: 'Box Peixes Ornamentais' })).toBe(0);
+    expect(sinalNivel({ tipo: 'restaurant', cozinha: 'japanese', estrelas: null, site: 'https://x' })).toBe(0);
+    expect(sinalNivel({ tipo: 'restaurant', cozinha: 'japanese', estrelas: null, site: 'https://x', fama: 2 })).toBe(1);
+    expect(sinalNivel({ tipo: 'restaurant', cozinha: 'american, steak', estrelas: null, site: 'https://x', nome: 'Outback Steakhouse' })).toBe(-1);
+    expect(sinalNivel({ tipo: 'restaurant', cozinha: 'pasta, italiana', estrelas: null, site: 'https://x', nome: 'Bolognas Macarrão Expresso' })).toBe(-1);
+    expect(sinalNivel({ tipo: 'attraction', cozinha: null, estrelas: null, site: null, curioso: 'catacumba' })).toBe(1);
+    expect(sinalNivel({ tipo: 'hotel', cozinha: null, estrelas: 5, site: null })).toBe(1);
     expect(sinalNivel({ tipo: 'restaurant', cozinha: 'burger', estrelas: null, site: 'https://x' })).toBe(-1);
     expect(sinalNivel({ tipo: 'restaurant', cozinha: 'regional', estrelas: null, site: null })).toBe(0);
   });
   it('com nível conforto o roteiro troca sorveteria e lanchonete por programas de nível mais alto', () => {
     const cat = [
       lugar('sorveteria', 'cafes', 'ice_cream'), lugar('doceria', 'cafes', 'pastry'), lugar('cafe-bom', 'cafes', 'cafe', { site: 'https://c' }),
-      lugar('lanche', 'restaurantes', 'restaurant', { cozinha: 'burger' }), lugar('sushi', 'restaurantes', 'restaurant', { cozinha: 'japanese', site: 'https://s' }),
-      lugar('praca', 'parques', 'park', { gratuito: true }), lugar('parque-tematico', 'lazer', 'theme_park'),
+      lugar('lanche', 'restaurantes', 'restaurant', { cozinha: 'burger' }), lugar('sushi', 'restaurantes', 'restaurant', { cozinha: 'japanese', site: 'https://s', fama: 2 }),
+      lugar('praca', 'parques', 'park', { gratuito: true }), lugar('parque-tematico', 'lazer', 'theme_park', { fama: 3 }),
     ].map(paraLugar).filter((l) => l !== null);
     const nomes = (p: Preferencias) => planejar(cat, p, { destino: 'X', dataIda: '2027-01-10', noites: 1 }).flatMap((d) => d.paradas).filter((x) => x.lugar).map((x) => x.lugar!.id);
     const conforto = nomes({ ...base, orcamento: 'conforto' });
@@ -52,6 +60,18 @@ describe('nível de gasto pelo orçamento', () => {
     const economico = nomes(base);
     expect(economico).not.toContain('parque-tematico');
     expect(economico).not.toContain('sushi');
+  });
+});
+
+describe('fugir do comum (D-078)', () => {
+  it('curioso sobe e rede cai para quem quer experiências diferentes', async () => {
+    const { afinidade } = await import('./planejador');
+    const p: Preferencias = { ...base, diferente: true };
+    const curioso = paraLugar(lugar('cripta', 'atracoes', 'attraction', { curioso: 'cripta' }))!;
+    const comum = paraLugar(lugar('outback', 'restaurantes', 'restaurant', { nome: 'Outback Steakhouse', cozinha: 'steak' } as Partial<LugarBase>))!;
+    expect(afinidade(curioso, p).motivos).toContain('experiência diferente');
+    expect(afinidade(curioso, p).pontos).toBeGreaterThan(afinidade(curioso, base).pontos);
+    expect(afinidade(comum, p).pontos).toBeLessThan(afinidade(comum, base).pontos);
   });
 });
 

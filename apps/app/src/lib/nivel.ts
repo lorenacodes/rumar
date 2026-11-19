@@ -47,10 +47,23 @@ const TIPOS_ESPECIAIS = new Set(['theme_park', 'water_park', 'marina', 'zoo', 'a
 const COZINHA_SIMPLES = /burger|hot_dog|sandwich|kebab|chicken|snack|pastel|acai|donut|juice|ice_cream|pizza|coxinha|lanche/i;
 const COZINHA_ESPECIAL = /french|japanese|sushi|steak|seafood|fine_dining|mediterranean|portuguese|peruvian|wine|italian|contemporary|fusion|oyster|tasting/i;
 
-export function sinalNivel(b: { tipo: string; cozinha: string | null; estrelas: number | null; site: string | null; relevancia?: number }): -1 | 0 | 1 {
+/**
+ * Redes e franquias (D-078): são comuns em qualquer cidade, nunca "especial". Lista pelo nome, porque o mapa
+ * nem sempre marca a marca.
+ */
+const REDES = /\b(outback|mc ?donald|burger king|subway|habib|giraffas|bob'?s|spoleto|china in box|madero|starbucks|kfc|domino|pizza hut|coco bambu|applebee|tgi|abbraccio|jeronimo|griletto|divino fog[aã]o|vivenda do camar[aã]o|casa do p[aã]o de queijo|cacau show|kopenhagen|chiquinho|bolognas|frango assado|ragazzo|rei do mate|mania de churrasco|fogo de ch[aã]o|paris 6)\b/i;
+
+export function sinalNivel(b: { tipo: string; cozinha: string | null; estrelas: number | null; site: string | null; relevancia?: number; nome?: string; fama?: number | null; curioso?: string | null }): -1 | 0 | 1 {
+  if (b.nome && REDES.test(b.nome)) return -1;
+  if (/expresso|express\b|lanchonete|delivery/i.test(b.nome ?? '')) return -1;
   if (TIPOS_SIMPLES.has(b.tipo)) return -1;
-  if (TIPOS_ESPECIAIS.has(b.tipo) || (b.estrelas ?? 0) >= 4) return 1;
+  // Especial de verdade (D-078): hotel 4+ estrelas, lugar curioso, ou programa/restaurante reconhecido
+  // (tem verbete na Wikipédia). Só o tipo ("aquário", "marina", "cozinha francesa") não basta: o mapa chama
+  // loja de peixes de aquário e clube de sócios de parque aquático.
+  if ((b.estrelas ?? 0) >= 4 || b.curioso) return 1;
+  const reconhecido = (b.fama ?? 0) >= 1;
+  if (TIPOS_ESPECIAIS.has(b.tipo)) return reconhecido ? 1 : 0;
   if (b.cozinha && COZINHA_SIMPLES.test(b.cozinha)) return -1;
-  if (b.tipo === 'restaurant' && b.cozinha && COZINHA_ESPECIAL.test(b.cozinha) && (b.site || (b.relevancia ?? 0) >= 3)) return 1;
+  if (b.tipo === 'restaurant' && b.cozinha && COZINHA_ESPECIAL.test(b.cozinha) && reconhecido) return 1;
   return 0;
 }

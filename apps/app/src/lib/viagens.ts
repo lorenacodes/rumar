@@ -137,7 +137,7 @@ export async function montarRoteiro(v: Viagem, pessoas: Pessoa[], reserva: Prefe
   const prefs = { ...base, orcamento: nivelDaViagem(v)?.nivel ?? base.orcamento };
   // Paris tem curadoria; as demais cidades usam os lugares já coletados da base.
   const destinoId = v.destino_id ?? (v.destino === 'Paris' ? DESTINO_CURADORIA : null);
-  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId, prefs.orcamento, [...(prefs.cozinhasAmo ?? []), ...regrasDaDieta(prefs.dieta).favorece]);
+  const candidatos = destinoId === DESTINO_CURADORIA || !destinoId ? LUGARES : await candidatosRoteiro(destinoId, prefs.orcamento, [...(prefs.cozinhasAmo ?? []), ...regrasDaDieta(prefs.dieta).favorece], prefs.diferente === true);
   if (!candidatos.length) {
     await registrar(v.id, 'Roteiro vazio: ainda não há lugares coletados nesta cidade (pedido de coleta registrado).');
     return;

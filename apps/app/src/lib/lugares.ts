@@ -251,7 +251,7 @@ export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
 }
 
 /** Candidatos para montar um roteiro automático: os mais documentados de cada categoria. */
-export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto', cozinhas: Cozinha[] = []): Promise<Lugar[]> {
+export async function candidatosRoteiro(destino: string, nivel?: 'economico' | 'intermediario' | 'conforto', cozinhas: Cozinha[] = [], diferente = false): Promise<Lugar[]> {
   const cats = ORDEM_CATEGORIAS.filter((c) => CATEGORIAS_LUGAR[c].roteiro);
   const consultas = cats.map((c) => supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', c).gte('relevancia', 0).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(c === 'restaurantes' || c === 'atracoes' ? 40 : 20));
   // Viagem de nível conforto: traz também restaurantes de cozinha especial e programas pagos
@@ -260,7 +260,11 @@ export async function candidatosRoteiro(destino: string, nivel?: 'economico' | '
     consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).eq('categoria', 'restaurantes').eq('tipo', 'restaurant')
       .or('cozinha.ilike.%frances%,cozinha.ilike.%french%,cozinha.ilike.%japon%,cozinha.ilike.%sushi%,cozinha.ilike.%churrascaria%,cozinha.ilike.%frutos do mar%,cozinha.ilike.%italian%,cozinha.ilike.%portugu%,cozinha.ilike.%mediterranean%,cozinha.ilike.%peru%,cozinha.ilike.%fine dining%')
       .not('site', 'is', null).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(30));
-    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('tipo', ['theme_park', 'water_park', 'marina', 'zoo', 'aquarium']).gte('relevancia', 0).order('relevancia', { ascending: false }).limit(15));
+    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).in('tipo', ['theme_park', 'water_park', 'marina', 'zoo', 'aquarium']).not('fama', 'is', null).gte('relevancia', 0).order('fama', { ascending: false }).limit(15));
+  }
+  // Fugir do comum (D-078): os lugares curiosos e os mais reconhecidos da cidade entram na disputa.
+  if (diferente || nivel === 'conforto') {
+    consultas.push(supabase.from('lugares').select(COLS).eq('destino_id', destino).not('curioso', 'is', null).not('tipo', 'in', `(${TIPOS_FORA.join(',')})`).order('fama', { ascending: false, nullsFirst: false }).limit(20));
   }
   // Comida da pessoa (D-041): restaurantes das cozinhas que ela adora ou que a dieta favorece,
   // mesmo que não estejam entre os mais conhecidos da cidade.
@@ -323,6 +327,7 @@ export function paraLugar(b: LugarBase & { relevancia?: number }): (Lugar & { de
     opcoesDieta: b.dieta_opcoes ?? [],
     pais: b.destino_id.slice(0, 2),
     nivel: sinalNivel(b),
+    curioso: b.curioso ?? null,
     ...(PONTOS_MENORES.has(b.tipo) ? { menor: true } : {}),
   };
 }

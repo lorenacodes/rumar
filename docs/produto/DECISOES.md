@@ -892,3 +892,17 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   "Guardou algo para a viagem este mês?" quando passa 30 dias sem registro. O gráfico também está em Dinheiro.
 - "Registrar viagem que já fiz" virou botão de verdade (52 px, com ícone), não um link azul solto.
 - Previsão sem juros nem inflação, dito na tela.
+
+## D-078 — "Especial" só o que é de fato diferente; opção "fugir do comum"
+- Teste da fundadora (orçamento ilimitado): o nível Conforto destacava em Recife massa expressa, Outback, loja de
+  peixes ("aquário") e clube de sócios ("parque aquático"). O mapa não tem preço nem qualidade; o app adivinhava
+  pelo tipo e pela cozinha.
+- Nova regra do sinal "especial": hotel 4+ estrelas, lugar curioso, ou programa/restaurante reconhecido (verbete
+  na Wikipédia). Só o tipo não basta. Redes e franquias (lista pelo nome) e "expresso/lanchonete" contam como
+  comuns.
+- Nova preferência no "Meu jeito de viajar": "Quero experiências diferentes, fora do comum". Com ela (e, mais
+  fraco, no nível Conforto) o curioso e o muito reconhecido sobem, o comum cai, e os curiosos da cidade entram
+  na lista de candidatos. Motivo mostrado: "experiência diferente".
+- Limite real: em Recife a base ainda não tem curiosos, restaurantes reconhecidos nem hotéis com estrelas, e 690
+  lugares do Brasil (Paço do Frevo, Cais do Sertão…) estavam sem fama calculada. Busca de fama disparada; o
+  roteiro "diferente" melhora conforme os dados chegam.
