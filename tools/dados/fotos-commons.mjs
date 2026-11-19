@@ -7,6 +7,8 @@
  * Roda no GitHub Actions (workflow "Fotos por localização"); grava pela função importar-lugares com OIDC, sem chave.
  * Uso: node tools/dados/fotos-commons.mjs [--pais br] [--regiao nordeste] [--meta 1000] [--destinos ids] [--limite 1000] [--minutos 150]
  */
+import { cita } from './fotos-regras.mjs';
+
 const FUNCAO = 'https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/importar-lugares';
 const API = 'https://commons.wikimedia.org/w/api.php';
 const UA = 'BoVairBot/0.2 (app de viagem; fotos livres por localização; https://github.com/lorenacodes/rumar)';
@@ -48,11 +50,6 @@ const RAIO = { praias: 400, parques: 250, atracoes: 150, historico: 150, museus:
 const RUIM = /\b(map|mapa|locator|location|logo|bandeira|flag|bras[aã]o|coat of arms|diagram|planta baixa|floor plan|sign|placa|cart[aã]o|ticket|menu|card[aá]pio|screenshot|document|selo|stamp)\b/i;
 const EXT = /\.(jpe?g|png|webp)$/i;
 const LIVRE = /^(cc0|cc[- ]by(-sa)?( \d\.\d)?|cc[- ]by[- ]sa( \d\.\d)?|public domain|pd\b|pdm|no restrictions)/i;
-const GENERICO = new Set(['praia', 'igreja', 'restaurante', 'bar', 'cafe', 'museu', 'parque', 'casa', 'rua', 'avenida', 'praca', 'largo', 'mercado', 'hotel', 'pousada', 'centro', 'shopping', 'loja', 'santa', 'santo', 'sao', 'nossa', 'senhora', 'capela', 'do', 'da', 'de', 'dos', 'das', 'the', 'and', 'cultural', 'municipal', 'estadual', 'nacional', 'espaco', 'galeria', 'teatro', 'forte', 'recife', 'olinda', 'brasil']);
-const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-const palavras = (nome) => [...new Set(norm(nome).split(/[^a-z0-9]+/).filter((w) => w.length >= 4 && !GENERICO.has(w)))];
-const cita = (titulo, nome) => { const t = norm(titulo); const ps = palavras(nome); return ps.length > 0 && ps.filter((p) => t.includes(p)).length >= Math.min(2, ps.length); };
-
 function candidatos(l, achados) {
   // Só foto cujo nome do arquivo cite o lugar (D-057, revisão de 19/11: "foto tirada perto" trazia lugar errado).
   const turistico = TURISTICO.has(l.categoria);
@@ -78,6 +75,21 @@ async function pendentes(ufs) {
   }
   return itens;
 }
+// Antes de buscar: revisa as fotos já achadas com a regra atual e tira as que não passam (D-057).
+{
+  let depois; let tiradas = 0; let vistas = 0;
+  for (;;) {
+    const { itens } = await banco({ acao: 'fotos_revisar', depois, limite: 1000 });
+    if (!itens.length) break;
+    vistas += itens.length; depois = itens.at(-1).id;
+    const nome = (f) => decodeURIComponent((f.match(/FilePath\/([^?]+)/) ?? [])[1] ?? '');
+    const ruins = itens.filter((l) => !cita(nome(l.foto ?? ''), l.nome)).map((l) => l.id);
+    if (ruins.length) tiradas += (await banco({ acao: 'fotos_limpar', ids: ruins })).ok;
+    if (itens.length < 1000) break;
+  }
+  console.log(`Revisão: ${vistas} fotos achadas antes, ${tiradas} tiradas por não citarem o lugar.`);
+}
+
 let achadas = 0;
 let procurados = 0;
 const porCidade = new Map();

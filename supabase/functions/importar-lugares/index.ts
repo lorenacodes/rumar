@@ -17,6 +17,8 @@
 //   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
 //   { acao: 'fotos_pendentes', destinos?, prefixo?, ufs?: [de, ate], turisticos?, limite } → lugares sem foto ainda não procurados (D-057)
 //   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
+//   { acao: 'fotos_revisar', depois?, limite }                 → fotos achadas pela busca (para revisar com a regra atual)
+//   { acao: 'fotos_limpar', ids }                              → tira fotos achadas que não passam na regra (volta para a busca)
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -172,6 +174,23 @@ Deno.serve(async (req) => {
       if (data?.length) ok++;
     }
     return json({ ok, procurados: itens.length });
+  }
+  if (p.acao === 'fotos_revisar') {
+    const limite = Math.min(Math.max(Number(p.limite) || 1000, 1), 1000);
+    let q = db.from('lugares').select('id, nome, foto').eq('foto_busca', true).order('id').limit(limite);
+    if (typeof p.depois === 'string') q = q.gt('id', p.depois);
+    const { data, error } = await q;
+    if (error) return json({ erro: error.message }, 500);
+    return json({ itens: data ?? [] });
+  }
+  if (p.acao === 'fotos_limpar') {
+    const ids = ((p.ids ?? []) as unknown[]).filter((i): i is string => typeof i === 'string').slice(0, 1000);
+    let ok = 0;
+    for (let k = 0; k < ids.length; k += 200) {
+      const { data } = await db.from('lugares').update({ foto: null, foto_pagina: null, foto_busca: false, foto_tentada_em: null }).eq('foto_busca', true).in('id', ids.slice(k, k + 200)).select('id');
+      ok += data?.length ?? 0;
+    }
+    return json({ ok });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });
