@@ -264,66 +264,74 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
   const [editando, setEditando] = useState<string | null>(null);
   const doDia = itens.filter((x) => x.it.dia === dia).sort((a, b) => a.it.ordem - b.it.ordem);
   const usados = new Set(itens.map((x) => x.l.id));
-  const faixas = ['Manhã', 'Tarde', 'Noite'].map((f) => ({ f, lista: doDia.filter((x) => FAIXA[x.it.periodo] === f) })).filter((x) => x.lista.length);
-  const temas = [...new Set(doDia.map((x) => NOME_CATEGORIA[x.l.categoria]))].slice(0, 3).join(' · ');
   const executar = async (p: Promise<unknown>) => (await p, recarregar());
+  // Cabeçalho do dia (D-049): data por extenso e um resumo que dá para entender de relance.
+  const data = new Date(`${v.viagem.data_ida}T12:00:00Z`);
+  data.setUTCDate(data.getUTCDate() + dia - 1);
+  const dataLonga0 = data.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+  const dataLonga = dataLonga0.charAt(0).toUpperCase() + dataLonga0.slice(1);
+  let andando = 0;
+  for (let i = 0; i < doDia.length - 1; i++) { const a2 = doDia[i]!.l; const b2 = doDia[i + 1]!.l; if (temCoord(a2) && temCoord(b2)) andando += distanciaKm(a2, b2); }
+  const resumo = [doDia.length ? `${doDia.length} ${doDia.length === 1 ? 'parada' : 'paradas'}` : null, andando > 0 ? `${textoDistancia(andando).replace(' em linha reta', '')} entre elas` : null, dia === 1 ? 'dia de chegada' : dia === v.viagem.noites + 1 ? 'dia de volta' : null].filter(Boolean).join(' · ');
+  const minutos = (km: number) => Math.max(1, Math.round((km * 1000) / 80));
 
   return (
     <section style={{ marginTop: '14px' }}>
       {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
-      <NivelDoRoteiro v={v} pode={pode} recarregar={recarregar} />
       {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
       <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
-      <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{temas || 'Dia livre'}</div>
-      {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Nada planejado para este dia.</p> : null}
-      {faixas.map(({ f, lista }) => (
-        <div key={f}>
-          <Rotulo style={{ borderBottom: '1px solid var(--linha)', paddingBottom: '6px' }}>{f}</Rotulo>
-          {lista.map(({ it, l }) => {
-            const i = doDia.findIndex((x) => x.it.id === it.id);
-            const prox = doDia[i + 1]?.l;
-            const km = temCoord(l) && temCoord(prox) ? distanciaKm(l, prox) : null;
-            const preco = precoTexto(l);
-            const motivos = grupo ? afinidade(l, grupo).motivos : [];
-            const quem = paraQuem(v.pessoas, (Object.keys(GOSTO_TAG) as Gosto[]).filter((g) => GOSTO_TAG[g].some((t) => l.tags.includes(t))));
-            const alternativas = lugaresDoDestino(destinoDe(v)).filter((o) => !usados.has(o.id) && o.categoria === l.categoria && o.slots.includes(it.periodo as Periodo))
-              .map((o) => ({ o, km: temCoord(o) && temCoord(l) ? distanciaKm(o, l) : 9 })).sort((a, b) => a.km - b.km).slice(0, 4);
-            return (
-              <article key={it.id} style={{ display: 'grid', gridTemplateColumns: '84px 1fr', gap: '10px', padding: '10px 0', borderBottom: '1px dashed var(--linha)' }}>
-                <div>
-                  <div style={{ font: "600 14px 'Lexend Exa'", marginBottom: '4px' }}>{it.hora ? it.hora.slice(0, 5).replace(':', 'h') : HORA[it.periodo]}</div>
-                  <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?viagem=${v.viagem.id}`)} aria-label={`${l.nome}: detalhes`} style={{ display: 'block', width: '84px' }}>
-                    <FotoLugar id={l.id} proporcao="1 / 1" credito={false} compacto />
+      <div style={{ fontSize: '15px', color: 'var(--texto)' }}>{dataLonga}</div>
+      {resumo ? <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '2px' }}>{resumo}</div> : null}
+      {!doDia.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Dia livre. Adicione lugares quando quiser.</p> : null}
+
+      <ol aria-label={`Paradas do dia ${dia}`} style={{ listStyle: 'none', margin: '14px 0 0', padding: 0 }}>
+        {doDia.map(({ it, l }, i) => {
+          const prox = doDia[i + 1]?.l;
+          const km = temCoord(l) && temCoord(prox) ? distanciaKm(l, prox) : null;
+          const preco = precoTexto(l);
+          const precoReal = !/não confirmado|não informado/i.test(preco.texto);
+          const motivos = grupo ? afinidade(l, grupo).motivos : [];
+          const quem = paraQuem(v.pessoas, (Object.keys(GOSTO_TAG) as Gosto[]).filter((g) => GOSTO_TAG[g].some((t) => l.tags.includes(t))));
+          const alternativas = lugaresDoDestino(destinoDe(v)).filter((o) => !usados.has(o.id) && o.categoria === l.categoria && o.slots.includes(it.periodo as Periodo))
+            .map((o) => ({ o, km: temCoord(o) && temCoord(l) ? distanciaKm(o, l) : 9 })).sort((a, b) => a.km - b.km).slice(0, 4);
+          const hora = it.hora ? it.hora.slice(0, 5).replace(':', 'h') : HORA[it.periodo];
+          const ultimo = i === doDia.length - 1;
+          return (
+            <li key={it.id} style={{ display: 'grid', gridTemplateColumns: '56px 1fr', columnGap: '10px' }}>
+              {/* Horário e linha do tempo */}
+              <div style={{ position: 'relative' }}>
+                <div style={{ font: "700 14px/20px 'Open Sans'" }}>{hora}</div>
+                <div style={{ fontSize: '11px', color: 'var(--texto-sec)' }}>{FAIXA[it.periodo]}</div>
+                <span aria-hidden="true" style={{ position: 'absolute', right: '-6px', top: '6px', width: '10px', height: '10px', borderRadius: '50%', background: it.feito ? 'var(--verde)' : 'var(--amarelo)', boxShadow: '0 0 0 3px var(--fundo)' }} />
+                {!ultimo ? <span aria-hidden="true" style={{ position: 'absolute', right: '-2px', top: '20px', bottom: '-6px', width: '2px', background: 'var(--linha)' }} /> : null}
+              </div>
+              <div style={{ minWidth: 0, paddingLeft: '8px', paddingBottom: ultimo ? 0 : '6px' }}>
+                <article style={{ background: 'var(--cartao-2)', borderRadius: '12px', padding: '10px', opacity: it.feito ? 0.75 : 1 }}>
+                  <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?viagem=${v.viagem.id}`)} aria-label={`${l.nome}: detalhes`}
+                    style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%', textAlign: 'left' }}>
+                    <span style={{ width: '56px', flex: 'none', borderRadius: '8px', overflow: 'hidden' }}><FotoLugar id={l.id} proporcao="1 / 1" credito={false} compacto /></span>
+                    <span style={{ minWidth: 0 }}>
+                      <span style={{ display: 'block', font: "600 16px/21px 'Lexend Exa'", letterSpacing: '-0.02em', textDecoration: it.feito ? 'line-through' : 'none' }}>{l.nome}</span>
+                      <span style={{ display: 'block', fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{[NOME_CATEGORIA[l.categoria], l.area || enderecoCurto(l.endereco)].filter(Boolean).join(' · ')}</span>
+                      {precoReal ? <span style={{ display: 'block', fontSize: '13px', fontWeight: 600 }}>{preco.texto}{preco.reserva ? <span style={{ color: 'var(--ambar)' }}> · compre antes</span> : null}</span> : null}
+                    </span>
                   </button>
-                </div>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ font: "700 11px/15px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{NOME_CATEGORIA[l.categoria]}</div>
-                  <div style={{ font: "600 17px/22px 'Lexend Exa'", letterSpacing: '-0.02em', textDecoration: it.feito ? 'line-through' : 'none' }}>{l.nome}</div>
-                  {it.feito ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--verde)' }}><Check />Feito</div> : null}
-                  {it.situacao === 'sugerido' ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--ambar)' }}>Sugestão de um participante</div> : null}
-                  <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{enderecoCurto(l.endereco) ?? l.area}</div>
-                  <div style={{ fontSize: '14px', lineHeight: '20px', marginTop: '2px' }}>
-                    <b>{preco.texto}</b>{preco.reserva ? <span style={{ color: 'var(--ambar)', fontWeight: 600 }}> · compre o ingresso antes</span> : null}
+                  {it.situacao === 'sugerido' ? <div style={{ font: "600 13px 'Open Sans'", color: 'var(--ambar)', marginTop: '6px' }}>Sugestão de um participante</div> : null}
+                  {motivos.length || quem ? <div style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', marginTop: '6px' }}>{quem ?? `Por que: ${motivos.slice(0, 2).join(' · ')}`}</div> : null}
+                  <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+                    {temCoord(l) ? <a href={`https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lon}`} target="_blank" rel="noreferrer" style={{ ...acao, display: 'inline-flex', alignItems: 'center', color: 'var(--azul)', textDecoration: 'none' }}>Como chegar</a> : null}
+                    {pode && it.situacao === 'sugerido' ? <button type="button" className="r-btn" onClick={() => void executar(confirmarSugestao(it))} style={acao}>Confirmar</button> : null}
+                    {pode ? <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? <><Check />Feito</> : 'Feito'}</button> : null}
+                    {pode ? <button type="button" className="r-btn" aria-expanded={editando === it.id} onClick={() => setEditando(editando === it.id ? null : it.id)} style={acao}>{editando === it.id ? 'Fechar' : 'Mais'}</button> : null}
+                    {!pode ? <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={acao}>{salvos.includes(l.id) ? 'Na lista Quero ir' : '+ Quero ir'}</button> : null}
                   </div>
-                  {motivos.length ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)', fontWeight: 600, marginTop: '2px' }}>Combina: {motivos.join(' · ')}</div> : null}
-                  {quem ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)' }}>{quem}</div> : null}
-                  {km !== null && prox ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>
-                      <span>↓ {textoDistancia(km).replace(' em linha reta', '')} · {km <= 1.5 ? 'a pé' : (P.transporte.metro ? `metrô (${euros(P.transporte.metro.valor)})` : 'de carro ou transporte')}</span>
-                      <a href={rotaMapa(l as { lat: number; lon: number }, prox as { lat: number; lon: number }, km <= 1.5 ? 'walking' : 'transit')} target="_blank" rel="noreferrer" style={{ color: 'var(--azul)', fontWeight: 600, minHeight: '40px', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>Rota ↗</a>
-                    </div>
-                  ) : null}
-                  {pode ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
-                      {it.situacao === 'sugerido' ? <button type="button" className="r-btn" onClick={() => void executar(confirmarSugestao(it))} style={acao}>Confirmar</button> : null}
-                      <button type="button" className="r-btn" aria-pressed={Boolean(it.feito)} onClick={() => void executar(marcarFeito(it, !it.feito))} style={{ ...acao, color: it.feito ? 'var(--verde)' : 'var(--texto)' }}>{it.feito ? <><Check />Feito</> : 'Marcar feito'}</button>
-                      <button type="button" className="r-btn" aria-expanded={editando === it.id} onClick={() => setEditando(editando === it.id ? null : it.id)} style={acao}>{editando === it.id ? 'Fechar ▴' : 'Editar ▾'}</button>
-                    </div>
-                  ) : null}
                   {pode && editando === it.id ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px', padding: '6px', background: 'var(--cartao-2)' }}>
-                      <button type="button" className="r-btn" disabled={i === 0} aria-label="Subir" onClick={() => void executar(Promise.all([moverItem(it, dia, doDia[i - 1]!.it.ordem), moverItem(doDia[i - 1]!.it, dia, it.ordem)]))} style={acao}>↑</button>
-                      <button type="button" className="r-btn" disabled={i === doDia.length - 1} aria-label="Descer" onClick={() => void executar(Promise.all([moverItem(it, dia, doDia[i + 1]!.it.ordem), moverItem(doDia[i + 1]!.it, dia, it.ordem)]))} style={acao}>↓</button>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--linha)' }}>
+                      <label style={{ ...acao, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Horário
+                        <input type="time" defaultValue={it.hora?.slice(0, 5) ?? ''} onBlur={(e) => { const h = e.target.value; if (h !== (it.hora?.slice(0, 5) ?? '')) void executar(mudarHora(it, h || null)); }} style={{ border: 0, background: 'transparent', font: "600 13px 'Open Sans'", color: 'var(--texto)', width: '84px' }} />
+                      </label>
+                      <button type="button" className="r-btn" disabled={i === 0} aria-label="Subir" onClick={() => void executar(Promise.all([moverItem(it, dia, doDia[i - 1]!.it.ordem), moverItem(doDia[i - 1]!.it, dia, it.ordem)]))} style={acao}>Subir</button>
+                      <button type="button" className="r-btn" disabled={ultimo} aria-label="Descer" onClick={() => void executar(Promise.all([moverItem(it, dia, doDia[i + 1]!.it.ordem), moverItem(doDia[i + 1]!.it, dia, it.ordem)]))} style={acao}>Descer</button>
                       <label style={{ ...acao, display: 'inline-flex', alignItems: 'center' }}>
                         <span className="visualmente-oculto">Mudar de dia</span>
                         <select value={dia} onChange={(e) => void executar(moverItem(it, Number(e.target.value), 99))} style={{ border: 0, background: 'transparent', font: "600 13px 'Open Sans'", color: 'var(--texto)' }}>
@@ -331,37 +339,37 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar }: { v: ViagemCompl
                         </select>
                       </label>
                       <button type="button" className="r-btn" onClick={() => setTrocando(trocando === it.id ? null : it.id)} style={acao}>Trocar</button>
-                      <label style={{ ...acao, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <span className="visualmente-oculto">Horário de {l.nome}</span>
-                        <input type="time" defaultValue={it.hora?.slice(0, 5) ?? ''} onBlur={(e) => { const h = e.target.value; if (h !== (it.hora?.slice(0, 5) ?? '')) void executar(mudarHora(it, h || null)); }} style={{ border: 0, background: 'transparent', font: "600 13px 'Open Sans'", color: 'var(--texto)', width: '88px' }} />
-                      </label>
                       <button type="button" className="r-btn" aria-label={`Tirar ${l.nome}`} onClick={() => void executar(removerItem(it))} style={{ ...acao, color: 'var(--vermelho)' }}>Tirar</button>
                     </div>
                   ) : null}
-                  {!pode ? (
-                    <button type="button" className="r-btn" onClick={() => void alternarSalvo(l.id)} style={{ ...acao, marginTop: '4px' }}>{salvos.includes(l.id) ? 'Na lista Quero ir' : '+ Quero ir (inspiração)'}</button>
-                  ) : null}
                   {trocando === it.id ? (
-                    <div style={{ marginTop: '6px', borderLeft: '3px solid var(--amarelo)', paddingLeft: '8px' }}>
-                      <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Mesma categoria, mais perto primeiro:</div>
+                    <div style={{ marginTop: '8px' }}>
+                      <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Trocar por (mais perto primeiro):</div>
                       {alternativas.length ? alternativas.map(({ o, km: d }) => (
                         <button key={o.id} type="button" className="r-btn" onClick={() => (setTrocando(null), void executar(trocarItem(it, o.id)))} style={{ display: 'block', minHeight: '40px', textAlign: 'left', fontSize: '14px' }}>
-                          <b>{o.nome}</b> · {d < 9 ? textoDistancia(d) : o.area} · {precoTexto(o).texto}
+                          <b>{o.nome}</b> · {d < 9 ? textoDistancia(d).replace(' em linha reta', '') : o.area}
                         </button>
-                      )) : <div style={{ fontSize: '14px' }}>Nenhuma alternativa no catálogo.</div>}
+                      )) : <div style={{ fontSize: '14px' }}>Nenhuma alternativa por perto.</div>}
                     </div>
                   ) : null}
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      ))}
+                </article>
+                {km !== null && prox ? (
+                  <a href={rotaMapa(l as { lat: number; lon: number }, prox as { lat: number; lon: number }, km <= 1.5 ? 'walking' : 'transit')} target="_blank" rel="noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', minHeight: '36px', fontSize: '12px', color: 'var(--texto-sec)', textDecoration: 'none' }}>
+                    {km <= 1.5 ? `${textoDistancia(km).replace(' em linha reta', '')} · cerca de ${minutos(km)} min a pé` : `${textoDistancia(km).replace(' em linha reta', '')} · de carro ou transporte`} · ver rota
+                  </a>
+                ) : null}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
       {pode ? (
-        <div style={{ marginTop: '12px' }}>
+        <div style={{ marginTop: '14px' }}>
           <BotaoContorno onClick={() => navegar(`/descobrir?d=${destinoDe(v) ?? ""}&viagem=${v.viagem.id}&dia=${dia}`)}>+ Adicionar lugar no dia {dia}</BotaoContorno>
         </div>
       ) : null}
+      <div style={{ marginTop: '18px' }}><NivelDoRoteiro v={v} pode={pode} recarregar={recarregar} /></div>
     </section>
   );
 }

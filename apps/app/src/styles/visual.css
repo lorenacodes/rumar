@@ -85,3 +85,15 @@ html:not(.modo-design) .tela button.r-btn[style*="height: 46px"][style*="backgro
   justify-content: center;
   text-align: center;
 }
+
+/* Espaço entre palavras (D-050): a Lexend Exa é uma fonte larga e o espaço dela fica grande.
+   Mantém a fonte e aproxima as palavras. Só no visual novo (fora do modo de comparação com o design). */
+html:not(.modo-design) [style*="Lexend Exa"],
+html:not(.modo-design) .tela h1,
+html:not(.modo-design) .titulo-tela,
+html:not(.modo-design) .postal-legenda b,
+html:not(.modo-design) .postal-selo > span i,
+html:not(.modo-design) .postal-sem-foto b,
+html:not(.modo-design) .ficha-nome {
+  word-spacing: -0.1em;
+}

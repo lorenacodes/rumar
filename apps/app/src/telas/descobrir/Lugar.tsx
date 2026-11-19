@@ -9,6 +9,8 @@ import { adicionarItem, listarViagens, type Viagem } from '../../lib/viagens';
 import { CATEGORIAS, DESTINO_CURADORIA, enderecoCurto, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
 import { basePorId, CATEGORIAS_LUGAR, destinoPorId, lugaresPorIds, nomeTipo } from '../../lib/lugares';
 import { dinheiro, paisPorCodigo } from '../../lib/moedas';
+import { linkWhatsApp } from '../../lib/whatsapp';
+import { BotaoWhatsApp } from '../../ui/whatsapp';
 import { afinidade } from '../../lib/planejador';
 import { useViajante } from '../../state/viajante';
 import { FotoLugar } from '../../ui/foto';
@@ -174,7 +176,7 @@ function LugarDaBase() {
           {b.estrelas ? linha('Categoria', `${b.estrelas} estrelas`) : null}
           {b.horario ? linha('Horário', horarioLegivel(b.horario)) : null}
           {preco ? linha('Preço', preco) : null}
-          {b.telefone ? linha('Telefone', <>{b.telefone.split(/[;,]/).map((t) => t.trim()).filter(Boolean).slice(0, 2).map((t, i) => <React.Fragment key={t}>{i ? ' · ' : ''}<a href={`tel:${t.replace(/[^\d+]/g, '')}`} style={{ color: 'var(--azul)' }}>{t}</a></React.Fragment>)}</>) : null}
+          {b.telefone ? linha('Telefone', <>{b.telefone.split(/[;,]/).map((t) => t.trim()).filter(Boolean).slice(0, 2).map((t, i) => <React.Fragment key={t}>{i ? ' · ' : ''}<a href={`tel:${t.replace(/[^\d+]/g, '')}`} style={{ color: 'var(--azul)' }}>{t}</a>{linkWhatsApp(t, b.destino_id.startsWith('br')) ? <BotaoWhatsApp href={linkWhatsApp(t, b.destino_id.startsWith('br'))!} nome={b.nome} /> : null}</React.Fragment>)}</>) : null}
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <a href={`https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lon}`} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
