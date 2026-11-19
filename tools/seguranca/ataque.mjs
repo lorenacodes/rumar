@@ -49,7 +49,7 @@ ok('Bia NÃO cria viagem em nome da Ana', dono.status >= 400);
 const aval = await B('/rest/v1/avaliacoes', { method: 'POST', body: JSON.stringify({ place_id: 'osm-n2557802355', user_id: ana.id, nota: 1 }) });
 ok('Bia NÃO avalia em nome da Ana', aval.status >= 400);
 const foto = await B('/rest/v1/fotos_enviadas', { method: 'POST', body: JSON.stringify({ place_id: 'osm-n2557802355', user_id: bia.id, caminho: 'x/y.jpg', tipo: 'lugar', declaracoes: true, status: 'aprovada' }) });
-ok('Bia NÃO publica foto já aprovada (pula a moderação)', foto.status >= 400 || foto.corpo?.[0]?.status !== 'aprovada');
+ok('Bia NÃO registra foto com arquivo na pasta de outra pessoa', foto.status >= 400);
 if (foto.corpo?.[0]?.id) await B(`/rest/v1/fotos_enviadas?id=eq.${foto.corpo[0].id}`, { method: 'DELETE' });
 const mod = await B('/rest/v1/rpc/sou_moderador', { method: 'POST', body: '{}' });
 ok('Bia não é moderadora', mod.corpo === false);
@@ -73,6 +73,18 @@ ok('Bia NÃO baixa a foto da viagem privada da Ana', baixa.status >= 400);
 const assina = await fetch(`${URL}/storage/v1/object/sign/fotos-viagem/${caminho}`, { method: 'POST', headers: { apikey: KEY, Authorization: `Bearer ${bia.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 60 }) });
 ok('Bia NÃO gera link da foto privada da Ana', assina.status >= 400);
 ok('Bia NÃO lê a linha do álbum privado', vazio(await B(`/rest/v1/viagem_fotos?trip_id=eq.${trip}&select=id`)));
+// D-071/D-082: feed e fotos no perfil não vazam a viagem privada.
+const idFotoPrivada = (await A(`/rest/v1/viagem_fotos?trip_id=eq.${trip}&select=id`)).corpo?.[0]?.id;
+const fp = await B('/rest/v1/rpc/fotos_da_pessoa', { method: 'POST', body: JSON.stringify({ dono: ana.id }) });
+ok('fotos_da_pessoa NÃO mostra à Bia a foto da viagem privada da Ana', !(fp.corpo ?? []).some?.((f) => f.id === idFotoPrivada));
+ok('fotos_das_viagens NÃO mostra fotos da viagem privada', vazio(await B('/rest/v1/rpc/fotos_das_viagens', { method: 'POST', body: JSON.stringify({ ids: [trip] }) })));
+const fd = await B('/rest/v1/rpc/feed_viagens', { method: 'POST', body: JSON.stringify({ limite: 50 }) });
+ok('feed NÃO traz a viagem privada da Ana', !(fd.corpo ?? []).some?.((x) => x.trip_id === trip));
+ok('sem conta: feed vazio', vazio(await anon('/rest/v1/rpc/feed_viagens', { method: 'POST', body: '{}' })));
+ok('sem conta: fotos_da_pessoa vazio', vazio(await anon('/rest/v1/rpc/fotos_da_pessoa', { method: 'POST', body: JSON.stringify({ dono: ana.id }) })));
+ok('sem conta: fotos_das_viagens vazio', vazio(await anon('/rest/v1/rpc/fotos_das_viagens', { method: 'POST', body: JSON.stringify({ ids: [trip] }) })));
+const apagaAlbum = await B(`/rest/v1/viagem_fotos?id=eq.${idFotoPrivada}`, { method: 'DELETE' });
+ok('Bia NÃO apaga foto do álbum da Ana', vazio(apagaAlbum) && !vazio(await A(`/rest/v1/viagem_fotos?id=eq.${idFotoPrivada}&select=id`)));
 await fetch(`${URL}/storage/v1/object/fotos-viagem`, { method: 'DELETE', headers: { apikey: KEY, Authorization: `Bearer ${ana.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ prefixes: [caminho] }) });
 const anonFoto = await fetch(`${URL}/storage/v1/object/list/fotos-perfil`, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ prefix: '' }) });
 ok('Sem conta NÃO lista fotos de perfil', ((await anonFoto.json().catch(() => [])) ?? []).length === 0);
@@ -159,6 +171,22 @@ const imp = await fn('importar-lugares', { acao: 'fotos_pendentes', limite: 1 },
 ok('importar-lugares: usuário comum NÃO consegue (só o GitHub)', imp.status === 401);
 const rem = await fn('remover-contas', {}, bia.token);
 ok('remover-contas: usuário comum NÃO consegue (só o GitHub)', rem.status === 401);
+
+// D-080: experiências são só leitura para usuários.
+const expIns = await B('/rest/v1/experiencias', { method: 'POST', body: JSON.stringify({ id: 'ataque-teste', destino_id: 'br-2611606', titulo: 'falsa', resumo: 'falsa', tipo: 'passeio' }) });
+ok('Usuária NÃO cria experiência', expIns.status >= 400);
+ok('Usuária NÃO altera experiência', vazio(await B('/rest/v1/experiencias?id=eq.recife-paco-do-frevo', { method: 'PATCH', body: JSON.stringify({ titulo: 'hackeado' }) })));
+ok('Usuária NÃO apaga experiência', vazio(await B('/rest/v1/experiencias?id=eq.recife-paco-do-frevo', { method: 'DELETE' })) && !vazio(await anon('/rest/v1/experiencias?id=eq.recife-paco-do-frevo&select=id')));
+// D-072: mídia só na própria avaliação.
+const avalAlheia = (await B(`/rest/v1/avaliacoes?user_id=neq.${bia.id}&select=id,place_id&limit=1`)).corpo?.[0];
+if (avalAlheia) {
+  const midia = await B('/rest/v1/fotos_enviadas', { method: 'POST', body: JSON.stringify({ place_id: avalAlheia.place_id, user_id: bia.id, caminho: `${bia.id}/ataque-midia.jpg`, tipo: 'lugar', declaracoes: true, avaliacao_id: avalAlheia.id }) });
+  ok('Bia NÃO anexa foto à avaliação de outra pessoa', midia.status >= 400);
+  if (midia.corpo?.[0]?.id) await B(`/rest/v1/fotos_enviadas?id=eq.${midia.corpo[0].id}`, { method: 'DELETE' });
+}
+// D-073: moderação.
+ok('Bia NÃO vê a fila de fotos de álbum denunciadas', vazio(await B('/rest/v1/rpc/fotos_viagem_denunciadas', { method: 'POST', body: '{}' })));
+ok('Bia NÃO lê denúncias', vazio(await B('/rest/v1/denuncias?select=id&limit=1')));
 
 // Injeção e XSS
 const inj = await B('/rest/v1/rpc/buscar_pessoas', { method: 'POST', body: JSON.stringify({ termo: "a' or 1=1 --" }) });

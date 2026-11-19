@@ -947,3 +947,10 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Perfil → "Minhas fotos": tudo o que eu postei, num lugar só.
 - Feed "Viagens da galera": até 5 fotos do álbum deslizam no próprio cartão, com pontinhos.
 - Funções no banco: fotos_da_pessoa e fotos_das_viagens (security definer, mesmas regras de visibilidade).
+
+## D-083 — Verificação minuciosa (19/11): comida típica e vegetariano
+- Achado no teste "comida": para quem é vegetariano e adora japonesa, o jantar virou um lugar de "comida típica"
+  sem opção sem carne (efeito colateral do D-078). Regra: "comida típica do lugar" só soma para vegetariano/vegano
+  se o lugar indicar opção sem carne ou for de cozinha que a dieta favorece. Teste unitário novo.
+- Teste de ataque ampliado com 16 tentativas contra o que foi criado hoje (feed, fotos no perfil, fotos por
+  viagem, experiências, mídia de avaliação, moderação): todas bloqueadas.

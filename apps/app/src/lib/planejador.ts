@@ -304,7 +304,10 @@ export function afinidade(l: Lugar, p: Preferencias): { pontos: number; motivos:
       pontos += 2;
       motivos.push('costuma ter pratos sem carne');
     }
-    if (p.provar !== false && cz.some((c) => cozinhaLocal(l.pais).includes(c))) {
+    // Comida típica só soma para quem não come carne se o lugar indicar opção sem carne (D-083).
+    const semCarne = p.dieta === 'vegetariana' || p.dieta === 'vegana';
+    const servePraDieta = !semCarne || informaOpcao(l.opcoesDieta, p.dieta) || cz.some((c) => regrasDaDieta(p.dieta).favorece.includes(c));
+    if (p.provar !== false && servePraDieta && cz.some((c) => cozinhaLocal(l.pais).includes(c))) {
       pontos += 2;
       motivos.push('comida típica do lugar');
     }

@@ -42,6 +42,12 @@ describe('comida no roteiro (D-041)', () => {
     expect(afinidade(rest('fr', 'francesa', 'fr-paris'), p).motivos).toContain('comida típica do lugar');
     expect(afinidade(rest('fr', 'francesa', 'fr-paris'), { ...p, provar: false }).motivos).not.toContain('comida típica do lugar');
   });
+  it('vegetariano: comida típica sem opção sem carne não ganha ponto; a cozinha que ama ganha (D-083)', () => {
+    const p: Preferencias = { ...base, provar: true, dieta: 'vegetariana', cozinhasAmo: ['japonesa'] };
+    const tipica = rest('fr', 'francesa', 'fr-paris');
+    expect(afinidade(tipica, p).motivos).not.toContain('comida típica do lugar');
+    expect(afinidade(rest('jp', 'japonesa', 'fr-paris'), p).pontos).toBeGreaterThan(afinidade(tipica, p).pontos);
+  });
   it('grupo: a dieta mais restrita vale para todos e o que alguém não come sai', () => {
     const g = mesclar([
       { nome: 'Ana', preferencias: { ...base, dieta: 'tudo', cozinhasEvito: ['pizza'] } },
