@@ -70,7 +70,7 @@ export function Destinos({ primeiraVez = false }: { primeiraVez?: boolean }) {
         <div style={{ height: '16px' }} />
       </div>
       <Rodape>
-        <BotaoPrincipal onClick={() => navegar(primeiraVez ? '/inicio' : -1 as never)}>{primeiraVez ? (favs.length ? 'Continuar ↗' : 'Pular por agora') : 'Pronto'}</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => navegar(primeiraVez ? '/inicio' : -1 as never)}>{primeiraVez ? (favs.length ? 'Continuar' : 'Pular por agora') : 'Pronto'}</BotaoPrincipal>
       </Rodape>
     </main>
   );

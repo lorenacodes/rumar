@@ -41,7 +41,7 @@ export function JaFiz() {
     <main className="tela" data-tela="ja-fiz" data-real="ja-fiz">
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 24px' }}>
         <Voltar para="/viagens" />
-        <h1 style={{ margin: '6px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Viagem que já fiz</h1>
+        <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Viagem que já fiz</h1>
         <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Guarde as fotos e mostre para os amigos.</p>
 
         <div style={{ marginTop: '18px' }}>

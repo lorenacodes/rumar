@@ -52,7 +52,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
       <div style={caixa}>
         <b style={{ font: "600 16px 'Lexend Exa'" }}>Montar uma viagem com este lugar</b>
         <p style={{ fontSize: '14px', lineHeight: '20px', margin: '6px 0 0' }}>Crie sua conta grátis para montar o roteiro.</p>
-        <button type="button" className="r-btn" onClick={() => navegar('/conta/criar')} style={botao}>Criar conta ↗</button>
+        <button type="button" className="r-btn" onClick={() => navegar('/conta/criar')} style={botao}>Criar conta</button>
         <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/entrar')} style={{ display: 'block', margin: '6px auto 0', color: 'var(--azul)', fontWeight: 600 }}>Já tenho conta · Entrar</button>
       </div>
     );
@@ -66,7 +66,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
     return (
       <div style={caixa}>
         <b style={{ font: "600 16px 'Lexend Exa'" }}>{cidade ? `Você ainda não tem viagem para ${cidade}` : 'Você ainda não tem viagem para esta cidade'}</b>
-                {destinoId ? <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)} style={botao}>Planejar viagem{cidade ? ` para ${cidade}` : ''} ↗</button> : null}
+                {destinoId ? <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)} style={botao}>Planejar viagem{cidade ? ` para ${cidade}` : ''}</button> : null}
       </div>
     );
   }
@@ -110,13 +110,13 @@ export function Lugar() {
   const salvo = salvos.includes(l.id);
   const preco = (PRECOS as unknown as Precos).lugares[l.id];
   const motivos = preferencias ? afinidade(l, preferencias).motivos : [];
-  const mapa = typeof l.lat === 'number' ? `https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.nome}, Paris`)}`;
+  const mapa = typeof l.lat === 'number' ? `https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.nome}, Paris`)}`;
   return (
     <main className="tela" data-tela="lugar" data-real="lugar">
       <div style={{ position: 'relative', maxHeight: '320px', overflow: 'hidden' }}>
         <FotoLugar id={l.id} proporcao="4 / 3" />
-        <div style={{ position: 'absolute', top: 'calc(8px + env(safe-area-inset-top))', left: '12px', background: 'var(--fundo)', zIndex: 2 }}>
-          <Voltar />
+        <div style={{ position: 'absolute', top: 'calc(10px + env(safe-area-inset-top))', left: '14px', zIndex: 2 }}>
+          <Voltar sobreFoto />
         </div>
       </div>
       <div style={{ padding: '14px 20px 24px' }}>
@@ -133,9 +133,9 @@ export function Lugar() {
           <dd style={{ margin: 0 }}>{preco ? (preco.min === 0 ? 'Grátis' : `${(preco.min / 100).toLocaleString('pt-BR')}${preco.max !== preco.min ? ` a ${(preco.max / 100).toLocaleString('pt-BR')}` : ''} € por pessoa`) : l.custo === 0 ? 'Grátis' : 'Não confirmado'}{preco ? <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{preco.selo === 'referencia' ? '▤ Referência' : '≈ Estimativa'} · <a href={preco.url} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{preco.fonte}</a>{preco.reserva ? ' · compre o ingresso antes' : ''}</span> : null}</dd>
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <a href={mapa} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
+          <a href={mapa} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Como chegar ↗</a>
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(l.id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>
-            {salvo ? <><Check />Quero ir</> : '+ Quero ir'}
+            {salvo ? <><Check />Salvo</> : '+ Salvar'}
           </button>
         </div>
         <AdicionarAViagem placeId={l.id} slots={l.slots} destinoId={DESTINO_CURADORIA} cidade="Paris" />
@@ -167,7 +167,7 @@ function LugarDaBase() {
       {b.foto ? (
         <div style={{ position: 'relative', maxHeight: '320px', overflow: 'hidden' }}>
           <FotoLugar id={id} proporcao="4 / 3" />
-          <div style={{ position: 'absolute', top: 'calc(8px + env(safe-area-inset-top))', left: '12px', background: 'var(--fundo)', zIndex: 2 }}><Voltar /></div>
+          <div style={{ position: 'absolute', top: 'calc(10px + env(safe-area-inset-top))', left: '14px', zIndex: 2 }}><Voltar sobreFoto /></div>
         </div>
       ) : <><div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}><Voltar /></div><CapaAlternativa placeId={id} nome={b.nome} /></>}
       <div style={{ padding: '14px 20px 24px' }}>
@@ -183,8 +183,8 @@ function LugarDaBase() {
           {b.telefone ? linha('Telefone', <>{b.telefone.split(/[;,]/).map((t) => t.trim()).filter(Boolean).slice(0, 2).map((t, i) => <React.Fragment key={t}>{i ? ' · ' : ''}<a href={`tel:${t.replace(/[^\d+]/g, '')}`} style={{ color: 'var(--azul)' }}>{t}</a>{linkWhatsApp(t, b.destino_id.startsWith('br')) ? <BotaoWhatsApp href={linkWhatsApp(t, b.destino_id.startsWith('br'))!} nome={b.nome} /> : null}</React.Fragment>)}</>) : null}
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <a href={`https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lon}`} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Ver no mapa ↗</a>
-          <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? <><Check />Quero ir</> : '+ Quero ir'}</button>
+          <a href={`https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lon}`} target="_blank" rel="noreferrer" aria-label={`Como chegar a ${b.nome} (abre o Google Maps)`} style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Como chegar ↗</a>
+          <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? <><Check />Salvo</> : '+ Salvar'}</button>
         </div>
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Reserve pela aba Hospedagem da sua viagem.' : 'Não entra no roteiro.'}</p>}
         <Avaliacoes placeId={id} nome={b.nome} moeda={paisPorCodigo(b.destino_id.slice(0, 2).toUpperCase())?.moeda ?? 'BRL'} />

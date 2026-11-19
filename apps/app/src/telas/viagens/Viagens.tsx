@@ -27,7 +27,7 @@ export function Viagens() {
           <p style={{ fontSize: '16px', lineHeight: '24px' }}>Roteiro, orçamento e amigos num lugar só.</p>
         </div>
         <div className="rodape" style={{ padding: '10px 20px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)', bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-          <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta ↗</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta</BotaoPrincipal>
           <div style={{ marginTop: '8px' }}><BotaoContorno onClick={() => navegar('/entrar')}>Já tenho conta · Entrar</BotaoContorno></div>
         </div>
         <Abas ativa="viagem" logoAbaixoDoRodape />
@@ -61,7 +61,7 @@ export function Viagens() {
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Viagens</div>
         <h1 style={titulo}>Suas viagens.</h1>
-        <div style={{ marginTop: '12px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Nova viagem ↗</BotaoPrincipal></div>
+        <div style={{ marginTop: '12px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Nova viagem</BotaoPrincipal></div>
         <button type="button" className="r-btn" onClick={() => navegar('/viagens/ja-fiz')} style={{ display: 'block', minHeight: '44px', marginTop: '4px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Registrar viagem que já fiz</button>
         {convites.length ? (
           <>

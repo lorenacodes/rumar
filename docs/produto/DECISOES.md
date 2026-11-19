@@ -734,3 +734,15 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - O hotel aparece no "Como foi?" com "Avaliar". Perfil ganhou "Minhas avaliações", por cidade.
 - Limite honesto: só acha lugares que estão na base (OpenStreetMap). Lugar que falta ainda não pode ser criado
   pela pessoa.
+
+## D-062 — Navegação mais clara (voltar e botões de ir)
+- **Por quê:** a fundadora achou botões de voltar mal formatados e botões de "ir" pouco claros.
+- **Voltar:** era só uma seta "←" (sem texto, num quadrado branco sobre a foto, sumindo em Curiosidades, e
+  em Descobrir virava um link pequeno no canto direito). Agora é uma pílula com ícone e o nome da tela de
+  destino ("Perfil", "Viagens", "Todas as cidades"); sobre foto, escura e translúcida. No modo de comparação
+  com o design continua a seta (o teste visual não muda).
+- **"↗"** ficou só em links que saem do app (Google Maps, site, eventos). Botões internos ("Nova viagem",
+  "Planejar viagem", "Criar conta", "Continuar") sem a seta, que dava a ideia de sair do app. Desvio consciente
+  do design (lá a seta enfeita botões principais).
+- **Página do lugar:** "Ver no mapa" virou "Como chegar" (abre a rota no Google Maps); "+ Quero ir" virou
+  "+ Salvar"/"Salvo" (a lista continua se chamando "Quero ir").

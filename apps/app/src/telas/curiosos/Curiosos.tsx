@@ -6,6 +6,7 @@ import { compartilharCuriosidade, curiosidade, curiosidades, type Curiosidade } 
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
 import { Check } from '../../ui/check';
+import { Voltar } from '../../ui/pecas';
 
 function Ficha({ c, n, primeira }: { c: Curiosidade; n: number; primeira: boolean }) {
   const { salvos, alternarSalvo } = useViajante();
@@ -81,7 +82,7 @@ export function Curiosos() {
   return (
     <main className="tela" data-tela="curiosos" data-real="curiosos" style={{ background: 'var(--fundo-escuro)' }}>
       <div className="gabinete-topo">
-        <button type="button" className="r-btn" aria-label="Voltar" onClick={() => (window.history.length > 1 ? navegar(-1) : navegar('/inicio'))} style={{ minWidth: '44px', minHeight: '44px', color: '#fff', fontSize: '22px' }}>←</button>
+        <Voltar sobreFoto />
         <b style={{ font: "600 16px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Curiosidades do mundo</b>
       </div>
       <div className="gabinete" ref={rolagem} aria-busy={carregando}>

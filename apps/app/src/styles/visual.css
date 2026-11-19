@@ -97,3 +97,27 @@ html:not(.modo-design) .postal-sem-foto b,
 html:not(.modo-design) .ficha-nome {
   word-spacing: -0.1em;
 }
+
+/* Botão de voltar (D-062): pílula com ícone e o nome da tela de destino. No modo de comparação com o
+   design continua só a seta. */
+.voltar-icone, .voltar-texto { display: none; }
+html:not(.modo-design) .voltar {
+  width: auto !important;
+  height: 40px !important;
+  margin: 2px 0 6px -2px !important;
+  padding: 0 14px 0 8px;
+  gap: 4px;
+  border-radius: 20px;
+  background: var(--cartao-2);
+  color: var(--texto);
+  font: 600 15px 'Open Sans' !important;
+}
+html:not(.modo-design) .voltar .voltar-seta { display: none; }
+html:not(.modo-design) .voltar .voltar-icone { display: block; flex: none; }
+html:not(.modo-design) .voltar .voltar-texto { display: inline; }
+html:not(.modo-design) .voltar--foto {
+  background: rgba(10, 20, 40, 0.55);
+  color: #fff;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}

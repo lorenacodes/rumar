@@ -139,7 +139,7 @@ export function NovaViagem() {
         <div style={{ height: '16px' }} />
       </div>
       <Rodape>
-        <BotaoPrincipal onClick={() => void criar()} disabled={criando}>{criando ? 'Montando o roteiro…' : preferencias ? 'Criar viagem ↗' : 'Responder meu jeito de viajar ↗'}</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => void criar()} disabled={criando}>{criando ? 'Montando o roteiro…' : preferencias ? 'Criar viagem' : 'Responder meu jeito de viajar'}</BotaoPrincipal>
       </Rodape>
     </main>
   );

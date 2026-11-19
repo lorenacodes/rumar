@@ -17,6 +17,7 @@ import { useDestinoAtual } from '../../state/destino';
 import { useViajante } from '../../state/viajante';
 import { Abas } from '../../ui/abas';
 import { EscolherDestino } from '../../ui/escolherDestino';
+import { Voltar } from '../../ui/pecas';
 import { FotoLugar } from '../../ui/foto';
 import { Mapa } from '../../ui/Mapa';
 import { ConviteCuriosidades, FeedGeral, FeedLugares } from './Feed';
@@ -175,13 +176,14 @@ export function Descobrir() {
   return (
     <main className="tela" data-tela="descobrir" data-real="descobrir">
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
+        {destino && !trocando ? <Voltar rotulo="Todas as cidades" aoTocar={todasAsCidades} /> : null}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
           <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Descobrir{destino ? ` · ${rotuloDestino(destino)}` : ''}</div>
-          {destino || trocando ? <button type="button" className="r-btn" onClick={() => (trocando ? setTrocando(false) : todasAsCidades())} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>{trocando ? 'Cancelar' : '← Todas as cidades'}</button> : null}
+          {trocando ? <button type="button" className="r-btn" onClick={() => setTrocando(false)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Cancelar</button> : null}
         </div>
         <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{destino ? `O que viver em ${destino.nome}.` : 'Lugares para conhecer.'}</h1>
         {destino && !trocando && !viagem ? (
-          <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destino.id}`)} style={{ marginTop: '10px', height: '44px', padding: '0 14px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Planejar viagem para {destino.nome} ↗</button>
+          <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destino.id}`)} style={{ marginTop: '10px', height: '44px', padding: '0 14px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Planejar viagem para {destino.nome}</button>
         ) : null}
         {trocando ? (
           <div style={{ marginTop: '10px' }}>
@@ -288,7 +290,7 @@ export function Descobrir() {
             {!feed && filtro === 'para-voce' && !termo && !comPreco && !gratis && itens.length ? (
               <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '12px 0 0' }}>
                 {preferencias ? 'Em ordem do que mais combina com o seu jeito de viajar.' : 'Conte seu jeito de viajar para ver primeiro o que combina com você.'}
-                {!preferencias ? <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/perfil-viajante')} style={{ color: 'var(--azul)', fontWeight: 600, marginLeft: '4px' }}>Responder ↗</button> : null}
+                {!preferencias ? <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/perfil-viajante')} style={{ color: 'var(--azul)', fontWeight: 600, marginLeft: '4px' }}>Responder</button> : null}
               </p>
             ) : null}
             {mapa ? (

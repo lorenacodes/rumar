@@ -163,7 +163,7 @@ function OQueFaz() {
           <li key={t}><b style={{ display: 'block', fontSize: '15px' }}>{t}</b><span style={{ fontSize: '13px', lineHeight: '17px', color: 'var(--sobre-escuro-sec)' }}>{d}</span></li>
         ))}
       </ul>
-      <button type="button" className="r-btn" onClick={() => navegar('/viagens/nova')} style={{ width: '100%', height: '50px', marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 16px 'Open Sans'" }}>Planejar uma viagem ↗</button>
+      <button type="button" className="r-btn" onClick={() => navegar('/viagens/nova')} style={{ width: '100%', height: '50px', marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 16px 'Open Sans'" }}>Planejar uma viagem</button>
     </section>
   );
 }
@@ -260,7 +260,7 @@ export function Inicio() {
         <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Fotos: Wikimedia Commons.</p>
 
         {sessao && viagem === null ? (
-          <div style={{ marginTop: '14px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Planejar uma viagem ↗</BotaoPrincipal></div>
+          <div style={{ marginTop: '14px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Planejar uma viagem</BotaoPrincipal></div>
         ) : null}
 
         <Rot t="No Brasil" />
@@ -270,7 +270,7 @@ export function Inicio() {
         <div role="list" aria-label="Destinos no exterior" style={fileira}>{fora.map((d) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoPequeno d={d} /></div>)}</div>
 
         <button type="button" className="r-btn" onClick={() => navegar(sessao ? '/destinos' : '/descobrir')} style={{ minHeight: '44px', marginTop: '10px', color: 'var(--azul)', fontWeight: 600 }}>
-          {sessao ? (favs.length ? 'Mudar meus destinos favoritos' : 'Marcar destinos que quero conhecer ↗') : 'Buscar qualquer cidade do Brasil ou do mundo ↗'}
+          {sessao ? (favs.length ? 'Mudar meus destinos favoritos' : 'Marcar destinos que quero conhecer') : 'Buscar qualquer cidade do Brasil ou do mundo'}
         </button>
         <div style={{ height: sessao ? '24px' : '110px' }} />
       </div>
@@ -279,7 +279,7 @@ export function Inicio() {
         <div className="rodape" style={{ padding: '10px 20px 10px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)', bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
           <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)', marginBottom: '8px' }}>Conta grátis: roteiros, dinheiro e amigos num lugar só.</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '8px' }}>
-            <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta ↗</BotaoPrincipal>
+            <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta</BotaoPrincipal>
             <BotaoContorno onClick={() => navegar('/entrar')}>Entrar</BotaoContorno>
           </div>
         </div>

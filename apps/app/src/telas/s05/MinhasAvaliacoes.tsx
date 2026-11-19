@@ -16,7 +16,7 @@ export function MinhasAvaliacoes() {
     <main className="tela" data-tela="minhas-avaliacoes" data-real="minhas-avaliacoes">
       <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 24px' }}>
         <Voltar para="/perfil" />
-        <h1 style={{ margin: '6px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Minhas avaliações</h1>
+        <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Minhas avaliações</h1>
         {lista && !lista.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Nenhuma ainda. Em uma viagem, use "Onde você foi?".</p> : null}
         {cidades.map((c) => (
           <section key={c} aria-label={c}>

@@ -49,7 +49,7 @@ export function Social() {
           <p style={{ fontSize: '16px', lineHeight: '24px' }}>Adicione amigos, veja os roteiros que eles compartilham e planejem a mesma viagem juntos.</p>
         </div>
         <div className="rodape" style={{ padding: '10px 20px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)', bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-          <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta ↗</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Criar conta</BotaoPrincipal>
         </div>
         <Abas ativa="passaporte" logoAbaixoDoRodape />
       </main>
@@ -71,7 +71,7 @@ export function Social() {
         {meu === null ? (
           <div style={{ marginTop: '10px', padding: '12px 14px', background: 'var(--cartao-1)', fontSize: '14px', lineHeight: '20px' }}>
             <b>Escolha seu nome de usuário.</b> Sem ele, seus amigos só te acham pelo nome completo.
-            <button type="button" className="r-btn" onClick={() => navegar('/perfil/usuario')} style={{ display: 'block', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Escolher meu @ ↗</button>
+            <button type="button" className="r-btn" onClick={() => navegar('/perfil/usuario')} style={{ display: 'block', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Escolher meu @</button>
           </div>
         ) : null}
         <label htmlFor="busca-pessoa" className="visualmente-oculto">Buscar pessoas por nome ou nome de usuário</label>

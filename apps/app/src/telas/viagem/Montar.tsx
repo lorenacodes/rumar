@@ -261,7 +261,7 @@ export function Montar({ soPerfil = false }: { soPerfil?: boolean }) {
       </div>
       <Rodape>
         <BotaoPrincipal onClick={() => void seguir()} disabled={!podeSeguir || salvando}>
-          {i < etapas.length - 1 ? 'Continuar ↗' : soPerfil ? 'Salvar' : salvando ? 'Montando…' : 'Montar meu roteiro ↗'}
+          {i < etapas.length - 1 ? 'Continuar' : soPerfil ? 'Salvar' : salvando ? 'Montando…' : 'Montar meu roteiro'}
         </BotaoPrincipal>
         {i > 0 ? (
           <button type="button" className="r-btn" onClick={() => setI(i - 1)} style={{ width: '100%', height: '44px', marginTop: '4px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)' }}>

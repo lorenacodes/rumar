@@ -6,16 +6,26 @@ import type { CSSProperties, InputHTMLAttributes, ReactNode } from 'react';
 import { Check } from './check';
 import { useNavigate } from 'react-router-dom';
 
-export function Voltar({ para, rotulo = 'Voltar' }: { para?: string; rotulo?: string }) {
+// Nome da tela de destino no botão de voltar (D-062): "Perfil", "Viagens"... em vez de só uma seta.
+const NOME_DESTINO: Record<string, string> = {
+  '/inicio': 'Início', '/descobrir': 'Descobrir', '/viagens': 'Viagens', '/perfil': 'Perfil', '/perfil/amigos': 'Amigos',
+  '/destinos': 'Destinos', '/curiosos': 'Curiosidades',
+};
+
+export function Voltar({ para, rotulo, sobreFoto = false, aoTocar }: { para?: string; rotulo?: string; sobreFoto?: boolean; aoTocar?: () => void }) {
   const navegar = useNavigate();
+  const texto = rotulo ?? (para ? NOME_DESTINO[para] : undefined) ?? 'Voltar';
   return (
     <button
       type="button"
-      className="r-btn"
-      aria-label={rotulo}
-      onClick={() => (para ? navegar(para) : window.history.state?.idx > 0 ? navegar(-1) : navegar('/inicio'))}
+      className={`r-btn voltar${sobreFoto ? ' voltar--foto' : ''}`}
+      aria-label={texto === 'Voltar' ? 'Voltar' : `Voltar para ${texto}`}
+      onClick={() => (aoTocar ? aoTocar() : para ? navegar(para) : window.history.state?.idx > 0 ? navegar(-1) : navegar('/inicio'))}
       style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', fontSize: '24px', marginLeft: '-4px' }}>
-      ←
+      {/* No modo de comparação com o design fica só a seta "←"; no visual novo, ícone + nome. */}
+      <span className="voltar-seta" aria-hidden="true">←</span>
+      <svg className="voltar-icone" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
+      <span className="voltar-texto">{texto}</span>
     </button>
   );
 }

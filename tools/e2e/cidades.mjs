@@ -78,9 +78,9 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   confere(`${cidade}: página do lugar com fonte`, /OpenStreetMap|curadoria/.test(t));
   const fotos = await p.locator('main img').count();
   // Pode já estar salvo (conta de teste reaproveitada): tira e salva de novo.
-  if (await p.getByRole('button', { name: 'Quero ir', exact: true }).count()) { await p.getByRole('button', { name: 'Quero ir', exact: true }).first().click(); await p.waitForTimeout(800); }
-  await p.getByRole('button', { name: '+ Quero ir' }).first().click(); await p.waitForTimeout(1500);
-  confere(`${cidade}: salvar lugar`, (await p.getByRole('button', { name: 'Quero ir', exact: true }).count()) > 0);
+  if (await p.getByRole('button', { name: 'Salvo', exact: true }).count()) { await p.getByRole('button', { name: 'Salvo', exact: true }).first().click(); await p.waitForTimeout(800); }
+  await p.getByRole('button', { name: '+ Salvar' }).first().click(); await p.waitForTimeout(1500);
+  confere(`${cidade}: salvar lugar`, (await p.getByRole('button', { name: 'Salvo', exact: true }).count()) > 0);
   await foto(`${cidade}-lugar`);
   resumo.push(`${cidade}: ${total} lugares, ${rest} restaurantes na 1ª página, ${gratis} grátis, ${marcadores} no mapa, foto no lugar: ${fotos ? 'sim' : 'não'}`);
 }
