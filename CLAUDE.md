@@ -23,3 +23,7 @@
 - **Pouco texto (18/11/2026).** Usuários não leem muito: cada bloco com uma frase curta (até ~12 palavras), ação primeiro, linguagem simples. Fonte, licença e "como calculamos" vão num `<Info>` (ⓘ, `ui/info.tsx`), não na tela. Não mostrar o que não temos (ex.: linha "Avaliações: sem fonte"). Medir com `node tools/e2e/palavras.mjs` (blocos de 14+ palavras devem ficar perto de zero).
 - **Sem emojis (18/11/2026).** Nenhum emoji nem símbolo que vire emoji (♥ ★ ✓ ✈ ☕ ⓘ…) em nenhuma tela. Marca de feito: `ui/check.tsx`. O teste `semEmoji.test.ts` reprova.
 - Plano vigente: `docs/PLANO_DE_ACAO.md`.
+- **Pendências da fundadora (19/11/2026):** tudo o que só ela pode fazer fica em `docs/CHECKLIST_FUNDADORA.md`.
+  Quando ela perguntar "o que falta pra mim?" (ou parecido), ler esse arquivo, conferir o que já foi feito
+  (banco, GitHub, painel) e responder em ordem de prioridade. Sempre que surgir algo novo que dependa dela,
+  acrescentar lá na hora; quando ela concluir algo, marcar `[x]` e mover para "Já feito".

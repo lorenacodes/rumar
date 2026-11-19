@@ -1,90 +1,111 @@
-# Checklist da fundadora
+# O que depende da Lorena
 
-> Atualizado em 16/11/2026. Marque `[x]` quando concluir. Ordem = urgência.
->
-> **Nome:** "Rumar" **não pode ser usado** — no INPI há registro em vigor da RUMAR VIAGENS LTDA
-> na classe 39 (viagens) e pedidos de terceiros nas classes 9 e 42 (15/11/2026). Nome escolhido:
-> **"Bo Vair"** (D-013; domínio `bovair.com.br` livre em 15/11/2026; compra prevista para depois do dia 30).
-> Plano completo e custos: `docs/PLANO_DE_ACAO.md`.
+> **Atualizado em 19/11/2026.** É a lista única do que só você pode fazer. Ordem = prioridade.
+> Quando quiser saber o que falta, pergunte "o que falta pra mim?": eu leio esta lista, confiro o que já
+> foi feito e atualizo. Marque `[x]` ou me avise que eu marco.
+> Detalhes de custo: `docs/PLANO_DE_ACAO.md` · Segurança: `docs/SEGURANCA.md`.
+> **Regra:** nunca cole senha ou chave no chat; elas vão direto no painel (Supabase → Edge Functions → Secrets).
 
-## ⚠️ Para ligar o que já está pronto (17/11/2026)
+---
 
-- [ ] **A. Envio de e-mail próprio (Gmail ou Resend)** — sem isso, pessoas novas não conseguem criar conta (limite do e-mail de teste do Supabase).
-- [ ] **B. Chave da LiteAPI no Supabase** — Edge Functions → Secrets → `LITEAPI_KEY` = a chave (hoje a de teste; depois a de produção, nova, porque a de teste apareceu num print). Liga a busca de hotéis.
-- [ ] **C. Chave de produção da LiteAPI** — quando quiser preços para reservar de verdade (a de teste mostra "ambiente de teste").
+## 1. Urgente: sem isso, gente de verdade não consegue usar
 
-## LGPD e Google Play — antes de publicar
-- [ ] **E-mail de contato de privacidade (encarregado):** criar um e-mail (ex.: privacidade@ seu domínio ou
-      um Gmail só para isso) e me passar para eu colocar em `VITE_CONTATO_PRIVACIDADE` (é público, não é segredo).
-      Hoje o app mostra o Instagram @bovair.app como contato.
-- [ ] **Página web para pedir exclusão de conta** (exigência da Google Play para apps com conta): uma página
-      pública simples com "como excluir sua conta" e o contato. Posso montar; precisa de um endereço público.
-- [ ] **Revisão por advogado(a)** do Aviso de privacidade (Perfil → Sobre → Aviso de privacidade) antes do lançamento.
-- [x] **Ramo principal atualizado (17/11/2026):** o `main` foi igualado ao `fase-0-base`, e os agendamentos
-      (coleta da fila a cada 3 h, câmbio nos dias úteis, remoção diária de contas) passam a rodar sozinhos.
-      Os workflows usam o código do `fase-0-base`; quando um arquivo de workflow mudar, o `main` precisa ser
-      atualizado de novo (eu faço junto com a mudança).
-- [x] Nome de usuário aplicado no banco (17/11/2026), sem precisar da sua confirmação.
-- [ ] **Aprovar no Supabase** a exclusão dos usuários de teste (e2e.*@bovair.com.br) quando eu pedir.
+- [ ] **1.1 E-mail próprio para o cadastro (SMTP)** — sem isso, pessoas novas não recebem o código e não criam
+      conta (o e-mail de teste do Supabase tem limite baixo). Caminho mais barato: conta grátis no Resend
+      (3.000 e-mails/mês) + domínio do item 5.1. Eu passo o passo a passo quando o domínio existir.
+- [ ] **1.2 Ajustes no Supabase (Authentication)**, 10 minutos:
+  - [ ] Ligar **"Leaked password protection"** (proteção contra senhas vazadas; está no plano Pro que você paga).
+  - [ ] Senha mínima de 8 caracteres com letras e números.
+  - [ ] Nos e-mails "Confirm signup" e "Change email address", usar o código `{{ .Token }}`.
+  - [ ] Redirect URL: `com.bovair.app://auth`.
+- [ ] **1.3 Testar criar conta no APK** com o seu e-mail principal e me contar o resultado. Isso também libera a
+      sua **Moderação de fotos** (Perfil → Moderação de fotos), onde você aprova as fotos enviadas.
 
-## Aulas de idioma específicas — chave gratuita do YouTube (5 minutos, R$ 0)
-- [ ] Criar a chave: console.cloud.google.com → criar projeto "Bo Vair" → APIs e serviços → Biblioteca →
-      "YouTube Data API v3" → Ativar → Credenciais → Criar credenciais → Chave de API → em "Restrições
-      de API", marcar só "YouTube Data API v3" → copiar.
-- [ ] Colocar no Supabase: Edge Functions → Secrets → Add new secret → nome `YOUTUBE_API_KEY`, valor = a chave.
-      Não precisa de cartão: a cota gratuita é de 10.000 unidades por dia; cada idioma atualizado gasta
-      ~810 e fica guardado por 14 dias. Não cole a chave em chat nem no código.
+## 2. iPhone (grátis)
 
-## Fotos de restaurantes e pratos (decidido em 18/11: os dois caminhos)
-- [ ] **Criar sua conta no app com o seu e-mail principal** (o mesmo deste projeto) e confirmar o código. Ele já está
-  cadastrado como moderadora: aparece **Perfil → Moderação de fotos**, onde você aprova ou recusa cada foto enviada.
-  Aprove só foto do lugar ou de prato de lá, sem pessoas reconhecíveis e sem nada impróprio.
-- [ ] **(Opcional, Google)** Para ligar fotos do Google nas páginas dos lugares:
-  1. console.cloud.google.com → projeto "Bo Vair" → Faturamento (precisa de cartão; o Google cobra em dólar, +IOF).
-  2. APIs e serviços → Biblioteca → ativar **Places API (New)** → Credenciais → Criar chave → restringir à Places API (New).
-  3. Recomendado: em Faturamento → Orçamentos e alertas, criar alerta de US$ 5.
-  4. Supabase → Edge Functions → Secrets → `GOOGLE_PLACES_KEY` = a chave.
-  O app tem teto de 900 pedidos de lista de fotos e 900 imagens por mês (dentro das cotas grátis divulgadas: 1.000
-  imagens/mês; a lista de fotos aparece como 5.000/mês em sites de terceiros — confira na sua fatura no 1º mês).
-  Com o teto, o custo esperado é R$ 0; acima dele, o app mostra o lugar sem foto do Google. Para aumentar o teto, me peça.
-- Avaliações (notas) de estabelecimentos continuam sem fonte: não inventamos nota.
+- [ ] **2.1 Ligar o GitHub Pages** — github.com/lorenacodes/rumar → Settings → Pages → Source: **GitHub Actions**.
+      Depois me avise: eu publico e mando o link. No iPhone: Safari → Compartilhar → Adicionar à Tela de Início.
+- [ ] **2.2 (Depois, para a App Store)** conta Apple Developer: US$ 99/ano ≈ R$ 575. Só quando for lançar no iPhone.
 
-## Seções 13–16 (moedas e linha do tempo) — o que depende de você
-- [ ] **Conferir os links oficiais** em Etapas (PF, Itamaraty, UE, Receita, Ministério da Saúde, Banco Central).
-      Os textos foram escritos a partir de buscas em 17/11/2026; o ambiente de desenvolvimento não abre
-      gov.br nem europa.eu, então os links não foram abertos daqui. 10 minutos no celular resolvem.
-- [ ] **Rodar o workflow "Câmbio"** no GitHub (Actions → Câmbio → Run workflow) para trazer libra, franco
-      suíço, dólar canadense e australiano, iene e coroas. Hoje o app só tem euro e dólar.
-- [ ] Revisar uma vez por mês: taxa do passaporte, ETIAS, IOF e cota da Receita (o app mostra a data da consulta).
+## 3. Decisão que mexe no custo
 
-## ⚠️ Esta semana
+- [ ] **3.1 Repositório público ou privado?** Público (como está): automações grátis, mas qualquer um vê o código.
+      Privado: ninguém copia, mas as automações passam a custar ≈ **R$ 200 a 300/mês** e o link do iPhone (Pages)
+      deixa de ser grátis. Se escolher privado, me avise antes: eu reduzo a busca diária de fotos para caber.
 
-- [x] **1. Confirmar que "Bo Vair" está livre no INPI** (feito em 15/11/2026: nada encontrado) (grátis, 15 min) — `busca.inpi.gov.br` → Marca → Radical: `bo vair`, `bovair`, `bovai`, `buovai`. Ver classes **9, 35, 39 e 42**.
-- [ ] **2. Registrar `bovair.com.br`** (R$ 40/ano, no seu CPF) — **depois do dia 30**. Até lá o código de cadastro só chega no seu e-mail (o Resend precisa do domínio).
-- [ ] **3. Três ajustes no Supabase** (projeto "rumar" no Supabase; o nome interno pode ficar) — código `{{ .Token }}` nos e-mails "Confirm signup" e "Change email address"; Redirect URL `com.bovair.app://auth`; senha mínima 8 com letras e números.
-- [ ] **4. Testar criar conta no APK** com o seu e-mail e me contar o resultado.
-- [ ] **5. Criar a conta de desenvolvedor no Google Play** (≈ R$ 140, uma vez). Contas pessoais novas precisam de **teste fechado com 12 pessoas por 14 dias** antes de publicar.
+## 4. Dinheiro (primeira receita)
 
-## Próximas 2 semanas
+- [ ] **4.1 Cadastrar um afiliado de seguro-viagem** (o melhor encaixe: o app já mostra o seguro no custo total).
+      Opções: Assist Card (anunciou 40% por venda), Allianz Travel (na Awin), ou Travelpayouts. Me mande só o
+      **link de afiliado** (não é segredo) e eu coloco na etapa "Seguro" da viagem (≈ 1 dia de trabalho).
+- [ ] **4.2 Contas grátis:** Travelpayouts (passagens), LiteAPI (hotéis), Unsplash (fotos). Avise e eu peço as
+      chaves por formulário seguro.
+- [ ] **4.3 Conversar com um contador sobre CNPJ** antes de receber comissões (software em geral não pode ser MEI).
 
-- [ ] **6. Juntar 12+ testadores** com celular Android (nome e e-mail do Google de cada um).
-- [ ] **7. Criar contas gratuitas:** Travelpayouts (passagens), LiteAPI (hotéis) e Unsplash (fotos). Me avise; eu peço as chaves por formulário seguro (nunca no chat).
-- [ ] **8. Criar conta gratuita no Resend** e verificar o domínio do item 2 (eu passo o passo a passo). Sem isso, só o seu e-mail recebe o código de cadastro.
-- [ ] **9. Responder: aprova o "beta enxuto"?** (conta + Descobrir + cofrinho/reservar/minha viagem + LGPD mínima, deixando comunidade e extras para depois). Isso define o tempo até o teste.
+## 5. Chaves que ligam o que já está pronto
 
-## Assim que der (proteção e formalização)
+- [ ] **5.1 YouTube (grátis, 5 min)** — liga as aulas de idioma específicas por tema (hoje a tela mostra "Elas
+      aparecem aqui em breve"). console.cloud.google.com → projeto "Bo Vair" → APIs e serviços → Biblioteca →
+      **YouTube Data API v3** → Ativar → Credenciais → Criar chave de API → Restringir a essa API.
+      Supabase → Edge Functions → Secrets → `YOUTUBE_API_KEY`. Me avise e eu confiro os vídeos escolhidos.
+- [ ] **5.2 LiteAPI (hotéis)** — Secrets → `LITEAPI_KEY` (a de teste primeiro; depois uma de produção nova,
+      porque a de teste apareceu num print). Liga a busca de hotéis com preço.
+- [ ] **5.3 (Opcional) Google Places** — fotos de restaurantes, que a Wikimedia quase não tem. Precisa de cartão no
+      Google Cloud; com o teto de 900/mês já configurado o custo esperado é R$ 0. Passos: Faturamento → ativar
+      **Places API (New)** → criar chave restrita → alerta de US$ 5 → Secrets → `GOOGLE_PLACES_KEY`.
 
-- [ ] **10. Registrar a marca "Bo Vair" no INPI** — R$ 440 por classe com desconto para pessoa física/MEI/ME (confirmar na tabela oficial). Prioridade: **classe 9** (aplicativo). Hoje não cabe no orçamento restante (faltam ≈ R$ 260); é o próximo gasto a planejar.
-- [ ] **11. Usar acordo de confidencialidade (NDA)** antes de mostrar o projeto em detalhe a sócios, devs ou investidores. Peça que eu redija o modelo.
-- [ ] **12. Conversar com um contador sobre CNPJ** — desenvolvimento de software em geral **não** pode ser MEI; precisa ver o enquadramento certo antes de receber comissões no nome da empresa.
-- [ ] **13. Revisão jurídica dos termos de uso e da política de privacidade** antes de abrir para o público (não precisa para os 12 testadores, mas precisa antes da publicação aberta).
+## 6. Limpeza no painel do Supabase (5 min)
+
+- [ ] **6.1 Apagar a função antiga `sonda-lugares`** (Edge Functions; está desligada, só ocupa lugar).
+- [ ] **6.2 Aprovar quando eu pedir** a limpeza de dados de teste (um gasto "Jantar teste" e viagens de teste nas
+      contas e2e.*@bovair.com.br). A janela de aprovação aparece no app do Claude e some em ~4 minutos.
+
+## 7. Antes de publicar na Google Play
+
+- [ ] **7.1 Domínio `bovair.com.br`** (≈ R$ 40/ano, no seu CPF) — depois do dia 30. Também serve para o e-mail (1.1).
+- [ ] **7.2 Conta de desenvolvedor Google Play** (US$ 25 ≈ R$ 145, uma vez). Conta pessoal nova exige
+      **teste fechado com 12 pessoas por 14 dias**.
+- [ ] **7.3 Juntar 12+ testadores** com Android (nome e e-mail do Google de cada um).
+- [ ] **7.4 E-mail de privacidade** (ex.: privacidade@bovair.com.br) — me passe para eu colocar no app (é público).
+- [ ] **7.5 Página pública de "como excluir sua conta"** (exigência da Play). Eu monto; precisa do domínio.
+- [ ] **7.6 Revisão por advogado(a)** do Aviso de privacidade e dos Termos de uso.
+- [ ] **7.7 Assinatura de publicação da Play Store** (a chave do APK de TESTE está no repositório; a de publicação
+      é criada pela Play e nunca fica no repositório). Até lá, **não distribua APK por link solto**.
+
+## 8. Proteção da marca
+
+- [ ] **8.1 Registrar "Bo Vair" no INPI**, classe 9 (aplicativo): R$ 440 com desconto para pessoa física/MEI/ME
+      (confirmar na tabela oficial). É o próximo gasto a planejar.
+- [ ] **8.2 Acordo de confidencialidade (NDA)** antes de mostrar o projeto em detalhe. Peça que eu redija.
+
+## 9. Conferências rápidas (10 min no celular)
+
+- [ ] **9.1 Conferir os links oficiais** em Etapas (PF, Itamaraty, UE, Receita, Ministério da Saúde, Banco Central).
+- [ ] **9.2 Rodar o workflow "Câmbio"** (GitHub → Actions → Câmbio → Run workflow) para trazer mais moedas.
+- [ ] **9.3 Uma vez por mês:** taxa do passaporte, ETIAS, IOF e cota da Receita (o app mostra a data da consulta).
+
+---
+
+## O que eu acompanho sozinho (não precisa fazer nada)
+
+- **Fotos dos lugares do Brasil:** busca diária na Wikimedia (Nordeste primeiro) e conferência minha às 10h17.
+  Realidade: ~100 a 150 fotos novas por dia com qualidade; a meta de 1.000/dia não é alcançável só com fonte
+  grátis. Cresce mais com fotos de quem foi (o app pede logo depois de avaliar) e com o Google (5.3).
+- **Testes de segurança:** `tools/seguranca/ataque.mjs` (54 verificações) e `xss.mjs`.
+- **Senha das contas de teste:** fica fora do repositório. Numa conversa nova, eu gero outra se precisar rodar os testes.
+
+## Já feito
+- [x] Nome "Bo Vair" livre no INPI (15/11).
+- [x] Supabase Pro pago (16/11).
+- [x] Mudanças no banco aprovadas e aplicadas (praia, café, roteiro público, álbum, segurança) — 19/11.
 
 ## Custos (lembrete)
 
 | Item | Valor | Situação |
 |---|---|---|
-| Supabase Pro | ≈ R$ 140/mês | ✅ pago (recorrente) |
-| Google Play | ≈ R$ 140, uma vez | a fazer |
-| Domínio | ≈ R$ 40–100/ano | a fazer |
+| Supabase Pro | ≈ R$ 145/mês | ✅ pago (recorrente) |
+| GitHub (automações) | R$ 0 público · ≈ R$ 200–300/mês se privado | decisão 3.1 |
+| Google Play | ≈ R$ 145, uma vez | a fazer |
+| Domínio | ≈ R$ 40/ano | a fazer |
 | Marca INPI (classe 9) | R$ 440 | quando houver verba |
-| Registro do software no INPI | R$ 210 | opcional, depois |
+| Apple Developer | ≈ R$ 575/ano | só para App Store |
