@@ -3,6 +3,10 @@
 Registro técnico das verificações e proteções. Atualizar a cada rodada.
 
 ## Como testar
+- Senha das contas de teste: variável `E2E_SENHA` (não fica no repositório; foi trocada em 19/11 porque a antiga
+  estava no código público).
+- `node tools/seguranca/xss.mjs` — XSS guardado: publica avaliação com `<script>`/`onerror` e confere no navegador
+  que nada roda (precisa do app em :8793).
 - `node tools/seguranca/ataque.mjs` — teste de ataque controlado com as contas de teste e2e.ana / e2e.bia:
   a Bia tenta ler e alterar dados da Ana direto pela API (IDOR/BOLA, escalada para participante, criar dados em
   nome de outra pessoa, pular a moderação de fotos, gastar a cota do Google, ler foto de viagem privada, ler
@@ -30,6 +34,30 @@ Registro técnico das verificações e proteções. Atualizar a cada rodada.
   o convite (`privado.e_membro`).
 - **Conferido, sem falha:** funções do Google (`google_*`) recusam quem não é o servidor (`service_role`);
   funções públicas de busca/perfil exigem conta; arquivos de álbum privado não aparecem nem para amigos.
+
+## Rodada 2 de 19/11/2026 (Red Team completo)
+- **Corrigido — escalada de papel (grave):** leitor podia se promover a editor ou dono, e um participante podia
+  mudar a própria linha para OUTRA viagem (inclusive privada) e ganhar acesso. Gatilho `privado.guarda_participantes`:
+  viagem/pessoa/quem convidou não mudam; só o dono muda papel (editor ↔ leitor); convidado só aceita o próprio convite.
+- **Corrigido — tomada de viagem:** editor podia trocar o dono (`user_id`) e tornar pública a viagem da dona.
+  Gatilho `privado.guarda_viagem`.
+- **Corrigido — amizade forjada:** quem recebia um pedido podia trocar quem pediu (amizade "aceita" com quem nunca
+  pediu → ver viagens de amigos). Gatilho `privado.guarda_amizade`.
+- **Corrigido — moderação contornável:** autora podia mostrar de novo uma avaliação escondida pela moderação e trocar
+  autor/lugar. Gatilho `privado.guarda_avaliacao`.
+- **Corrigido — busca de hotéis sem conta:** o portão do Supabase deixa passar a chave pública nova sem token; a função
+  agora confere o login antes de gastar a cota da LiteAPI.
+- **Corrigido — senha das contas de teste no repositório público:** trocada; os testes leem `E2E_SENHA`.
+- **Conferido, sem falha:** XSS guardado (avaliação com script aparece como texto); injeção em busca e filtros;
+  envio para a pasta de outra pessoa; HTML e SVG recusados no envio de fotos; funções internas (`importar-lugares`,
+  `remover-contas`) só aceitam o GitHub; `aulas` só aceita idiomas da lista; histórico do git sem chaves.
+- **Não se aplica:** CSRF (a sessão vai no cabeçalho Authorization, não em cookie).
+- **Riscos aceitos/registrados:** `foto-google` aceita quem não tem conta (precisa, para mostrar a foto a todos);
+  o teto mensal impede custo, mas um abuso pode esgotar a cota grátis do mês. A chave do APK de TESTE está no
+  repositório (só assina APKs de teste); antes de lançar, usar a assinatura da Play Store e nunca distribuir APK por
+  link solto. A troca da senha de teste ficou registrada no histórico de migrações do banco (acesso só da fundadora).
+  Função antiga `sonda-lugares` (só responde 410): apagar no painel.
+- **Ataque controlado:** 54 verificações, todas bloqueadas.
 
 ## Pendências que dependem da fundadora (painel do Supabase)
 - **Proteção contra senhas vazadas** (Authentication → Policies/Passwords → "Leaked password protection").

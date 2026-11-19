@@ -13,7 +13,7 @@ await foto('03-descobrir-rio', '#/descobrir?d=br-3304557');
 await foto('04-lugar', '#/lugar/osm-r4514671');
 await foto('05-nova-viagem', '#/viagens/nova?d=br-3304557');
 await p.goto(URL + '#/entrar'); await p.waitForTimeout(1500); await foto('06-entrar', null, 500);
-await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await foto('07-perfil', '#/perfil');
 await foto('08-viagem-roteiro', '#/viagem/757a544d-0c1c-4b41-ba3e-1da1715af18b?aba=roteiro');
 await foto('09-viagem-dinheiro', '#/viagem/757a544d-0c1c-4b41-ba3e-1da1715af18b?aba=dinheiro');

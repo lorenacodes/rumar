@@ -2,7 +2,7 @@
  * Aulas de idioma no Supabase real: viagem para Paris → tarefa "Aprender frases básicas em
  * francês" na linha do tempo → tela de idioma com plano até a viagem e aulas por tema.
  * Sem a chave YOUTUBE_API_KEY no Supabase, a tela explica e oferece a busca por tema.
- * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha Viagem2027) com jeito de viajar.
+ * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha na variável E2E_SENHA) com jeito de viajar.
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
@@ -16,7 +16,7 @@ p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && 
 const texto = async () => (await p.locator('main').first().innerText()).replace(/\s+/g, ' ');
 const confere = (rotulo, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${rotulo}`); if (!ok) erros.push(`FALHOU: ${rotulo}`); };
 await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/viagens/nova?d=fr-paris'); await p.waitForTimeout(2000);
 await p.getByRole('button', { name: /Criar viagem/ }).click(); await p.waitForTimeout(7000);

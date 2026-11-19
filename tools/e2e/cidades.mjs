@@ -3,7 +3,7 @@
  * Para cada cidade: escolher no buscador, ver categorias e cobertura, buscar por nome,
  * filtrar por categoria e preço, abrir no mapa, abrir um lugar e salvar. Depois: favoritar
  * destinos nacional e internacional e criar uma viagem com roteiro montado com lugares da base.
- * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha Viagem2027) com perfil e jeito de viajar.
+ * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha na variável E2E_SENHA) com perfil e jeito de viajar.
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
@@ -23,7 +23,7 @@ const confere = (rotulo, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${rotulo
 
 await p.goto(URL);
 await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 
 const CIDADES = [['Aracaju', 'SE'], ['Salvador', 'BA'], ['Recife', 'PE'], ['São Paulo', 'SP'], ['Rio de Janeiro', 'RJ'], ['Gramado', 'RS'], ['Florianópolis', 'SC'], ['Paris', null]];

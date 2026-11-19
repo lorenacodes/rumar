@@ -1,6 +1,6 @@
 /**
  * Privacidade no Supabase real: baixar meus dados, pedir exclusão com senha (14 dias),
- * ver o aviso no Início, desistir. Pré-requisito: e2e.tempo@bovair.com.br (senha Viagem2027).
+ * ver o aviso no Início, desistir. Pré-requisito: e2e.tempo@bovair.com.br (senha na variável E2E_SENHA).
  */
 import { chromium } from 'playwright';
 const URL = 'http://localhost:8793/';
@@ -13,7 +13,7 @@ const texto = async () => (await p.locator('main').first().innerText()).replace(
 const confere = (rotulo, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${rotulo}`); if (!ok) erros.push(`FALHOU: ${rotulo}`); };
 try {
   await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-  await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+  await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
   await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   await p.goto(URL + '#/perfil'); await p.waitForTimeout(2500);
   let t = await texto();
@@ -27,7 +27,7 @@ try {
   await p.getByRole('checkbox').check(); await p.locator('#senha-excluir').fill('senha-errada');
   await p.getByRole('button', { name: 'Pedir a exclusão' }).click(); await p.waitForTimeout(2000);
   confere('senha errada não exclui', /Senha incorreta/.test(await texto()));
-  await p.locator('#senha-excluir').fill('Viagem2027'); await p.getByRole('button', { name: 'Pedir a exclusão' }).click(); await p.waitForTimeout(2500);
+  await p.locator('#senha-excluir').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: 'Pedir a exclusão' }).click(); await p.waitForTimeout(2500);
   t = await texto();
   confere('pedido registrado com data (14 dias)', /Sua conta será apagada em \d\d\/\d\d\/\d{4}/.test(t));
   await p.goto(URL + '#/inicio'); await p.waitForTimeout(3000);

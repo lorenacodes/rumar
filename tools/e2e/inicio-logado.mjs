@@ -1,6 +1,6 @@
 /**
  * Início de quem tem conta, no Supabase real: avisos do que espera resposta (pedido de amizade) e
- * "Hoje em <destino>" durante a viagem. Pré-requisito: e2e.tempo@ (com @) e e2e.ana@ (senha Viagem2027).
+ * "Hoje em <destino>" durante a viagem. Pré-requisito: e2e.tempo@ (com @) e e2e.ana@ (senha na variável E2E_SENHA).
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
@@ -14,7 +14,7 @@ async function pessoa(email) {
   const p = await (await b.newContext({ viewport: { width: 360, height: 780 } })).newPage();
   p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${r.status()} ${r.url().split('?')[0].split('.co')[1]}`));
   await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-  await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill('Viagem2027');
+  await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
   await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   return p;
 }

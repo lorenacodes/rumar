@@ -69,7 +69,7 @@ confere('"Ver em lista" continua existindo', (await posts.count()) === 0 && (awa
 
 console.log('— Com conta (tem viagem para o Rio)');
 p = await pagina();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/descobrir?d=br-3304557'); await p.waitForTimeout(5000);
 confere('menu com 4 abas, sem Social', (await p.locator('nav[aria-label="Abas"] button').allInnerTexts()).join('|') === 'Início|Descobrir|Viagens|Perfil');

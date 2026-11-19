@@ -1,5 +1,6 @@
 // Busca de hospedagem para uma viagem (LiteAPI). A chave fica SÓ aqui (segredo LITEAPI_KEY
-// no Supabase), nunca no app. Só pessoas logadas podem chamar (verify_jwt).
+// no Supabase), nunca no app. Só pessoas logadas podem chamar: o token é conferido aqui dentro (além do
+// verify_jwt), porque a chave pública nova do Supabase passa pelo portão sem token de usuário (Red Team, 19/11).
 //
 // Entrada (POST JSON): { lat, lon, checkin: 'AAAA-MM-DD', checkout, adultos, raio? (m) }
 // Saída: { fonte, cotadoEm, moeda, hoteis: [{ id, nome, foto, endereco, lat, lon, estrelas,
@@ -34,6 +35,10 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   const chave = Deno.env.get('LITEAPI_KEY');
   if (!chave) return json({ erro: 'nao_configurado', mensagem: 'A busca de hotéis ainda não foi ligada (falta a chave da LiteAPI no Supabase).' }, 503);
+  // Só quem tem conta: confere o token do usuário no próprio Supabase Auth antes de gastar a cota da LiteAPI.
+  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? '';
+  const u = token ? await fetch(`${Deno.env.get('SUPABASE_URL')}/auth/v1/user`, { headers: { Authorization: `Bearer ${token}`, apikey: Deno.env.get('SUPABASE_ANON_KEY') ?? '' } }) : null;
+  if (!u || !u.ok) return json({ erro: 'nao_autorizado', mensagem: 'Entre na sua conta para buscar hotéis.' }, 401);
 
   let p: { lat: number; lon: number; checkin: string; checkout: string; adultos: number; raio?: number };
   try {
@@ -42,7 +47,7 @@ Deno.serve(async (req) => {
     return json({ erro: 'entrada' }, 400);
   }
   const data = /^\d{4}-\d{2}-\d{2}$/;
-  if (typeof p.lat !== 'number' || typeof p.lon !== 'number' || !data.test(p.checkin) || !data.test(p.checkout) || p.checkout <= p.checkin) {
+  if (typeof p.lat !== 'number' || typeof p.lon !== 'number' || Math.abs(p.lat) > 90 || Math.abs(p.lon) > 180 || !data.test(p.checkin) || !data.test(p.checkout) || p.checkout <= p.checkin) {
     return json({ erro: 'entrada', mensagem: 'Confira as datas de entrada e saída.' }, 400);
   }
   const adultos = Math.min(Math.max(Math.round(p.adultos || 1), 1), 8);

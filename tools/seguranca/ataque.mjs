@@ -8,7 +8,7 @@ const falhas = [];
 const vazio = (r) => (Array.isArray(r.corpo) ? r.corpo.length === 0 : r.status >= 400);
 const ok = (rotulo, passou) => { console.log(`${passou ? 'ok   ' : 'FALHA'} ${rotulo}`); if (!passou) falhas.push(rotulo); };
 async function entrar(email) {
-  const r = await fetch(`${URL}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: 'Viagem2027' }) });
+  const r = await fetch(`${URL}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: (process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()) }) });
   const j = await r.json(); return { token: j.access_token, id: j.user?.id };
 }
 const api = (t) => async (caminho, opcoes = {}) => {
@@ -18,6 +18,7 @@ const api = (t) => async (caminho, opcoes = {}) => {
 };
 const ana = await entrar('e2e.ana@bovair.com.br');
 const bia = await entrar('e2e.bia@bovair.com.br');
+const tempo = await entrar('e2e.tempo@bovair.com.br');
 const A = api(ana.token), B = api(bia.token), anon = api(null);
 
 // A Ana cria uma viagem PRIVADA de teste (será apagada no fim).
@@ -92,6 +93,78 @@ if (amigas) {
   ok('Bia (amiga) NÃO vê o histórico', vazio(await B(`/rest/v1/trip_events?trip_id=eq.${t2}&select=id`)));
 } else console.log('(Ana e Bia não são amigas agora: pulei os testes de viagem compartilhada)');
 await A(`/rest/v1/trips?id=eq.${t2}`, { method: 'DELETE' });
+
+// Escalada de papel: a Ana convida a Bia como LEITORA; a Bia aceita e tenta virar editora/dona.
+const t3 = (await A('/rest/v1/trips', { method: 'POST', body: JSON.stringify({ user_id: ana.id, destino: 'Teste Papel', data_ida: '2030-03-10', noites: 1, viajantes: 2 }) })).corpo?.[0]?.id;
+const conv = await A('/rest/v1/trip_members', { method: 'POST', body: JSON.stringify({ trip_id: t3, user_id: bia.id, papel: 'leitor', status: 'convidado' }) });
+if (conv.status < 300) {
+  await B(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}`, { method: 'PATCH', body: JSON.stringify({ status: 'ativo' }) });
+  const viraDona = await B(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}`, { method: 'PATCH', body: JSON.stringify({ papel: 'dono' }) });
+  const papel1 = (await A(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}&select=papel`)).corpo?.[0]?.papel;
+  ok('Leitora NÃO vira dona da viagem', papel1 === 'leitor');
+  await B(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}`, { method: 'PATCH', body: JSON.stringify({ papel: 'editor' }) });
+  const papel2 = (await A(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}&select=papel`)).corpo?.[0]?.papel;
+  ok('Leitora NÃO vira editora sozinha', papel2 === 'leitor');
+  const muda = await B(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}`, { method: 'PATCH', body: JSON.stringify({ trip_id: trip }) });
+  ok('Participante NÃO move a própria linha para outra viagem', vazio(muda) || (muda.corpo?.[0]?.trip_id !== trip));
+  const item3 = await B('/rest/v1/trip_items', { method: 'POST', body: JSON.stringify({ trip_id: t3, dia: 1, periodo: 'morning', ordem: 0, place_id: 'osm-n1' }) });
+  ok('Leitora NÃO edita o roteiro', item3.status >= 400);
+} else console.log('(convite de teste não foi criado: pulei os testes de papel)', conv.status);
+// Editora tenta tomar a viagem (trocar o dono) e deixá-la pública.
+if (conv.status < 300) {
+  // a Ana promove a Bia a editora (permitido ao dono)
+  await A(`/rest/v1/trip_members?trip_id=eq.${t3}&user_id=eq.${bia.id}`, { method: 'PATCH', body: JSON.stringify({ papel: 'editor' }) });
+  await B(`/rest/v1/trips?id=eq.${t3}`, { method: 'PATCH', body: JSON.stringify({ user_id: bia.id }) });
+  ok('Editora NÃO toma a posse da viagem', (await A(`/rest/v1/trips?id=eq.${t3}&select=user_id`)).corpo?.[0]?.user_id === ana.id);
+  await B(`/rest/v1/trips?id=eq.${t3}`, { method: 'PATCH', body: JSON.stringify({ visibilidade: 'publica' }) });
+  ok('Editora NÃO deixa pública a viagem da dona', (await A(`/rest/v1/trips?id=eq.${t3}&select=visibilidade`)).corpo?.[0]?.visibilidade !== 'publica');
+}
+await A(`/rest/v1/trips?id=eq.${t3}`, { method: 'DELETE' });
+
+// Amizade forjada: a Bia recebe um pedido falso? Ela tenta reescrever um pedido recebido para "aceito com outra pessoa".
+const recebidos = (await B(`/rest/v1/friendships?addressee=eq.${bia.id}&select=requester,addressee,status`)).corpo ?? [];
+if (Array.isArray(recebidos) && recebidos.length) {
+  const r0 = recebidos[0];
+  const forja = await B(`/rest/v1/friendships?requester=eq.${r0.requester}&addressee=eq.${bia.id}`, { method: 'PATCH', body: JSON.stringify({ requester: tempo.id }) });
+  ok('NÃO dá para forjar amizade trocando quem pediu', vazio(forja) || forja.corpo?.[0]?.requester === r0.requester);
+}
+// Avaliação escondida pela moderação não volta sozinha
+await B('/rest/v1/avaliacoes', { method: 'POST', body: JSON.stringify({ place_id: 'osm-teste-seguranca', user_id: bia.id, nota: 3 }) });
+const minhaAval = (await B(`/rest/v1/avaliacoes?user_id=eq.${bia.id}&place_id=eq.osm-teste-seguranca&select=id,escondida&limit=1`)).corpo?.[0];
+if (minhaAval) {
+  const des = await B(`/rest/v1/avaliacoes?id=eq.${minhaAval.id}`, { method: 'PATCH', body: JSON.stringify({ escondida: true }) });
+  ok('autora NÃO mexe no "escondida" da moderação', vazio(des) || des.corpo?.[0]?.escondida === minhaAval.escondida);
+  const troca = await B(`/rest/v1/avaliacoes?id=eq.${minhaAval.id}`, { method: 'PATCH', body: JSON.stringify({ user_id: ana.id }) });
+  ok('autora NÃO passa a avaliação para outra pessoa', vazio(troca));
+  await B(`/rest/v1/avaliacoes?id=eq.${minhaAval.id}`, { method: 'DELETE' });
+} else ok('avaliação de teste criada', false);
+
+// Arquivos: pasta de outra pessoa e tipo proibido (HTML disfarçado / SVG com script)
+const subir = (balde, caminho, tipo, corpo, token) => fetch(`${URL}/storage/v1/object/${balde}/${caminho}`, { method: 'POST', headers: { apikey: KEY, Authorization: `Bearer ${token}`, 'Content-Type': tipo }, body: corpo });
+ok('Bia NÃO grava na pasta de fotos da Ana', (await subir('fotos-enviadas', `${ana.id}/x.jpg`, 'image/jpeg', new Uint8Array([255, 216, 255, 217]), bia.token)).status >= 400);
+ok('Bia NÃO grava na pasta do álbum da Ana', (await subir('fotos-viagem', `${ana.id}/x_y.jpg`, 'image/jpeg', new Uint8Array([255, 216, 255, 217]), bia.token)).status >= 400);
+ok('Bia NÃO troca a foto de perfil da Ana', (await subir('fotos-perfil', `${ana.id}/perfil.jpg`, 'image/jpeg', new Uint8Array([255, 216, 255, 217]), bia.token)).status >= 400);
+const html = await subir('fotos-enviadas', `${bia.id}/ataque.html`, 'text/html', '<script>alert(1)</script>', bia.token);
+ok('NÃO aceita HTML no envio de fotos', html.status >= 400);
+const svg = await subir('fotos-enviadas', `${bia.id}/ataque.svg`, 'image/svg+xml', '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"/>', bia.token);
+ok('NÃO aceita SVG (pode ter script) no envio de fotos', svg.status >= 400);
+for (const r of [html, svg]) if (r.status < 300) await fetch(`${URL}/storage/v1/object/fotos-enviadas`, { method: 'DELETE', headers: { apikey: KEY, Authorization: `Bearer ${bia.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ prefixes: [`${bia.id}/ataque.html`, `${bia.id}/ataque.svg`] }) });
+
+// Funções do servidor sem conta e com entrada maliciosa (SSRF/abuso)
+const fn = (nome, corpo, token) => fetch(`${URL}/functions/v1/${nome}`, { method: 'POST', headers: { apikey: KEY, ...(token ? { Authorization: `Bearer ${token}` } : {}), 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
+{ const h = await fn('hoteis', { lat: 0, lon: 0, checkin: '2030-01-01', checkout: '2030-01-02', adultos: 1 }); const c = await h.json().catch(() => ({})); ok('hotéis: sem conta é recusado (ou ainda desligado)', h.status === 401 || (h.status === 503 && c.erro === 'nao_configurado')); }
+ok('hotéis: entrada malformada é recusada', (await fn('hoteis', { lat: 'http://169.254.169.254/', lon: 0, checkin: 'x', checkout: 'y' }, bia.token)).status >= 400);
+ok('aulas: idioma fora da lista é recusado', (await fn('aulas', { idioma: '../../etc' }, bia.token)).status === 400);
+const imp = await fn('importar-lugares', { acao: 'fotos_pendentes', limite: 1 }, bia.token);
+ok('importar-lugares: usuário comum NÃO consegue (só o GitHub)', imp.status === 401);
+const rem = await fn('remover-contas', {}, bia.token);
+ok('remover-contas: usuário comum NÃO consegue (só o GitHub)', rem.status === 401);
+
+// Injeção e XSS
+const inj = await B('/rest/v1/rpc/buscar_pessoas', { method: 'POST', body: JSON.stringify({ termo: "a' or 1=1 --" }) });
+ok('busca de pessoas não aceita injeção (não devolve todo mundo)', inj.status < 500 && (Array.isArray(inj.corpo) ? inj.corpo.length < 20 : true));
+const filtro = await B(`/rest/v1/lugares?nome=ilike.*%27%3Bdrop%20table%20lugares%3B--*&select=id&limit=1`);
+ok('filtro com texto malicioso não quebra nem apaga nada', filtro.status < 500 && !vazio(await B('/rest/v1/lugares?select=id&limit=1')));
 
 // Limpeza
 await A(`/rest/v1/trips?id=eq.${trip}`, { method: 'DELETE' });

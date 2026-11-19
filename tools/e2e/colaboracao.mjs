@@ -2,7 +2,7 @@
  * Ponta a ponta com DUAS pessoas no Supabase real: favoritos → viagem (2 viajantes,
  * orçamento) → roteiro, mapa, hospedagem, orçamento → amizade → convite → a amiga edita →
  * a dona vê a mudança e o orçamento recalculado. Pré-requisito: usuários de teste
- * e2e.ana@ e e2e.bia@bovair.com.br (senha Viagem2027) com perfil e jeito de viajar.
+ * e2e.ana@ e e2e.bia@bovair.com.br (senha na variável E2E_SENHA) com perfil e jeito de viajar.
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
@@ -18,7 +18,7 @@ async function pessoa(nome, email) {
   p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${nome}: ${r.status()} ${r.request().method()} ${r.url().split('?')[0].split('.co')[1]}`));
   await p.goto(URL);
   await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-  await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill('Viagem2027');
+  await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
   await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   return p;
 }

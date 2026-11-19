@@ -1,6 +1,6 @@
 /**
  * Auditoria automática de acessibilidade (axe-core) nas telas principais + aviso de sem internet.
- * Pré-requisito: e2e.tempo@bovair.com.br (senha Viagem2027).
+ * Pré-requisito: e2e.tempo@bovair.com.br (senha na variável E2E_SENHA).
  */
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -27,7 +27,7 @@ try {
   await p.goto(URL); await auditar('1.1-idade');
   await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2500); await auditar('inicio');
   await p.goto(URL + '#/entrar'); await p.waitForTimeout(800); await auditar('entrar');
-  await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4500);
+  await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4500);
   for (const [rota, nome] of [['#/descobrir?d=br-2927408', 'descobrir'], ['#/viagens', 'viagens'], ['#/viagens/nova', 'nova-viagem'], ['#/perfil/amigos', 'amigos'], ['#/perfil', 'perfil'], ['#/perfil/privacidade', 'privacidade']]) {
     await p.goto(URL + rota); await p.waitForTimeout(3000); await auditar(nome);
   }

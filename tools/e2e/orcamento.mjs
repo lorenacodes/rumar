@@ -2,7 +2,7 @@
  * Ponta a ponta do orçamento → nível do roteiro (D-030) no Supabase REAL.
  * Viagem de R$ 15.000 para 1 pessoa (5 noites) no Rio: a prévia diz "Conforto", o roteiro nasce
  * no nível Conforto, e trocar para Econômico refaz com outros lugares.
- * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha Viagem2027) com jeito de viajar.
+ * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha na variável E2E_SENHA) com jeito de viajar.
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
@@ -30,7 +30,7 @@ const lugares = async () => {
 
 await p.goto(URL);
 await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 
 console.log('— Nova viagem com R$ 15.000');

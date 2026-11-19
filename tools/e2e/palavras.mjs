@@ -18,7 +18,7 @@ const nova = async () => { const p = await (await b.newContext({ viewport: { wid
 let p = await nova();
 for (const [n, r] of [['sem conta · início', '#/inicio'], ['sem conta · descobrir', '#/descobrir?d=br-3304557'], ['sem conta · viagens', '#/viagens'], ['sem conta · nova viagem', '#/viagens/nova?d=br-3304557'], ['sem conta · lugar', '#/lugar/osm-r4514671'], ['sem conta · lugar restaurante', '#/lugar/osm-n3832775913']]) await medir(p, n, r);
 p = await nova();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 const sub = (nome) => async (q) => { const t = q.getByRole('tab', { name: nome }); if (await t.count()) await t.first().click(); };
 for (const [n, r, a] of [['início', '#/inicio'], ['viagens', '#/viagens'], ['perfil', '#/perfil'], ['amigos', '#/perfil/amigos'], ['privacidade', '#/perfil/privacidade'], ['jeito de viajar', '#/perfil-viajante'],
   ['viagem · etapas', `#/viagem/${VIAGEM}?aba=etapas`], ['viagem · roteiro', `#/viagem/${VIAGEM}?aba=roteiro`], ['viagem · hospedagem', `#/viagem/${VIAGEM}?aba=hospedagem`],

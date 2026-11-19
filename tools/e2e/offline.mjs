@@ -6,7 +6,7 @@ const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? 'âœ“' : 'â
 const ctx = await b.newContext({ viewport: { width: 390, height: 1200 } });
 const p = await ctx.newPage();
 await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027'); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/viagem/757a544d-0c1c-4b41-ba3e-1da1715af18b?aba=roteiro'); await p.waitForTimeout(6000);
 const nomeLugar = (await p.locator('ol[aria-label^="Paradas"] b, ol[aria-label^="Paradas"] span').first().textContent().catch(() => '')) ?? '';
 confere('guardou a viagem no aparelho', await p.evaluate(() => Object.keys(localStorage).some((k) => k.startsWith('bovair.offline.'))));

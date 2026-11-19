@@ -31,7 +31,7 @@ await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', {
 console.log('    vai direto ao Início:', p.url().endsWith('#/inicio'), '|', await texto(120));
 console.log('— 4. Preencher dados');
 await p.getByRole('button', { name: /^Criar conta/ }).first().click(); await passo('formulario');
-await p.locator('#nome').fill('Teste E2E'); await p.locator('#senha').fill('Viagem2027');
+await p.locator('#nome').fill('Teste E2E'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByText(/Li e concordo/).click(); await p.getByText(/Li a Política/).click();
 await p.locator('#email').fill('e2e.teste@dominio-que-nao-existe-bovair.com.br');
 await p.getByRole('button', { name: /^Criar conta/ }).click(); await p.waitForTimeout(2500); await passo('email-inexistente');
@@ -63,7 +63,7 @@ console.log('— 9. Sair e entrar de novo');
 await p.getByText('Sair da conta').click(); await p.waitForTimeout(800);
 await p.getByRole('button', { name: /^Sair/ }).last().click(); await p.waitForTimeout(2000); await passo('saiu');
 await p.goto(URL + '#/inicio'); await p.waitForTimeout(1500); console.log('    início depois de sair:', await texto(120));
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.teste@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.teste@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4500); await passo('entrou-de-novo');
 console.log('   ', await texto(160));
 console.log('— 10. Fotos dos destinos no Início');

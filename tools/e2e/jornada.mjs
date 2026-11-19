@@ -4,7 +4,7 @@
  * da regra Schengen, ETIAS, seguro) → marcar tarefa, tarefa pessoal → mudar a data (prazos
  * e metas recalculam) → dinheiro (duas moedas, economia incompatível, depósito, simulador,
  * gasto em euro convertido, planejado × real) → roteiro (feito, horário) → encerrar.
- * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha Viagem2027) com perfil e jeito de viajar.
+ * Pré-requisito: usuário e2e.tempo@bovair.com.br (senha na variável E2E_SENHA) com perfil e jeito de viajar.
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
@@ -26,7 +26,7 @@ const mais = (dias) => new Date(Date.now() + dias * 86_400_000).toISOString().sl
 
 await p.goto(URL);
 await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill('Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 
 console.log('— País e moeda (perfil)');

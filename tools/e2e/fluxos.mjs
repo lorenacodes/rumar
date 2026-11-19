@@ -27,7 +27,7 @@ await p.goto(URL + '#/descobrir?d=br-3550308'); await p.waitForTimeout(4000); aw
 await p.goto(URL + '#/descobrir?d=br-4205407'); await p.waitForTimeout(4000); await ver(p, 'descobrir-cidade-sem-coleta-ou-pequena');
 
 p = await pagina();
-await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.teste@bovair.com.br'); await p.locator('#senha').fill(process.env.SENHA_TESTE ?? 'Viagem2027');
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.teste@bovair.com.br'); await p.locator('#senha').fill(process.env.SENHA_TESTE ?? (process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000); await ver(p, 'conta-nova-inicio');
 await p.goto(URL + '#/viagens'); await ver(p, 'conta-nova-viagens');
 await p.goto(URL + '#/descobrir?d=br-3304557'); await p.locator('article.postal').first().waitFor({ timeout: 20000 });
