@@ -225,3 +225,6 @@ html:not(.modo-design) nav[aria-label='Abas']::after {
   height: 120px;
   background: var(--fundo);
 }
+
+/* Campo de busca com lupa à esquerda (D-084): espaço para o ícone. */
+html:not(.modo-design) .tela input.r-input.busca-com-icone { padding-left: 44px !important; border-radius: 26px !important; }

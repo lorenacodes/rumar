@@ -22,6 +22,9 @@ import { FotoLugar } from '../../ui/foto';
 import { Mapa } from '../../ui/Mapa';
 import { ConviteCuriosidades, FeedGeral, FeedLugares } from './Feed';
 import { Experiencias } from './Experiencias';
+import { ExplorarCidades } from './ExplorarCidades';
+import { faixaDoLugar, NOME_FAIXA } from '../../lib/nivel';
+import { contarFiltros, FILTROS_VAZIOS, PainelFiltros, type EstadoFiltros } from './PainelFiltros';
 import { BlocoNetworking } from './Networking';
 
 const P = PRECOS as unknown as Precos;
@@ -31,7 +34,7 @@ const dataBR = (iso?: string | null) => (iso ? iso.slice(0, 10).split('-').rever
 interface Item { id: string; nome: string; rotulo: string; detalhe: string; lat?: number; lon?: number; verificado: boolean }
 const deCuradoria = (l: Lugar): Item => ({ id: l.id, nome: l.nome, rotulo: NOME_CATEGORIA[l.categoria], detalhe: [l.area, l.custo === 0 ? 'grátis' : null, 'curadoria Bo Vair'].filter(Boolean).join(' · '), lat: l.lat, lon: l.lon, verificado: true });
 const deBase = (b: LugarBase): Item => ({
-  id: b.id, nome: b.nome, rotulo: nomeTipo(b.tipo),
+  id: b.id, nome: b.nome, rotulo: [nomeTipo(b.tipo), faixaDoLugar(b) ? NOME_FAIXA[faixaDoLugar(b)!] : null].filter(Boolean).join(' · '),
   detalhe: [b.cozinha, b.bairro, b.estrelas ? `${b.estrelas} estrelas` : null, b.gratuito ? 'grátis' : null, b.preco_min_centavos != null && b.preco_moeda ? dinheiro(b.preco_min_centavos, b.preco_moeda) : null].filter(Boolean).join(' · '),
   lat: b.lat, lon: b.lon, verificado: b.verificado,
 });
@@ -71,9 +74,11 @@ export function Descobrir() {
   const filtro = (params.get('ver') ?? 'para-voce') as Filtro;
   const lista = params.get('modo') === 'lista';
   const [termo, setTermo] = useState('');
-  const [min, setMin] = useState('');
-  const [max, setMax] = useState('');
-  const [gratis, setGratis] = useState(false);
+  // Filtros (D-084): faixa, cozinha, dieta, nota, grátis e preço num painel só.
+  const [fil, setFil] = useState<EstadoFiltros>(FILTROS_VAZIOS);
+  const [verFiltros, setVerFiltros] = useState(false);
+  const { min, max, gratis } = fil;
+  const nFiltros = contarFiltros(fil);
   const [mapa, setMapa] = useState(false);
   const [verPreco, setVerPreco] = useState(false);
   const [pagina, setPagina] = useState(0);
@@ -117,8 +122,8 @@ export function Descobrir() {
   const moeda = destino ? paisPorCodigo(destino.pais)?.moeda ?? 'BRL' : 'BRL';
   const centavos = (s: string) => (s ? Math.round(Number(s.replace(',', '.')) * 100) : null);
   const comPreco = Boolean(min || max);
-  // Feed (D-031): o jeito padrão de explorar; lista e mapa continuam a um toque.
-  const feed = filtro === 'para-voce' && !lista && !mapa && !termo.trim() && !comPreco && !gratis;
+  // Feed (D-031): o jeito padrão de explorar; qualquer busca ou filtro troca para a lista.
+  const feed = filtro === 'para-voce' && !lista && !mapa && !termo.trim() && !nFiltros;
 
   useEffect(() => {
     if (!destino) return;
@@ -132,14 +137,14 @@ export function Descobrir() {
         const bases = await lugaresPorIds(salvos);
         novos = [...(curadoria ? LUGARES.filter((l) => salvos.includes(l.id)) : []).map(deCuradoria), ...bases.filter((b) => b.destino_id === destino.id).map(deBase)];
         tot = novos.length;
-      } else if (filtro === 'para-voce' && !termo.trim() && !comPreco && !gratis) {
+      } else if (filtro === 'para-voce' && !termo.trim() && !nFiltros) {
         const cands = [...(curadoria ? LUGARES : []), ...(await candidatosRoteiro(destino.id)).filter((l) => !OSM_DA_CURADORIA.has(l.osm ?? ''))];
         const ordem = preferencias ? [...cands].sort((a, b) => afinidade(b, preferencias).pontos - afinidade(a, preferencias).pontos) : cands;
         novos = ordem.slice(0, 24).map((l) => (basePorId(l.id) ? deBase(basePorId(l.id)!) : deCuradoria(l)));
         tot = novos.length;
       } else {
         const cat = filtro === 'todos' || filtro === 'para-voce' ? null : filtro;
-        const r = await buscarLugares({ destino: destino.id, categoria: cat, termo, precoMin: centavos(min), precoMax: centavos(max), soGratis: gratis, pagina });
+        const r = await buscarLugares({ destino: destino.id, categoria: cat, termo, precoMin: centavos(min), precoMax: centavos(max), soGratis: gratis, pagina, cozinhas: fil.cozinhas, dieta: fil.dieta, faixa: fil.faixa, bemAvaliados: fil.bemAvaliados, porPagina: fil.faixa ? 80 : 30 });
         const daBase = r.lugares.filter((b) => !OSM_DA_CURADORIA.has(`https://www.openstreetmap.org/${b.fonte_id}`)).map(deBase);
         // Paris: os lugares da curadoria (com preço conferido) entram junto, filtrados igual.
         const cur = curadoria && pagina === 0 ? LUGARES.filter((l) => {
@@ -158,9 +163,9 @@ export function Descobrir() {
       setCarregando(false);
     })();
     return () => { vivo = false; };
-  }, [destino, filtro, termo, min, max, gratis, pagina, preferencias, salvos]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [destino, filtro, termo, fil, pagina, preferencias, salvos]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => setPagina(0), [destino, filtro, termo, min, max, gratis]);
+  useEffect(() => setPagina(0), [destino, filtro, termo, fil]);
   const porCat = useMemo(() => new Map((cob ?? []).map((c) => [c.categoria, c])), [cob]);
   const semColeta = cob !== null && cob.length === 0;
   const abrir = (id: string) => navegar(`/lugar/${id}${viagem ? `?viagem=${viagem}&dia=${params.get('dia') ?? 1}` : ''}`);
@@ -202,50 +207,43 @@ export function Descobrir() {
               ))}
             </div>
             <ConviteCuriosidades />
+            <ExplorarCidades aoEscolher={irParaCidade} />
             {cidades.length ? <FeedGeral cidades={cidades} aoAbrir={(id) => navegar(`/lugar/${id}`)} /> : <div className="mural-esqueleto" aria-label="Carregando lugares" />}
           </>
         ) : null}
 
         {destino && !trocando ? (
           <>
-            <label htmlFor="busca-lugar" className="visualmente-oculto">Buscar lugar pelo nome</label>
-            <input id="busca-lugar" className="r-input" type="search" value={termo} placeholder={`Buscar lugar em ${destino.nome}`} onChange={(e) => setTermo(e.target.value)}
-              style={{ display: 'block', width: '100%', boxSizing: 'border-box', marginTop: '12px', borderBottom: '2px solid var(--texto)', padding: '10px 0', font: "500 17px 'Open Sans'", color: 'var(--texto)', background: 'transparent' }} />
-            {feed ? (
-              <div role="group" aria-label="Outras formas de ver" style={{ display: 'flex', gap: '16px', marginTop: '8px', fontSize: '14px', fontWeight: 600 }}>
-                <button type="button" className="r-btn alvo-toque" onClick={() => setParams((p) => { const n = new URLSearchParams(p); n.set('modo', 'lista'); return n; }, { replace: true })} style={{ color: 'var(--azul)' }}>Lista e filtros</button>
-                <button type="button" className="r-btn alvo-toque" onClick={() => setMapa(true)} style={{ color: 'var(--azul)' }}>Mapa</button>
-                <button type="button" className="r-btn alvo-toque" onClick={() => mudarFiltro('salvos')} style={{ color: 'var(--azul)' }}>Quero ir{salvos.length ? ` (${salvos.length})` : ''}</button>
-              </div>
-            ) : (
-              <>
-            <div role="tablist" aria-label="Categorias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '12px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
+            {/* Busca e filtros à vista (D-084). */}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '14px' }}>
+              <label htmlFor="busca-lugar" className="visualmente-oculto">Buscar lugar pelo nome</label>
+              <span style={{ position: 'relative', flex: 1 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--texto-sec)' }}><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="m16 16 4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                <input id="busca-lugar" className="r-input busca-com-icone" type="search" value={termo} placeholder={`Restaurante, praia, museu em ${destino.nome}`} onChange={(e) => setTermo(e.target.value)}
+                  style={{ display: 'block', width: '100%', boxSizing: 'border-box', minHeight: '52px', padding: '0 14px 0 44px', borderRadius: '26px', font: "500 16px 'Open Sans'", color: 'var(--texto)', background: 'var(--cartao-2)', border: 0 }} />
+              </span>
+              <button type="button" className="r-btn" aria-expanded={verFiltros} onClick={() => setVerFiltros(!verFiltros)}
+                style={{ flex: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', minHeight: '52px', padding: '0 16px', borderRadius: '26px', font: "600 15px 'Open Sans'", ...(nFiltros ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-1)' }) }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><circle cx="16" cy="7" r="2" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="10" cy="17" r="2" fill="none" stroke="currentColor" strokeWidth="2" /></svg>
+                Filtros{nFiltros ? ` (${nFiltros})` : ''}
+              </button>
+            </div>
+            <div role="tablist" aria-label="Categorias" style={{ display: 'flex', gap: '6px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
               {chips.map((c) => {
                 const ativo = filtro === c.id;
                 return (
                   <button key={c.id} type="button" role="tab" aria-selected={ativo} className="r-btn" onClick={() => mudarFiltro(c.id)}
-                    style={{ flex: 'none', height: '44px', padding: '0 14px', boxSizing: 'border-box', whiteSpace: 'nowrap', font: `${ativo ? 600 : 500} 14px 'Open Sans'`, ...(ativo ? { background: 'var(--fundo-escuro)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>{c.nome}</button>
+                    style={{ flex: 'none', height: '40px', padding: '0 14px', boxSizing: 'border-box', whiteSpace: 'nowrap', borderRadius: '20px', font: `${ativo ? 600 : 500} 14px 'Open Sans'`, ...(ativo ? { background: 'var(--fundo-escuro)', color: '#fff' } : { background: 'var(--cartao-2)' }) }}>{c.nome}</button>
                 );
               })}
             </div>
-            <div role="group" aria-label="Mapa e filtros" style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
-              {filtro === 'para-voce' ? (
-                <button type="button" className="r-btn" aria-pressed={!lista && !mapa} onClick={() => (setMapa(false), setParams((p) => { const n = new URLSearchParams(p); if (lista || mapa) n.delete('modo'); else n.set('modo', 'lista'); return n; }, { replace: true }))}
-                  style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{lista || mapa ? 'Ver feed' : 'Ver em lista'}</button>
-              ) : null}
-              <button type="button" className="r-btn" aria-pressed={mapa} onClick={() => setMapa(!mapa)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", border: '2px solid var(--texto)' }}>{mapa ? 'Fechar mapa' : 'Ver no mapa'}</button>
-              <button type="button" className="r-btn" aria-pressed={gratis} onClick={() => setGratis(!gratis)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(gratis ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Grátis</button>
-              <button type="button" className="r-btn" aria-expanded={verPreco || comPreco} onClick={() => setVerPreco(!verPreco)} style={{ height: '40px', padding: '0 12px', font: "600 13px 'Open Sans'", ...(comPreco ? { background: 'var(--azul)', color: '#fff' } : { border: '1px solid var(--linha)' }) }}>Preço {verPreco || comPreco ? '▴' : '▾'}</button>
+            {verFiltros ? <PainelFiltros f={fil} mudar={setFil} comida={['todos', 'para-voce', 'restaurantes', 'cafes', 'bares'].includes(filtro)} moeda={moeda} total={feed ? null : itens.length} aoFechar={() => setVerFiltros(false)} /> : null}
+            <div role="group" aria-label="Outras formas de ver" style={{ display: 'flex', gap: '16px', marginTop: '6px', fontSize: '14px', fontWeight: 600 }}>
+              {!feed && filtro === 'para-voce' ? <button type="button" className="r-btn alvo-toque" onClick={() => { setFil(FILTROS_VAZIOS); setTermo(''); setMapa(false); setParams((p) => { const n = new URLSearchParams(p); n.delete('modo'); return n; }, { replace: true }); }} style={{ color: 'var(--azul)' }}>Ver feed</button> : null}
+              <button type="button" className="r-btn alvo-toque" onClick={() => setMapa(!mapa)} style={{ color: 'var(--azul)' }}>{mapa ? 'Fechar mapa' : 'Ver no mapa'}</button>
+              {feed ? <button type="button" className="r-btn alvo-toque" onClick={() => setParams((p) => { const n = new URLSearchParams(p); n.set('modo', 'lista'); return n; }, { replace: true })} style={{ color: 'var(--azul)' }}>Ver em lista</button> : null}
             </div>
-              </>
-            )}
-            {verPreco || comPreco ? (
-              <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
-                <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '110px' }}>Mínimo ({moeda})<input inputMode="decimal" className="r-input" value={min} onChange={(e) => setMin(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
-                <label style={{ fontSize: '12px', color: 'var(--texto-sec)', width: '110px' }}>Máximo ({moeda})<input inputMode="decimal" className="r-input" value={max} onChange={(e) => setMax(e.target.value.replace(/[^\d,]/g, ''))} style={campoPeq} /></label>
-              </div>
-            ) : null}
-            {comPreco || gratis ? <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Só aparecem lugares com preço informado; os outros continuam no app.</p> : null}
+            {(comPreco || gratis) && !verFiltros ? <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Só aparecem lugares com preço informado; os outros continuam no app.</p> : null}
             {viagem ? <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--azul)', margin: '8px 0 0' }}>Escolha um lugar para adicionar à sua viagem.</p> : null}
 
             {semColeta ? (
@@ -309,7 +307,12 @@ export function Descobrir() {
               <button type="button" className="r-btn" onClick={() => setPagina(pagina + 1)} style={{ width: '100%', height: '48px', marginTop: '8px', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'" }}>Ver mais ({total - itens.length} restantes)</button>
             ) : null}
             {!feed && !carregando && !itens.length && !semColeta ? (
-              <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>{filtro === 'salvos' ? 'Toque em "+ Quero ir" num lugar para guardar aqui.' : termo ? 'Nada com esse nome nos lugares já coletados.' : 'Nada nesta categoria nos lugares já coletados.'}</p>
+              <div>
+                <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: '12px 0 0' }}>{filtro === 'salvos' ? 'Toque em "+ Quero ir" num lugar para guardar aqui.' : nFiltros ? 'Nada com esses filtros.' : termo ? 'Nada com esse nome nesta categoria.' : 'Nada nesta categoria nos lugares já coletados.'}</p>
+                {filtro !== 'salvos' && (nFiltros || (termo && filtro !== 'todos' && filtro !== 'para-voce')) ? (
+                  <button type="button" className="r-btn" onClick={() => { setFil(FILTROS_VAZIOS); mudarFiltro('todos'); }} style={{ minHeight: '44px', color: 'var(--azul)', font: "600 15px 'Open Sans'" }}>{nFiltros ? 'Limpar filtros' : 'Buscar em tudo'}</button>
+                ) : null}
+              </div>
             ) : null}
             <div style={{ height: '24px' }} />
           </>

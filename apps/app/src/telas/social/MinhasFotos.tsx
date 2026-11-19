@@ -15,7 +15,7 @@ export function MinhasFotos() {
         <Voltar para="/perfil" />
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Minhas fotos</h1>
         <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>De viagens e de lugares onde você foi.</p>
-        {id ? <GradeDeFotos userId={id} vazio="Você ainda não postou fotos. Poste no álbum de uma viagem." /> : null}
+        {id ? <GradeDeFotos userId={id} minhas vazio="Você ainda não postou fotos. Poste no álbum de uma viagem." /> : null}
       </div>
       <Abas ativa="passaporte" />
     </main>

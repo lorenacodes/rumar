@@ -954,3 +954,20 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   se o lugar indicar opção sem carne ou for de cozinha que a dieta favorece. Teste unitário novo.
 - Teste de ataque ampliado com 16 tentativas contra o que foi criado hoje (feed, fotos no perfil, fotos por
   viagem, experiências, mídia de avaliação, moderação): todas bloqueadas.
+
+## D-084 — Busca e filtros de verdade (lugares e cidades)
+- Pedido da fundadora: faltava pesquisar e filtrar (tipos de restaurante, cidades, estados). Já existia busca por
+  nome e filtro por categoria e preço, mas escondidos atrás do link "Lista e filtros".
+- Descobrir da cidade: barra de busca grande com lupa ("Restaurante, praia, museu em…"), botão "Filtros" com
+  contador e categorias sempre à vista. Painel de filtros: Faixa (Especial, Em conta, Grátis, Nota 4 ou mais),
+  Cozinha (17 tipos), Dieta (vegetariano, vegano, sem glúten, pelo que o lugar informa no mapa) e Preço.
+  Sem resultado: "Buscar em tudo" ou "Limpar filtros".
+- Faixa dos restaurantes, sem inventar preço: Especial = reconhecido/curioso/4+ estrelas ou nota média 4,5+ com 3+
+  avaliações. Em conta = preço informado até R$ 50, lanchonete/café/padaria/sorveteria, comida do dia a dia
+  (regional, prato feito, self-service, pastel, tapioca, açaí…) ou rede de lanche barata. Redes de preço médio/alto
+  (Outback, Madero, Coco Bambu…) não são "em conta". Sem dados suficientes: sem selo. O selo aparece na lista.
+- Descobrir sem cidade: "Explorar cidades" por nome, estado (27 UFs; digitar "Bahia" filtra o estado) e tipo
+  (Praia, Natureza, Histórica, Cultural, Gastronomia, Aventura, Campo, Diversão).
+- Verificação: "Minhas fotos" ganhou "Apagar" (LGPD); o teste de fotos agora apaga o que posta (duas fotos de
+  teste tinham ficado públicas e foram retiradas). Fundo provisório dos destaques do Início em azul-marinho
+  (texto branco legível enquanto a foto carrega).

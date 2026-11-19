@@ -1,0 +1,40 @@
+/** Busca e filtros (D-084): restaurantes por faixa e cozinha em Recife; cidades por estado e tipo. */
+import { chromium } from 'playwright';
+const URL = process.env.URL ?? 'http://localhost:8793/';
+const OUT = process.env.OUT;
+const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
+const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage();
+p.on('pageerror', (e) => erros.push(e.message));
+await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/descobrir?d=br-2611606'); await p.waitForTimeout(5000);
+confere('barra de busca à vista', await p.locator('#busca-lugar').isVisible());
+confere('botão Filtros à vista', await p.getByRole('button', { name: /^Filtros/ }).isVisible());
+await p.getByRole('tab', { name: /^Restaurantes/ }).click(); await p.waitForTimeout(3000);
+await p.getByRole('button', { name: /^Filtros/ }).click();
+await p.getByRole('region', { name: 'Filtros' }).getByRole('button', { name: 'Em conta' }).click(); await p.waitForTimeout(4000);
+const rotulos = await p.locator('main li').allInnerTexts();
+confere('"Em conta" traz resultados e todos marcados', rotulos.length > 0 && rotulos.every((t) => /EM CONTA/i.test(t)));
+if (OUT) await p.screenshot({ path: `${OUT}/busca-em-conta.png` });
+await p.getByRole('region', { name: 'Filtros' }).getByRole('button', { name: 'Em conta' }).click();
+await p.getByRole('region', { name: 'Filtros' }).getByRole('button', { name: 'Japonesa e sushi' }).click(); await p.waitForTimeout(4000);
+const jap = await p.locator('main li').allInnerTexts();
+confere('cozinha japonesa filtra', jap.length > 0 && jap.every((t) => /japon|sushi/i.test(t)));
+await p.getByRole('region', { name: 'Filtros' }).getByRole('button', { name: 'Limpar' }).click(); await p.waitForTimeout(500);
+await p.locator('#busca-lugar').fill('Paço'); await p.waitForTimeout(3000);
+confere('em Restaurantes, oferece "Buscar em tudo"', await p.getByRole('button', { name: 'Buscar em tudo' }).isVisible());
+await p.getByRole('button', { name: 'Buscar em tudo' }).click(); await p.waitForTimeout(3000);
+confere('busca por nome acha o Paço do Frevo', /Paço do Frevo/.test(await p.locator('main').innerText()));
+// Cidades
+await p.goto(URL + '#/descobrir'); await p.waitForTimeout(4000);
+const sec = p.getByRole('region', { name: 'Explorar cidades' });
+await sec.getByRole('group', { name: 'Estado' }).getByRole('button', { name: 'Bahia' }).click();
+await sec.getByRole('group', { name: 'Tipo de viagem' }).getByRole('button', { name: 'Praia' }).click(); await p.waitForTimeout(3000);
+const cidades = await sec.locator('li').allInnerTexts();
+confere('cidades de praia da Bahia', cidades.length > 0 && cidades.every((t) => /· BA/.test(t) && /Praia/.test(t)));
+await sec.getByRole('group', { name: 'Estado' }).getByRole('button', { name: 'Bahia' }).click(); await sec.getByRole('group', { name: 'Tipo de viagem' }).getByRole('button', { name: 'Praia' }).click();
+await p.locator('#busca-cidade').fill('pernambuco'); await p.waitForTimeout(3000);
+confere('digitar o estado filtra pelo estado', (await sec.locator('li').allInnerTexts()).every((t) => /· PE/.test(t)));
+if (OUT) { await sec.scrollIntoViewIfNeeded(); await p.screenshot({ path: `${OUT}/busca-cidades.png` }); }
+console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
+await b.close(); process.exit(erros.length ? 1 : 0);

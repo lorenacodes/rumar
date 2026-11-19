@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { fotosDaPessoa, type FotoDaPessoa } from '../lib/fotosPessoa';
+import { apagarMinhaFotoQualquer, fotosDaPessoa, type FotoDaPessoa } from '../lib/fotosPessoa';
 
 /** Grade de fotos de uma pessoa (D-082), 3 por linha; toque abre a foto com o atalho para a viagem ou o lugar. */
-export function GradeDeFotos({ userId, vazio, max }: { userId: string; vazio?: string; max?: number }) {
+export function GradeDeFotos({ userId, vazio, max, minhas = false }: { userId: string; vazio?: string; max?: number; minhas?: boolean }) {
   const navegar = useNavigate();
   const [fotos, setFotos] = useState<FotoDaPessoa[] | null>(null);
   const [vendo, setVendo] = useState<FotoDaPessoa | null>(null);
@@ -35,6 +35,7 @@ export function GradeDeFotos({ userId, vazio, max }: { userId: string; vazio?: s
             <b style={{ flex: 1, minWidth: 0 }}>{vendo.titulo ?? ''}</b>
             {vendo.trip_id ? <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${vendo.trip_id}?aba=roteiro`)} style={{ color: '#fff', fontWeight: 600, minHeight: '44px' }}>Ver a viagem</button>
               : vendo.place_id ? <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${vendo.place_id}`)} style={{ color: '#fff', fontWeight: 600, minHeight: '44px' }}>Ver o lugar</button> : null}
+            {minhas ? <button type="button" className="r-btn" onClick={() => { if (window.confirm('Apagar esta foto? Ela sai de todos os lugares do app.')) void apagarMinhaFotoQualquer(vendo).then((ok) => { if (ok) { setFotos((l) => l?.filter((x) => x.id !== vendo.id) ?? null); setVendo(null); } }); }} style={{ color: '#ff9b9b', fontWeight: 600, minHeight: '44px' }}>Apagar</button> : null}
             <button type="button" className="r-btn" onClick={() => setVendo(null)} style={{ color: '#fff', minHeight: '44px' }}>Fechar</button>
           </div>
         </div>

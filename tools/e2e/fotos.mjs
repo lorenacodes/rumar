@@ -37,6 +37,13 @@ if (ETAPA === '1') {
   const a = await pagina(false);
   await a.goto(URL + `#/lugar/${LUGAR}`); await a.waitForTimeout(3500);
   confere('sem conta, a foto já aparece', (await a.locator('section[aria-label="Fotos de quem foi"] img').count()) >= 1);
+  // Limpa (D-083): apaga pela tela "Minhas fotos" (testa o apagar e não deixa foto de teste no ar).
+  t.on('dialog', (d) => d.accept());
+  await t.goto(URL + '#/perfil/fotos'); await t.waitForTimeout(4000);
+  const antes = await t.getByRole('list', { name: 'Fotos' }).locator('img').count();
+  await t.getByRole('list', { name: 'Fotos' }).getByRole('button').first().click(); await t.waitForTimeout(800);
+  await t.getByRole('dialog', { name: 'Foto' }).getByRole('button', { name: 'Apagar' }).click(); await t.waitForTimeout(3000);
+  confere('apaga a própria foto em Minhas fotos', (await t.getByRole('list', { name: 'Fotos' }).locator('img').count().catch(() => 0)) === antes - 1);
 } else if (ETAPA === '3') {
   // Depois de marcar como recusada no banco: Tempo vê o aviso e apaga (limpa o teste).
   const t = await pagina(true);

@@ -67,3 +67,27 @@ export function sinalNivel(b: { tipo: string; cozinha: string | null; estrelas: 
   if (b.tipo === 'restaurant' && b.cozinha && COZINHA_ESPECIAL.test(b.cozinha) && reconhecido) return 1;
   return 0;
 }
+
+/**
+ * Faixa de um lugar de comer ou beber (D-084), sem inventar preço:
+ * - Especial: o sinal "especial" (reconhecido, curioso, hotel 4+) ou nota média 4,5+ com 3+ avaliações.
+ * - Em conta: preço informado até R$ 50 por pessoa, lanchonete/café/padaria/sorveteria, cozinha simples do dia a dia
+ *   (regional, prato feito, self-service, pastel, tapioca, açaí…) ou rede de lanche barata. Serve para baixo orçamento.
+ * - Sem faixa: o resto (não sabemos o suficiente para dizer).
+ */
+export type Faixa = 'especial' | 'em-conta';
+export const NOME_FAIXA: Record<Faixa, string> = { especial: 'Especial', 'em-conta': 'Em conta' };
+const EM_CONTA_COZINHA = /regional|brasileir|nordestin|self.?service|buffet|quilo|prato feito|pastel|sandu|lanche|tapioca|a[cç]a[ií]|cuscuz|marmit|salgad|padaria|bakery|caf[eé]|sorvete|ice_cream|juice|suco|hot ?dog|cachorro|esfiha|espetinho|empanada|frango|coxinha/i;
+/** Redes baratas (lanche, fast-food). Redes de preço médio/alto (Outback, Madero, Coco Bambu…) NÃO são "em conta". */
+const REDES_BARATAS = /\b(mc ?donald|burger king|subway|habib|giraffas|bob'?s|spoleto|china in box|kfc|domino|pizza hut|casa do p[aã]o de queijo|ragazzo|rei do mate|bolognas|frango assado|chiquinho)\b/i;
+const TIPOS_EM_CONTA = new Set(['fast_food', 'food_court', 'cafe', 'ice_cream', 'bakery', 'pastry']);
+const COMER = new Set(['restaurantes', 'cafes', 'bares']);
+
+export function faixaDoLugar(b: Parameters<typeof sinalNivel>[0] & { categoria?: string; preco_max_centavos?: number | null; preco_moeda?: string | null }, nota?: { media: number; quantidade: number } | null): Faixa | null {
+  if (b.categoria && !COMER.has(b.categoria)) return null;
+  const s = sinalNivel(b);
+  if (s === 1 || (nota && nota.quantidade >= 3 && nota.media >= 4.5)) return 'especial';
+  const barato = b.preco_max_centavos != null && (b.preco_moeda ?? 'BRL') === 'BRL' && b.preco_max_centavos <= 5000;
+  if (barato || TIPOS_EM_CONTA.has(b.tipo) || (b.cozinha && EM_CONTA_COZINHA.test(b.cozinha)) || (b.nome && REDES_BARATAS.test(b.nome))) return 'em-conta';
+  return null;
+}

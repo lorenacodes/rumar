@@ -7,6 +7,7 @@
  */
 import { sinalNivel } from './nivel';
 import { gruposDeCozinha, TERMOS_COZINHA, type Cozinha } from './comida';
+import { faixaDoLugar, type Faixa } from './nivel';
 import { supabase } from './supabase';
 import { lugaresDeExperiencia } from './experiencias';
 import { registrarLugares } from './catalogo';
@@ -162,6 +163,19 @@ export interface Filtros {
   soGratis?: boolean;
   pagina?: number;
   porPagina?: number;
+  /** D-084: tipos de cozinha, opções de dieta informadas, faixa (especial / em conta) e só bem avaliados (4+). */
+  cozinhas?: Cozinha[];
+  dieta?: ('vegetariano' | 'vegano' | 'sem_gluten')[];
+  faixa?: Faixa | null;
+  bemAvaliados?: boolean;
+}
+
+/** Lugares com nota média 4+ (das avaliações de quem foi). */
+async function bemAvaliados(): Promise<Map<string, { media: number; quantidade: number }>> {
+  const { data } = await supabase.from('avaliacoes').select('place_id, nota').limit(5000);
+  const soma = new Map<string, { s: number; n: number }>();
+  for (const a of (data ?? []) as { place_id: string; nota: number }[]) { const x = soma.get(a.place_id) ?? { s: 0, n: 0 }; x.s += a.nota; x.n++; soma.set(a.place_id, x); }
+  return new Map([...soma].map(([id, x]) => [id, { media: x.s / x.n, quantidade: x.n }]));
 }
 
 export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[]; total: number }> {
@@ -174,11 +188,25 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
   if (f.soGratis) q = q.eq('gratuito', true);
   if (f.precoMin != null) q = q.gte('preco_max_centavos', f.precoMin);
   if (f.precoMax != null) q = q.lte('preco_min_centavos', f.precoMax);
+  const termos = [...new Set((f.cozinhas ?? []).flatMap((c) => TERMOS_COZINHA[c] ?? []))];
+  if (termos.length) q = q.or(termos.map((t) => `cozinha.ilike.%${t.replace(/[,()%]/g, '')}%`).join(','));
+  if (f.dieta?.length) q = q.overlaps('dieta_opcoes', f.dieta.flatMap((d) => (d === 'sem_gluten' ? ['sem_gluten'] : [d, `so_${d}`])));
+  let notas: Map<string, { media: number; quantidade: number }> | null = null;
+  if (f.bemAvaliados) {
+    notas = await bemAvaliados();
+    const ids = [...notas].filter(([, x]) => x.media >= 4).map(([id]) => id);
+    if (!ids.length) return { lugares: [], total: 0 };
+    q = q.in('id', ids.slice(0, 300));
+  }
+  // Faixa: pré-filtro no banco (sem misturar com o filtro de cozinha) e a regra exata aqui (D-084).
+  if (f.faixa === 'especial' && !termos.length) q = q.or('fama.not.is.null,curioso.not.is.null,estrelas.gte.4');
+  if (f.faixa === 'em-conta' && !termos.length) q = q.or('tipo.in.(fast_food,food_court,cafe,ice_cream,bakery,pastry),preco_max_centavos.lte.5000,cozinha.ilike.%regional%,cozinha.ilike.%brasileir%,cozinha.ilike.%sandu%,cozinha.ilike.%pastel%,cozinha.ilike.%lanche%,cozinha.ilike.%tapioca%,cozinha.ilike.%aça%,cozinha.ilike.%cuscuz%,cozinha.ilike.%frango%,cozinha.ilike.%hot dog%');
   // Primeiro os mais documentados (foto, Wikidata, cozinha, horário); redes e fast-food depois.
   const { data, count } = await q.order('relevancia', { ascending: false }).order('nome').range(pagina * porPagina, pagina * porPagina + porPagina - 1);
-  const lugares = (data ?? []) as LugarBase[];
+  let lugares = (data ?? []) as LugarBase[];
+  if (f.faixa) lugares = lugares.filter((b) => faixaDoLugar(b, notas?.get(b.id)) === f.faixa);
   guardar(lugares);
-  return { lugares, total: count ?? lugares.length };
+  return { lugares, total: f.faixa ? lugares.length : count ?? lugares.length };
 }
 
 /** Item do feed: um lugar da base, com ou sem foto. */
@@ -364,4 +392,17 @@ export async function nomesDestinos(ids: string[]): Promise<Map<string, string>>
   if (!ids.length) return new Map();
   const { data } = await supabase.from('destinos').select('id, nome').in('id', [...new Set(ids)].slice(0, 100));
   return new Map((data ?? []).map((d) => [d.id as string, d.nome as string]));
+}
+
+/** Explorar cidades do Brasil por estado e por tipo (praia, natureza, histórica…) (D-084). */
+export const TIPOS_CIDADE: Record<string, string> = { praia: 'Praia', natureza: 'Natureza', historica: 'Histórica', cultural: 'Cultural', gastronomia: 'Gastronomia', aventura: 'Aventura', rural: 'Campo', entretenimento: 'Diversão' };
+export const UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
+export async function explorarCidades(f: { uf?: string | null; tipo?: string | null; termo?: string }): Promise<Destino[]> {
+  let q = supabase.from('destinos').select('*').like('id', 'br-%');
+  if (f.uf) q = q.eq('regiao', f.uf);
+  if (f.tipo) q = q.contains('tipos', [f.tipo]);
+  if (f.termo?.trim()) q = q.ilike('nome', `%${f.termo.trim().replace(/[,()%]/g, '')}%`);
+  if (!f.uf && !f.tipo && !f.termo?.trim()) q = q.gte('peso', 2);
+  const { data } = await q.order('peso', { ascending: false }).order('nome').limit(60);
+  return (data ?? []) as Destino[];
 }

@@ -58,9 +58,9 @@ function CartaoGrande({ d, favorito, i = 0, total = 0 }: { d: DestinoCartao; fav
   const abrir = useAbrirDestino();
   return (
     <button type="button" className="r-btn" onClick={() => void abrir(d)} aria-label={`${d.nome}, ${d.pais}: ver o que viver lá`}
-      style={{ position: 'relative', flex: 'none', width: '80%', maxWidth: '360px', aspectRatio: '1 / 1', overflow: 'hidden', borderRadius: '16px', scrollSnapAlign: 'start', background: 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))', textAlign: 'left' }}>
+      style={{ position: 'relative', flex: 'none', width: '80%', maxWidth: '360px', aspectRatio: '1 / 1', overflow: 'hidden', borderRadius: '16px', scrollSnapAlign: 'start', background: 'var(--marinho)', textAlign: 'left' }}>
       <FotoDestino nome={d.foto ?? d.nome} credito={false} />
-      <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.72) 100%)' }} />
+      <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(0,0,0,.82) 100%)' }} />
       <span style={{ position: 'absolute', left: 16, right: 16, bottom: 16, zIndex: 2, color: '#fff' }}>
         {favorito ? <span style={{ display: 'inline-block', font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', padding: '2px 6px', marginBottom: '6px' }}>Seu favorito</span> : null}
         <span style={{ display: 'block', font: "600 26px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{d.nome}</span>
@@ -198,7 +198,7 @@ function Curiosos() {
 const Rot = ({ t }: { t: string }) => <h2 style={{ font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em', margin: '22px 0 8px' }}>{t}</h2>;
 // Fotos grandes com a ponta da próxima à vista (D-081): dá para ver que há mais sem rolar a tela inteira.
 const fileira = { display: 'flex', alignItems: 'flex-start', gap: '12px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px 4px', scrollPaddingLeft: '20px', scrollbarWidth: 'none', scrollSnapType: 'x mandatory' } as const;
-const sombraTexto = { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 2, padding: '40px 14px 14px', background: 'linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.72))', color: '#fff', textAlign: 'left' } as const;
+const sombraTexto = { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 2, padding: '40px 14px 14px', background: 'linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.82))', color: '#fff', textAlign: 'left' } as const;
 /** Avisos de quem tem conta: o que espera resposta e o que falta para aproveitar o app. */
 function Pendencias({ convites, pedidos, semUsuario, semJeito }: { convites: number; pedidos: number; semUsuario: boolean; semJeito: boolean }) {
   const navegar = useNavigate();
