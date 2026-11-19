@@ -693,4 +693,4 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
   própria, ela passa a valer.
 - **Limite honesto:** restaurantes e lojas quase nunca têm foto livre; para eles, fotos de quem foi ou Google
   (pago, com teto mensal) quando a fundadora decidir.
-- Workflow "Fotos por localização" (fotos-commons.yml): todo dia 3.000 lugares do Brasil, primeiro os turísticos mais conhecidos (fama), depois o resto; à mão por cidade. Começou por Pernambuco. Uma tarefa diária do agente confere a qualidade, cobre os estados atrasados e para quando a meta for atingida.
+- Workflow "Fotos por localização" (fotos-commons.yml): todo dia até 1.000 fotos novas, região por região (Nordeste primeiro, depois Sudeste, Sul, Centro-Oeste e Norte), turísticos mais conhecidos antes do resto; à mão por cidade. Começou por Pernambuco. Uma tarefa diária do agente confere a qualidade, cobre os estados atrasados e para quando a meta for atingida.

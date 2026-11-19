@@ -6,7 +6,7 @@
  * - restaurantes, bares, cafés, hotéis e lojas: só se o nome do arquivo citar o lugar (até 150 m);
  * - nunca mapa, logo, bandeira, brasão ou diagrama; só CC0, CC BY, CC BY-SA ou domínio público.
  * Roda no GitHub Actions (workflow "Fotos por localização"); grava pela função importar-lugares com OIDC, sem chave.
- * Uso: node tools/dados/fotos-commons.mjs [--pais br] [--destinos br-2611606,br-2609600] [--limite 1500]
+ * Uso: node tools/dados/fotos-commons.mjs [--pais br] [--regiao nordeste] [--meta 1000] [--destinos ids] [--limite 1000] [--minutos 150]
  */
 const FUNCAO = 'https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/importar-lugares';
 const API = 'https://commons.wikimedia.org/w/api.php';
@@ -64,50 +64,72 @@ function candidatos(l, achados) {
 }
 
 const destinos = (arg('destinos', '') || '').split(',').map((s) => s.trim()).filter(Boolean);
-const limite = Number(arg('limite', '1500'));
+const limite = Number(arg('limite', '1000'));
 const prefixo = arg('pais', '') ? `${arg('pais', '')}-` : undefined;
-// Ordem (pedido da fundadora): no país escolhido, primeiro os turísticos mais conhecidos; depois o resto.
-let { itens } = await banco({ acao: 'fotos_pendentes', destinos, prefixo, turisticos: true, limite });
-if (itens.length < limite) {
-  const vistos = new Set(itens.map((i) => i.id));
-  const resto = (await banco({ acao: 'fotos_pendentes', destinos, prefixo, limite: limite - itens.length + 200 })).itens.filter((i) => !vistos.has(i.id));
-  itens = [...itens, ...resto].slice(0, limite);
-}
-console.log(`${itens.length} lugares sem foto para procurar${destinos.length ? ` em ${destinos.join(', ')}` : prefixo ? ` (${prefixo}*)` : ''}`);
+// Meta do dia (pedido da fundadora): pelo menos 1.000 fotos novas, região por região, começando pelo Nordeste.
+const meta = Number(arg('meta', '0'));
+const REGIOES = { nordeste: [21, 29], sudeste: [31, 35], sul: [41, 43], 'centro-oeste': [50, 53], norte: [11, 17] };
+const ordem = arg('regiao', '') ? [arg('regiao', ''), ...Object.keys(REGIOES).filter((r) => r !== arg('regiao', ''))] : [null];
+const fimEm = Date.now() + Number(arg('minutos', '150')) * 60_000;
 
-let achadas = 0;
-const porCidade = new Map();
-for (let k = 0; k < itens.length; k += 50) {
-  const lote = itens.slice(k, k + 50);
-  const escolhas = new Map();
-  for (const l of lote) {
-    const r = await commons({ action: 'query', list: 'geosearch', gscoord: `${l.lat}|${l.lon}`, gsradius: String(RAIO[l.categoria] ?? 150), gsnamespace: '6', gslimit: '15' });
-    const c = candidatos(l, r?.query?.geosearch ?? []);
-    if (c.length) escolhas.set(l.id, c.map((x) => x.title));
-    await espera(250);
+async function pendentes(ufs) {
+  // Primeiro os turísticos mais conhecidos; depois o resto.
+  let { itens } = await banco({ acao: 'fotos_pendentes', destinos, prefixo, ufs, turisticos: true, limite });
+  if (itens.length < limite) {
+    const vistos = new Set(itens.map((i) => i.id));
+    const resto = (await banco({ acao: 'fotos_pendentes', destinos, prefixo, ufs, limite: limite - itens.length + 200 })).itens.filter((i) => !vistos.has(i.id));
+    itens = [...itens, ...resto].slice(0, limite);
   }
-  // Licença e autor de todos os candidatos do lote, em blocos de 50 títulos.
-  const titulos = [...new Set([...escolhas.values()].flat())];
-  const info = new Map();
-  for (let i = 0; i < titulos.length; i += 50) {
-    const r = await commons({ action: 'query', prop: 'imageinfo', iiprop: 'url|extmetadata', iiextmetadatafilter: 'LicenseShortName|Restrictions', titles: titulos.slice(i, i + 50).join('|') });
-    for (const p of r?.query?.pages ?? []) {
-      const ii = p.imageinfo?.[0];
-      const lic = ii?.extmetadata?.LicenseShortName?.value ?? '';
-      if (ii && LIVRE.test(lic.trim()) && !/nc|nd/i.test(lic)) info.set(p.title, ii.descriptionurl);
-    }
-    await espera(300);
-  }
-  const gravar = lote.map((l) => {
-    const t = (escolhas.get(l.id) ?? []).find((x) => info.has(x));
-    if (!t) return { id: l.id };
-    const arquivo = t.replace(/^File:/, '');
-    porCidade.set(l.destino_id, (porCidade.get(l.destino_id) ?? 0) + 1);
-    return { id: l.id, foto: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(arquivo)}?width=640`, foto_pagina: info.get(t)?.startsWith('https://commons.wikimedia.org/') ? info.get(t) : `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(arquivo)}` };
-  });
-  const r = await banco({ acao: 'fotos_gravar', itens: gravar });
-  achadas += r.ok;
-  console.log(`  ${Math.min(k + 50, itens.length)}/${itens.length}: +${r.ok} fotos (total ${achadas})`);
+  return itens;
 }
-console.log(`Fotos novas: ${achadas} de ${itens.length} procurados.`);
+let achadas = 0;
+let procurados = 0;
+const porCidade = new Map();
+async function processar(itens) {
+  for (let k = 0; k < itens.length; k += 50) {
+    const lote = itens.slice(k, k + 50);
+    const escolhas = new Map();
+    for (const l of lote) {
+      const r = await commons({ action: 'query', list: 'geosearch', gscoord: `${l.lat}|${l.lon}`, gsradius: String(RAIO[l.categoria] ?? 150), gsnamespace: '6', gslimit: '15' });
+      const c = candidatos(l, r?.query?.geosearch ?? []);
+      if (c.length) escolhas.set(l.id, c.map((x) => x.title));
+      await espera(250);
+    }
+    // Licença e autor de todos os candidatos do lote, em blocos de 50 títulos.
+    const titulos = [...new Set([...escolhas.values()].flat())];
+    const info = new Map();
+    for (let i = 0; i < titulos.length; i += 50) {
+      const r = await commons({ action: 'query', prop: 'imageinfo', iiprop: 'url|extmetadata', iiextmetadatafilter: 'LicenseShortName|Restrictions', titles: titulos.slice(i, i + 50).join('|') });
+      for (const p of r?.query?.pages ?? []) {
+        const ii = p.imageinfo?.[0];
+        const lic = ii?.extmetadata?.LicenseShortName?.value ?? '';
+        if (ii && LIVRE.test(lic.trim()) && !/nc|nd/i.test(lic)) info.set(p.title, ii.descriptionurl);
+      }
+      await espera(300);
+    }
+    const gravar = lote.map((l) => {
+      const t = (escolhas.get(l.id) ?? []).find((x) => info.has(x));
+      if (!t) return { id: l.id };
+      const arquivo = t.replace(/^File:/, '');
+      porCidade.set(l.destino_id, (porCidade.get(l.destino_id) ?? 0) + 1);
+      return { id: l.id, foto: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(arquivo)}?width=640`, foto_pagina: info.get(t)?.startsWith('https://commons.wikimedia.org/') ? info.get(t) : `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(arquivo)}` };
+    });
+    const r = await banco({ acao: 'fotos_gravar', itens: gravar });
+    achadas += r.ok;
+    console.log(`  ${Math.min(k + 50, itens.length)}/${itens.length}: +${r.ok} fotos (total ${achadas})`);
+  }
+}
+for (const regiao of ordem) {
+  const ufs = regiao ? REGIOES[regiao] : undefined;
+  while (Date.now() < fimEm) {
+    const itens = await pendentes(ufs);
+    if (!itens.length) { console.log(`${regiao ?? 'Lista'}: nada mais para procurar.`); break; }
+    console.log(`${regiao ? `${regiao}: ` : ''}${itens.length} lugares sem foto para procurar`);
+    await processar(itens);
+    procurados += itens.length;
+    if (!meta || achadas >= meta) break;
+  }
+  if (!meta || achadas >= meta || Date.now() >= fimEm) break;
+}
+console.log(`Fotos novas: ${achadas} de ${procurados} procurados${meta ? ` (meta ${meta}: ${achadas >= meta ? 'atingida' : 'não atingida'})` : ''}.`);
 for (const [d, n] of [...porCidade].sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log(`  ${d}: ${n}`);

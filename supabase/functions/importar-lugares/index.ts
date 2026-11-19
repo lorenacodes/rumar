@@ -15,7 +15,7 @@
 //   { acao: 'curiosidades_gravar', itens: Curiosidade[] }      → curiosidades do mundo (D-039)
 //   { acao: 'coletadas' }                                      → cidades com lugares (para as opções de dieta)
 //   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
-//   { acao: 'fotos_pendentes', destinos?, prefixo?, turisticos?, limite } → lugares sem foto ainda não procurados (D-057)
+//   { acao: 'fotos_pendentes', destinos?, prefixo?, ufs?: [de, ate], turisticos?, limite } → lugares sem foto ainda não procurados (D-057)
 //   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
@@ -149,6 +149,10 @@ Deno.serve(async (req) => {
     if (destinos.length) q = q.in('destino_id', destinos);
     // País (prefixo do id, ex.: "br-") e só os turísticos primeiro (praias, atrações, centro histórico, museus, parques).
     if (typeof p.prefixo === 'string' && /^[a-z]{2}-$/.test(p.prefixo)) q = q.like('destino_id', `${p.prefixo}%`);
+    // Região do Brasil pela faixa do código IBGE do estado (ex.: Nordeste = 21 a 29), contígua em cada região.
+    if (Array.isArray(p.ufs) && p.ufs.length === 2 && p.ufs.every((u: unknown) => typeof u === 'number' && u >= 11 && u <= 53)) {
+      q = q.gte('destino_id', `br-${p.ufs[0]}`).lt('destino_id', `br-${p.ufs[1] + 1}`);
+    }
     if (p.turisticos === true) q = q.in('categoria', ['praias', 'atracoes', 'historico', 'museus', 'parques', 'cultura', 'mercados']);
     const { data, error } = await q.order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).limit(limite);
     if (error) return json({ erro: error.message }, 500);

@@ -1,23 +1,24 @@
 name: Fotos por localização
 
 # Fotos por localização (D-057): procura no Wikimedia Commons fotos livres tiradas perto dos lugares
-# que não têm foto. Todo dia, 3.000 do Brasil (turísticos mais conhecidos primeiro) ainda não procurados (cada um é revisto a cada
-# 90 dias). Rodar à mão escolhendo cidades: campo "destinos". OIDC do GitHub; nenhuma chave.
+# sem foto. Todo dia, até atingir 1.000 fotos novas (ou 150 min), região por região do Brasil, a
+# começar pelo Nordeste; em cada região, os turísticos mais conhecidos primeiro. Cada lugar é revisto
+# a cada 90 dias. À mão: escolher região, meta ou cidades. OIDC do GitHub; nenhuma chave.
 on:
   workflow_dispatch:
     inputs:
+      regiao:
+        description: 'nordeste | sudeste | sul | centro-oeste | norte (as outras vêm depois)'
+        required: false
+        default: 'nordeste'
+      meta:
+        description: 'Fotos novas a buscar'
+        required: false
+        default: '1000'
       destinos:
-        description: 'IDs das cidades separados por vírgula (vazio = todas)'
+        description: 'Só estas cidades (ids separados por vírgula; vazio = por região)'
         required: false
-        default: 'br-2611606,br-2609600,br-2605459,br-2604106,br-2607208'
-      pais:
-        description: 'País (prefixo do id, ex.: br). Vazio = todos'
-        required: false
-        default: 'br'
-      limite:
-        description: 'Quantos lugares procurar'
-        required: false
-        default: '3000'
+        default: ''
   schedule:
     - cron: '41 6 * * *'
   push:
@@ -37,15 +38,15 @@ concurrency:
 jobs:
   fotos:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 175
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Pernambuco primeiro (no push) ou o que foi pedido
+      - name: Buscar fotos
         env:
-          DESTINOS: ${{ github.event_name == 'push' && 'br-2611606,br-2609600,br-2605459,br-2604106,br-2607208' || inputs.destinos || '' }}
-          LIMITE: ${{ inputs.limite || '3000' }}
-          PAIS: ${{ github.event_name == 'workflow_dispatch' && inputs.pais || 'br' }}
-        run: node tools/dados/fotos-commons.mjs --pais "$PAIS" --destinos "$DESTINOS" --limite "$LIMITE"
+          REGIAO: ${{ inputs.regiao || 'nordeste' }}
+          META: ${{ inputs.meta || '1000' }}
+          DESTINOS: ${{ inputs.destinos || '' }}
+        run: node tools/dados/fotos-commons.mjs --pais br --regiao "$REGIAO" --meta "$META" --destinos "$DESTINOS" --minutos 150
