@@ -97,3 +97,16 @@ describe('o que falta no custo (nada parece calculado sem estar)', () => {
     expect(faltaNoCusto(o, []).itens).toContain('passagem');
   });
 });
+
+describe('preço de experiência em reais entra no custo (D-090)', () => {
+  const lugar = { id: 'osm-paco', nome: 'Paço do Frevo', categoria: 'passeios', tags: [], slots: ['afternoon'], energia: 1, caminhada: 'low', custo: 1, local: false, lotado: false, descricao: '', area: '' } as unknown as import('./planejador').Lugar;
+  const precos: Precos = { lugares: { 'osm-paco': { min: 1000, max: 1000, selo: 'referencia', fonte: 'Grupo Dicas, 2026', url: 'https://x', moeda: 'BRL' } }, transporte: {} };
+  const entrada = (gastos: Entrada['gastos']): Entrada => ({ itens: [{ dia: 1, periodo: 'afternoon', ordem: 0, lugar }], precos, catalogo: [lugar], hospedagem: null, gastos, viajantes: 2, noites: 1, euroEmReais: 6, prefereTransporte: false });
+  it('soma em reais, sem converter do euro', () => {
+    expect(calcular(entrada([])).categorias.find((c) => c.id === 'lazer')!.minBRL).toBe(2000);
+  });
+  it('não soma de novo quando o dia a dia com passeios já foi anotado', () => {
+    const o = calcular(entrada([{ categoria: 'alimentacao', descricao: 'Comida, passeios e transporte (2 dias)', valor: 30000, moeda: 'BRL' }]));
+    expect(o.categorias.find((c) => c.id === 'lazer')!.minBRL).toBe(0);
+  });
+});

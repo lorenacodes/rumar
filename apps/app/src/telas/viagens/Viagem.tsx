@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hojeLocal } from '../../lib/datas';
 import { BlocoNetworking } from '../descobrir/Networking';
 import { Experiencias } from '../descobrir/Experiencias';
+import { precosDeExperiencias } from '../../lib/experiencias';
 import { climaDaViagem, textoDoDia, type Clima } from '../../lib/clima';
 import { internacional } from '../../lib/linhaDoTempo';
 import { Mala } from './Mala';
@@ -116,7 +117,10 @@ export function Viagem() {
     // Lugares da cidade para trocar paradas e ver no mapa.
     if (destinoId !== DESTINO_CURADORIA) void candidatosRoteiro(destinoId).then(() => setPool((n) => n + 1));
   }, [destinoId]);
-  P = destinoId === DESTINO_CURADORIA ? P_PARIS : SEM_PRECOS;
+  // Preços das experiências pesquisadas entram no custo, com a fonte (D-090).
+  const [precosExp, setPrecosExp] = useState<Precos['lugares']>({});
+  useEffect(() => { setPrecosExp({}); if (destinoId && destinoId !== DESTINO_CURADORIA) void precosDeExperiencias(destinoId).then(setPrecosExp); }, [destinoId]);
+  P = destinoId === DESTINO_CURADORIA ? P_PARIS : Object.keys(precosExp).length ? { lugares: precosExp, transporte: {} } : SEM_PRECOS;
   const orc = useMemo(() => {
     if (!v) return null;
     const entrada = {
@@ -130,7 +134,7 @@ export function Viagem() {
     // O orçamento é guardado na moeda de planejamento da viagem; a comparação é feita em reais.
     const limiteBRL = v.viagem.orcamento_centavos ? converter(v.viagem.orcamento_centavos, taxa(v.viagem.moeda_planejamento ?? 'BRL', 'BRL')) : null;
     return { o, limiteBRL, sugestoes: limiteBRL ? sugerirAjustes(entrada, o, limiteBRL) : [] };
-  }, [v, itens, grupo]);
+  }, [v, itens, grupo, precosExp]);
   const j = useMemo(() => (v && orc ? montarJornada(v, orc.o.semCambio ? null : orc.o.provavelBRL, { paisResidencia, paisPassaporte, moedaReferencia, idiomasFalados }, undefined, destino?.pais) : null), [v, orc, paisResidencia, paisPassaporte, moedaReferencia, idiomasFalados, destino]);
 
   if (v === null) return <Navigate to="/viagens" replace />;

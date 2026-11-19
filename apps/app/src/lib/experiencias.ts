@@ -71,3 +71,14 @@ export async function lugaresDeExperiencia(destinoId: string): Promise<Set<strin
   const { todas } = await carregar();
   return new Set(todas.filter((e) => e.destino_id === destinoId && e.place_id).map((e) => e.place_id!));
 }
+
+/** Preços das experiências com fonte, para o custo da viagem (D-090): só as ligadas a um lugar do roteiro. */
+export async function precosDeExperiencias(destinoId: string): Promise<Record<string, { min: number; max: number; selo: 'referencia'; fonte: string; url: string; moeda: 'BRL' }>> {
+  const { todas } = await carregar();
+  const r: Record<string, { min: number; max: number; selo: 'referencia'; fonte: string; url: string; moeda: 'BRL' }> = {};
+  for (const e of todas) {
+    if (e.destino_id !== destinoId || !e.place_id || e.preco_min_centavos == null || !e.preco_fonte || !e.preco_fonte_url) continue;
+    r[e.place_id] = { min: e.preco_min_centavos, max: e.preco_max_centavos ?? e.preco_min_centavos, selo: 'referencia', fonte: `${e.preco_fonte}, ${e.preco_data ?? 'sem data'}`, url: e.preco_fonte_url, moeda: 'BRL' };
+  }
+  return r;
+}

@@ -35,7 +35,7 @@ export interface Categoria {
   aviso?: string;
 }
 
-export interface PrecoLugar { min: number; max: number; selo: 'referencia' | 'estimativa'; fonte: string; url: string; reserva?: boolean }
+export interface PrecoLugar { min: number; max: number; selo: 'referencia' | 'estimativa'; fonte: string; url: string; reserva?: boolean; /** Padrão EUR (curadoria de Paris); experiências do Brasil vêm em BRL (D-090). */ moeda?: 'EUR' | 'BRL' }
 export interface Precos {
   lugares: Record<string, PrecoLugar>;
   transporte: Record<string, { valor: number; selo: 'referencia'; fonte: string; url: string }>;
@@ -81,11 +81,13 @@ export function calcular(e: Entrada): Orcamento {
 
   // Lazer (ingressos × pessoas)
   const lazer: Linha[] = [];
+  // Quem anotou "comida, passeios e transporte por dia" já tem os passeios no total: não somar de novo (D-090).
+  const diaADia = e.gastos.some((g) => /passeios/i.test(g.descricao));
   for (const it of e.itens) {
     if (it.lugar.categoria === 'gastronomia' && (it.lugar as Lugar & { refeicao?: boolean }).refeicao) continue;
     const p = P[it.lugar.id];
     if ((it.lugar as Lugar & { ingresso?: boolean }).ingresso === false && !p) continue; // rua, feira, loja: sem ingresso
-    if (p) lazer.push({ texto: `${it.lugar.nome} (${pessoas} ${pessoas === 1 ? 'pessoa' : 'pessoas'})`, min: p.min * pessoas, max: p.max * pessoas, moeda: 'EUR', selo: p.selo, fonte: p.fonte, url: p.url });
+    if (p) lazer.push({ texto: `${it.lugar.nome} (${pessoas} ${pessoas === 1 ? 'pessoa' : 'pessoas'})`, min: p.min * pessoas, max: p.max * pessoas, moeda: p.moeda ?? 'EUR', selo: p.selo, fonte: diaADia ? `${p.fonte} · já no dia a dia que você anotou` : p.fonte, url: p.url, ...(diaADia ? { semPreco: true } : {}) });
     else if (it.lugar.custo === 0) lazer.push({ texto: `${it.lugar.nome}`, min: 0, max: 0, moeda: 'EUR', selo: 'referencia', fonte: 'Entrada gratuita' });
     else lazer.push({ texto: `${it.lugar.nome}`, min: 0, max: 0, moeda: 'EUR', selo: 'estimativa', semPreco: true, fonte: 'Preço não confirmado' });
   }
