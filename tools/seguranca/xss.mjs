@@ -16,7 +16,7 @@ const aval = (await r.json())?.[0];
 const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
 const p = await (await b.newContext()).newPage();
 let alerta = false; p.on('dialog', (d) => { alerta = true; void d.dismiss(); });
-await p.goto(APP); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
+await p.goto(APP + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
 await p.goto(`${APP}#/lugar/${LUGAR}`); await p.waitForTimeout(6000);
 const rodou = await p.evaluate(() => window.__xss === 1).catch(async () => p.evaluate('window.__xss === 1'));
 const comoTexto = (await p.locator('main').innerText()).includes('<script>window.__xss=1</script>');
