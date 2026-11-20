@@ -4,7 +4,7 @@ import { apagarViagem } from './apagar.mjs';
 const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
-const p = await (await b.newContext({ viewport: { width: 390, height: 1600 } })).newPage();
+const p = await (await b.newContext({ viewport: { width: 390, height: 1600 } })).newPage(); p.on('dialog', (d) => void d.accept()); // confirmações (ex.: datas que se cruzam)
 p.on('pageerror', (e) => erros.push(e.message));
 await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(process.env.E2E_SENHA); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);

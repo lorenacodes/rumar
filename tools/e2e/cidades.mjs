@@ -12,7 +12,7 @@ mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const ctx = await b.newContext({ viewport: { width: 360, height: 780 } });
-const p = await ctx.newPage();
+const p = await ctx.newPage(); p.on('dialog', (d) => void d.accept()); // confirmações (ex.: datas que se cruzam)
 const erros = [];
 p.on('console', (m) => m.type() === 'error' && !/tiles|glyph|sprite|Failed to load resource|wikimedia/.test(m.text()) && erros.push(m.text().slice(0, 160)));
 p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${r.status()} ${r.request().method()} ${r.url().split('?')[0].split('.co')[1]}`));
@@ -42,7 +42,7 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   const posts = await p.locator('article.postal').count();
   const semColeta = /Ainda não coletamos/.test(await texto());
   if (!semColeta) confere(`${cidade}: feed com lugares (${posts})`, posts > 0);
-  if (!semColeta) { await p.getByRole('button', { name: 'Lista e filtros' }).click(); await p.waitForTimeout(3000); }
+  if (!semColeta) { await p.getByRole('button', { name: 'Ver em lista' }).click(); await p.waitForTimeout(3000); }
   let t = await texto();
   const total = Number(t.match(/O que já temos em [^:]+: (\d+) lugares/)?.[1] ?? 0);
   confere(`${cidade}: cobertura com ${total} lugares e aviso de parcial`, total > 0 && /cobertura parcial/.test(t));
@@ -60,11 +60,12 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.locator('#busca-lugar').fill('');
   // Preço
   await p.getByRole('tab', { name: /^Tudo/ }).click(); await p.waitForTimeout(1500);
-  await p.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(2000);
+  const filtroGratis = async () => { await p.getByRole('button', { name: /^Filtros/ }).click(); const d = p.getByRole('dialog', { name: 'Filtros' }); await d.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(2000); await d.getByRole('button', { name: /^Ver / }).click(); await p.waitForTimeout(500); };
+  await filtroGratis();
   t = await texto();
   const gratis = await p.locator('main ul li').count();
   confere(`${cidade}: filtro de preço explica quem fica de fora (${gratis} grátis)`, /continuam no app/.test(t));
-  await p.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(1500);
+  await filtroGratis();
   // Mapa
   await p.getByRole('button', { name: 'Ver no mapa', exact: true }).click(); await p.waitForTimeout(4500);
   const marcadores = await p.locator('.maplibregl-marker').count();

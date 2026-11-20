@@ -9,7 +9,7 @@ import { apagarViagem } from './apagar.mjs';
 const OUT = 'tools/e2e/out/comida'; mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
-const p = await (await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })).newPage();
+const p = await (await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })).newPage(); p.on('dialog', (d) => void d.accept()); // confirmações (ex.: datas que se cruzam)
 const erros = [];
 const confere = (r, ok) => { console.log(`   ${ok ? 'ok ' : 'X  '} ${r}`); if (!ok) erros.push(r); };
 p.on('pageerror', (e) => erros.push(`JS: ${e.message.slice(0, 160)}`));

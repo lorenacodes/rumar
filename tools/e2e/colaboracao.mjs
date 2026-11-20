@@ -14,7 +14,7 @@ const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypa
 const erros = [];
 async function pessoa(nome, email) {
   const ctx = await b.newContext({ viewport: { width: 360, height: 780 } });
-  const p = await ctx.newPage();
+  const p = await ctx.newPage(); p.on('dialog', (d) => void d.accept()); // confirmações (ex.: datas que se cruzam)
   p.on('console', (m) => m.type() === 'error' && !/tiles|glyph|sprite|Failed to load resource: net::ERR/.test(m.text()) && erros.push(`${nome}: ${m.text().slice(0, 160)}`));
   p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${nome}: ${r.status()} ${r.request().method()} ${r.url().split('?')[0].split('.co')[1]}`));
   await p.goto(URL);
