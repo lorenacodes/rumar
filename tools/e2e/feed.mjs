@@ -5,6 +5,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { apagarViagem } from './apagar.mjs';
 const OUT = process.env.E2E_OUT ?? 'tools/e2e/out/feed';
 mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
@@ -71,6 +72,13 @@ console.log('— Com conta (tem viagem para o Rio)');
 p = await pagina();
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+// Prepara (e apaga no fim) uma viagem futura para o Rio, com a sessão da própria página.
+const rioId = await p.evaluate(async () => {
+  const k = Object.keys(localStorage).find((x) => x.startsWith('sb-') && x.endsWith('-auth-token'));
+  const s = JSON.parse(localStorage.getItem(k));
+  const r = await fetch(`https://${k.slice(3, -11)}.supabase.co/rest/v1/trips`, { method: 'POST', headers: { apikey: 'sb_publishable_d6lqjjWeuf81otJOT2xKFA_eWPaY0oG', Authorization: `Bearer ${s.access_token}`, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify({ user_id: s.user.id, destino: 'Rio de Janeiro', destino_id: 'br-3304557', data_ida: '2027-03-10', noites: 3, viajantes: 1 }) });
+  return (await r.json())[0]?.id;
+});
 await p.goto(URL + '#/descobrir?d=br-3304557'); await p.waitForTimeout(5000);
 confere('menu com 4 abas, sem Social', (await p.locator('nav[aria-label="Abas"] button').allInnerTexts()).join('|') === 'Início|Descobrir|Viagens|Perfil');
 confere('motivos pelo jeito de viajar', (await p.locator('.postal-verso').getByText(/^Combina: /).count()) > 0);
@@ -79,6 +87,7 @@ await p.screenshot({ path: `${OUT}/05-feed-com-conta.png` });
 await p.getByRole('button', { name: /No roteiro/ }).first().click(); await p.waitForTimeout(2000);
 confere('"No roteiro" abre o lugar com a viagem escolhida', /viagem=/.test(p.url()) && (await p.getByText('Adicionar à viagem').count()) > 0);
 
+await apagarViagem(p, rioId);
 console.log('— Amigos dentro do Perfil');
 await p.goto(URL + '#/perfil'); await p.waitForTimeout(3000);
 const linhaAmigos = p.getByRole('button', { name: /^Amigos/ });

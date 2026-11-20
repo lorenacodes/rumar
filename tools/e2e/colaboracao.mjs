@@ -14,7 +14,7 @@ const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypa
 const erros = [];
 async function pessoa(nome, email) {
   const ctx = await b.newContext({ viewport: { width: 360, height: 780 } });
-  const p = await ctx.newPage(); p.on('dialog', (d) => void d.accept()); // confirmações (ex.: datas que se cruzam)
+  const p = await ctx.newPage(); p.on('dialog', (d) => void d.accept().catch(() => {})); // confirmações (ex.: datas que se cruzam)
   p.on('console', (m) => m.type() === 'error' && !/tiles|glyph|sprite|Failed to load resource: net::ERR/.test(m.text()) && erros.push(`${nome}: ${m.text().slice(0, 160)}`));
   p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${nome}: ${r.status()} ${r.request().method()} ${r.url().split('?')[0].split('.co')[1]}`));
   await p.goto(URL);
@@ -82,7 +82,7 @@ await bia.goto(URL + '#/viagens'); await bia.waitForTimeout(2500); await foto(bi
 while (await bia.getByRole('button', { name: 'Entrar na viagem' }).count()) { await bia.getByRole('button', { name: 'Entrar na viagem' }).first().click(); await bia.waitForTimeout(2000); }
 await bia.goto(URL + `#/viagem/${idViagem}?aba=grupo`); await bia.waitForTimeout(3500);
 await bia.getByRole('button', { name: /Refazer roteiro para o grupo/ }).click({ trial: true });
-bia.once('dialog', (d) => d.accept()); await bia.getByRole('button', { name: /Refazer roteiro para o grupo/ }).click(); await bia.waitForTimeout(6000);
+bia.once('dialog', (d) => void d.accept().catch(() => {})); await bia.getByRole('button', { name: /Refazer roteiro para o grupo/ }).click(); await bia.waitForTimeout(6000);
 await bia.goto(URL + `#/viagem/${idViagem}?aba=roteiro`); await bia.waitForTimeout(3500); await foto(bia, 'bia-roteiro-grupo');
 console.log('    bia vê:', (await texto(bia, 900)).match(/Agrada a[^.]*\./g)?.slice(0, 3).join(' | '));
 await bia.getByRole('tab', { name: /Dia 2/ }).click(); await bia.waitForTimeout(500);
