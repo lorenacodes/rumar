@@ -21,6 +21,8 @@
 //   { acao: 'fotos_limpar', ids }                              → tira fotos achadas que não passam na regra (volta para a busca)
 //   { acao: 'sem_bairro', destino_id, limite }                 → lugares sem bairro (id, lat, lon)
 //   { acao: 'bairro_gravar', itens: [{ id, bairro }] }         → bairro pelo contorno oficial do mapa (só onde estava vazio)
+//   { acao: 'descobertas_pendentes', limite }                  → descobertas da pesquisa ainda sem lugar no mapa
+//   { acao: 'descoberta_localizar', id, lat, lon }             → vira lugar (fonte "pesquisa") com a fonte da descoberta
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -244,6 +246,31 @@ Deno.serve(async (req) => {
       }
     }
     return json({ ok });
+  }
+  if (p.acao === 'descobertas_pendentes') {
+    const { data, error } = await db.from('descobertas').select('id, destino_id, nome, categoria, bairro, endereco').eq('situacao', 'a_localizar')
+      .order('id').limit(Math.min(Number(p.limite) || 200, 1000));
+    if (error) return json({ erro: error.message }, 400);
+    const ids = [...new Set((data ?? []).map((d) => d.destino_id.replace(/^(br-\d{7}).*/, '$1')))];
+    const { data: dest } = ids.length ? await db.from('destinos').select('id, nome, regiao, lat, lon, raio_km').in('id', ids) : { data: [] };
+    return json({ itens: data ?? [], destinos: dest ?? [] });
+  }
+  if (p.acao === 'descoberta_localizar') {
+    const lat = Number(p.lat); const lon = Number(p.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return json({ erro: 'coordenada' }, 400);
+    const { data: d } = await db.from('descobertas').select('*').eq('id', Number(p.id)).eq('situacao', 'a_localizar').maybeSingle();
+    if (!d || !CATEGORIAS.has(d.categoria)) return json({ erro: 'descoberta' }, 400);
+    const id = `pesq-${d.id}`;
+    const busca = String(d.nome).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const { error } = await db.from('lugares').upsert({
+      id, destino_id: d.destino_id, fonte: 'pesquisa', fonte_id: String(d.id), nome: d.nome, busca, categoria: d.categoria, tipo: 'pesquisa',
+      lat, lon, bairro: d.bairro, endereco: d.endereco, destaque: d.destaque, popularidade: d.popularidade, confiabilidade: 'parcial',
+      pesquisado_em: new Date().toISOString(), ativo: true, atualizado_em: new Date().toISOString(),
+    }, { onConflict: 'id' });
+    if (error) return json({ erro: error.message }, 400);
+    await db.from('lugar_fontes').upsert({ lugar_id: id, url: d.fonte_url, tipo: d.fonte_tipo }, { onConflict: 'lugar_id,url' });
+    await db.from('descobertas').update({ situacao: 'localizado', lugar_id: id }).eq('id', d.id);
+    return json({ ok: true, id });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });

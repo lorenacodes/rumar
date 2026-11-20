@@ -2,9 +2,9 @@ import { NOME_COZINHA, ORDEM_COZINHAS, type Cozinha } from '../../lib/comida';
 import { NOME_FAIXA, type Faixa } from '../../lib/nivel';
 
 export type Dieta = 'vegetariano' | 'vegano' | 'sem_gluten';
-export interface EstadoFiltros { faixa: Faixa | null; gratis: boolean; cozinhas: Cozinha[]; dieta: Dieta[]; bemAvaliados: boolean; min: string; max: string }
+export interface EstadoFiltros { faixa: Faixa | null; gratis: boolean; cozinhas: Cozinha[]; dieta: Dieta[]; bemAvaliados: boolean; escondidos?: boolean; min: string; max: string }
 export const FILTROS_VAZIOS: EstadoFiltros = { faixa: null, gratis: false, cozinhas: [], dieta: [], bemAvaliados: false, min: '', max: '' };
-export const contarFiltros = (f: EstadoFiltros) => (f.faixa ? 1 : 0) + (f.gratis ? 1 : 0) + f.cozinhas.length + f.dieta.length + (f.bemAvaliados ? 1 : 0) + (f.min || f.max ? 1 : 0);
+export const contarFiltros = (f: EstadoFiltros) => (f.faixa ? 1 : 0) + (f.gratis ? 1 : 0) + f.cozinhas.length + f.dieta.length + (f.bemAvaliados ? 1 : 0) + (f.escondidos ? 1 : 0) + (f.min || f.max ? 1 : 0);
 const NOME_DIETA: Record<Dieta, string> = { vegetariano: 'Vegetariano', vegano: 'Vegano', sem_gluten: 'Sem glúten' };
 
 function Chip({ ativo, aoTocar, children }: { ativo: boolean; aoTocar: () => void; children: string }) {
@@ -31,6 +31,7 @@ export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total }: { f:
         {(['especial', 'em-conta'] as Faixa[]).map((x) => <Chip key={x} ativo={f.faixa === x} aoTocar={() => mudar({ ...f, faixa: f.faixa === x ? null : x })}>{NOME_FAIXA[x]}</Chip>)}
         <Chip ativo={f.gratis} aoTocar={() => mudar({ ...f, gratis: !f.gratis })}>Grátis</Chip>
         <Chip ativo={f.bemAvaliados} aoTocar={() => mudar({ ...f, bemAvaliados: !f.bemAvaliados })}>Nota 4 ou mais</Chip>
+        <Chip ativo={!!f.escondidos} aoTocar={() => mudar({ ...f, escondidos: !f.escondidos })}>Pouco conhecidos</Chip>
       </div>
       {comida ? (
         <>

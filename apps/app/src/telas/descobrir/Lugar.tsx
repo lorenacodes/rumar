@@ -8,7 +8,7 @@ import type { Precos } from '../../lib/orcamento';
 import { adicionarItem, listarViagens, type Viagem } from '../../lib/viagens';
 
 import { CATEGORIAS, DESTINO_CURADORIA, enderecoCurto, horarioLegivel, lugarPorId, OSM_ATUALIZADO_EM } from '../../lib/catalogo';
-import { basePorId, CATEGORIAS_LUGAR, destinoPorId, lugaresPorIds, nomeTipo } from '../../lib/lugares';
+import { basePorId, CATEGORIAS_LUGAR, destinoPorId, fontesDoLugar, lugaresPorIds, nomeTipo, SELO_POPULARIDADE } from '../../lib/lugares';
 import { dinheiro, paisPorCodigo } from '../../lib/moedas';
 import { linkSeguro } from '../../lib/seguro';
 import { linkWhatsApp } from '../../lib/whatsapp';
@@ -160,6 +160,8 @@ function LugarDaBase() {
   const l = lugarPorId(id)!;
   const { salvos, alternarSalvo } = useViajante();
   const salvo = salvos.includes(id);
+  const [fontes, setFontes] = React.useState<{ url: string; titulo: string | null; tipo: string }[]>([]);
+  React.useEffect(() => { if (b.popularidade || b.destaque || b.fonte === 'pesquisa') void fontesDoLugar(id).then(setFontes); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
   const linha = (rotulo: string, valor: React.ReactNode) => (<><dt style={{ fontWeight: 600 }}>{rotulo}</dt><dd style={{ margin: 0 }}>{valor}</dd></>);
   const preco = b.preco_min_centavos != null && b.preco_moeda
     ? `${dinheiro(b.preco_min_centavos, b.preco_moeda)}${b.preco_max_centavos && b.preco_max_centavos !== b.preco_min_centavos ? ` a ${dinheiro(b.preco_max_centavos, b.preco_moeda)}` : ''}${b.preco_fonte ? ` (${b.preco_fonte})` : ''}`
@@ -175,8 +177,14 @@ function LugarDaBase() {
       <div style={{ padding: '14px 20px 24px' }}>
         <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS_LUGAR[b.categoria].nome} · {nomeTipo(b.tipo)}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{b.nome}</h1>
+        {b.popularidade && SELO_POPULARIDADE[b.popularidade] ? (
+          <span style={{ display: 'inline-block', marginTop: '8px', padding: '4px 10px', borderRadius: '999px', background: 'var(--fundo-escuro)', color: '#fff', font: "700 12px 'Open Sans'", letterSpacing: '0.02em' }}>{SELO_POPULARIDADE[b.popularidade]}</span>
+        ) : null}
+        {b.destaque ? <p style={{ margin: '8px 0 0', fontSize: '16px', lineHeight: '23px' }}>{b.destaque}</p> : null}
+        {b.historia ? <p style={{ margin: '6px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)' }}>{b.historia}</p> : null}
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
-          {b.endereco ?? b.bairro ? linha('Onde', b.endereco ?? b.bairro) : null}
+          {b.endereco ?? b.bairro ? linha('Onde', [b.endereco, b.endereco && b.bairro && !b.endereco.includes(b.bairro) ? b.bairro : null].filter(Boolean).join(' · ') || b.bairro) : null}
+          {b.melhor_horario ? linha('Melhor hora', b.melhor_horario) : null}
           {b.cozinha ? linha('Cozinha', b.cozinha) : null}
           {b.dieta_opcoes?.length ? linha('Opções', b.dieta_opcoes.map((o) => ({ vegetariano: 'vegetariana', vegano: 'vegana', so_vegetariano: 'só vegetariano', so_vegano: 'só vegano', sem_gluten: 'sem glúten' } as Record<string, string>)[o] ?? o).join(' · ')) : null}
           {b.estrelas ? linha('Categoria', `${b.estrelas} estrelas`) : null}
@@ -193,7 +201,8 @@ function LugarDaBase() {
         <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
         {linkSeguro(b.site) ? <a href={linkSeguro(b.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
         <Info style={{ marginTop: '14px' }}>
-          Dados: <a href={`https://www.openstreetmap.org/${b.fonte_id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a> (© colaboradores, ODbL){b.dados_de ? `, ${b.dados_de.split('-').reverse().join('/')}` : ''}. Mapa colaborativo{b.verificado ? ', conferido pela curadoria do Bo Vair' : ''}: confira horário e preço antes de ir. Estrelas de hotel são a classificação oficial, não nota de clientes.
+          {fontes.length ? <>Pesquisa: {fontes.map((f, i) => <React.Fragment key={f.url}>{i ? ' · ' : ''}<a href={f.url} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{f.titulo ?? new URL(f.url).hostname.replace(/^www\./, '')}</a></React.Fragment>)}. </> : null}
+          {b.fonte === 'pesquisa' ? 'Lugar achado pela pesquisa do Bo Vair; localização pelo endereço no OpenStreetMap. Confira antes de ir.' : <>Dados: <a href={`https://www.openstreetmap.org/${b.fonte_id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a> (© colaboradores, ODbL){b.dados_de ? `, ${b.dados_de.split('-').reverse().join('/')}` : ''}. Mapa colaborativo{b.verificado ? ', conferido pela curadoria do Bo Vair' : ''}: confira horário e preço antes de ir. Estrelas de hotel são a classificação oficial, não nota de clientes.</>}
         </Info>
         <button type="button" className="r-btn" onClick={() => navegar(`/descobrir?d=${b.destino_id}`)} style={{ marginTop: '4px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Ver mais lugares desta cidade</button>
       </div>

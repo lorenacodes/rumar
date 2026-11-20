@@ -35,8 +35,13 @@ export interface LugarBase {
   curioso?: string | null;
   /** Opções de dieta informadas no mapa: vegetariano, vegano, so_vegetariano, so_vegano, sem_gluten (D-042). */
   dieta_opcoes?: string[] | null;
+  /** Pesquisa (Fase 1): quão conhecido é, o que torna especial, história e melhor hora. */
+  popularidade?: 'muito_conhecido' | 'regional' | 'pouco_divulgado' | 'descoberta_local' | null;
+  destaque?: string | null;
+  historia?: string | null;
+  melhor_horario?: string | null;
   destino_id: string;
-  fonte: 'osm' | 'curadoria';
+  fonte: 'osm' | 'curadoria' | 'pesquisa';
   fonte_id: string;
   nome: string;
   categoria: CategoriaLugar;
@@ -150,7 +155,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso, dieta_opcoes';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso, dieta_opcoes, popularidade, destaque, historia, melhor_horario';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
@@ -168,6 +173,8 @@ export interface Filtros {
   dieta?: ('vegetariano' | 'vegano' | 'sem_gluten')[];
   faixa?: Faixa | null;
   bemAvaliados?: boolean;
+  /** Só os que a pesquisa marcou como pouco divulgados ou descoberta local. */
+  escondidos?: boolean;
 }
 
 /** Lugares com nota média 4+ (das avaliações de quem foi). */
@@ -189,6 +196,7 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
   if (f.precoMax != null) q = q.lte('preco_min_centavos', f.precoMax);
   const termos = [...new Set((f.cozinhas ?? []).flatMap((c) => TERMOS_COZINHA[c] ?? []))];
   if (termos.length) q = q.or(termos.map((t) => `cozinha.ilike.%${t.replace(/[,()%]/g, '')}%`).join(','));
+  if (f.escondidos) q = q.in('popularidade', ['pouco_divulgado', 'descoberta_local']);
   if (f.dieta?.length) q = q.overlaps('dieta_opcoes', f.dieta.flatMap((d) => (d === 'sem_gluten' ? ['sem_gluten'] : [d, `so_${d}`])));
   let notas: Map<string, { media: number; quantidade: number }> | null = null;
   if (f.bemAvaliados) {
@@ -404,4 +412,13 @@ export async function explorarCidades(f: { uf?: string | null; tipo?: string | n
   if (!f.uf && !f.tipo && !f.termo?.trim()) q = q.gte('peso', 2);
   const { data } = await q.order('peso', { ascending: false }).order('nome').limit(60);
   return (data ?? []) as Destino[];
+}
+
+/** Selo de popularidade: só o que ajuda a decidir (o "muito conhecido" não precisa de selo). */
+export const SELO_POPULARIDADE: Record<string, string> = { regional: 'Conhecido na cidade', pouco_divulgado: 'Pouco divulgado', descoberta_local: 'Descoberta local' };
+
+/** De onde veio a pesquisa de um lugar (várias fontes). */
+export async function fontesDoLugar(id: string): Promise<{ url: string; titulo: string | null; tipo: string }[]> {
+  const { data } = await supabase.from('lugar_fontes').select('url, titulo, tipo').eq('lugar_id', id).order('consultado_em', { ascending: false }).limit(6);
+  return (data ?? []) as { url: string; titulo: string | null; tipo: string }[];
 }

@@ -145,7 +145,7 @@ export function Descobrir() {
         tot = novos.length;
       } else {
         const cat = filtro === 'todos' || filtro === 'para-voce' ? null : filtro;
-        const r = await buscarLugares({ destino: destino.id, categoria: cat, termo, precoMin: centavos(min), precoMax: centavos(max), soGratis: gratis, pagina, cozinhas: fil.cozinhas, dieta: fil.dieta, faixa: fil.faixa, bemAvaliados: fil.bemAvaliados, porPagina: fil.faixa ? 80 : 30 });
+        const r = await buscarLugares({ destino: destino.id, categoria: cat, termo, precoMin: centavos(min), precoMax: centavos(max), soGratis: gratis, pagina, cozinhas: fil.cozinhas, dieta: fil.dieta, faixa: fil.faixa, bemAvaliados: fil.bemAvaliados, escondidos: fil.escondidos, porPagina: fil.faixa ? 80 : 30 });
         const daBase = r.lugares.filter((b) => !OSM_DA_CURADORIA.has(`https://www.openstreetmap.org/${b.fonte_id}`)).map(deBase);
         // Paris: os lugares da curadoria (com preço conferido) entram junto, filtrados igual.
         const cur = curadoria && pagina === 0 ? LUGARES.filter((l) => {
