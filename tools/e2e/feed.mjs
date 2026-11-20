@@ -39,7 +39,7 @@ await p.getByRole('list', { name: 'Lugares curiosos' }).scrollIntoViewIfNeeded()
 await p.goto(URL + '#/descobrir'); await p.locator('article.postal').first().waitFor({ timeout: 20000 }).catch(() => {}); await p.waitForTimeout(1000);
 await p.getByRole('group', { name: 'Cidades' }).getByRole('button', { name: 'Salvador', exact: true }).click(); await p.waitForTimeout(3000);
 confere('chip de cidade abre a cidade', /d=br-2927408/.test(p.url()) && (await p.getByRole('heading', { name: /Salvador/ }).count()) === 1);
-await p.getByRole('button', { name: '← Todas as cidades' }).click(); await p.waitForTimeout(2500);
+await p.getByRole('button', { name: /Todas as cidades/ }).click(); await p.waitForTimeout(2500);
 confere('"Todas as cidades" volta ao mural geral', !/d=/.test(p.url()) && (await p.getByRole('heading', { name: 'Lugares para conhecer.' }).count()) === 1);
 await p.goto(URL + '#/descobrir?d=br-3304557'); await p.getByRole('heading', { name: /O que viver em Rio/ }).waitFor({ timeout: 20000 }); await p.waitForTimeout(4000);
 const posts = p.locator('article.postal');
