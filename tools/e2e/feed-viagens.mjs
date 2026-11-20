@@ -7,7 +7,7 @@ const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? 'âœ“' : 'â
 const entrar = async (email) => {
   const p = await (await b.newContext({ viewport: { width: 390, height: 1400 } })).newPage();
   p.on('pageerror', (e) => erros.push(e.message)); p.on('dialog', (d) => d.accept());
-  await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
   await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   return p;
 };

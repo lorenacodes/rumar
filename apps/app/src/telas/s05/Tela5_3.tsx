@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { criarConta, emailValido, regrasSenha, senhaValida, sugerirEmail } from '../../conta/servico';
+import { criarConta, emailValido, entrarComGoogle, googleDisponivel, regrasSenha, senhaValida, sugerirEmail } from '../../conta/servico';
+import { lerData, maiorDe18, mascararData } from '../../lib/idade';
 import { useFluxoConta } from '../../conta/fluxo';
 import { ANA, useDemo, useValorInicial } from '../../dev/demo';
 import { usePlano } from '../../state/plano';
@@ -46,6 +47,26 @@ export function Tela5_3() {
   const navegar = useNavigate();
   const demo = useDemo();
   const maior18 = usePlano((p) => p.maior18);
+  const atualizarPlano = usePlano((p) => p.atualizar);
+  // A idade é pedida aqui, só na hora de criar a conta (antes a pessoa navega à vontade).
+  const [nascimento, setNascimento] = useState('');
+  const [google, setGoogle] = useState(false);
+  useEffect(() => { void googleDisponivel().then(setGoogle); }, []);
+  /** Confere a idade (se ainda não foi conferida). false = parou (erro ou menor de 18). */
+  const conferirIdade = (): boolean => {
+    if (maior18) return true;
+    const d = lerData(nascimento);
+    if (!d) { setErro('Confira a data de nascimento.'); return false; }
+    const maior = maiorDe18(d, new Date());
+    atualizarPlano({ maior18: maior });
+    if (!maior) { navegar('/menor-de-18', { replace: true }); return false; }
+    return true;
+  };
+  const comGoogle = async () => {
+    if (!(termos && privacidade)) { setErro('Marque que aceita os Termos e a Política de Privacidade.'); return; }
+    if (!conferirIdade()) return;
+    if (!(await entrarComGoogle())) setErro('Não deu para abrir o Google agora. Tente de novo.');
+  };
   const mensal = usePlano((p) => p.mensal);
   const guardadoPlano = usePlano((p) => p.guardado);
   const setFluxo = useFluxoConta((s) => s.set);
@@ -63,12 +84,12 @@ export function Tela5_3() {
   const pronto = nome.trim() && emailValido(email) && senhaValida(senha) && termos && privacidade;
 
   const enviar = async () => {
-    if (!maior18) return navegar('/', { replace: true }); // idade precisa ser conferida antes (1.1)
     if (!pronto) {
       // Diz exatamente o que falta (um item por vez).
       setErro(!nome.trim() ? 'Escreva seu nome.' : !emailValido(email) ? 'Confira o e-mail.' : !senhaValida(senha) ? 'A senha precisa ter pelo menos 8 caracteres, com uma letra e um número.' : 'Marque que aceita os Termos e a Política de Privacidade.');
       return;
     }
+    if (!conferirIdade()) return;
     setEnviando(true);
     const r = await criarConta({ nome, email, senha, novidades });
     setEnviando(false);
@@ -115,6 +136,12 @@ export function Tela5_3() {
               <span style={{ color: regras.letraENumero ? 'var(--verde)' : 'var(--texto-sec)' }}>{regras.letraENumero ? <span className="visualmente-oculto">Atendido: </span> : null}Uma letra e um número</span>
             </div>
           ) : null}
+          {!maior18 && !demo ? (
+            <>
+              <Campo id="nascimento" rotulo="Data de nascimento" inputMode="numeric" autoComplete="bday" placeholder="dd/mm/aaaa" valor={nascimento} aoMudar={(v) => setNascimento(mascararData(v))} aria-describedby="nascimento-ajuda" />
+              <div id="nascimento-ajuda" style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)', marginTop: '4px' }}>O Bo Vair é para 18+. Guardamos só isso, não a data.</div>
+            </>
+          ) : null}
           <div style={{ marginTop: '8px' }}>
             {demo ? (
               <>
@@ -154,6 +181,13 @@ export function Tela5_3() {
           <BotaoPrincipal type="submit" disabled={enviando}>
             {enviando ? 'Criando sua conta…' : demo ? 'Criar conta e guardar ↗' : 'Criar conta ↗'}
           </BotaoPrincipal>
+          {google && !demo ? (
+            <button type="button" className="r-btn" onClick={() => void comGoogle()}
+              style={{ width: '100%', minHeight: '48px', marginTop: '8px', borderRadius: '24px', border: '1.5px solid var(--texto)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', font: "600 15px 'Open Sans'" }}>
+              <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+              Continuar com Google
+            </button>
+          ) : null}
         </Rodape>
       </form>
     </main>

@@ -31,6 +31,16 @@
       real (a LGPD exige um canal para pedidos sobre dados). Pode ser o próprio Gmail do item 1.1. Me passe o
       endereço (não é segredo) e eu coloco no app. **O app citava um Instagram "@bovair.app": ele é seu?** Se não
       for, foi bom ter tirado; se for, me avise que eu volto a mostrar.
+- [ ] **1.6 Entrar com o Google (grátis, ~10 min) — o que mais aumenta cadastros.** O botão "Continuar com Google"
+      já está pronto no app e aparece sozinho quando isto estiver ligado:
+      1. console.cloud.google.com → projeto "Bo Vair" → APIs e serviços → **Tela de consentimento OAuth** → Externo →
+         nome "Bo Vair", e-mail de suporte → salvar e **Publicar**.
+      2. **Credenciais** → Criar credenciais → **ID do cliente OAuth** → Aplicativo da Web → em "URIs de
+         redirecionamento autorizados" cole `https://iunrivtuhwaytmwclmui.supabase.co/auth/v1/callback` → Criar.
+      3. Copie o **ID do cliente** e a **chave secreta** e cole direto no Supabase → Authentication → Sign In /
+         Providers → **Google** → ligar → salvar (não cole no chat).
+      4. Supabase → Authentication → URL Configuration → Redirect URLs: confira que tem `com.bovair.app://auth`.
+      Me avise: eu testo no celular.
 - [ ] **1.4 Teste com o pessoal do trabalho** — guia e mensagem pronta em `docs/TESTADORES.md`. Faça depois do 1.1.
       Peça "relatório dos testadores" quando quiser ver os números (só contagens, sem dados pessoais).
 

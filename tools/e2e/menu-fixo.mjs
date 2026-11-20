@@ -4,7 +4,7 @@ const URL='http://localhost:8793/'; const b = await chromium.launch();
 const erros = [];
 for (const [w, h] of [[390, 844], [320, 568]]) {
 const p = await (await b.newContext({ viewport:{width:w,height:h} })).newPage();
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button',{name:/Continuar/}).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button',{name:/Continuar/}).click(); await p.waitForTimeout(1500);
 await p.goto(URL+'#/entrar'); await p.locator('#email').fill('e2e.bia@bovair.com.br'); await p.locator('#senha').fill(process.env.E2E_SENHA); await p.getByRole('button',{name:/^Entrar/}).click(); await p.waitForTimeout(4000);
 for (const r of ['#/inicio','#/descobrir','#/descobrir?ver=lugares','#/viagens','#/perfil','#/pessoa/eu','#/viagens/galera']) {
   await p.goto(URL+r); await p.waitForTimeout(4000);

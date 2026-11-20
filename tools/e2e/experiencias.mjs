@@ -6,7 +6,7 @@ const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: pro
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
 const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage();
 p.on('pageerror', (e) => erros.push(e.message));
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/descobrir?d=br-2611606'); await p.waitForTimeout(6000);
 const sec = p.getByRole('region', { name: 'Experiências' });
 confere('Descobrir de Recife mostra Experiências', await sec.isVisible().catch(() => false));

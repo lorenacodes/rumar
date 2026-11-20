@@ -6,7 +6,7 @@ const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: pro
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
 const p = await (await b.newContext({ viewport: { width: 390, height: 1200 } })).newPage();
 p.on('pageerror', (e) => erros.push(e.message));
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/viagens'); await p.waitForTimeout(3000);
 await p.getByRole('button', { name: /Recife/ }).first().click(); await p.waitForTimeout(4000);

@@ -5,7 +5,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
-import { CODIGO_DIGITOS, CODIGO_VALIDADE_MIN, DEEP_LINK, VERSAO_TEXTOS_LEGAIS } from '../config';
+import { CODIGO_DIGITOS, CODIGO_VALIDADE_MIN, DEEP_LINK, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, VERSAO_TEXTOS_LEGAIS } from '../config';
 import { useFluxoConta } from './fluxo';
 import { apagarTudoOffline } from '../lib/offline';
 import { supabase } from '../lib/supabase';
@@ -203,11 +203,11 @@ async function finalizarCadastroUmaVez(sessao: Session): Promise<Resultado<'meno
   // A data de nascimento nunca saiu do aparelho: só o resultado da tela 1.1.
   if (!plano.maior18) return { ok: false, motivo: 'menor' };
   const user = sessao.user;
-  const meta = user.user_metadata as { display_name?: string; novidades_email?: boolean };
+  const meta = user.user_metadata as { display_name?: string; full_name?: string; name?: string; novidades_email?: boolean };
 
   const perfil = await supabase.from('profiles').upsert({
     user_id: user.id,
-    display_name: meta.display_name ?? 'Viajante',
+    display_name: (meta.display_name ?? meta.full_name ?? meta.name ?? 'Viajante').slice(0, 80),
     origin_city: plano.cidade || null,
     origin: plano.origem,
     language: plano.idiomaApp,
@@ -455,5 +455,33 @@ export async function removerFoto(): Promise<boolean> {
   const apagou = await supabase.storage.from(PASTA_FOTOS).remove([caminhoFoto(u.user.id)]);
   if (apagou.error) return false;
   const { error } = await supabase.from('profiles').update({ photo_updated_at: null }).eq('user_id', u.user.id);
+  return !error;
+}
+
+/** O login com o Google está ligado no Supabase? (o botão só aparece quando está). */
+let google: Promise<boolean> | null = null;
+export function googleDisponivel(): Promise<boolean> {
+  google ??= fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_PUBLISHABLE_KEY } })
+    .then((r) => r.json()).then((d) => Boolean(d?.external?.google)).catch(() => false);
+  return google;
+}
+
+/** Entrar com o Google: no app abre o navegador e volta pelo deep link; na web volta para esta página com ?code=. */
+export async function entrarComGoogle(): Promise<boolean> {
+  const nativo = typeof window !== 'undefined' && (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.();
+  const volta = nativo ? DEEP_LINK : `${window.location.origin}${window.location.pathname}`;
+  const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: volta, skipBrowserRedirect: true } });
+  if (error || !data?.url) return false;
+  if (nativo) window.open(data.url, '_system'); else window.location.assign(data.url);
+  return true;
+}
+
+/** Volta do Google na web: troca o ?code= pela sessão e limpa o endereço. */
+export async function concluirRetornoWeb(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+  const code = new URLSearchParams(window.location.search).get('code');
+  if (!code) return false;
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.hash || '#/inicio'}`);
   return !error;
 }

@@ -5,7 +5,7 @@ const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: pro
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
 for (const largura of [320, 768]) {
   const p = await (await b.newContext({ viewport: { width: largura, height: 800 } })).newPage();
-  await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
   await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(process.env.E2E_SENHA); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   const telas = ['#/inicio', '#/descobrir', '#/descobrir?d=br-2611606', '#/viagens', '#/viagens/nova?d=br-2611606', '#/viagens/ja-fiz', '#/viagens/galera', '#/perfil', '#/perfil/fotos', '#/perfil/ajuda', '#/perfil/amigos'];
   for (const t of telas) {

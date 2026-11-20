@@ -5,7 +5,7 @@
 import { App as CapApp } from '@capacitor/app';
 
 import { supabase } from '../lib/supabase';
-import { carregarDaConta, garantirPerfil } from './servico';
+import { carregarDaConta, concluirRetornoWeb, garantirPerfil } from './servico';
 
 export function ouvirLinks(navegar: (rota: string) => void): () => void {
   const tratar = async (url: string) => {
@@ -25,6 +25,8 @@ export function ouvirLinks(navegar: (rota: string) => void): () => void {
     }
   };
   const ouvinte = CapApp.addListener('appUrlOpen', (e) => void tratar(e.url));
+  // Na web, a volta do Google chega como ?code= nesta mesma página.
+  void concluirRetornoWeb().then((ok) => { if (ok) navegar('/inicio'); });
   // Link de senha: o Supabase avisa com o evento PASSWORD_RECOVERY.
   const { data } = supabase.auth.onAuthStateChange((evento, sessao) => {
     if (evento === 'PASSWORD_RECOVERY') navegar('/conta/senha-nova');

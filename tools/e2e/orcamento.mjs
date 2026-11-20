@@ -29,8 +29,7 @@ const lugares = async () => {
   return todos;
 };
 
-await p.goto(URL);
-await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
 await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 

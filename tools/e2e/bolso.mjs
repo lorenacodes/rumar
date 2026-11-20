@@ -8,7 +8,7 @@ const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '�
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, permissions: ['clipboard-read', 'clipboard-write'] });
 const p = await ctx.newPage();
 p.on('pageerror', (e) => erros.push(e.message)); p.on('dialog', (d) => d.accept());
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/viagens'); await p.waitForTimeout(2500);
 confere('"Registrar viagem que já fiz" é um botão de verdade', (await p.getByRole('button', { name: 'Registrar viagem que já fiz' }).evaluate((e) => e.offsetHeight)) >= 48);

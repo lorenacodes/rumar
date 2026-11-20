@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
+import { lazy, Suspense, useEffect, type ComponentType } from 'react';
 import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, useParams, type RouteObject } from 'react-router-dom';
 import { TelaDeErro } from './ui/TelaDeErro';
 
@@ -8,7 +8,6 @@ import { App as CapApp } from '@capacitor/app';
 import { ouvirLinks } from './conta/deepLink';
 import { sessaoTerminouSozinha } from './conta/servico';
 import { supabase } from './lib/supabase';
-import { usePlano } from './state/plano';
 import { EmBreve } from './telas/provisorias';
 import { Tela1_1 } from './telas/s01/Tela1_1';
 import { Tela1_2 } from './telas/s01/Tela1_2';
@@ -99,12 +98,13 @@ function TelaPorId({ id: fixo }: { id?: string }) {
 /** Primeira tela: conferência de idade, ou o início se ela já foi feita. */
 function Comeco() {
   // Lido só na abertura: ao confirmar a idade, a própria 1.1 segue para a 1.3.
-  const [jaConferida] = useState(() => usePlano.getState().maior18);
-  return jaConferida ? <Navigate to="/inicio" replace /> : <Tela1_1 />;
+  // A idade agora é pedida só ao criar a conta (a pessoa navega antes). A 1.1 continua em /idade.
+  return <Navigate to="/inicio" replace />;
 }
 
 const filhos: RouteObject[] = [
   { path: '/', element: <Comeco /> },
+  { path: '/idade', element: <Tela1_1 /> },
   { path: '/menor-de-18', element: <Tela1_2 /> },
   { path: '/boas-vindas', element: <Tela1_3 /> },
   { path: '/seu-plano', element: <Tela1_4 /> },

@@ -5,7 +5,7 @@ const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: pro
 const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
 const ctx = await b.newContext({ viewport: { width: 390, height: 1200 } });
 const p = await ctx.newPage();
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 // Uma viagem da conta com roteiro (sem id fixo: dados de teste mudam).
 const alvo = await p.evaluate(async () => {

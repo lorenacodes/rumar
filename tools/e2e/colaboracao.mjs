@@ -17,8 +17,7 @@ async function pessoa(nome, email) {
   const p = await ctx.newPage(); p.on('dialog', (d) => void d.accept().catch(() => {})); // confirmações (ex.: datas que se cruzam)
   p.on('console', (m) => m.type() === 'error' && !/tiles|glyph|sprite|Failed to load resource: net::ERR/.test(m.text()) && erros.push(`${nome}: ${m.text().slice(0, 160)}`));
   p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${nome}: ${r.status()} ${r.request().method()} ${r.url().split('?')[0].split('.co')[1]}`));
-  await p.goto(URL);
-  await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click();
   await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
   await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   return p;

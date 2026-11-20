@@ -5,7 +5,7 @@ const OUT = 'tools/e2e/out/visual-novo'; mkdirSync(OUT, { recursive: true });
 const URL = 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const p = await (await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })).newPage();
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(3000);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(3000);
 const foto = async (n, rota, espera = 4000) => { if (rota) await p.goto(URL + rota); await p.waitForTimeout(espera); await p.screenshot({ path: `${OUT}/${n}.png` }); };
 await foto('01-inicio', '#/inicio');
 await foto('02-descobrir', '#/descobrir');

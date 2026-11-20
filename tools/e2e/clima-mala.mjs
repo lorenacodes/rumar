@@ -17,7 +17,7 @@ await ctx.route(/open-meteo\.com/, (rota) => {
 });
 const p = await ctx.newPage();
 p.on('pageerror', (e) => erros.push(e.message));
-await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('bovair.clima.') || k.startsWith('bovair.mala.')).forEach((k) => localStorage.removeItem(k)));
 await p.goto(URL + '#/inicio'); await p.waitForTimeout(6000);

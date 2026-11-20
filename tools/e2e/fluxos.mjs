@@ -9,7 +9,7 @@ async function pagina() {
   const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage(); p.on('dialog', (d) => void d.accept().catch(() => {})); // confirmações (ex.: datas que se cruzam)
   p.on('pageerror', (e) => erros.push(`JS: ${e.message.slice(0, 160)}`));
   p.on('response', (r) => r.url().includes('supabase.co') && r.status() >= 400 && !r.url().includes('/functions/') && erros.push(`${r.status()} ${r.url().split('?')[0].split('.co')[1]}`));
-  await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2500);
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2500);
   return p;
 }
 const ver = async (p, nome) => { await p.waitForTimeout(2000); await p.screenshot({ path: `${OUT}/${nome}.png` }); console.log(`\n== ${nome} [${p.url().split('#')[1]}]\n` + (await p.locator('main').first().innerText()).replace(/\n+/g, ' | ').slice(0, 600)); };

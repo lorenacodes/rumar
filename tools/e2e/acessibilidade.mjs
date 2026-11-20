@@ -24,7 +24,7 @@ async function auditar(nome) {
   console.log(`${nome}: ${r.length} tipos de problema`);
 }
 try {
-  await p.goto(URL); await auditar('1.1-idade');
+  await p.goto(URL + '#/idade'); await p.waitForTimeout(800); await auditar('1.1-idade');
   await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2500); await auditar('inicio');
   await p.goto(URL + '#/entrar'); await p.waitForTimeout(800); await auditar('entrar');
   await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })())); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4500);

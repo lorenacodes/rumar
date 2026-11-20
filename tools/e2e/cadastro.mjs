@@ -27,7 +27,7 @@ const passo = async (nome) => { await p.waitForTimeout(700); n++; await p.screen
 console.log('— 1. Abrir sem conta');
 await p.goto(URL); await passo('abrir-app');
 console.log('— 2. Idade → Início com destinos (onboarding curto, D-028)');
-await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2000); await passo('inicio-sem-conta');
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(2000); await passo('inicio-sem-conta');
 console.log('    vai direto ao Início:', p.url().endsWith('#/inicio'), '|', await texto(120));
 console.log('— 4. Preencher dados');
 await p.getByRole('button', { name: /^Criar conta/ }).first().click(); await passo('formulario');

@@ -7,7 +7,7 @@ const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? 'âœ“' : 'â
 for (const largura of [390, 320]) {
   const p = await (await b.newContext({ viewport: { width: largura, height: 900 } })).newPage();
   p.on('pageerror', (e) => erros.push(e.message));
-  await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
   await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.ana@bovair.com.br'); await p.locator('#senha').fill(SENHA); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   const futura = await p.evaluate(async () => {
     const k = Object.keys(localStorage).find((x) => x.startsWith('sb-') && x.endsWith('-auth-token'));

@@ -6,7 +6,7 @@ const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '�
 for (const largura of [390, 320]) {
   const p = await (await b.newContext({ viewport: { width: largura, height: 900 } })).newPage();
   p.on('pageerror', (e) => erros.push(e.message));
-  await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
   // Ficha de um lugar pesquisado (Sítio da Trindade: regional, com história e fonte).
   await p.goto(URL + '#/descobrir?d=br-2611606&modo=lista'); await p.waitForTimeout(4000);
   await p.locator('#busca-lugar').fill('Trindade'); await p.waitForTimeout(3000);

@@ -14,7 +14,7 @@ async function medir(p, nome, rota, antes) {
   const unicos = [...new Set(blocos)].filter((x, i, a) => !a.some((y, j) => j !== i && y.length > x.length && y.includes(x)));
   res.push([unicos.reduce((s2, x) => s2 + x.split(/\s+/).length, 0), nome, unicos]);
 }
-const nova = async () => { const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage(); await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500); return p; };
+const nova = async () => { const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage(); await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500); return p; };
 let p = await nova();
 for (const [n, r] of [['sem conta · início', '#/inicio'], ['sem conta · descobrir', '#/descobrir?d=br-3304557'], ['sem conta · viagens', '#/viagens'], ['sem conta · nova viagem', '#/viagens/nova?d=br-3304557'], ['sem conta · lugar', '#/lugar/osm-r4514671'], ['sem conta · lugar restaurante', '#/lugar/osm-n3832775913']]) await medir(p, n, r);
 p = await nova();

@@ -43,7 +43,7 @@ const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: pro
 async function sessao(email, largura) {
   const p = await (await b.newContext({ viewport: { width: largura, height: 1200 } })).newPage();
   p.on('pageerror', (e) => erros.push(`${email}: ${e.message}`));
-  await p.goto(URL); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1200);
   await p.goto(URL + '#/entrar'); await p.locator('#email').fill(email); await p.locator('#senha').fill(SENHA); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
   return p;
 }
