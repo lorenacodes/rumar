@@ -279,7 +279,7 @@ export async function pedirCidade(destino: string): Promise<boolean> {
 export function reporLugares(lista: LugarBase[]) { guardar(lista); }
 
 export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
-  const faltam = [...new Set(ids)].filter((id) => id.startsWith('osm-') && !bases.has(id));
+  const faltam = [...new Set(ids)].filter((id) => /^(osm|pesq|cnpj)-/.test(id) && !bases.has(id));
   for (let i = 0; i < faltam.length; i += 100) {
     // Inclui inativos: um lugar que saiu da fonte continua aparecendo na viagem de quem o escolheu.
     const { data } = await supabase.from('lugares').select(COLS).in('id', faltam.slice(i, i + 100));

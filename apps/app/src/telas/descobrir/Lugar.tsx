@@ -99,7 +99,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
 export function Lugar() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
-  const [carregado, setCarregado] = useState(!id.startsWith('osm-') || Boolean(basePorId(id)));
+  const [carregado, setCarregado] = useState(!/^(osm|pesq|cnpj)-/.test(id) || Boolean(basePorId(id)));
   useEffect(() => {
     if (!carregado) void lugaresPorIds([id]).then(() => setCarregado(true));
   }, [id, carregado]);

@@ -6,6 +6,8 @@ import { feedViagens, type PostViagem } from '../../lib/feed';
 import { tempoRelativo } from '../../lib/datas';
 import { textoMotivo } from '../../lib/viagens';
 import { fotosDasViagens } from '../../lib/fotosPessoa';
+import { inspiracao, type PasseioInspira } from '../../lib/inspiracao';
+import type { LugarBase } from '../../lib/lugares';
 import { useSessao } from '../../conta/servico';
 import { Abas } from '../../ui/abas';
 import { Avatar } from '../../ui/avatar';
@@ -48,10 +50,11 @@ export function FeedViagens() {
           <div style={{ marginTop: '20px' }}><BotaoPrincipal onClick={() => navegar('/entrar')}>Entre para ver</BotaoPrincipal></div>
         ) : posts === null ? <p aria-busy="true" style={{ marginTop: '20px' }}>Carregando…</p> : !posts.length ? (
           <div style={{ marginTop: '20px' }}>
-            <p style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>Ainda não tem viagem para mostrar.</p>
-            <p style={{ fontSize: '14px', margin: '4px 0 12px', color: 'var(--texto-sec)' }}>Mostre uma viagem ou chame amigos.</p>
-            <BotaoPrincipal onClick={() => navegar('/viagens/ja-fiz')}>Mostrar uma viagem que fiz</BotaoPrincipal>
-            <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} style={{ width: '100%', minHeight: '44px', marginTop: '6px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Encontrar amigos</button>
+            <p style={{ fontSize: '15px', margin: 0 }}>Seus amigos ainda não mostraram viagens.</p>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <button type="button" className="r-btn" onClick={() => navegar('/viagens/ja-fiz')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Mostrar uma viagem ›</button>
+              <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Encontrar amigos ›</button>
+            </div>
           </div>
         ) : (
           <div role="feed" aria-label="Viagens da galera" style={{ display: 'grid', gap: '22px', marginTop: '16px' }}>
@@ -88,6 +91,8 @@ export function FeedViagens() {
             {!fim ? <button type="button" className="r-btn" onClick={() => void mais()} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Ver mais viagens</button> : null}
           </div>
         )}
+        {/* Poucas viagens da galera: o feed se completa com passeios e lugares reais da base, com foto. */}
+        {posts !== null && posts.length < 6 ? <Inspiracao /> : null}
         <div style={{ height: '24px' }} />
       </div>
       <Abas ativa="inicio" />
@@ -108,5 +113,55 @@ function Carrossel({ fotos }: { fotos: { id: string; url: string }[] }) {
         {fotos.map((f, i) => <span key={f.id} style={{ width: '7px', height: '7px', borderRadius: '50%', background: i === atual ? '#fff' : 'rgba(255,255,255,.5)' }} />)}
       </span>
     </span>
+  );
+}
+
+const NOME_TIPO: Record<string, string> = { passeio: 'Passeio', museu: 'Museu', natureza: 'Natureza', cultura: 'Cultura', gastronomia: 'Comida', noite: 'Noite' };
+const FUNDO_TIPO: Record<string, string> = { passeio: 'var(--azul)', natureza: 'var(--verde)', gastronomia: 'var(--ambar)', cultura: 'var(--marinho)', museu: 'var(--marinho)', noite: 'var(--marinho)' };
+
+/** Para se inspirar: passeios que só existem em cada cidade (deslizando) e lugares em cartões grandes. */
+function Inspiracao() {
+  const navegar = useNavigate();
+  const [d, setD] = useState<{ passeios: PasseioInspira[]; lugares: (LugarBase & { cidade: string })[] } | null>(null);
+  useEffect(() => { void inspiracao().then(setD); }, []);
+  if (!d || (!d.passeios.length && !d.lugares.length)) return null;
+  return (
+    <section aria-label="Para se inspirar" style={{ marginTop: '28px' }}>
+      <h2 style={{ margin: 0, font: "600 20px/25px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Para se inspirar</h2>
+      {d.passeios.length ? (
+        <>
+          <p style={{ margin: '2px 0 0', fontSize: '14px', color: 'var(--texto-sec)' }}>Passeios que só existem lá.</p>
+          <ul aria-label="Passeios" style={{ listStyle: 'none', display: 'flex', alignItems: 'stretch', gap: '10px', overflowX: 'auto', margin: '10px -20px 0', padding: '0 0 4px', scrollSnapType: 'x mandatory', scrollPaddingLeft: '20px', scrollbarWidth: 'none' }}>
+            {d.passeios.map((p, i) => (
+              <li key={p.id} style={{ flex: 'none', width: '72%', scrollSnapAlign: 'start', marginLeft: i === 0 ? '20px' : 0, marginRight: i === d.passeios.length - 1 ? '20px' : 0 }}>
+                <button type="button" className="r-btn" onClick={() => navegar(`/descobrir?d=${p.destino_id}`)} aria-label={`${p.titulo}, ${p.cidade}`}
+                  style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', width: '100%', height: p.foto ? undefined : '100%', minHeight: '180px', aspectRatio: p.foto ? '4 / 5' : undefined, boxSizing: 'border-box', borderRadius: '18px', overflow: 'hidden', textAlign: 'left', background: FUNDO_TIPO[p.tipo] ?? 'var(--marinho)', color: '#fff' }}>
+                  {p.foto ? <img src={p.foto} alt="" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
+                  <span style={{ position: p.foto ? 'absolute' : 'relative', left: 0, right: 0, bottom: 0, padding: '14px', background: p.foto ? 'rgba(11,31,75,.82)' : 'transparent' }}>
+                    <span style={{ display: 'block', font: "700 11px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>{[NOME_TIPO[p.tipo] ?? 'Passeio', p.cidade, p.gratis ? 'Grátis' : null].filter(Boolean).join(' · ')}</span>
+                    <span style={{ display: 'block', marginTop: '4px', font: "600 18px/22px 'Lexend Exa'", letterSpacing: '-0.01em' }}>{p.titulo}</span>
+                    <span style={{ display: 'block', marginTop: '4px', fontSize: '13px', lineHeight: '18px' }}>{p.resumo}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      {d.lugares.length ? (
+        <div style={{ display: 'grid', gap: '20px', marginTop: '22px' }}>
+          {d.lugares.map((l) => (
+            <button key={l.id} type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}`)} aria-label={`${l.nome}, ${l.cidade}`} style={{ display: 'block', width: '100%', textAlign: 'left', padding: 0 }}>
+              <span style={{ display: 'block', aspectRatio: '4 / 5', borderRadius: '16px', overflow: 'hidden', background: 'var(--cartao-2)' }}>
+                <img src={l.foto!} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </span>
+              <span style={{ display: 'block', marginTop: '8px', font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{[l.cidade, l.bairro].filter(Boolean).join(' · ')}</span>
+              <b style={{ display: 'block', font: "600 20px/25px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{l.nome}</b>
+              {l.destaque ? <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{l.destaque}</span> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </section>
   );
 }
