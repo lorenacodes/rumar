@@ -93,21 +93,18 @@ export async function listarViagens(): Promise<{ minhas: (Viagem & { papel: stri
   const uid = await eu();
   if (!uid) return { minhas: [], deAmigos: [] };
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return listaOffline();
-  const [membros, todas, amizades] = await Promise.all([
-    supabase.from('trip_members').select('trip_id, papel, status').eq('user_id', uid),
-    supabase.from('trips').select('id, user_id, destino, destino_id, data_ida, noites, viajantes, orcamento_centavos, visibilidade, motivo, evento').order('data_ida'),
+  // Uma visão no banco já junta viagem + meu papel (v_minhas_viagens); RLS continua valendo.
+  const [minhas, amizades, visiveis] = await Promise.all([
+    supabase.from('v_minhas_viagens').select('*').order('data_ida'),
     supabase.from('friendships').select('requester, addressee').eq('status', 'aceita'),
+    viagensVisiveis(),
   ]);
-  const visiveis = await viagensVisiveis();
+  if (!minhas.data && semRede(minhas.error)) return listaOffline();
   // Viagem pública de quem não é amigo não entra aqui (aparece só no perfil da pessoa, D-055).
   const amigos = new Set((amizades.data ?? []).map((a) => (a.requester === uid ? a.addressee : a.requester) as string));
-  if (!membros.data && semRede(membros.error)) return listaOffline();
-  const meu = new Map((membros.data ?? []).map((m) => [m.trip_id as string, m]));
-  const viagens = (todas.data ?? []) as Viagem[];
-  return {
-    minhas: viagens.filter((v) => meu.has(v.id)).map((v) => ({ ...v, papel: meu.get(v.id)!.papel as string, status: meu.get(v.id)!.status as string })),
-    deAmigos: visiveis.filter((v) => !meu.has(v.id) && amigos.has(v.user_id)),
-  };
+  const lista = (minhas.data ?? []) as (Viagem & { papel: string; status: string })[];
+  const meu = new Set(lista.map((v) => v.id));
+  return { minhas: lista, deAmigos: visiveis.filter((v) => !meu.has(v.id) && amigos.has(v.user_id)) };
 }
 
 /** Preferências de quem está na viagem (para o roteiro do grupo). */

@@ -171,11 +171,10 @@ export interface Filtros {
 }
 
 /** Lugares com nota média 4+ (das avaliações de quem foi). */
-async function bemAvaliados(): Promise<Map<string, { media: number; quantidade: number }>> {
-  const { data } = await supabase.from('avaliacoes').select('place_id, nota').limit(5000);
-  const soma = new Map<string, { s: number; n: number }>();
-  for (const a of (data ?? []) as { place_id: string; nota: number }[]) { const x = soma.get(a.place_id) ?? { s: 0, n: 0 }; x.s += a.nota; x.n++; soma.set(a.place_id, x); }
-  return new Map([...soma].map(([id, x]) => [id, { media: x.s / x.n, quantidade: x.n }]));
+async function bemAvaliados(destino: string): Promise<Map<string, { media: number; quantidade: number }>> {
+  // A média já vem pronta da visão v_notas_lugares (antes o app baixava todas as avaliações).
+  const { data } = await supabase.from('v_notas_lugares').select('place_id, media, quantidade').eq('destino_id', destino).limit(2000);
+  return new Map(((data ?? []) as { place_id: string; media: number; quantidade: number }[]).map((a) => [a.place_id, { media: Number(a.media), quantidade: a.quantidade }]));
 }
 
 export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[]; total: number }> {
@@ -193,7 +192,7 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
   if (f.dieta?.length) q = q.overlaps('dieta_opcoes', f.dieta.flatMap((d) => (d === 'sem_gluten' ? ['sem_gluten'] : [d, `so_${d}`])));
   let notas: Map<string, { media: number; quantidade: number }> | null = null;
   if (f.bemAvaliados) {
-    notas = await bemAvaliados();
+    notas = await bemAvaliados(f.destino);
     const ids = [...notas].filter(([, x]) => x.media >= 4).map(([id]) => id);
     if (!ids.length) return { lugares: [], total: 0 };
     q = q.in('id', ids.slice(0, 300));

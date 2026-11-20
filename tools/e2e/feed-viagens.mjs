@@ -35,6 +35,7 @@ await bia.waitForTimeout(2000);
 confere('cartão desliza entre as fotos da viagem (2)', (await card.locator('img').count()) === 2);
 // Perfil do Tempo: grade com as fotos que a Bia pode ver (D-082).
 await card.getByRole('button').first().click(); await bia.waitForTimeout(5000);
+await bia.getByRole('tab', { name: 'Fotos' }).click(); await bia.waitForTimeout(3000);
 confere('perfil mostra a grade de fotos', (await bia.getByRole('list', { name: 'Fotos' }).locator('img').count()) >= 2);
 await bia.goBack(); await bia.waitForTimeout(4000);
 await card.getByRole('button', { name: /Ver a viagem/ }).click(); await bia.waitForTimeout(5000);

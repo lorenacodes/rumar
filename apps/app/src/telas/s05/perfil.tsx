@@ -119,13 +119,25 @@ export function Tela5_13() {
     <main className="tela" data-tela="5.13">
       <div style={{ padding: '22px 20px 0' }}>
         <Cabecalho />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '6px' }}>
-          <Avatar nome={p.display_name} foto={p.foto} lado="60px" fonte="600 22px 'Lexend Exa'" />
-          <div>
-            <div style={{ font: "600 20px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{p.display_name}</div>
-            <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{p.email}</div>
+        {demo ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '6px' }}>
+            <Avatar nome={p.display_name} foto={p.foto} lado="60px" fonte="600 22px 'Lexend Exa'" />
+            <div>
+              <div style={{ font: "600 20px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{p.display_name}</div>
+              <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{p.email}</div>
+            </div>
           </div>
-        </div>
+        ) : (
+          // No app: o topo abre o meu perfil como os outros veem (bio, fotos e viagens).
+          <button type="button" className="r-btn" onClick={() => navegar('/pessoa/eu')} aria-label="Ver meu perfil"
+            style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '6px', width: '100%', textAlign: 'left', padding: 0 }}>
+            <Avatar nome={p.display_name} foto={p.foto} lado="60px" fonte="600 22px 'Lexend Exa'" />
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', font: "600 20px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{p.display_name}</span>
+              <span style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--azul)' }}>Ver meu perfil ›</span>
+            </span>
+          </button>
+        )}
         {/* Viagem e preferências da pessoa (no app; a comparação com o design mostra só a 5.13 original). */}
         {!demo ? <SecaoViajante /> : null}
         <div style={{ marginTop: '6px' }}>

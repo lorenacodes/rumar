@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { denunciar } from '../../lib/avaliacoes';
 import { feedViagens, type PostViagem } from '../../lib/feed';
+import { tempoRelativo } from '../../lib/datas';
 import { textoMotivo } from '../../lib/viagens';
 import { fotosDasViagens } from '../../lib/fotosPessoa';
 import { useSessao } from '../../conta/servico';
@@ -15,6 +16,7 @@ import { periodo } from '../viagens/comum';
 export function FeedViagens() {
   const navegar = useNavigate();
   const sessao = useSessao();
+  const meuId = sessao?.user.id;
   const [posts, setPosts] = useState<PostViagem[] | null>(null);
   const [fim, setFim] = useState(false);
   const [denunciados, setDenunciados] = useState<Set<string>>(new Set());
@@ -46,20 +48,23 @@ export function FeedViagens() {
           <div style={{ marginTop: '20px' }}><BotaoPrincipal onClick={() => navegar('/entrar')}>Entre para ver</BotaoPrincipal></div>
         ) : posts === null ? <p aria-busy="true" style={{ marginTop: '20px' }}>Carregando…</p> : !posts.length ? (
           <div style={{ marginTop: '20px' }}>
-            <p style={{ fontSize: '15px' }}>Ainda não tem viagem para mostrar.</p>
+            <p style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>Ainda não tem viagem para mostrar.</p>
+            <p style={{ fontSize: '14px', margin: '4px 0 12px', color: 'var(--texto-sec)' }}>Mostre uma viagem ou chame amigos.</p>
             <BotaoPrincipal onClick={() => navegar('/viagens/ja-fiz')}>Mostrar uma viagem que fiz</BotaoPrincipal>
+            <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} style={{ width: '100%', minHeight: '44px', marginTop: '6px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Encontrar amigos</button>
           </div>
         ) : (
           <div role="feed" aria-label="Viagens da galera" style={{ display: 'grid', gap: '22px', marginTop: '16px' }}>
             {posts.filter((p) => !denunciados.has(p.trip_id)).map((p) => {
-              const extra = [textoMotivo(p), p.fotos ? `${p.fotos} ${p.fotos === 1 ? 'foto' : 'fotos'}` : null, p.lugares ? `${p.lugares} ${p.lugares === 1 ? 'lugar' : 'lugares'}` : null].filter(Boolean).join(' · ');
+              const eu = p.user_id === meuId;
+              const extra = [periodo(p.data_ida, p.noites), textoMotivo(p), p.fotos ? `${p.fotos} ${p.fotos === 1 ? 'foto' : 'fotos'}` : null, p.lugares ? `${p.lugares} ${p.lugares === 1 ? 'lugar' : 'lugares'}` : null].filter(Boolean).join(' · ');
               return (
                 <article key={p.trip_id} aria-label={`${p.nome} em ${p.destino}`}>
-                  <button type="button" className="r-btn" onClick={() => navegar(`/pessoa/${p.user_id}`)} style={{ display: 'flex', alignItems: 'center', gap: '8px', minHeight: '44px', textAlign: 'left' }}>
+                  <button type="button" className="r-btn" onClick={() => navegar(`/pessoa/${eu ? 'eu' : p.user_id}`)} aria-label={eu ? 'Ver meu perfil' : `Ver o perfil de ${p.nome}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', minHeight: '44px', textAlign: 'left' }}>
                     <Avatar userId={p.user_id} nome={p.nome} tamanho={32} />
                     <span>
-                      <b style={{ display: 'block', fontSize: '15px' }}>{p.nome}</b>
-                      <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{p.amigo ? 'Amigo' : 'Viajante'} · {periodo(p.data_ida, p.noites)}</span>
+                      <b style={{ display: 'block', fontSize: '15px' }}>{eu ? 'Você' : p.nome}</b>
+                      <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{[eu ? null : p.amigo ? 'Amigo' : 'Viajante', tempoRelativo(p.quando)].filter(Boolean).join(' · ')}</span>
                     </span>
                   </button>
                   <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${p.trip_id}?aba=roteiro`)} aria-label={`Ver a viagem de ${p.nome} para ${p.destino}`}
@@ -74,7 +79,7 @@ export function FeedViagens() {
                     <b style={{ display: 'block', font: "600 20px/25px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '8px' }}>{p.destino}</b>
                     {extra ? <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{extra}</span> : null}
                   </button>
-                  {p.foto_id ? (
+                  {p.foto_id && !eu ? (
                     <button type="button" className="r-btn" onClick={() => void denunciarFoto(p)} style={{ minHeight: '40px', fontSize: '13px', color: 'var(--texto-sec)' }}>Denunciar foto</button>
                   ) : null}
                 </article>
