@@ -1,0 +1,43 @@
+name: CNPJ
+
+# Restaurantes, bares, lanchonetes e padarias dos dados abertos do CNPJ (Receita Federal), sem MEI,
+# localizados pelo endereço (Nominatim, 1 pedido/s). À mão: sondar (confere o formato) ou importar cidades.
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'sondar | importar'
+        default: sondar
+      cidades:
+        description: 'ids dos destinos (ex.: br-2611606), separados por vírgula'
+        default: 'br-2611606'
+      maximo:
+        description: 'quantos localizar por cidade nesta rodada (1 por segundo)'
+        default: '3000'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: cnpj
+  cancel-in-progress: false
+
+jobs:
+  cnpj:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fase-0-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Importar
+        env:
+          MODO: ${{ inputs.modo }}
+          CIDADES: ${{ inputs.cidades }}
+          MAXIMO: ${{ inputs.maximo }}
+        run: |
+          if [ "$MODO" = "importar" ]; then node tools/dados/cnpj.mjs --cidades "$CIDADES" --maximo "${MAXIMO:-3000}"; else node tools/dados/cnpj.mjs --sondar; fi

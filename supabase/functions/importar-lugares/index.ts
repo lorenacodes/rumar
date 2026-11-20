@@ -23,6 +23,7 @@
 //   { acao: 'bairro_gravar', itens: [{ id, bairro }] }         → bairro pelo contorno oficial do mapa (só onde estava vazio)
 //   { acao: 'descobertas_pendentes', limite }                  → descobertas da pesquisa ainda sem lugar no mapa
 //   { acao: 'descoberta_localizar', id, lat, lon }             → vira lugar (fonte "pesquisa") com a fonte da descoberta
+//   { acao: 'lugares_da_cidade', destino_id, de }              → id, nome, lat, lon (1.000 por vez; para não duplicar)
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -271,6 +272,11 @@ Deno.serve(async (req) => {
     await db.from('lugar_fontes').upsert({ lugar_id: id, url: d.fonte_url, tipo: d.fonte_tipo }, { onConflict: 'lugar_id,url' });
     await db.from('descobertas').update({ situacao: 'localizado', lugar_id: id }).eq('id', d.id);
     return json({ ok: true, id });
+  }
+  if (p.acao === 'lugares_da_cidade') {
+    const de = Math.max(0, Number(p.de) || 0);
+    const { data, error } = await db.from('lugares').select('id, nome, lat, lon').eq('destino_id', String(p.destino_id ?? '')).order('id').range(de, de + 999);
+    return error ? json({ erro: error.message }, 400) : json({ lugares: data ?? [] });
   }
   return json({ erro: 'acao_desconhecida' }, 400);
 });

@@ -41,7 +41,9 @@ export interface LugarBase {
   historia?: string | null;
   melhor_horario?: string | null;
   destino_id: string;
-  fonte: 'osm' | 'curadoria' | 'pesquisa';
+  /** Lugares do CNPJ: false = localizado só pela rua (o número não bateu). */
+  local_preciso?: boolean | null;
+  fonte: 'osm' | 'curadoria' | 'pesquisa' | 'cnpj';
   fonte_id: string;
   nome: string;
   categoria: CategoriaLugar;
@@ -155,7 +157,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso, dieta_opcoes, popularidade, destaque, historia, melhor_horario';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso, dieta_opcoes, popularidade, destaque, historia, melhor_horario, local_preciso';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
