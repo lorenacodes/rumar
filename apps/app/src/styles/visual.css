@@ -216,14 +216,9 @@ html:not(.modo-design) .postal-sem-foto .vazio { display: none; }
 
 /* D-081: no Android, a faixa dos botões do sistema mostrava o conteúdo por baixo da barra de abas
    (ex.: o selo "Seu favorito"). A barra pinta o fundo para baixo dela. */
-html:not(.modo-design) nav[aria-label='Abas']::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 120px;
-  background: var(--fundo);
+/* Sombra sólida em vez de um bloco: não cria rolagem extra (o bloco fazia a barra subir no fim da tela). */
+html:not(.modo-design) nav[aria-label='Abas'] {
+  box-shadow: 0 120px 0 0 var(--fundo);
 }
 
 /* Campo de busca com lupa à esquerda (D-084): espaço para o ícone. */

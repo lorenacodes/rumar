@@ -21,7 +21,11 @@ export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total }: { f:
   const alterna = <T,>(lista: T[], x: T) => (lista.includes(x) ? lista.filter((y) => y !== x) : [...lista, x]);
   const campo = { display: 'block', width: '100%', boxSizing: 'border-box' as const, marginTop: '4px', font: "500 16px 'Open Sans'" };
   return (
-    <section aria-label="Filtros" style={{ marginTop: '10px', padding: '4px 16px 16px', borderRadius: '16px', background: 'var(--cartao-2)' }}>
+    // Folha que sobe de baixo (não empurra as recomendações); toque fora ou Esc fecha.
+    <div onClick={aoFechar} onKeyDown={(e) => { if (e.key === 'Escape') aoFechar(); }} style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(0,0,0,.35)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+    <section role="dialog" aria-modal="true" aria-label="Filtros" onClick={(e) => e.stopPropagation()}
+      style={{ width: '100%', maxWidth: '520px', maxHeight: '78vh', overflowY: 'auto', boxSizing: 'border-box', padding: '8px 20px calc(16px + env(safe-area-inset-bottom))', borderRadius: '20px 20px 0 0', background: 'var(--cartao-2)', boxShadow: '0 -8px 30px rgba(0,0,0,.18)' }}>
+      <div aria-hidden="true" style={{ width: '40px', height: '4px', borderRadius: '2px', background: 'var(--linha)', margin: '4px auto 6px' }} />
       <Titulo t="Faixa" />
       <div style={linha}>
         {(['especial', 'em-conta'] as Faixa[]).map((x) => <Chip key={x} ativo={f.faixa === x} aoTocar={() => mudar({ ...f, faixa: f.faixa === x ? null : x })}>{NOME_FAIXA[x]}</Chip>)}
@@ -42,10 +46,11 @@ export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total }: { f:
         <label style={{ flex: 1, fontSize: '12px', color: 'var(--texto-sec)' }}>Máximo<input inputMode="decimal" className="r-input" value={f.max} onChange={(e) => mudar({ ...f, max: e.target.value.replace(/[^\d,]/g, '') })} style={campo} /></label>
       </div>
       <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '8px 0 0' }}>Especial: reconhecido ou com nota alta. Em conta: simples e barato.</p>
-      <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginTop: '12px', position: 'sticky', bottom: '-16px', paddingBottom: '4px', background: 'var(--cartao-2)' }}>
         <button type="button" className="r-btn" onClick={() => mudar(FILTROS_VAZIOS)} style={{ flex: 1, minHeight: '48px', borderRadius: '24px', background: 'var(--fundo)', font: "600 15px 'Open Sans'" }}>Limpar</button>
         <button type="button" className="r-btn" onClick={aoFechar} style={{ flex: 2, minHeight: '48px', borderRadius: '24px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{total === null ? 'Ver resultados' : `Ver ${total} ${total === 1 ? 'resultado' : 'resultados'}`}</button>
       </div>
     </section>
+    </div>
   );
 }
