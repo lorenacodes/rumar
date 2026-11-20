@@ -55,6 +55,7 @@ export function Tela5_3() {
   const [termos, setTermos] = useState(useValorInicial(true, false));
   const [privacidade, setPrivacidade] = useState(useValorInicial(true, false));
   const [novidades, setNovidades] = useState(false);
+  const [verSenha, setVerSenha] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -64,7 +65,8 @@ export function Tela5_3() {
   const enviar = async () => {
     if (!maior18) return navegar('/', { replace: true }); // idade precisa ser conferida antes (1.1)
     if (!pronto) {
-      setErro(!senhaValida(senha) ? 'A senha precisa ter pelo menos 8 caracteres, com uma letra e um número.' : 'Preencha os campos e aceite os Termos e a Política de Privacidade.');
+      // Diz exatamente o que falta (um item por vez).
+      setErro(!nome.trim() ? 'Escreva seu nome.' : !emailValido(email) ? 'Confira o e-mail.' : !senhaValida(senha) ? 'A senha precisa ter pelo menos 8 caracteres, com uma letra e um número.' : 'Marque que aceita os Termos e a Política de Privacidade.');
       return;
     }
     setEnviando(true);
@@ -102,7 +104,10 @@ export function Tela5_3() {
               Você quis dizer {sugerirEmail(email)}?
             </button>
           ) : null}
-          <Campo id="senha" rotulo="Senha" type="password" autoComplete="new-password" placeholder="••••••••" valor={senha} aoMudar={setSenha} aria-describedby="regras-senha" />
+          <Campo id="senha" rotulo="Senha" type={verSenha ? 'text' : 'password'} autoComplete="new-password" placeholder={demo ? '••••••••' : 'Mínimo 8, com letra e número'} valor={senha} aoMudar={setSenha} aria-describedby="regras-senha" />
+          {!demo ? (
+            <button type="button" className="r-btn" aria-pressed={verSenha} onClick={() => setVerSenha(!verSenha)} style={{ minHeight: '36px', marginTop: '2px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>{verSenha ? 'Esconder senha' : 'Mostrar senha'}</button>
+          ) : null}
           {senha ? (
             <div id="regras-senha" style={{ fontSize: '13px', lineHeight: '20px', marginTop: '4px' }}>
               <span style={{ color: regras.tamanho ? 'var(--verde)' : 'var(--texto-sec)' }}>{regras.tamanho ? <span className="visualmente-oculto">Atendido: </span> : null}Pelo menos 8 caracteres</span>
@@ -111,12 +116,21 @@ export function Tela5_3() {
             </div>
           ) : null}
           <div style={{ marginTop: '8px' }}>
-            <Caixa marcada={termos} aoMudar={setTermos}>
-              Li e concordo com os Termos de uso.
-            </Caixa>
-            <Caixa marcada={privacidade} aoMudar={setPrivacidade}>
-              Li a Política de Privacidade.
-            </Caixa>
+            {demo ? (
+              <>
+                <Caixa marcada={termos} aoMudar={setTermos}>
+                  Li e concordo com os Termos de uso.
+                </Caixa>
+                <Caixa marcada={privacidade} aoMudar={setPrivacidade}>
+                  Li a Política de Privacidade.
+                </Caixa>
+              </>
+            ) : (
+              // No app, um aceite só (os dois registros continuam salvos separados).
+              <Caixa marcada={termos && privacidade} aoMudar={(v) => { setTermos(v); setPrivacidade(v); }}>
+                Li e aceito os Termos de uso e a Política de Privacidade.
+              </Caixa>
+            )}
             {/* Links para ler o que se aceita (D-029); a comparação com o design mantém a 5.3 original. */}
             {!demo ? (
               <div style={{ display: 'flex', gap: '16px', margin: '0 0 6px 34px' }}>
