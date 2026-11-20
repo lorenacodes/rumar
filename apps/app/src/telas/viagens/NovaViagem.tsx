@@ -6,7 +6,8 @@ import { cobertura, destinoPorId, pedirCidade, rotuloDestino, type Destino } fro
 import { paisPorCodigo } from '../../lib/moedas';
 import { useDestinoAtual } from '../../state/destino';
 import { EscolherDestino } from '../../ui/escolherDestino';
-import { adicionarGasto, criarViagem } from '../../lib/viagens';
+import { adicionarGasto, criarViagem, listarViagens } from '../../lib/viagens';
+import { textoConflito, viagensNoMesmoPeriodo, type Periodo } from '../../lib/conflitoDatas';
 import { nivelDoOrcamento, NOME_NIVEL } from '../../lib/nivel';
 import { mesAno, preverPoupanca } from '../../lib/previsao';
 import { GraficoPrevisao } from '../../ui/GraficoPrevisao';
@@ -43,6 +44,10 @@ export function NovaViagem() {
   const ultimo = useDestinoAtual((x) => x.destino);
   const [destino, setDestino] = useState<Destino | null>(null);
   const [lugaresNaBase, setLugaresNaBase] = useState<number | null>(null);
+  // Datas que se cruzam com outra viagem minha: avisa (pode ser comparação de destinos), não bloqueia.
+  const [minhas, setMinhas] = useState<Periodo[]>([]);
+  useEffect(() => { void listarViagens().then((l) => setMinhas(l.minhas as unknown as Periodo[])); }, []);
+  const conflitos = viagensNoMesmoPeriodo({ data_ida: dataIda, noites }, minhas.filter((v) => !v.registrada));
   useEffect(() => {
     const d = params.get('d');
     if (d) void destinoPorId(d).then(setDestino);
@@ -70,6 +75,8 @@ export function NovaViagem() {
   const criar = async () => {
     if (!destino) return setErro('Escolha o destino.');
     if (dataIda < hoje()) return setErro('Escolha uma data a partir de hoje.');
+    const fechada = conflitos.find((c) => c.data_definida !== false);
+    if (definida === 'sim' && fechada && !window.confirm(`Você já tem ${textoConflito(fechada)} com data fechada nesses dias. Criar mesmo assim?`)) return;
     if (!preferencias) return navegar('/perfil-viajante');
     setCriando(true);
     const valor = custo || num(orcamento);
@@ -122,6 +129,12 @@ export function NovaViagem() {
         <input id="ida" type="date" className="r-input" value={dataIda} min={hoje()} onChange={(e) => setDataIda(e.target.value)} style={campo} />
         <Rotulo>Noites</Rotulo>
         <Passo valor={noites} menor={1} maior={14} aoMudar={setNoites} rotulo="uma noite" />
+        {conflitos.length ? (
+          <div role="status" style={{ marginTop: '10px', padding: '10px 12px', borderRadius: '12px', background: 'var(--cartao-2)', boxShadow: 'inset 4px 0 0 var(--ambar)' }}>
+            <b style={{ display: 'block', fontSize: '14px' }}>Você já tem {conflitos.map(textoConflito).join(' e ')} nesses dias.</b>
+            <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Tudo bem se estiver comparando destinos.</span>
+          </div>
+        ) : null}
         <Rotulo>Quantas pessoas viajam</Rotulo>
         <Passo valor={viajantes} menor={1} maior={10} aoMudar={setViajantes} rotulo="uma pessoa" />
 

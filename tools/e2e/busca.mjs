@@ -30,6 +30,8 @@ confere('busca por nome acha o Paço do Frevo', /Paço do Frevo/.test(await p.lo
 // Cidades
 await p.goto(URL + '#/descobrir'); await p.waitForTimeout(4000);
 const sec = p.getByRole('region', { name: 'Explorar cidades' });
+const lupaOk = await p.evaluate(() => ['#busca-cidade'].every((id) => { const i = document.querySelector(id); const g = i.parentElement.querySelector('svg'); return i.getBoundingClientRect().left + parseFloat(getComputedStyle(i).paddingLeft) >= g.getBoundingClientRect().right; }));
+confere('texto da busca não fica embaixo da lupa', lupaOk);
 confere('compacto: sem lista antes de buscar', (await sec.locator('li').count()) === 0);
 const altura = (await sec.boundingBox())?.height ?? 999;
 confere(`compacto: bloco baixo (${Math.round(altura)} px)`, altura < 180);

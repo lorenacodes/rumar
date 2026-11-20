@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { ETAPAS, dataBR, internacional, type Diagnostico, type Etapa, type TipoPrazo } from '../../lib/linhaDoTempo';
 import { dinheiro } from '../../lib/moedas';
-import { adicionarAporte, atualizarViagem, criarTarefa, marcarTarefaPessoal, marcarTarefaSistema, ordenarTarefas, removerTarefa, type ViagemCompleta } from '../../lib/viagens';
+import { adicionarAporte, atualizarViagem, criarTarefa, marcarTarefaPessoal, marcarTarefaSistema, ordenarTarefas, removerTarefa, type ViagemCompleta, listarViagens } from '../../lib/viagens';
+import { textoConflito, viagensNoMesmoPeriodo, type Periodo } from '../../lib/conflitoDatas';
 import { Aviso, BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 import { botaoTexto, campo, Rotulo, Segmentos } from './comum';
 import type { Jornada, TarefaVista } from './jornada';
@@ -324,6 +325,10 @@ function PainelEditar({ v, j, fechar, recarregar }: { v: ViagemCompleta; j: Jorn
     const n = Number(noites);
     if (!data || !(n >= 1 && n <= 60)) return setErro('Confira a data e o número de noites (1 a 60).');
     const mudouData = data !== vg.data_ida || n !== vg.noites;
+    if (mudouData && definida === 'sim') {
+      const c = viagensNoMesmoPeriodo({ data_ida: data, noites: n }, ((await listarViagens()).minhas as unknown as Periodo[]).filter((x) => !x.registrada), vg.id);
+      if (c.length && !window.confirm(`Você já tem ${c.map(textoConflito).join(' e ')} nesses dias. Salvar mesmo assim?`)) return;
+    }
     await atualizarViagem(vg.id, {
       data_ida: data, data_definida: definida === 'sim', noites: n, orcamento_centavos: num(orc), guardado_centavos: num(inicial) ?? 0,
       capacidade_mensal_centavos: num(mensal), reserva_pct: Math.min(50, Math.max(0, Number(reserva) || 0)),

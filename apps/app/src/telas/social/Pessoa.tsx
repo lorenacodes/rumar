@@ -13,6 +13,7 @@ import { FotoLugar } from '../../ui/foto';
 import { GradeDeFotos } from '../../ui/GradeDeFotos';
 import { BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { periodo } from '../viagens/comum';
+import '../../styles/perfil.css';
 
 type Fase = 'agora' | 'proximas' | 'foi';
 const NOME_FASE: Record<Fase, string> = { agora: 'Viajando agora', proximas: 'Vai viajar', foi: 'Já foi' };
@@ -87,6 +88,12 @@ export function Pessoa() {
     const fa = fase(a, hoje); const fb = fase(b, hoje);
     return ord[fa] - ord[fb] || (fa === 'foi' ? b.data_ida.localeCompare(a.data_ida) : a.data_ida.localeCompare(b.data_ida));
   });
+  const capaUrl = ordenadas.map((v) => capas.get(v.id)?.[0]?.url).find(Boolean) ?? null;
+  const capaDestino = ordenadas.find((v) => fase(v, hoje) !== 'proximas')?.destino ?? ordenadas[0]?.destino ?? null;
+  // Carimbos: uma por cidade onde já esteve (a visita mais recente).
+  const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const carimbos = [...new Map(ordenadas.filter((v) => fase(v, hoje) === 'foi').map((v) => [v.destino, v] as const)).values()]
+    .map((v) => ({ cidade: v.destino.split(',')[0]!, quando: `${MES[Number(v.data_ida.slice(5, 7)) - 1]} ${v.data_ida.slice(0, 4)}` })).slice(0, 12);
   const mostrarMinhas = () => {
     if (!window.confirm(`Mostrar suas ${minhasPrivadas.length} viagens privadas para todos os seus amigos? Dá para esconder de novo em cada viagem.`)) return;
     void Promise.all(minhasPrivadas.map((v) => atualizarViagem(v.id, { visibilidade: 'amigos' }))).then(carregar);
@@ -99,22 +106,23 @@ export function Pessoa() {
 
   return (
     <main className="tela" data-tela="pessoa" data-real="pessoa">
-      <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 24px' }}>
-        <Voltar para={p.eu ? '/perfil' : '/perfil/amigos'} />
-
-        <header style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '8px' }}>
-          <Avatar userId={id} nome={nome} tamanho={84} />
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <h1 style={{ margin: 0, font: "600 24px/29px 'Lexend Exa'", letterSpacing: '-0.02em', overflowWrap: 'anywhere' }}>{nome}</h1>
-            <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', overflowWrap: 'anywhere' }}>{[p.username ? `@${p.username}` : null, p.origin_city].filter(Boolean).join(' · ')}</span>
-          </div>
+      {/* Capa: a foto mais recente das viagens (ou a cidade); sem foto, o azul-marinho da marca. */}
+      <div className="perfil-capa">
+        {capaUrl ? <img src={capaUrl} alt="" /> : capaDestino ? <FotoLugar id={capaDestino} proporcao="390 / 170" credito={false} compacto /> : null}
+        <div className="perfil-voltar"><Voltar para={p.eu ? '/perfil' : '/perfil/amigos'} /></div>
+      </div>
+      <div style={{ padding: '0 20px 24px' }}>
+        <header className="perfil-topo">
+          <span className="perfil-avatar"><Avatar userId={id} nome={nome} tamanho={96} /></span>
+          <h1 style={{ margin: '8px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em', overflowWrap: 'anywhere' }}>{nome}</h1>
+          <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', overflowWrap: 'anywhere' }}>{[p.username ? `@${p.username}` : null, p.origin_city].filter(Boolean).join(' · ')}</span>
         </header>
 
-        <dl aria-label="Números" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', margin: '16px 0 0', textAlign: 'center', background: 'var(--cartao-2)', borderRadius: '14px', padding: '10px 0' }}>
+        <dl aria-label="Números" className="perfil-numeros">
           {numeros.map(([n, um, varios]) => (
-            <div key={varios} style={{ display: 'flex', flexDirection: 'column-reverse' }}>
-              <dt style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>{n === 1 ? um : varios}</dt>
-              <dd style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'" }}>{n}</dd>
+            <div key={varios}>
+              <dt>{n === 1 ? um : varios}</dt>
+              <dd>{n}</dd>
             </div>
           ))}
         </dl>
@@ -127,8 +135,8 @@ export function Pessoa() {
             {p.gostos_viagem.length ? (
               <>
                 <h2 style={{ margin: p.bio ? '12px 0 0' : 0, font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)' }}>Gosta numa viagem</h2>
-                <ul aria-label="Gosta numa viagem" style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                  {p.gostos_viagem.map((g) => <li key={g} style={{ padding: '6px 12px', borderRadius: '999px', background: 'var(--cartao-2)', fontSize: '14px', fontWeight: 600 }}>{GOSTOS_VIAGEM[g]}</li>)}
+                <ul aria-label="Gosta numa viagem" className="perfil-gostos">
+                  {p.gostos_viagem.map((g) => <li key={g}>{GOSTOS_VIAGEM[g]}</li>)}
                 </ul>
               </>
             ) : null}
@@ -150,6 +158,19 @@ export function Pessoa() {
             ) : null}
           </section>
         )}
+
+        {carimbos.length ? (
+          <section aria-label="Carimbos" style={{ marginTop: '22px' }}>
+            <h2 style={{ margin: 0, font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)' }}>Carimbos</h2>
+            <ul className="perfil-carimbos" aria-label="Cidades visitadas">
+              {carimbos.map((c, i) => (
+                <li key={c.cidade} className={`carimbo carimbo-${i % 3}`} style={{ transform: `rotate(${[-4, 3, -2, 4, -3][i % 5]}deg)` }}>
+                  <b>{c.cidade}</b><span>{c.quando}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <div role="tablist" aria-label="Ver" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', marginTop: '20px', borderBottom: '1px solid var(--linha)' }}>
           {(['viagens', 'fotos'] as const).map((a) => (
