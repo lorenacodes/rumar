@@ -3,44 +3,44 @@
  "url": "https://www.bcb.gov.br/estabilidadefinanceira/historicocotacoes",
  "moedas": {
   "EUR": {
-   "venda": 6.372,
-   "data": "2026-11-18"
+   "venda": 6.4672,
+   "data": "2026-11-19"
   },
   "USD": {
-   "venda": 5.8102,
-   "data": "2026-11-18"
+   "venda": 5.8889,
+   "data": "2026-11-19"
   },
   "GBP": {
-   "venda": 7.6398,
-   "data": "2026-11-18"
+   "venda": 7.7262,
+   "data": "2026-11-19"
   },
   "CHF": {
-   "venda": 6.8931,
-   "data": "2026-11-18"
+   "venda": 6.9865,
+   "data": "2026-11-19"
   },
   "CAD": {
-   "venda": 4.0543,
-   "data": "2026-11-18"
+   "venda": 4.1147,
+   "data": "2026-11-19"
   },
   "AUD": {
-   "venda": 3.9015,
-   "data": "2026-11-18"
+   "venda": 3.9338,
+   "data": "2026-11-19"
   },
   "JPY": {
-   "venda": 0.03648,
-   "data": "2026-11-18"
+   "venda": 0.03685,
+   "data": "2026-11-19"
   },
   "DKK": {
-   "venda": 0.8525,
-   "data": "2026-11-18"
+   "venda": 0.8653,
+   "data": "2026-11-19"
   },
   "NOK": {
-   "venda": 0.599,
-   "data": "2026-11-18"
+   "venda": 0.6044,
+   "data": "2026-11-19"
   },
   "SEK": {
-   "venda": 0.5706,
-   "data": "2026-11-18"
+   "venda": 0.5784,
+   "data": "2026-11-19"
   }
  }
 }
