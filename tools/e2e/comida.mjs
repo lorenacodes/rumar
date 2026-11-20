@@ -40,6 +40,7 @@ console.log('VIAGEM', idComida);
 await p.goto(p.url().split('?')[0] + '?aba=roteiro'); await p.waitForTimeout(3000);
 const texto = await p.locator('main').innerText();
 confere('roteiro mostra motivo de comida (vegetariano ou japonesa)', /opção vegetariana|adora comida japonesa/.test(texto));
+if (!/opção vegetariana|adora comida japonesa/.test(texto)) console.log(texto.slice(0, 1500));
 await p.screenshot({ path: `${OUT}/02-roteiro.png` });
 
 // Volta o perfil ao normal (outros testes usam esta conta).

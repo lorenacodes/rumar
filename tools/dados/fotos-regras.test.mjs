@@ -25,3 +25,11 @@ test('recusa os erros vistos na 1ª rodada', () => {
   assert.equal(cita('File:Seminário Santo Antônio.jpg', 'Largo de Santo Antônio'), false);
   assert.equal(cita('File:Oficina de Museu Portátil no Arquivo Público Municipal de Cachoeira (51993).jpg', 'Centro de Cultura'), false);
 });
+
+test('hospedagem: recusa foto de coisa vizinha (rodada de 20/11)', () => {
+  assert.equal(cita('File:Paraíso metro station (Linha 1-Azul, Linha 2-Verde), SP, 2025-06-16 (44).jpg', 'Hotel Estação Paraíso', 'hospedagem'), false);
+  assert.equal(cita('File:Escadaria-Selarón 06 42 01 136000.jpeg', 'Casa da Escada', 'hospedagem'), false);
+  assert.equal(cita('File:Ubatuba trip (Jul 2023) 274.jpg', 'Ubatuba Palace Hotel', 'hospedagem'), false);
+  assert.ok(cita('File:Hotel Copacabana Palace 2019.jpg', 'Copacabana Palace', 'hospedagem'));
+  assert.ok(cita('File:Pousada Maravilha Noronha.jpg', 'Pousada Maravilha', 'hospedagem'));
+});

@@ -20,7 +20,10 @@ const INGLES = { square: 'praca', avenue: 'avenida', street: 'rua', church: 'igr
 const tokens = (s) => norm(s).split(/[^a-z0-9]+/).filter(Boolean).map((w) => INGLES[w] ?? w);
 export const palavras = (nome) => [...new Set(tokens(nome).filter((w) => w.length >= 4 && !GENERICO.has(w)))];
 
-export function cita(titulo, nome) {
+// Hospedagem quase nunca tem foto própria no Commons: o nome costuma bater com algo vizinho (estação, escadaria, a cidade).
+const HOSPEDAGEM = ['hotel', 'pousada', 'hostel', 'resort', 'albergue', 'flat', 'inn', 'chale', 'chales'];
+
+export function cita(titulo, nome, categoria) {
   const t = tokens(titulo.replace(/^File:/, '').replace(/\.[a-z]+$/i, ''));
   const ps = palavras(nome);
   if (!ps.length) return false;
@@ -28,6 +31,8 @@ export function cita(titulo, nome) {
   if (achou < Math.min(2, ps.length) || achou < Math.ceil(ps.length / 2)) return false;
   // Nome com uma só palavra própria e curta ("Ideal", "Flora"): fácil de coincidir com outro lugar.
   if (ps.length === 1 && ps[0].length < 6) return false;
+  // Hotel/pousada: o arquivo precisa dizer que é hospedagem, ou bater pelo menos 2 palavras próprias do nome.
+  if (categoria === 'hospedagem' && !HOSPEDAGEM.some((h) => t.includes(h)) && achou < 2) return false;
   const tiposNome = TIPOS.filter((x) => tokens(nome).includes(x));
   const tiposArq = TIPOS.filter((x) => t.includes(x));
   if (tiposArq.length && !tiposArq.some((x) => tiposNome.includes(x)) && (tiposNome.length || tiposArq.some((x) => x !== 'praia'))) return false;

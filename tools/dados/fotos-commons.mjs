@@ -58,7 +58,7 @@ function distanciaM(a, b, c, d) {
 function candidatos(l, achados) {
   // Só foto cujo nome do arquivo cite o lugar (D-057, revisão de 19/11: "foto tirada perto" trazia lugar errado).
   const turistico = TURISTICO.has(l.categoria);
-  return achados.filter((a) => EXT.test(a.title) && !RUIM.test(a.title) && cita(a.title, l.nome) && (turistico || a.dist <= 150)).slice(0, 3);
+  return achados.filter((a) => EXT.test(a.title) && !RUIM.test(a.title) && cita(a.title, l.nome, l.categoria) && (turistico || a.dist <= 150)).slice(0, 3);
 }
 
 const destinos = (arg('destinos', '') || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -88,7 +88,7 @@ async function pendentes(ufs) {
     if (!itens.length) break;
     vistas += itens.length; depois = itens.at(-1).id;
     const nome = (f) => decodeURIComponent((f.match(/FilePath\/([^?]+)/) ?? [])[1] ?? '');
-    const ruins = itens.filter((l) => !cita(nome(l.foto ?? ''), l.nome)).map((l) => l.id);
+    const ruins = itens.filter((l) => !cita(nome(l.foto ?? ''), l.nome, l.categoria)).map((l) => l.id);
     if (ruins.length) tiradas += (await banco({ acao: 'fotos_limpar', ids: ruins })).ok;
     if (itens.length < 1000) break;
   }
@@ -111,7 +111,7 @@ async function processar(itens, porNome = false) {
         const s = await commons({ action: 'query', generator: 'search', gsrsearch: l.nome, gsrnamespace: '6', gsrlimit: '10', prop: 'coordinates' });
         c = (s?.query?.pages ?? []).filter((x) => {
           const co = x.coordinates?.[0];
-          return co && EXT.test(x.title) && !RUIM.test(x.title) && cita(x.title, l.nome) && distanciaM(l.lat, l.lon, co.lat, co.lon) <= 2000;
+          return co && EXT.test(x.title) && !RUIM.test(x.title) && cita(x.title, l.nome, l.categoria) && distanciaM(l.lat, l.lon, co.lat, co.lon) <= 2000;
         }).slice(0, 3).map((x) => ({ title: x.title }));
         await espera(250);
       }
