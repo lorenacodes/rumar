@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       modo:
-        description: 'padrao | fila | destinos | cidades | novos (destinos + cidades) | turisticos | dietas | trabalho'
+        description: 'padrao | fila | destinos | cidades | novos (destinos + cidades) | turisticos | dietas | trabalho | bairros'
         default: padrao
       cidades:
         description: 'ids (só no modo cidades), separados por vírgula'
@@ -53,5 +53,6 @@ jobs:
             turisticos) node tools/dados/lugares.mjs --turisticos 70 ;;
             dietas) node tools/dados/dietas.mjs ;;
             trabalho) node tools/dados/lugares.mjs --coletadas --so trabalho ;;
+            bairros) node tools/dados/bairros.mjs --cidades "${CIDADES:-br-2611606}" ;;
             *) node tools/dados/lugares.mjs --destinos --padrao ;;
           esac

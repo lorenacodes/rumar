@@ -19,6 +19,8 @@
 //   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
 //   { acao: 'fotos_revisar', depois?, limite }                 → fotos achadas pela busca (para revisar com a regra atual)
 //   { acao: 'fotos_limpar', ids }                              → tira fotos achadas que não passam na regra (volta para a busca)
+//   { acao: 'sem_bairro', destino_id, limite }                 → lugares sem bairro (id, lat, lon)
+//   { acao: 'bairro_gravar', itens: [{ id, bairro }] }         → bairro pelo contorno oficial do mapa (só onde estava vazio)
 import { createRemoteJWKSet, jwtVerify } from 'npm:jose@5.9.6';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -213,6 +215,33 @@ Deno.serve(async (req) => {
     for (let k = 0; k < ids.length; k += 200) {
       const { data } = await db.from('lugares').update({ foto: null, foto_pagina: null, foto_busca: false, foto_tentada_em: null }).eq('foto_busca', true).in('id', ids.slice(k, k + 200)).select('id');
       ok += data?.length ?? 0;
+    }
+    return json({ ok });
+  }
+  if (p.acao === 'sem_bairro') {
+    // O banco devolve no máximo 1.000 linhas por vez: busca em páginas.
+    const limite = Math.min(Number(p.limite) || 5000, 20000);
+    const lugares: unknown[] = [];
+    for (let de = 0; de < limite; de += 1000) {
+      const { data, error } = await db.from('lugares').select('id, lat, lon').eq('destino_id', String(p.destino_id ?? '')).is('bairro', null)
+        .not('lat', 'is', null).order('id').range(de, Math.min(de + 999, limite - 1));
+      if (error) return json({ erro: error.message }, 400);
+      lugares.push(...(data ?? []));
+      if ((data ?? []).length < 1000) break;
+    }
+    return json({ lugares });
+  }
+  if (p.acao === 'bairro_gravar') {
+    const itens = ((p.itens ?? []) as { id: string; bairro: string }[]).slice(0, 2000)
+      .map((i) => ({ id: String(i.id), bairro: String(i.bairro ?? '').trim().slice(0, 120) })).filter((i) => i.bairro);
+    const porBairro = new Map<string, string[]>();
+    for (const i of itens) porBairro.set(i.bairro, [...(porBairro.get(i.bairro) ?? []), i.id]);
+    let ok = 0;
+    for (const [bairro, ids] of porBairro) {
+      for (let k = 0; k < ids.length; k += 200) {
+        const { data } = await db.from('lugares').update({ bairro }).in('id', ids.slice(k, k + 200)).is('bairro', null).select('id');
+        ok += data?.length ?? 0;
+      }
     }
     return json({ ok });
   }
