@@ -34,10 +34,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install duckdb==1.1.3
       - name: Importar
         env:
           MODO: ${{ inputs.modo }}
           CIDADES: ${{ inputs.cidades }}
           MAXIMO: ${{ inputs.maximo }}
         run: |
-          if [ "$MODO" = "importar" ]; then node tools/dados/cnpj.mjs --cidades "$CIDADES" --maximo "${MAXIMO:-3000}"; else node tools/dados/cnpj.mjs --sondar; fi
+          if [ "$MODO" = "importar" ]; then node tools/dados/cnpj.mjs --cidades "$CIDADES" --maximo "${MAXIMO:-3000}"; else python tools/dados/cnpj_sondar.py; fi
