@@ -38,9 +38,10 @@ await p.getByRole('button', { name: /Criar viagem/ }).click(); await p.waitForUR
 const idComida = p.url().split('/viagem/')[1]?.split('?')[0];
 console.log('VIAGEM', idComida);
 await p.goto(p.url().split('?')[0] + '?aba=roteiro'); await p.waitForTimeout(3000);
-const texto = await p.locator('main').innerText();
+// O roteiro mostra um dia por vez: junta o texto de todos os dias.
+let texto = await p.locator('main').innerText();
+for (let d = 2; d <= 7; d++) { const b = p.getByRole('button', { name: new RegExp(`^Dia ${d}\\b`) }).first(); if (!(await b.count())) break; await b.click(); await p.waitForTimeout(400); texto += '\n' + await p.locator('main').innerText(); }
 confere('roteiro mostra motivo de comida (vegetariano ou japonesa)', /opção vegetariana|adora comida japonesa/.test(texto));
-if (!/opção vegetariana|adora comida japonesa/.test(texto)) console.log(texto.slice(0, 1500));
 await p.screenshot({ path: `${OUT}/02-roteiro.png` });
 
 // Volta o perfil ao normal (outros testes usam esta conta).
