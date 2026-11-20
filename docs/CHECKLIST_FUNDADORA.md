@@ -70,6 +70,11 @@
       Supabase → Edge Functions → Secrets → `YOUTUBE_API_KEY`. Me avise e eu confiro os vídeos escolhidos.
 - [ ] **5.2 LiteAPI (hotéis)** — Secrets → `LITEAPI_KEY` (a de teste primeiro; depois uma de produção nova,
       porque a de teste apareceu num print). Liga a busca de hotéis com preço.
+- [ ] **5.4 Hugging Face (grátis, 5 min) — milhares de restaurantes e bares do CNPJ.** A Receita não responde ao
+      GitHub; a cópia dos dados no Hugging Face exige conta. huggingface.co → criar conta → abrir
+      huggingface.co/datasets/cnpjaberto/cnpj-dados-receita-brasil-2026-09 → aceitar os termos (se pedir) →
+      Settings → Access Tokens → New token (tipo **Read**) → GitHub do repositório → Settings → Secrets and
+      variables → Actions → New secret `HF_TOKEN`. Me avise; eu rodo a importação do Recife.
 - [ ] **5.3 (Opcional) Google Places** — fotos de restaurantes, que a Wikimedia quase não tem. Precisa de cartão no
       Google Cloud; com o teto de 900/mês já configurado o custo esperado é R$ 0. Passos: Faturamento → ativar
       **Places API (New)** → criar chave restrita → alerta de US$ 5 → Secrets → `GOOGLE_PLACES_KEY`.

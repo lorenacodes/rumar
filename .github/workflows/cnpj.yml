@@ -43,5 +43,6 @@ jobs:
           MODO: ${{ inputs.modo }}
           CIDADES: ${{ inputs.cidades }}
           MAXIMO: ${{ inputs.maximo }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           if [ "$MODO" = "importar" ]; then node tools/dados/cnpj.mjs --cidades "$CIDADES" --maximo "${MAXIMO:-3000}"; else python tools/dados/cnpj_sondar.py; fi

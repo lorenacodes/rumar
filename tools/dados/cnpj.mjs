@@ -7,12 +7,9 @@
  *   node tools/dados/cnpj.mjs --sondar
  *   node tools/dados/cnpj.mjs --cidades br-2611606 --maximo 3000
  */
-import { execFileSync, spawn } from 'node:child_process';
-import { existsSync, rmSync } from 'node:fs';
-import { createInterface } from 'node:readline';
-import { avaliarEndereco, campos, candidato, duplicado, sem } from './cnpj-regras.mjs';
+import { execFileSync } from 'node:child_process';
+import { avaliarEndereco, candidato, duplicado, sem } from './cnpj-regras.mjs';
 
-const BASE = 'https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/';
 const FUNCAO = 'https://iunrivtuhwaytmwclmui.supabase.co/functions/v1/importar-lugares';
 const UA = 'BoVair/0.1 (dados abertos CNPJ; github.com/lorenacodes)';
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -35,77 +32,25 @@ async function banco(corpo) {
   return d;
 }
 
-async function competencia() {
-  const r = await fetch(BASE, { headers: { 'User-Agent': UA } });
-  if (!r.ok) throw new Error(`Receita: ${r.status} em ${BASE}`);
-  const meses = [...(await r.text()).matchAll(/href="(\d{4}-\d{2})\/"/g)].map((m) => m[1]).sort();
-  if (!meses.length) throw new Error('Receita: nenhuma competência na listagem (o endereço mudou?)');
-  return meses.at(-1);
-}
-function baixar(url, arquivo) {
-  console.log(`   baixando ${url}`);
-  execFileSync('curl', ['-L', '--fail', '--silent', '--show-error', '--retry', '4', '--retry-delay', '20', '-A', UA, '-o', arquivo, url], { stdio: 'inherit' });
-}
-/** Lê as linhas de um zip (latin1) sem descompactar no disco. */
-async function* linhas(arquivo) {
-  const p = spawn('unzip', ['-p', arquivo]);
-  p.stdout.setEncoding('latin1');
-  for await (const l of createInterface({ input: p.stdout, crlfDelay: Infinity })) yield l;
-}
 
-const mes = await competencia();
-console.log(`Competência mais recente: ${mes}`);
-
-if (process.argv.includes('--sondar')) {
-  const html = await (await fetch(`${BASE}${mes}/`, { headers: { 'User-Agent': UA } })).text();
-  console.log('Arquivos:', [...html.matchAll(/href="([^"]+\.zip)"/g)].map((m) => m[1]).join(' '));
-  baixar(`${BASE}${mes}/Municipios.zip`, 'mun.zip');
-  let n = 0; for await (const l of linhas('mun.zip')) { if (n++ < 3) console.log('   Municipios:', l); }
-  console.log(`   ${n} municípios`);
-  process.exit(0);
-}
-
+// Os dados vêm da cópia no Hugging Face (o servidor da Receita não responde ao GitHub): cnpj_extrair.py grava candidatos.json.
+const mes = process.env.CNPJ_MES ?? '2026-09';
 const ids = (arg('--cidades') ?? 'br-2611606').split(',').map((s) => s.trim()).filter(Boolean);
 const maximo = Number(arg('--maximo') ?? 3000);
 const { destinos } = await banco({ acao: 'destino', ids });
-
-// 1. Código da Receita de cada cidade (pelo nome; o estado confere na linha do estabelecimento).
-baixar(`${BASE}${mes}/Municipios.zip`, 'mun.zip');
+execFileSync('python', ['tools/dados/cnpj_extrair.py', JSON.stringify(destinos.map((d) => [sem(d.nome).toUpperCase(), d.regiao]))], { stdio: 'inherit' });
+const linhasJson = JSON.parse((await import('node:fs')).readFileSync('candidatos.json', 'utf8'));
+// Código do município → destino: pelo nome que a extração põe no fim da linha (o estado confere).
 const municipios = new Map();
-for await (const l of linhas('mun.zip')) {
-  const [codigo, nome] = campos(l);
-  for (const d of destinos) if (sem(nome) === sem(d.nome)) municipios.set(codigo, { destino: d.id, uf: d.regiao });
-}
-rmSync('mun.zip');
-console.log(`Municípios: ${[...municipios].map(([c, m]) => `${m.destino}=${c}`).join(', ')}`);
-if (!municipios.size) throw new Error('Nenhum município encontrado');
-
-// 2. Estabelecimentos (10 arquivos).
 const candidatos = new Map();
-for (let i = 0; i <= 9; i++) {
-  const arq = `est${i}.zip`;
-  try { baixar(`${BASE}${mes}/Estabelecimentos${i}.zip`, arq); } catch { console.log(`   Estabelecimentos${i}.zip indisponível`); continue; }
-  let lidas = 0;
-  for await (const l of linhas(arq)) {
-    lidas++;
-    const c = candidato(campos(l), municipios);
-    if (c) candidatos.set(c.cnpj, c);
-  }
-  rmSync(arq);
-  console.log(`   Estabelecimentos${i}: ${lidas} linhas; candidatos até agora: ${candidatos.size}`);
+for (const f of linhasJson) {
+  const d = destinos.find((x) => x.regiao === f[19] && sem(x.nome).toUpperCase() === f[30]);
+  if (!d) continue;
+  if (!municipios.has(f[20])) municipios.set(f[20], { destino: d.id, uf: d.regiao });
+  const c = candidato(f, municipios);
+  if (c) candidatos.set(c.cnpj, c);
 }
-
-// 3. Fora o MEI (Simples: coluna 4 = opção pelo MEI).
-baixar(`${BASE}${mes}/Simples.zip`, 'simples.zip');
-const basicos = new Set([...candidatos.values()].map((c) => c.basico));
-const mei = new Set();
-for await (const l of linhas('simples.zip')) {
-  const f = campos(l);
-  if (f[4] === 'S' && basicos.has(f[0])) mei.add(f[0]);
-}
-rmSync('simples.zip');
-for (const [k, c] of candidatos) if (mei.has(c.basico)) candidatos.delete(k);
-console.log(`Sem MEI: ${candidatos.size} estabelecimentos`);
+console.log(`Candidatos (sem MEI): ${candidatos.size}`);
 
 // 4. Por cidade: pula o que já existe, localiza e grava.
 async function nominatim(c, d) {
@@ -148,4 +93,3 @@ for (const d of destinos) {
   await gravar(true);
   console.log(`   gravados ${ok}; sem endereço achado ${fora}; já no mapa ${dup}`);
 }
-if (existsSync('mun.zip')) rmSync('mun.zip');
