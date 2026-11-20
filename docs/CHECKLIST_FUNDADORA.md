@@ -1,6 +1,6 @@
 # O que depende da Lorena
 
-> **Atualizado em 19/11/2026.** É a lista única do que só você pode fazer. Ordem = prioridade.
+> **Atualizado em 20/11/2026.** É a lista única do que só você pode fazer. Ordem = prioridade.
 > Quando quiser saber o que falta, pergunte "o que falta pra mim?": eu leio esta lista, confiro o que já
 > foi feito e atualizo. Marque `[x]` ou me avise que eu marco.
 > Detalhes de custo: `docs/PLANO_DE_ACAO.md` · Segurança: `docs/SEGURANCA.md`.
@@ -70,14 +70,15 @@
       Supabase → Edge Functions → Secrets → `YOUTUBE_API_KEY`. Me avise e eu confiro os vídeos escolhidos.
 - [ ] **5.2 LiteAPI (hotéis)** — Secrets → `LITEAPI_KEY` (a de teste primeiro; depois uma de produção nova,
       porque a de teste apareceu num print). Liga a busca de hotéis com preço.
-- [ ] **5.4 Hugging Face (grátis, 5 min) — milhares de restaurantes e bares do CNPJ.** A Receita não responde ao
+- [ ] **5.3 (Opcional) Google Places** — fotos de restaurantes, que a Wikimedia quase não tem. Precisa de cartão no
+      Google Cloud; com o teto de 900/mês já configurado o custo esperado é R$ 0. Passos: Faturamento → ativar
+      **Places API (New)** → criar chave restrita → alerta de US$ 5 → Secrets → `GOOGLE_PLACES_KEY`.
+
+- [ ] **5.4 Hugging Face (grátis, 5 min) — PRIORIDADE desta seção: milhares de restaurantes e bares do CNPJ.** A Receita não responde ao
       GitHub; a cópia dos dados no Hugging Face exige conta. huggingface.co → criar conta → abrir
       huggingface.co/datasets/cnpjaberto/cnpj-dados-receita-brasil-2026-09 → aceitar os termos (se pedir) →
       Settings → Access Tokens → New token (tipo **Read**) → GitHub do repositório → Settings → Secrets and
       variables → Actions → New secret `HF_TOKEN`. Me avise; eu rodo a importação do Recife.
-- [ ] **5.3 (Opcional) Google Places** — fotos de restaurantes, que a Wikimedia quase não tem. Precisa de cartão no
-      Google Cloud; com o teto de 900/mês já configurado o custo esperado é R$ 0. Passos: Faturamento → ativar
-      **Places API (New)** → criar chave restrita → alerta de US$ 5 → Secrets → `GOOGLE_PLACES_KEY`.
 
 ## 6. Limpeza no painel do Supabase (5 min)
 
@@ -111,6 +112,10 @@
 
 ## 9. Conferências rápidas (10 min no celular)
 
+- [ ] **9.0 (Conforto) Modo "Auto" nas conversas comigo** — no app, no seletor ao lado da caixa de mensagem,
+      escolha **Auto**: quase tudo roda sem pedir aprovação (eu não posso ligar isso sozinho). Liberar tudo no
+      repositório também é possível, mas aí até apagar dados no banco passaria sem confirmação; não recomendo.
+
 - [ ] **9.1 Conferir os links oficiais** em Etapas (PF, Itamaraty, UE, Receita, Ministério da Saúde, Banco Central).
 - [ ] **9.2 Rodar o workflow "Câmbio"** (GitHub → Actions → Câmbio → Run workflow) para trazer mais moedas.
 - [ ] **9.3 Uma vez por mês:** taxa do passaporte, ETIAS, IOF e cota da Receita (o app mostra a data da consulta).
@@ -119,16 +124,21 @@
 
 ## O que eu acompanho sozinho (não precisa fazer nada)
 
-- **Fotos dos lugares do Brasil:** busca diária na Wikimedia (Nordeste primeiro) e conferência minha às 10h17.
-  Realidade: ~100 a 150 fotos novas por dia com qualidade; a meta de 1.000/dia não é alcançável só com fonte
-  grátis. Cresce mais com fotos de quem foi (o app pede logo depois de avaliar) e com o Google (5.3).
-- **Testes de segurança:** `tools/seguranca/ataque.mjs` (54 verificações) e `xss.mjs`.
+- **Tarefa diária às 10h17** (erros do app, fotos, passeios, pesquisa de lugares), com aviso de até 5 linhas.
+- **Fotos dos lugares do Brasil:** busca diária na Wikimedia (Nordeste primeiro). Realidade: 500 a 600 fotos
+  novas por dia; Brasil com 2.623 lugares com foto (de 57 mil). Cresce mais com fotos de quem foi e com o Google (5.3).
+- **Passeios por cidade:** 6 a 10 por dia. Já têm: Recife (9), Salvador (7), Aracaju (6), Maceió, Maragogi,
+  Milagres, Olinda, Porto de Galinhas, Carneiros, Xingó. Meta: 8 por cidade turística do Nordeste.
+- **Pesquisa de lugares (Fase 1, Recife):** 2 a 3 bairros por dia (o que torna especial, quão conhecido, fontes).
+  Recife já tem bairro em 1.675 de 1.678 lugares.
+- **Testes de segurança:** `tools/seguranca/ataque.mjs` (~98 verificações), `xss.mjs` e `concorrencia.mjs`.
 - **Senha das contas de teste:** fica fora do repositório. Numa conversa nova, eu gero outra se precisar rodar os testes.
 
 ## Já feito
 - [x] Nome "Bo Vair" livre no INPI (15/11).
 - [x] Supabase Pro pago (16/11).
 - [x] Mudanças no banco aprovadas e aplicadas (praia, café, roteiro público, álbum, segurança) — 19/11.
+- [x] Escolhida a opção A para a base de restaurantes: dados abertos do CNPJ, grátis (20/11). Falta só o 5.4.
 
 ## Custos (lembrete)
 
