@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useRouteError } from 'react-router-dom';
 
-import { registrarErro } from '../lib/erros';
+import { ehVersaoAntiga, recarregarPorVersaoNova, registrarErro } from '../lib/erros';
 
 /** Quando uma tela quebra (D-085): mensagem clara e caminho de volta, em vez de tela branca. O erro é registrado. */
 export function TelaDeErro() {
   const erro = useRouteError();
-  useEffect(() => registrarErro(erro, 'tela'), [erro]);
+  // Versão nova publicada com a tela aberta: recarrega sozinho em vez de mostrar erro.
+  useEffect(() => { if (!(ehVersaoAntiga(erro) && recarregarPorVersaoNova())) registrarErro(erro, 'tela'); }, [erro]);
   return (
     <main className="tela" role="alert" style={{ padding: 'calc(40px + env(safe-area-inset-top)) 20px 24px' }}>
       <h1 style={{ margin: 0, font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Algo deu errado.</h1>

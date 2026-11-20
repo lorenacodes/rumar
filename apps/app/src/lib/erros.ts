@@ -27,4 +27,18 @@ export function capturarErros() {
   if (typeof window === 'undefined') return;
   window.addEventListener('error', (ev) => registrarErro(ev.error ?? ev.message, 'janela'));
   window.addEventListener('unhandledrejection', (ev) => registrarErro(ev.reason, 'promessa'));
+  // App atualizado com a tela aberta: os pedaços antigos sumiram do servidor. Recarrega uma vez (no máximo a cada 30 s).
+  window.addEventListener('vite:preloadError', (ev) => { if (recarregarPorVersaoNova()) ev.preventDefault(); });
 }
+
+/** Recarrega a página quando um pedaço do app não existe mais (nova versão publicada). Evita laço de recarga. */
+export function recarregarPorVersaoNova(): boolean {
+  try {
+    const ultima = Number(sessionStorage.getItem('bovair.recarga') ?? 0);
+    if (Date.now() - ultima < 30_000) return false;
+    sessionStorage.setItem('bovair.recarga', String(Date.now()));
+  } catch { return false; }
+  window.location.reload();
+  return true;
+}
+export const ehVersaoAntiga = (e: unknown) => /dynamically imported module|Importing a module script failed|error loading dynamically/i.test(String((e as Error)?.message ?? e));
