@@ -144,7 +144,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
           const estado = i < idxAtual && !pend ? 'feita' : e.id === j.etapa ? 'atual' : pend === 0 && daEtapa.length ? 'feita' : 'futura';
           const aberta = vista === e.id;
           return (
-            <li key={e.id} style={{ borderLeft: `3px solid ${estado === 'feita' ? 'var(--verde)' : estado === 'atual' ? 'var(--amarelo)' : 'var(--linha)'}`, paddingLeft: '12px', marginLeft: '6px' }}>
+            <li key={e.id} style={{ borderBottom: '1px solid var(--linha)' }}>
               <button type="button" className="r-btn" aria-expanded={aberta} onClick={() => setVista(e.id)} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', minHeight: '48px', alignItems: 'center', textAlign: 'left' }}>
                 <span>
                   <b style={{ font: "600 16px 'Lexend Exa'" }}>{estado === 'feita' ? <Check cor="var(--verde)" /> : estado === 'atual' ? '● ' : '○ '}{e.nome}</b>

@@ -505,7 +505,7 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar, clima }: { v: Viag
                 {!ultimo ? <span aria-hidden="true" style={{ position: 'absolute', right: '-2px', top: '20px', bottom: '-6px', width: '2px', background: 'var(--linha)' }} /> : null}
               </div>
               <div style={{ minWidth: 0, paddingLeft: '8px', paddingBottom: ultimo ? 0 : '6px' }}>
-                <article style={{ background: 'var(--cartao-2)', borderRadius: '12px', padding: '10px', boxShadow: it.feito ? 'inset 4px 0 0 var(--verde)' : 'none' }}>
+                <article style={{ background: 'var(--cartao-2)', borderRadius: '12px', padding: '10px' }}>
                   <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}?viagem=${v.viagem.id}`)} aria-label={`${l.nome}: detalhes`}
                     style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%', textAlign: 'left' }}>
                     <span style={{ width: '56px', flex: 'none', borderRadius: '8px', overflow: 'hidden' }}><FotoLugar id={l.id} proporcao="1 / 1" credito={false} compacto /></span>

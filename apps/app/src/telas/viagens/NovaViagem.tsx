@@ -130,7 +130,7 @@ export function NovaViagem() {
         <Rotulo>Noites</Rotulo>
         <Passo valor={noites} menor={1} maior={14} aoMudar={setNoites} rotulo="uma noite" />
         {conflitos.length ? (
-          <div role="status" style={{ marginTop: '10px', padding: '10px 12px', borderRadius: '12px', background: 'var(--cartao-2)', boxShadow: 'inset 4px 0 0 var(--ambar)' }}>
+          <div role="status" style={{ marginTop: '10px', padding: '10px 12px', borderRadius: '12px', background: 'var(--cartao-2)' }}>
             <b style={{ display: 'block', fontSize: '14px' }}>Você já tem {conflitos.map(textoConflito).join(' e ')} nesses dias.</b>
             <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Tudo bem se estiver comparando destinos.</span>
           </div>
