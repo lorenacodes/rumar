@@ -19,8 +19,8 @@
       4. Me avise: eu testo um cadastro. (Gmail aguenta ~500 e-mails por dia, sobra para o teste.)
       Depois, com o domínio (7.1), dá para trocar pelo Resend com e-mail @bovair.com.br.
 - [ ] **1.2 Ajustes no Supabase (Authentication)**, 10 minutos:
-  - [ ] Ligar **"Leaked password protection"** (proteção contra senhas vazadas; está no plano Pro que você paga).
-  - [ ] Senha mínima de 8 caracteres com letras e números.
+  - [x] Ligar **"Leaked password protection"** (feito 21/11; conferido no painel de segurança) (proteção contra senhas vazadas; está no plano Pro que você paga).
+  - [x] Senha mínima de 8 caracteres com letras e números (feito 21/11).
   - [ ] Nos e-mails "Confirm signup" e "Change email address", usar o código `{{ .Token }}`.
   - [ ] Redirect URL: `com.bovair.app://auth`.
 - [ ] **1.3 Testar criar conta no APK** com o seu e-mail principal e me contar o resultado. Isso também libera a
