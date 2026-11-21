@@ -10,7 +10,7 @@
 
 ## 1. Urgente: sem isso, gente de verdade não consegue usar
 
-- [ ] **1.1 E-mail próprio para o cadastro (SMTP)** — o envio grátis do Supabase é para testes (poucos e-mails por
+- [x] **1.1 E-mail próprio para o cadastro (SMTP)** (feito 21/11 com o Gmail da Buovai, só para enviar os códigos; remetente "App de viagens"; trocar pelo e-mail próprio quando o nome for decidido) — o envio grátis do Supabase é para testes (poucos e-mails por
       hora, pode não entregar para pessoas de fora). **Jeito grátis, sem domínio e sem MEI: usar um Gmail.**
       1. Crie um Gmail só para o app (ex.: bovair.app@gmail.com) e ligue a verificação em 2 etapas.
       2. Conta Google → Segurança → **Senhas de app** → criar "Bo Vair" → copie a senha de 16 letras.
