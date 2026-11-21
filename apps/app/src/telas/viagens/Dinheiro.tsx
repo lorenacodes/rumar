@@ -27,7 +27,7 @@ export function AbaDinheiro({ v, j, orc, resumo, pode, recarregar }: { v: Viagem
     <section style={{ marginTop: '14px' }}>
       <Segmentos rotulo="Partes do dinheiro" valor={sub} aoMudar={setSub}
         opcoes={[{ id: 'resumo', nome: 'Custos' }, { id: 'economia', nome: 'Economia' }, { id: 'levar', nome: 'Como levar' }, { id: 'viagem', nome: 'Na viagem' }]} />
-      {sub === 'resumo' ? <><TabelaMoedas j={j} orc={orc} gastos={v.gastos} />{resumo}</> : null}
+      {sub === 'resumo' ? <><TabelaMoedas j={j} orc={orc} gastos={v.gastos} limite={v.viagem.orcamento_centavos ? converter(v.viagem.orcamento_centavos, taxa(v.viagem.moeda_planejamento ?? 'BRL', j.moedaPlano)) ?? 0 : 0} />{resumo}</> : null}
       {sub === 'economia' ? <Economia v={v} j={j} pode={pode} recarregar={recarregar} semPrecos={orc.provavelBRL === 0} /> : null}
       {sub === 'levar' ? <ComoLevar v={v} j={j} orc={orc} /> : null}
       {sub === 'viagem' ? <NaViagem v={v} j={j} orc={orc} pode={pode} recarregar={recarregar} /> : null}
@@ -47,7 +47,7 @@ function Cotacao({ de, para }: { de: string; para: string }) {
   );
 }
 
-function TabelaMoedas({ j, orc, gastos }: { j: Jornada; orc: Orcamento; gastos: { categoria: string }[] }) {
+function TabelaMoedas({ j, orc, gastos, limite }: { j: Jornada; orc: Orcamento; gastos: { categoria: string }[]; limite: number }) {
   const falta = textoFalta(faltaNoCusto(orc, gastos));
   const tBRL = taxa('BRL', j.moedaPlano);
   const linhas = orc.categorias.map((c) => {
@@ -83,6 +83,12 @@ function TabelaMoedas({ j, orc, gastos }: { j: Jornada; orc: Orcamento; gastos: 
         </tbody>
       </table>
       {total && falta ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--ambar)', fontWeight: 600, marginTop: '6px' }}>Falta: {falta}.</div> : null}
+      {/* Comparação com o orçamento (saiu do topo da viagem): aqui, com o caminho para ajustar. */}
+      {total && limite ? (
+        total > limite
+          ? <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)', marginTop: '6px' }}>Passa do orçamento em <b style={{ color: 'var(--texto)' }}>{dinheiro(total - limite, j.moedaPlano)}</b>{falta ? ' (e falta somar)' : ''}. Ajuste em Etapas.</div>
+          : <div style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--verde)', fontWeight: 600, marginTop: '6px' }}>Cabe no seu orçamento{falta ? ' até agora' : ''}: sobram {dinheiro(limite - total, j.moedaPlano)}.</div>
+      ) : null}
       <Cotacao de={j.moedaDestino} para={j.moedaPlano} />
       <Info rotulo="Sobre a conversão" style={{ marginTop: '4px' }}>Pela cotação de referência, sem IOF nem taxas do banco (veja "Como levar"). Cada valor tem a fonte dele abaixo.</Info>
     </div>

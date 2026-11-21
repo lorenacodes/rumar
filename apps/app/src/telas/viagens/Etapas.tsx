@@ -88,9 +88,11 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
   const tarefas = j.tarefas;
   const acionaveis = tarefas.filter((t) => !t.informativa);
   const feitas = acionaveis.filter((t) => t.feita).length;
-  const proximas = acionaveis.filter((t) => !t.feita && t.etapa !== 'durante' && t.etapa !== 'volta').sort((a, b) => (a.prazo ?? '9999').localeCompare(b.prazo ?? '9999') || ordemPrior(a) - ordemPrior(b)).slice(0, 3);
-  const alertasDoc = tarefas.filter((t) => t.etapa === 'documentos' && !t.feita && !t.informativa && t.prioridade === 'alta');
-  const vencidas = acionaveis.filter((t) => !t.feita && t.prazo && t.prazo < j.ctx.hoje);
+  // Depois da ida, preparo atrasado não ajuda: mostra só o que vale para agora (durante/volta).
+  const comecou = j.etapa === 'durante' || j.etapa === 'volta';
+  const proximas = acionaveis.filter((t) => !t.feita && (comecou ? t.etapa === j.etapa : t.etapa !== 'durante' && t.etapa !== 'volta')).sort((a, b) => (a.prazo ?? '9999').localeCompare(b.prazo ?? '9999') || ordemPrior(a) - ordemPrior(b)).slice(0, 3);
+  const alertasDoc = comecou ? [] : tarefas.filter((t) => t.etapa === 'documentos' && !t.feita && !t.informativa && t.prioridade === 'alta');
+  const vencidas = comecou ? [] : acionaveis.filter((t) => !t.feita && t.prazo && t.prazo < j.ctx.hoje);
   const idxAtual = ETAPAS.findIndex((e) => e.id === j.etapa);
 
   const abrir = (t: TarefaVista) => {
@@ -108,7 +110,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
 
   return (
     <section style={{ marginTop: '14px' }}>
-      <div style={{ padding: '14px', background: 'var(--fundo-escuro)', color: '#fff' }}>
+      <div style={{ padding: '14px', borderRadius: '16px', background: 'var(--fundo-escuro)', color: '#fff' }}>
         <div style={{ font: "600 24px 'Lexend Exa'" }}>{situacao}</div>
         <div style={{ fontSize: '14px', color: 'var(--sobre-escuro-sec)', marginTop: '2px' }}>
           Etapa atual: <b style={{ color: '#fff' }}>{ETAPAS[idxAtual]?.nome}</b> · {feitas} de {acionaveis.length} tarefas feitas
@@ -117,12 +119,7 @@ export function AbaEtapas({ v, j, pode, recarregar, irPara, resumoFinal }: { v: 
         <div aria-hidden="true" style={{ height: '6px', background: 'rgba(255,255,255,.2)', marginTop: '10px' }}>
           <div style={{ height: '6px', width: `${Math.round((feitas / Math.max(1, acionaveis.length)) * 100)}%`, background: 'var(--amarelo)' }} />
         </div>
-        {j.plano ? (
-          <div style={{ fontSize: '14px', marginTop: '10px', color: 'var(--sobre-escuro-sec)' }}>
-            Guardado: <b style={{ color: '#fff' }}>{dinheiro(j.guardado, j.moedaPlano)}</b> de {dinheiro(j.plano.meta, j.moedaPlano)}
-            {j.plano.falta ? <> · guardar <b style={{ color: '#fff' }}>{dinheiro(j.plano.mensal, j.moedaPlano)}/mês</b></> : ' · meta atingida'}
-          </div>
-        ) : null}
+        {/* O dinheiro (guardado e quanto por mês) fica no bloco logo abaixo: sem repetir aqui. */}
       </div>
 
       <BolsoDaViagem v={v} j={j} pode={pode} recarregar={recarregar} irPara={irPara} />

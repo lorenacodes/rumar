@@ -1,3 +1,4 @@
+import { FotosQuePassam } from '../../ui/FotosQuePassam';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hojeLocal } from '../../lib/datas';
 import { BlocoNetworking } from '../descobrir/Networking';
@@ -141,18 +142,24 @@ export function Viagem() {
   if (!v) return <main className="tela" aria-busy="true" style={{ padding: '40px 20px' }}>Carregando a viagem…</main>;
   const pode = v.papel === 'dono' || v.papel === 'editor';
   const total = v.viagem.noites + 1;
-  const acima = orc?.limiteBRL ? orc.o.provavelBRL - orc.limiteBRL : 0;
   const falta = orc ? faltaNoCusto(orc.o, v.gastos) : null;
   const parcial = Boolean(falta && (falta.itens.length || falta.passeiosSemPreco));
   const irPara = (a: string) => setParams({ aba: a }, { replace: true });
 
   return (
     <main className="tela" data-tela="viagem" data-real="viagem">
-      <div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}>
-        <Voltar para="/viagens" />
-        <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
-        <h1 style={{ margin: '4px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
-        {textoMotivo(v.viagem) ? <div style={{ marginTop: '2px', fontSize: '15px', fontWeight: 600, color: 'var(--texto-sec)' }}>{textoMotivo(v.viagem)}</div> : null}
+      {/* Topo com fotos do destino passando: a viagem começa pelo desejo, não pelos números. */}
+      <div style={{ position: 'relative', height: 'calc(230px + env(safe-area-inset-top))', background: 'var(--marinho)', overflow: 'hidden' }}>
+        <FotosQuePassam destinoId={v.viagem.destino_id ?? null} nome={v.viagem.destino} />
+        <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(0deg, rgba(11,31,75,.92) 0%, rgba(11,31,75,.35) 55%, rgba(11,31,75,.15) 100%)' }} />
+        <div style={{ position: 'absolute', left: '16px', top: 'calc(14px + env(safe-area-inset-top))', zIndex: 3 }}><Voltar para="/viagens" sobreFoto /></div>
+        <div style={{ position: 'absolute', left: '20px', right: '20px', bottom: '16px', zIndex: 2, color: '#fff' }}>
+          <div style={{ font: "600 14px 'Open Sans'", color: 'var(--amarelo)' }}>{textoPeriodo(v.viagem.data_ida, v.viagem.noites)} · {v.viagem.viajantes} {v.viagem.viajantes === 1 ? 'pessoa' : 'pessoas'}</div>
+          <h1 style={{ margin: '2px 0 0', font: "600 30px/35px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.viagem.destino}</h1>
+          {textoMotivo(v.viagem) ? <div style={{ marginTop: '2px', fontSize: '14px', fontWeight: 600, opacity: 0.9 }}>{textoMotivo(v.viagem)}</div> : null}
+        </div>
+      </div>
+      <div style={{ padding: '6px 20px 0' }}>
         <QuemVe v={v} recarregar={recarregar} />
         {v.offline ? (
           <div role="status" style={{ marginTop: '8px', padding: '10px 12px', borderRadius: '10px', background: 'var(--fundo-escuro)', color: '#fff', fontSize: '14px', lineHeight: '19px' }}>
@@ -169,9 +176,8 @@ export function Viagem() {
             </span>
             <span style={{ textAlign: 'right', fontSize: '13px', color: 'var(--sobre-escuro-sec)', alignSelf: 'center' }}>
               {orc.o.provavelBRL > 0 ? `${reais(orc.o.porPessoaBRL)} por pessoa` : 'Anote seus custos'}
-              {orc.o.provavelBRL > 0 && v.viagem.orcamento_centavos && acima > 0
-                ? <span style={{ display: 'block', color: 'var(--amarelo)', fontWeight: 600 }}>{reais(acima)} acima do orçamento{parcial ? ' (e ainda falta somar)' : ''}</span>
-                : orc.o.provavelBRL > 0 && parcial
+              {/* O "acima do orçamento" fica na aba Dinheiro: aqui, só o resumo (sem cobrança logo no topo). */}
+              {orc.o.provavelBRL > 0 && parcial
                   ? <span style={{ display: 'block', color: 'var(--sobre-escuro-sec)', fontWeight: 600 }}>Falta preço de {textoFalta(falta!)}</span>
                   : orc.o.provavelBRL > 0 && v.viagem.orcamento_centavos ? <span style={{ display: 'block', color: '#9fe0b4', fontWeight: 600 }}>Dentro do orçamento</span> : null}
             </span>
