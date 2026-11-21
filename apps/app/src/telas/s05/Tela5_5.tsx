@@ -62,7 +62,9 @@ export function Tela5_5() {
   const confirmar = async () => {
     setInfo(null);
     if (bloqueado) return setErro('Você errou o código 5 vezes. Peça um código novo abaixo.');
-    if (codigo.length !== digitos) return setErro(`Digite os ${digitos} números do código.`);
+    // O tamanho do código é configurado no painel do Supabase (hoje 8). No app aceitamos de 6 até esse
+    // tamanho: se alguém mudar o painel para 6, ninguém fica preso com caixas vazias.
+    if (demo ? codigo.length !== digitos : codigo.length < 6 || codigo.length > digitos) return setErro(`Digite os ${digitos} números do código.`);
     setEnviando(true);
     const r = await confirmarCodigo(email, codigo, tipoCodigo);
     setEnviando(false);
