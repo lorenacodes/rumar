@@ -26,6 +26,9 @@
   (vitest, todos os `tools/e2e/*.mjs`, `tools/seguranca/*.mjs`, `npm run visual`), corrigir o que falhar e só então
   dizer que terminou. Se algo depender dela (chave, aprovação, decisão), registrar no `docs/CHECKLIST_FUNDADORA.md`
   e dizer claramente o que ficou e por quê. Ajustar testes que ficaram desatualizados por mudança de tela.
+- **Princípio do produto: gerar desejo o tempo todo (21/11/2026).** Toda tela deve fazer a pessoa querer ir e ver que
+  é possível: foto real, o que só existe naquele lugar, o próximo passo fácil e o "dá para fazer". Evitar telas que só
+  informam ou listam pendências; avisos no máximo um por item. Sem inventar números: desejo com dado real e fonte.
 - Plano vigente: `docs/PLANO_DE_ACAO.md`.
 - **Pendências da fundadora (19/11/2026):** tudo o que só ela pode fazer fica em `docs/CHECKLIST_FUNDADORA.md`.
   Quando ela perguntar "o que falta pra mim?" (ou parecido), ler esse arquivo, conferir o que já foi feito

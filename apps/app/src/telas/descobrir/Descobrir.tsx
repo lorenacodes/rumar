@@ -26,6 +26,7 @@ import { Experiencias } from './Experiencias';
 import { ExplorarCidades } from './ExplorarCidades';
 import { faixaDoLugar, NOME_FAIXA } from '../../lib/nivel';
 import { CoracaoQueroIr } from '../../ui/CoracaoQueroIr';
+import { experienciasPerto } from '../../lib/experiencias';
 import { contarFiltros, FILTROS_VAZIOS, PainelFiltros, type EstadoFiltros } from './PainelFiltros';
 import { BlocoNetworking } from './Networking';
 
@@ -62,6 +63,22 @@ function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
 type Filtro = 'para-voce' | 'todos' | 'salvos' | CategoriaLugar;
 
 /** Descobrir: qualquer cidade da base, por categoria, nome, preço e mapa, com a cobertura à vista. */
+/** Convite para montar o roteiro: dados reais da cidade (lugares na base e experiências únicas) e a ação em destaque. */
+function ConviteRoteiro({ destinoId, cidade, lugares }: { destinoId: string; cidade: string; lugares: number | null }) {
+  const navegar = useNavigate();
+  const [unicas, setUnicas] = useState<number | null>(null);
+  useEffect(() => { void experienciasPerto({ id: destinoId }).then((l) => setUnicas(l.filter((e) => !e.bateVolta).length)); }, [destinoId]);
+  const dados = [lugares ? `${lugares.toLocaleString('pt-BR')} lugares` : null, unicas ? `${unicas} ${unicas === 1 ? 'experiência que só existe aqui' : 'experiências que só existem aqui'}` : null].filter(Boolean);
+  return (
+    <div style={{ marginTop: '12px', padding: '14px 16px', borderRadius: '18px', background: 'var(--fundo-escuro)', color: '#fff' }}>
+      <b style={{ display: 'block', font: "600 18px/23px 'Lexend Exa'", letterSpacing: '-0.01em' }}>Dá para ir. Seu roteiro sai em 1 minuto.</b>
+      {dados.length ? <span style={{ display: 'block', marginTop: '4px', fontSize: '14px', color: 'var(--sobre-escuro-sec)' }}>{dados.join(' · ')}</span> : null}
+      <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)}
+        style={{ width: '100%', minHeight: '48px', marginTop: '12px', borderRadius: '24px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 16px 'Open Sans'" }}>Montar meu roteiro para {cidade}</button>
+    </div>
+  );
+}
+
 export function Descobrir() {
   const navegar = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -189,9 +206,7 @@ export function Descobrir() {
           {trocando ? <button type="button" className="r-btn" onClick={() => setTrocando(false)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Cancelar</button> : null}
         </div>
         <h1 style={{ margin: '6px 0 0', font: "600 28px/33px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{destino ? `O que viver em ${destino.nome}.` : 'Lugares para conhecer.'}</h1>
-        {destino && !trocando && !viagem ? (
-          <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destino.id}`)} style={{ marginTop: '10px', height: '44px', padding: '0 14px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 14px 'Open Sans'" }}>Planejar viagem para {destino.nome}</button>
-        ) : null}
+        {destino && !trocando && !viagem ? <ConviteRoteiro destinoId={destino.id} cidade={destino.nome} lugares={cob?.reduce((t, c) => t + c.quantidade, 0) ?? null} /> : null}
         {trocando ? (
           <div style={{ marginTop: '10px' }}>
             <EscolherDestino autoFoco aoEscolher={irParaCidade} />
