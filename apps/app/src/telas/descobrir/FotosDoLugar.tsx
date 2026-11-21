@@ -97,7 +97,7 @@ export function FotosDeQuemFoi({ placeId, nome, comida }: { placeId: string; nom
             </figure>
           ))}
         </div>
-      ) : <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{comida ? 'Já comeu aqui? Mostre o prato.' : 'Já foi? Mostre como é.'}</p>}
+      ) : <p style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{comida ? 'Mostre o prato que você comeu.' : 'Mande a primeira foto daqui.'}</p>}
 
       {pendentes ? <p role="status" style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>{pendentes === 1 ? '1 foto sua está em análise.' : `${pendentes} fotos suas estão em análise.`}</p> : null}
       {recusadas.length ? <p style={{ fontSize: '13px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>{recusadas.length === 1 ? '1 foto sua não foi aprovada.' : `${recusadas.length} fotos suas não foram aprovadas.`} <button type="button" className="r-btn" onClick={() => void Promise.all(recusadas.map((r) => apagarMinhaFoto(r.id, r.caminho))).then(carregar)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Apagar</button></p> : null}

@@ -110,7 +110,7 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
             </div>
           ) : null}
         </div>
-      ) : lista ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Ninguém avaliou ainda. Seja a primeira pessoa.</p> : null}
+      ) : lista ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Ainda sem avaliações. Já foi? Conte como é.</p> : null}
 
       {msg ? <p role="status" style={{ fontSize: '14px', fontWeight: 600, color: msg.startsWith('Avaliação') ? 'var(--verde)' : 'var(--vermelho)', margin: '8px 0 0' }}>{msg}</p> : null}
 
@@ -121,7 +121,7 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
       ) : null}
 
       {!aberto ? (
-        <button type="button" className="r-btn" onClick={abrir} style={{ width: '100%', height: '48px', marginTop: '10px', borderRadius: '12px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>
+        <button type="button" className="r-btn" onClick={abrir} style={{ width: '100%', height: '48px', marginTop: '10px', borderRadius: '999px', background: 'var(--cartao-2)', color: 'var(--texto)', font: "600 15px 'Open Sans'" }}>
           {!sessao ? 'Entre para avaliar' : minha ? 'Editar minha avaliação' : 'Avaliar este lugar'}
         </button>
       ) : (

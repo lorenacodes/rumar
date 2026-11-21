@@ -60,7 +60,7 @@ function Cabecalho({ children }: { children?: ReactNode }) {
       {/* No app, as configurações abrem a partir do perfil (feed): voltar leva a ele. */}
       <Voltar para={demo ? '/inicio' : '/pessoa/eu'} rotulo={demo ? undefined : 'Meu perfil'} />
       <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Perfil</div>
-      <Titulo marginTop="4px">Seu perfil.</Titulo>
+      <Titulo marginTop="4px">{demo ? 'Seu perfil.' : 'Ajustes.'}</Titulo>
       {children}
     </>
   );
@@ -84,6 +84,7 @@ function SecaoViajante() {
   const [amizades, setAmizades] = useState<Amizade[] | null>(null);
   useEffect(() => void meuUsuario().then((m) => setUsuario(m?.username ?? null)), []);
   useEffect(() => void minhasAmizades().then(setAmizades), []);
+  const demo = useDemo();
   const [moderadora, setModeradora] = useState(false);
   useEffect(() => void souModerador().then(setModeradora), []);
   const pedidos = amizades?.filter((a) => a.status === 'pendente' && !a.enviadaPorMim).length ?? 0;
@@ -91,7 +92,7 @@ function SecaoViajante() {
   const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
   return (
     <div style={{ marginTop: '10px' }}>
-      <div style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', margin: '8px 0 2px' }}>Viagens</div>
+      <div style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', margin: '8px 0 2px' }}>{demo ? 'Viagens' : 'Viagens e amigos'}</div>
       <Linha minHeight="44px" titulo={pedidos ? `Amigos · ${pedidos} ${pedidos === 1 ? 'pedido' : 'pedidos'} esperando` : 'Amigos'}
         detalhe={amizades === null ? '…' : nAmigos ? `${nAmigos} ${nAmigos === 1 ? 'amigo' : 'amigos'} · encontrar mais pelo nome ou @` : 'Encontrar amigos pelo nome ou @ e viajar junto'} onClick={() => navegar('/perfil/amigos')} />
       {moderadora ? <Linha minHeight="44px" titulo="Moderação de fotos" detalhe="Aprovar fotos enviadas" onClick={() => navegar('/perfil/moderar')} /> : null}

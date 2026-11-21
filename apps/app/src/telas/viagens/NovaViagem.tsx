@@ -6,6 +6,7 @@ import { cobertura, destinoPorId, pedirCidade, rotuloDestino, type Destino } fro
 import { paisPorCodigo } from '../../lib/moedas';
 import { useDestinoAtual } from '../../state/destino';
 import { EscolherDestino } from '../../ui/escolherDestino';
+import { FotosQuePassam } from '../../ui/FotosQuePassam';
 import { adicionarGasto, criarViagem, listarViagens } from '../../lib/viagens';
 import { seguirRoteiro } from '../../lib/seguirRoteiro';
 import { textoConflito, viagensNoMesmoPeriodo, type Periodo } from '../../lib/conflitoDatas';
@@ -119,17 +120,19 @@ export function NovaViagem() {
         {params.get('roteiro') ? <p style={{ margin: '6px 0 0', fontSize: '15px', lineHeight: '21px' }}>Sua viagem já nasce com os mesmos lugares, dia a dia.</p> : null}
         <Rotulo>Destino</Rotulo>
         {destino ? (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ font: "600 22px 'Lexend Exa'" }}>{rotuloDestino(destino)}</div>
-            <button type="button" className="r-btn" onClick={() => setDestino(null)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Trocar</button>
+          <div style={{ position: 'relative', height: '170px', borderRadius: '18px', overflow: 'hidden', background: 'var(--fundo-escuro)' }}>
+            <FotosQuePassam destinoId={destino.id} nome={destino.nome} />
+            <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to top, rgba(5,12,30,.78), rgba(5,12,30,0) 60%)' }} />
+            <div style={{ position: 'absolute', left: '14px', right: '14px', bottom: '30px', zIndex: 2, color: '#fff', font: "600 22px/27px 'Lexend Exa'", letterSpacing: '-0.02em', overflowWrap: 'anywhere' }}>{rotuloDestino(destino)}</div>
+            <button type="button" className="r-btn" onClick={() => setDestino(null)} style={{ position: 'absolute', right: '10px', top: '10px', zIndex: 2, minHeight: '40px', padding: '0 14px', borderRadius: '999px', background: 'rgba(11,31,75,.55)', color: '#fff', fontWeight: 600, fontSize: '14px' }}>Trocar</button>
           </div>
         ) : <EscolherDestino aoEscolher={setDestino} placeholder="Busque uma cidade" />}
         {destino && lugaresNaBase !== null ? (
-          <div style={{ fontSize: '14px', lineHeight: '20px', color: lugaresNaBase ? 'var(--texto-sec)' : 'var(--ambar)' }}>
-            {lugaresNaBase ? `${lugaresNaBase} lugares para o seu roteiro.` : 'Ainda sem lugares aqui: o roteiro começa vazio e pedimos a coleta.'}
+          <div style={{ fontSize: '14px', lineHeight: '20px', color: lugaresNaBase ? 'var(--texto-sec)' : 'var(--ambar)', marginTop: '6px' }}>
+            {lugaresNaBase ? `${lugaresNaBase.toLocaleString('pt-BR')} lugares para o seu roteiro.` : 'Ainda sem lugares aqui: o roteiro começa vazio e pedimos a coleta.'}
           </div>
         ) : null}
-        {paisDestino ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{paisDestino.nome} · moeda: {NOME_MOEDA[paisDestino.moeda] ?? paisDestino.moeda} · viagem {intl ? 'internacional' : 'nacional'}</div> : null}
+        {paisDestino && intl ? <div style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Moeda de lá: {NOME_MOEDA[paisDestino.moeda] ?? paisDestino.moeda}</div> : null}
         <Rotulo>A data já está fechada?</Rotulo>
         <Segmentos rotulo="A data já está fechada?" valor={definida} aoMudar={setDefinida} opcoes={[{ id: 'sim', nome: 'Sim, data fechada' }, { id: 'nao', nome: 'Ainda é uma previsão' }]} />
         <Rotulo><label htmlFor="ida">{definida === 'sim' ? 'Data de ida' : 'Data prevista de ida'}</label></Rotulo>

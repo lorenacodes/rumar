@@ -1,5 +1,5 @@
 import { FotosQuePassam } from '../../ui/FotosQuePassam';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { hojeLocal } from '../../lib/datas';
 import { BlocoNetworking } from '../descobrir/Networking';
 import { Experiencias } from '../descobrir/Experiencias';
@@ -77,6 +77,14 @@ export function Viagem() {
   const soOlha = v ? !v.papel : false;
   const aba = ((registrada || soOlha) && ['etapas', 'hospedagem', 'dinheiro', 'orcamento', 'grupo'].includes(pedida) ? 'roteiro' : pedida === 'orcamento' ? 'dinheiro' : pedida) as Aba;
   const [dia, setDia] = useState(1);
+  // Durante a viagem, o roteiro abre no dia de hoje (uma vez por viagem aberta).
+  const diaAjustado = useRef<string | null>(null);
+  useEffect(() => {
+    if (!v || diaAjustado.current === v.viagem.id) return;
+    diaAjustado.current = v.viagem.id;
+    const n = Math.round((Date.parse(`${hojeLocal()}T12:00:00Z`) - Date.parse(`${v.viagem.data_ida}T12:00:00Z`)) / 864e5) + 1;
+    if (n > 1 && n <= v.viagem.noites + 1) setDia(n);
+  }, [v]);
   const local = useLocation();
   const recarregar = useCallback(() => void carregarViagem(id).then(setV), [id]);
   // Sempre fresco: ao abrir/navegar, ao vivo (Realtime), ao voltar para o app e, por
@@ -315,22 +323,25 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
   const navegar = useNavigate();
   const hoje = hojeLocal();
   const vistos = new Set<string>();
+  const [todosAbertos, setTodosAbertos] = useState(false);
+  // Só o que já passou (dias anteriores a hoje ou marcados como feitos): nada de avaliar o que ainda vem.
+  const diaDeHoje = Math.round((Date.parse(`${hoje}T12:00:00Z`) - Date.parse(`${v.viagem.data_ida}T12:00:00Z`)) / 864e5) + 1;
   const hotelId = v.hospedagem?.hotel_id.startsWith('lugar:') ? v.hospedagem.hotel_id.slice(6) : null;
   const todos = [
     ...(hotelId ? [{ id: hotelId, nome: v.hospedagem!.nome, sub: 'Onde você ficou' }] : []),
-    ...itens.filter(({ l }) => (vistos.has(l.id) ? false : (vistos.add(l.id), true))).map(({ l, it }) => ({ id: l.id, nome: l.nome, sub: it.feito ? 'Você foi' : '' })),
+    ...itens.filter(({ it }) => it.feito || it.dia < diaDeHoje).filter(({ l }) => (vistos.has(l.id) ? false : (vistos.add(l.id), true))).map(({ l, it }) => ({ id: l.id, nome: l.nome, sub: it.feito ? 'Você foi' : '' })),
   ];
   const chave = todos.map((x) => x.id).join(',');
   const [notas, setNotas] = useState<Map<string, number> | null>(null);
   useEffect(() => { void minhasNotas(chave.split(',').filter(Boolean)).then(setNotas); }, [chave]);
-  if (v.viagem.data_ida > hoje) return null;
+  if (v.viagem.data_ida > hoje || !todos.length) return null;
   // Primeiro o que falta avaliar; os avaliados mostram a nota e "Editar".
-  const lista = [...todos].sort((a, b) => Number(notas?.has(a.id) ?? false) - Number(notas?.has(b.id) ?? false)).slice(0, 12);
+  const lista = [...todos].sort((a, b) => Number(notas?.has(a.id) ?? false) - Number(notas?.has(b.id) ?? false)).slice(0, todosAbertos ? 12 : 3);
   const faltam = notas ? todos.filter((x) => !notas.has(x.id)).length : null;
   return (
-    <section aria-label="Como foi" style={{ marginBottom: '14px', padding: '14px', background: 'var(--cartao-2)' }}>
+    <section aria-label="Como foi" style={{ marginBottom: '14px', padding: '14px', borderRadius: '16px', background: 'var(--cartao-2)' }}>
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Como foi?</h2>
-      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>{faltam === 0 ? 'Você avaliou todos. Obrigado!' : 'Avalie os lugares onde você foi.'}</p>
+      <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>{faltam === 0 ? 'Você avaliou todos. Obrigado!' : 'Sua nota ajuda quem vai depois.'}</p>
       <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
         {lista.map((x) => {
           const nota = notas?.get(x.id);
@@ -341,12 +352,14 @@ function ComoFoi({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l: Lugar 
                 {nota ? <Estrelas nota={nota} tamanho={13} /> : x.sub ? <span style={{ fontSize: '12px', color: x.sub === 'Você foi' ? 'var(--verde)' : 'var(--texto-sec)' }}>{x.sub}</span> : null}
               </span>
               <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${x.id}?viagem=${v.viagem.id}#avaliar=1`)}
-                style={{ flex: 'none', minHeight: '44px', padding: '0 12px', font: "600 14px 'Open Sans'", ...(nota ? { color: 'var(--azul)' } : { background: 'var(--amarelo)', color: 'var(--botao-principal-texto)' }) }}>{nota ? 'Editar' : 'Avaliar'}</button>
+                style={{ flex: 'none', minHeight: '44px', padding: '0 4px', font: "600 14px 'Open Sans'", color: 'var(--azul)' }}>{nota ? 'Editar' : 'Avaliar'}</button>
             </li>
           );
         })}
       </ul>
-      {v.viagem.destino_id ? (
+      {!todosAbertos && todos.length > 3 ? (
+        <button type="button" className="r-btn alvo-toque" onClick={() => setTodosAbertos(true)} style={{ marginTop: '6px', color: 'var(--texto)', fontWeight: 600, fontSize: '14px' }}>Ver todos ({todos.length})</button>
+      ) : v.viagem.destino_id ? (
         <button type="button" className="r-btn alvo-toque" onClick={() => navegar(`/descobrir?d=${v.viagem.destino_id}&modo=lista`)} style={{ marginTop: '6px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Avaliar outro lugar de {v.viagem.destino} ›</button>
       ) : null}
     </section>
@@ -468,10 +481,6 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar, clima }: { v: Viag
 
   return (
     <section style={{ marginTop: '14px' }}>
-      {dia === 1 && pode && v.viagem.data_ida <= hojeLocal() ? <OndeFui v={v} recarregar={recarregar} /> : null}
-      {dia === 1 ? <ComoFoi v={v} itens={itens} /> : null}
-      {dia === 1 && v.viagem.destino_id ? <Experiencias destino={{ id: v.viagem.destino_id }} cidade={v.viagem.destino} preferencias={grupo ?? preferencias ?? null} titulo="Experiências para esta viagem" max={3} /> : null}
-      {preferencias?.networking && v.viagem.destino_id && dia === 1 ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
         <h2 style={{ margin: 0, font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Dia {dia}</h2>
         {itens.length ? <BotaoCompartilharRoteiro v={v} itens={itens} /> : null}
@@ -575,6 +584,12 @@ function AbaRoteiro({ v, dia, itens, pode, grupo, recarregar, clima }: { v: Viag
           <BotaoContorno onClick={() => navegar(`/descobrir?d=${destinoDe(v) ?? ""}&viagem=${v.viagem.id}&dia=${dia}`)}>+ Adicionar lugar no dia {dia}</BotaoContorno>
         </div>
       ) : null}
+      <div style={{ marginTop: '22px' }}>
+      {v.viagem.destino_id ? <Experiencias destino={{ id: v.viagem.destino_id }} cidade={v.viagem.destino} preferencias={grupo ?? preferencias ?? null} titulo="Experiências para esta viagem" max={3} /> : null}
+      {preferencias?.networking && v.viagem.destino_id ? <div style={{ marginBottom: '14px' }}><BlocoNetworking destinoId={v.viagem.destino_id} cidade={v.viagem.destino} area={preferencias.area} /></div> : null}
+        <ComoFoi v={v} itens={itens} />
+        {pode && v.viagem.data_ida <= hojeLocal() ? <OndeFui v={v} recarregar={recarregar} /> : null}
+      </div>
       <div style={{ marginTop: '18px' }}><NivelDoRoteiro v={v} pode={pode} recarregar={recarregar} /></div>
     </section>
   );

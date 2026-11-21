@@ -23,7 +23,7 @@ async function pagina(entrar) {
 if (ETAPA === '1') {
   const t = await pagina(true);
   await t.goto(URL + `#/lugar/${LUGAR}`); await t.waitForTimeout(3500);
-  confere('página do restaurante convida a mostrar o prato', (await t.getByText('Já comeu aqui? Mostre o prato.').count()) === 1);
+  confere('página do restaurante convida a mostrar o prato', (await t.getByText('Mostre o prato que você comeu.').count()) === 1);
   await t.getByRole('button', { name: /Mandar foto/ }).click();
   await t.locator('input[type=file]').setInputFiles('apps/app/public/fotos/destaque-sao-paulo.jpg'); await t.waitForTimeout(800);
   confere('enviar fica desligado sem a declaração', await t.getByRole('button', { name: 'Publicar foto' }).isDisabled());

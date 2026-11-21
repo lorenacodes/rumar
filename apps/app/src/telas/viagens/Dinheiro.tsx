@@ -416,6 +416,8 @@ export function planejadoReal(v: ViagemCompleta, j: Jornada, orc: Orcamento) {
 
 export function PlanejadoReal({ v, j, orc, comCompartilhar }: { v: ViagemCompleta; j: Jornada; orc: Orcamento; comCompartilhar?: boolean }) {
   const r = planejadoReal(v, j, orc);
+  // Sem nada planejado nem gasto, a tabela seria só traços: não mostra.
+  if (!r.linhas.length) return null;
   const f = (c: number) => dinheiro(c, j.moedaPlano);
   const texto = `Minha viagem para ${v.viagem.destino} (${v.viagem.noites + 1} dias): ${r.plan ? `planejei ${f(r.plan)} e ` : ''}gastei ${f(r.real)}${v.viagem.avaliacao ? `. Nota do planejamento: ${v.viagem.avaliacao}/5` : ''}. Planejada no Bo Vair.`;
   return (

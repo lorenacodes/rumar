@@ -67,7 +67,7 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
   if (!viagens.length) {
     return (
       <div style={caixa}>
-        <b style={{ font: "600 16px 'Lexend Exa'" }}>{cidade ? `Você ainda não tem viagem para ${cidade}` : 'Você ainda não tem viagem para esta cidade'}</b>
+        <b style={{ font: "600 16px 'Lexend Exa'" }}>{cidade ? `Que tal conhecer ${cidade}?` : 'Que tal conhecer esta cidade?'}</b>
                 {destinoId ? <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)} style={botao}>Planejar viagem{cidade ? ` para ${cidade}` : ''}</button> : null}
       </div>
     );
