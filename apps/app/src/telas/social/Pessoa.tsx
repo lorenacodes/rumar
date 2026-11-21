@@ -37,7 +37,7 @@ export function Pessoa() {
   const [p, setP] = useState<Vitrine | null | undefined>(undefined);
   const [viagens, setViagens] = useState<ViagemPerfil[] | null>(null);
   const [capas, setCapas] = useState<Map<string, { id: string; url: string }[]>>(new Map());
-  const [paradas, setParadas] = useState<Map<string, number>>(new Map());
+  const [roteiros, setRoteiros] = useState<Map<string, { nomes: string[]; total: number }>>(new Map());
   const [minhasPrivadas, setMinhasPrivadas] = useState<Viagem[]>([]);
   const [aba, setAba] = useState<'viagens' | 'fotos'>('viagens');
   const [editando, setEditando] = useState(false);
@@ -62,11 +62,20 @@ export function Pessoa() {
       setMinhasPrivadas(souEu ? [] : v.minhas.filter((x) => x.user_id === uid && x.visibilidade === 'privada'));
       if (lista.length) {
         const ids = lista.map((x) => x.id);
-        void fotosDasViagens(ids, 1).then(setCapas);
-        const { data } = await supabase.from('trip_items').select('trip_id').in('trip_id', ids);
-        const m = new Map<string, number>();
-        for (const r of data ?? []) m.set(r.trip_id as string, (m.get(r.trip_id as string) ?? 0) + 1);
-        setParadas(m);
+        void fotosDasViagens(ids, 4).then(setCapas);
+        // O que importa no perfil: por onde a pessoa passou (os lugares mais conhecidos do roteiro).
+        const { data } = await supabase.from('trip_items').select('trip_id, place_id').in('trip_id', ids).limit(2000);
+        const linhas = (data ?? []) as { trip_id: string; place_id: string }[];
+        const lugIds = [...new Set(linhas.map((l) => l.place_id).filter((x) => !x.startsWith('livre-')))].slice(0, 400);
+        const { data: lug } = lugIds.length ? await supabase.from('lugares').select('id, nome, fama').in('id', lugIds) : { data: [] };
+        const info = new Map(((lug ?? []) as { id: string; nome: string; fama: number | null }[]).map((l) => [l.id, l]));
+        const m = new Map<string, { nomes: string[]; total: number }>();
+        for (const tid of ids) {
+          const doRoteiro = linhas.filter((l) => l.trip_id === tid);
+          const conhecidos = [...new Map(doRoteiro.map((l) => info.get(l.place_id)).filter((x): x is { id: string; nome: string; fama: number | null } => Boolean(x)).map((x) => [x.nome, x])).values()];
+          m.set(tid, { nomes: conhecidos.sort((a, b) => (b.fama ?? 0) - (a.fama ?? 0)).slice(0, 3).map((x) => x.nome), total: doRoteiro.length });
+        }
+        setRoteiros(m);
       }
     });
   };
@@ -88,6 +97,9 @@ export function Pessoa() {
     const fa = fase(a, hoje); const fb = fase(b, hoje);
     return ord[fa] - ord[fb] || (fa === 'foi' ? b.data_ida.localeCompare(a.data_ida) : a.data_ida.localeCompare(b.data_ida));
   });
+  // Perfil mostra o que a pessoa viveu (feitas e em andamento); planos ficam numa linha discreta no fim.
+  const vividas = ordenadas.filter((v) => fase(v, hoje) !== 'proximas');
+  const planos = ordenadas.filter((v) => fase(v, hoje) === 'proximas');
   const capaUrl = ordenadas.map((v) => capas.get(v.id)?.[0]?.url).find(Boolean) ?? null;
   const capaDestino = ordenadas.find((v) => fase(v, hoje) !== 'proximas')?.destino ?? ordenadas[0]?.destino ?? null;
   // Carimbos: uma por cidade onde já esteve (a visita mais recente).
@@ -185,7 +197,7 @@ export function Pessoa() {
         <div role="tablist" aria-label="Ver" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '20px' }}>
           {(['viagens', 'fotos'] as const).map((a) => (
             <button key={a} type="button" role="tab" aria-selected={aba === a} className="r-btn" onClick={() => setAba(a)}
-              style={{ minHeight: '44px', borderRadius: '999px', fontWeight: 600, fontSize: '15px', background: aba === a ? 'var(--fundo-escuro)' : 'var(--cartao-2)', color: aba === a ? '#fff' : 'var(--texto)' }}>
+              style={{ minHeight: '44px', borderRadius: '999px', textAlign: 'center', fontWeight: 600, fontSize: '15px', background: aba === a ? 'var(--fundo-escuro)' : 'var(--cartao-2)', color: aba === a ? '#fff' : 'var(--texto)' }}>
               {a === 'viagens' ? 'Viagens' : 'Fotos'}
             </button>
           ))}
@@ -198,25 +210,57 @@ export function Pessoa() {
         ) : (
           <div role="tabpanel" aria-label="Viagens" style={{ display: 'grid', gap: '18px', marginTop: '14px' }}>
             {viagens === null ? <p aria-busy="true">Carregando…</p> : null}
-            {ordenadas.map((v) => {
+            {vividas.map((v) => {
               const f = fase(v, hoje);
-              const capa = capas.get(v.id)?.[0];
-              const n = paradas.get(v.id) ?? 0;
+              const fotos = capas.get(v.id) ?? [];
+              const capa = fotos[0];
+              const r = roteiros.get(v.id);
+              const resto = r ? r.total - r.nomes.length : 0;
               return (
                 <button key={v.id} type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)} aria-label={`Ver a viagem para ${v.destino}`}
                   style={{ display: 'block', width: '100%', textAlign: 'left', padding: 0 }}>
                   <span style={{ position: 'relative', display: 'block', borderRadius: '16px', overflow: 'hidden', background: 'var(--cartao-2)' }}>
                     {capa ? <img src={capa.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16 / 10', objectFit: 'cover', display: 'block' }} />
                       : <FotoLugar id={v.destino} proporcao="16 / 10" credito={false} compacto />}
-                    <span style={{ position: 'absolute', left: '10px', top: '10px', padding: '4px 10px', borderRadius: '999px', background: 'var(--fundo)', color: f === 'agora' ? 'var(--verde)' : 'var(--texto)', fontSize: '12px', fontWeight: 700 }}>{NOME_FASE[f]}</span>
+                    {f === 'agora' ? <span style={{ position: 'absolute', left: '10px', top: '10px', padding: '4px 10px', borderRadius: '999px', background: 'var(--fundo)', color: 'var(--verde)', fontSize: '12px', fontWeight: 700 }}>{NOME_FASE[f]}</span> : null}
                   </span>
+                  {fotos.length > 1 ? (
+                    <span aria-hidden="true" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginTop: '4px' }}>
+                      {fotos.slice(1, 4).map((ft) => <img key={ft.id} src={ft.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />)}
+                    </span>
+                  ) : null}
                   <span style={{ display: 'block', font: "600 19px/24px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '8px' }}>{v.destino}</span>
-                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>
-                    {[periodo(v.data_ida, v.noites), textoMotivo(v), n ? `${n} ${n === 1 ? 'parada' : 'paradas'}` : null, v.juntos ? 'vocês vão juntos' : null, p.eu ? QUEM_VE[v.visibilidade] : null].filter(Boolean).join(' · ')}
+                  {r?.nomes.length ? (
+                    <span style={{ display: 'block', fontSize: '15px', lineHeight: '21px', marginTop: '2px' }}>
+                      {f === 'agora' ? 'No roteiro: ' : 'Passou por '}<b>{r.nomes.join(', ')}</b>{resto > 0 ? ` e mais ${resto}` : ''}
+                    </span>
+                  ) : null}
+                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', marginTop: '2px' }}>
+                    {[periodo(v.data_ida, v.noites), textoMotivo(v), v.juntos ? 'vocês foram juntos' : null, p.eu ? QUEM_VE[v.visibilidade] : null].filter(Boolean).join(' · ')}
                   </span>
                 </button>
               );
             })}
+            {viagens?.length && !vividas.length ? (
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>
+                {p.eu ? 'Suas viagens feitas aparecem aqui, com fotos e roteiro.' : `${primeiro} ainda não mostrou viagens feitas.`}
+              </p>
+            ) : null}
+            {planos.length ? (
+              <section aria-label="Próximos destinos">
+                <h2 style={{ margin: '4px 0 8px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)' }}>Próximos destinos</h2>
+                <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {planos.map((v) => (
+                    <li key={v.id}>
+                      <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)} aria-label={`Ver a viagem para ${v.destino}`}
+                        style={{ minHeight: '40px', padding: '0 14px', borderRadius: '999px', background: 'var(--cartao-2)', fontSize: '14px', fontWeight: 600 }}>
+                        {v.destino.split(',')[0]} <span style={{ fontWeight: 400, color: 'var(--texto-sec)' }}>· {periodo(v.data_ida, v.noites).split(' →')[0]}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
             {viagens && !viagens.length ? (
               p.eu ? (
                 <div>
