@@ -9,6 +9,8 @@ p.on('pageerror', (e) => erros.push(e.message));
 await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.tempo@bovair.com.br'); await p.locator('#senha').fill(senha); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
 await p.goto(URL + '#/viagens'); await p.waitForTimeout(3000);
+const feitas = p.getByRole('button', { name: /Já feitas/ });
+if (await feitas.count() && (await feitas.getAttribute('aria-expanded')) === 'false') { await feitas.click(); await p.waitForTimeout(800); }
 await p.getByRole('button', { name: /Recife/ }).first().click(); await p.waitForTimeout(4000);
 const antes = await p.locator('section[aria-label="Fotos da viagem"] img').count();
 await p.getByRole('button', { name: 'Postar fotos' }).click();

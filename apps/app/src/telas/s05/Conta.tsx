@@ -98,6 +98,7 @@ export function AvisoPrivacidade() {
     ['Foto de perfil (opcional)', 'Mostrar a quem você permitir', 'Consentimento', 'Até você apagar'],
     ['Fotos de lugares e pratos que você envia (opcional), com o seu @', 'Mostrar o lugar a outros viajantes, depois de aprovadas', 'Consentimento', 'Até você apagar a foto ou excluir a conta'],
     ['Bio e "gosto numa viagem" (opcionais)', 'Mostrar seu perfil a quem tem conta', 'Consentimento', 'Até você apagar'],
+    ['Nota e frase sobre a cidade (opcional)', 'Mostrar a viagem a quem pode vê-la', 'Consentimento', 'Até você apagar a nota ou a viagem'],
     ['Fotos do álbum da viagem (opcional)', 'Mostrar a viagem a quem pode vê-la', 'Consentimento', 'Até você apagar a foto ou a viagem'],
     ['Avaliações de lugares (nota, comentário, mídias), com o seu @', 'Ajudar outros viajantes', 'Consentimento', 'Até você apagar ou excluir a conta'],
     ['Se entrar com o Google: nome e e-mail da conta Google', 'Criar e acessar sua conta', 'Execução de contrato', 'Enquanto a conta existir'],
@@ -116,7 +117,7 @@ export function AvisoPrivacidade() {
         </div>
       ))}
       <Rotulo>Quem vê</Rotulo>
-      <p style={p}>Cada viagem tem o seu "Quem vê": só quem vai, amigos ou todos com conta. Valores e gastos nunca aparecem para quem só olha. Quem tem conta encontra você pelo nome ou @ e vê sua bio, se você escrever uma. Avaliações e fotos de lugares aparecem para todos, com o seu @.</p>
+      <p style={p}>Cada viagem tem o seu "Quem vê": só quem vai, amigos ou todos com conta. Valores e gastos nunca aparecem para quem só olha. Quem tem conta encontra você pelo nome ou @ e vê sua bio, se você escrever uma. Avaliações e fotos de lugares aparecem para todos, com o seu @. No seu perfil, quem tem conta vê quantos amigos você tem; nomes, só de amigos em comum.</p>
       <Rotulo>Onde ficam e com quem compartilhamos</Rotulo>
       <p style={p}>Os dados ficam no Supabase, com servidores em São Paulo. Para buscar hotéis, enviamos à LiteAPI só o local, as datas e o número de pessoas (nada de nome ou e-mail). Mapas (OpenFreeMap), fotos (Wikimedia e Google Maps), vídeos (YouTube) e a previsão do tempo (Open-Meteo, só com a cidade da viagem) são carregados direto no seu aparelho; esses serviços recebem o endereço de internet do aparelho, como em qualquer site. Se você entrar com o Google, o Google sabe que você usou o Bo Vair.</p>
       <p style={p}>Não vendemos dados, não mostramos anúncios e não usamos ferramentas de rastreamento ou de publicidade.</p>

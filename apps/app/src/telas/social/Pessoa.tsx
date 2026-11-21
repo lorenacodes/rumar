@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { hojeLocal } from '../../lib/datas';
 import { fotosDasViagens } from '../../lib/fotosPessoa';
+import { amigosDoPerfil, lugaresAmados, MAX_COMENTARIO_CIDADE, notasDaCidade, salvarNotaCidade, type Conexoes, type LugarAmado, type NotaCidade } from '../../lib/perfilVivido';
 import { GOSTOS_VIAGEM, limparBio, MAX_BIO, MAX_GOSTOS, perfilVitrine, salvarVitrine, type GostoViagem, type Vitrine } from '../../lib/perfilVitrine';
 import { desfazerAmizade, minhasAmizades, pedirAmizade } from '../../lib/social';
 import { supabase } from '../../lib/supabase';
@@ -39,7 +40,11 @@ export function Pessoa() {
   const [capas, setCapas] = useState<Map<string, { id: string; url: string }[]>>(new Map());
   const [roteiros, setRoteiros] = useState<Map<string, { nomes: string[]; total: number }>>(new Map());
   const [minhasPrivadas, setMinhasPrivadas] = useState<Viagem[]>([]);
-  const [aba, setAba] = useState<'viagens' | 'fotos'>('viagens');
+  const [aba, setAba] = useState<'viagens' | 'lugares' | 'fotos'>('viagens');
+  const [notas, setNotas] = useState<Map<string, NotaCidade>>(new Map());
+  const [amados, setAmados] = useState<LugarAmado[] | null>(null);
+  const [conexoes, setConexoes] = useState<Conexoes | null>(null);
+  const [carimbo, setCarimbo] = useState<string | null>(null);
   const [editando, setEditando] = useState(false);
   const [pedido, setPedido] = useState<'nada' | 'enviado' | 'recebido'>('nada');
 
@@ -48,6 +53,8 @@ export function Pessoa() {
   const carregar = () => {
     if (!id) return;
     void perfilVitrine(id).then(setP);
+    void lugaresAmados(id).then(setAmados);
+    void amigosDoPerfil(id).then(setConexoes);
     void minhasAmizades().then((l) => {
       const a = l.find((x) => x.outro.user_id === id && x.status === 'pendente');
       setPedido(a ? (a.enviadaPorMim ? 'enviado' : 'recebido') : 'nada');
@@ -63,6 +70,7 @@ export function Pessoa() {
       if (lista.length) {
         const ids = lista.map((x) => x.id);
         void fotosDasViagens(ids, 4).then(setCapas);
+        void notasDaCidade(id, ids).then(setNotas);
         // O que importa no perfil: por onde a pessoa passou (os lugares mais conhecidos do roteiro).
         const { data } = await supabase.from('trip_items').select('trip_id, place_id').in('trip_id', ids).limit(2000);
         const linhas = (data ?? []) as { trip_id: string; place_id: string }[];
@@ -100,12 +108,12 @@ export function Pessoa() {
   // Perfil mostra o que a pessoa viveu (feitas e em andamento); planos ficam numa linha discreta no fim.
   const vividas = ordenadas.filter((v) => fase(v, hoje) !== 'proximas');
   const planos = ordenadas.filter((v) => fase(v, hoje) === 'proximas');
-  const capaUrl = ordenadas.map((v) => capas.get(v.id)?.[0]?.url).find(Boolean) ?? null;
-  const capaDestino = ordenadas.find((v) => fase(v, hoje) !== 'proximas')?.destino ?? ordenadas[0]?.destino ?? null;
-  // Carimbos: uma por cidade onde já esteve (a visita mais recente).
+  const capaUrl = vividas.map((v) => capas.get(v.id)?.[0]?.url).find(Boolean) ?? null;
+  const capaDestino = vividas[0]?.destino ?? ordenadas[0]?.destino ?? null;
+  // Carimbos: um por cidade onde já esteve (a viagem mais recente), ligado à viagem real.
   const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-  const carimbos = [...new Map(ordenadas.filter((v) => fase(v, hoje) === 'foi').map((v) => [v.destino, v] as const)).values()]
-    .map((v) => ({ cidade: v.destino.split(',')[0]!, quando: `${MES[Number(v.data_ida.slice(5, 7)) - 1]} ${v.data_ida.slice(0, 4)}` })).slice(0, 12);
+  const carimbos = [...new Map(ordenadas.filter((v) => fase(v, hoje) === 'foi').reverse().map((v) => [v.destino, v] as const)).values()].reverse()
+    .map((v) => ({ v, cidade: v.destino.split(',')[0]!, quando: `${MES[Number(v.data_ida.slice(5, 7)) - 1]} ${v.data_ida.slice(0, 4)}` })).slice(0, 12);
   const mostrarMinhas = () => {
     if (!window.confirm(`Mostrar suas ${minhasPrivadas.length} viagens privadas para todos os seus amigos? Dá para esconder de novo em cada viagem.`)) return;
     void Promise.all(minhasPrivadas.map((v) => atualizarViagem(v.id, { visibilidade: 'amigos' }))).then(carregar);
@@ -115,30 +123,65 @@ export function Pessoa() {
     [p.viagens, 'viagem', 'viagens'], [p.cidades, 'cidade', 'cidades'], [p.fotos, 'foto', 'fotos'],
   ];
   const semBio = !p.bio && !p.gostos_viagem.length;
+  const aberto = carimbo ? vividas.find((v) => v.id === carimbo) ?? null : null;
+  const rotuloLugares = p.eu ? 'Lugares que amei' : 'Lugares que amou';
 
   return (
     <main className="tela" data-tela="pessoa" data-real="pessoa">
       {/* Capa: a foto mais recente das viagens (ou a cidade); sem foto, o azul-marinho da marca. */}
       <div className="perfil-capa">
-        {capaUrl ? <img src={capaUrl} alt="" /> : capaDestino ? <FotoLugar id={capaDestino} proporcao="390 / 170" credito={false} compacto /> : null}
+        {capaUrl ? <img src={capaUrl} alt="" /> : capaDestino ? <FotoLugar id={capaDestino} proporcao="390 / 190" credito={false} compacto /> : null}
         {p.eu ? null : <div className="perfil-voltar"><Voltar para="/perfil/amigos" /></div>}
         {p.eu ? (
-          <div style={{ position: 'absolute', right: '16px', top: 'calc(16px + env(safe-area-inset-top))', display: 'flex', gap: '8px' }}>
-            <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} aria-label="Amigos"
-              style={{ height: '40px', padding: '0 14px', borderRadius: '20px', background: 'rgba(11,31,75,.55)', color: '#fff', fontWeight: 600, fontSize: '14px' }}>Amigos</button>
-            <button type="button" className="r-btn" onClick={() => navegar('/perfil')} aria-label="Configurações da conta"
-              style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: 'rgba(11,31,75,.55)', color: '#fff' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM19.4 13.5l1.6 1.2-1.8 3.1-1.9-.7a7.4 7.4 0 0 1-1.7 1l-.3 2H10.7l-.3-2a7.4 7.4 0 0 1-1.7-1l-1.9.7-1.8-3.1 1.6-1.2a7 7 0 0 1 0-2l-1.6-1.2 1.8-3.1 1.9.7a7.4 7.4 0 0 1 1.7-1l.3-2h3.6l.3 2a7.4 7.4 0 0 1 1.7 1l1.9-.7 1.8 3.1-1.6 1.2a7 7 0 0 1 0 2z" /></svg>
-            </button>
-          </div>
+          <button type="button" className="r-btn perfil-icone" onClick={() => navegar('/perfil')} aria-label="Configurações da conta" style={{ position: 'absolute', right: '16px', top: 'calc(16px + env(safe-area-inset-top))' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.8" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.9-1.4-1.9-3.3-2.2.9a7.4 7.4 0 0 0-2.6-1.5L14.3 3h-3.8l-.3 2.2a7.4 7.4 0 0 0-2.6 1.5l-2.2-.9-1.9 3.3 1.9 1.4a7.6 7.6 0 0 0 0 3l-1.9 1.4 1.9 3.3 2.2-.9a7.4 7.4 0 0 0 2.6 1.5l.3 2.2h3.8l.3-2.2a7.4 7.4 0 0 0 2.6-1.5l2.2.9 1.9-3.3z" /></svg>
+          </button>
         ) : null}
       </div>
-      <div style={{ padding: '0 20px 24px' }}>
+      <div style={{ padding: '0 20px 28px' }}>
         <header className="perfil-topo">
-          <span className="perfil-avatar"><Avatar userId={id} nome={nome} tamanho={96} /></span>
-          <h1 style={{ margin: '8px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em', overflowWrap: 'anywhere' }}>{nome}</h1>
-          <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', overflowWrap: 'anywhere' }}>{[p.username ? `@${p.username}` : null, p.origin_city].filter(Boolean).join(' · ')}</span>
+          <span className="perfil-avatar"><Avatar userId={id} nome={nome} tamanho={92} /></span>
+          <div style={{ minWidth: 0, paddingBottom: '4px' }}>
+            <h1 style={{ margin: 0, font: "600 24px/29px 'Lexend Exa'", letterSpacing: '-0.02em', overflowWrap: 'anywhere' }}>{nome}</h1>
+            <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', overflowWrap: 'anywhere' }}>
+              {[p.username ? `@${p.username}` : null, !p.eu && p.amigos ? 'Vocês são amigos' : p.origin_city].filter(Boolean).join(' · ')}
+            </span>
+          </div>
         </header>
+
+        {editando ? (
+          <EditarVitrine inicial={p} onFim={(salvou) => { setEditando(false); if (salvou) void perfilVitrine(id).then(setP); }} />
+        ) : (
+          <section aria-label="Sobre" style={{ marginTop: '14px' }}>
+            {p.bio || (p.eu && !semBio) ? (
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                <p style={{ flex: 1, margin: 0, fontSize: '15px', lineHeight: '22px', whiteSpace: 'pre-line', overflowWrap: 'anywhere' }}>{p.bio}</p>
+                {p.eu ? (
+                  <button type="button" className="r-btn perfil-icone claro" onClick={() => setEditando(true)} aria-label="Editar bio">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" /></svg>
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+            {p.gostos_viagem.length ? (
+              <ul aria-label="Gosta numa viagem" className="perfil-gostos">
+                {p.gostos_viagem.map((g) => <li key={g}>{GOSTOS_VIAGEM[g]}</li>)}
+              </ul>
+            ) : null}
+            {p.eu && semBio ? (
+              <div className="perfil-convite">
+                <span><b>O que você gosta numa viagem?</b> Amigos combinam viagens com você.</span>
+                <button type="button" className="r-btn" onClick={() => setEditando(true)}>Escrever minha bio</button>
+              </div>
+            ) : null}
+            {!p.eu && !p.amigos ? (
+              <div style={{ marginTop: '14px' }}>
+                {pedido === 'enviado' ? <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>Pedido de amizade enviado.</p>
+                  : <BotaoPrincipal onClick={() => void pedir()}>{pedido === 'recebido' ? 'Aceitar amizade' : 'Pedir amizade'}</BotaoPrincipal>}
+              </div>
+            ) : null}
+          </section>
+        )}
 
         <dl aria-label="Números" className="perfil-numeros">
           {numeros.map(([n, um, varios]) => (
@@ -149,106 +192,140 @@ export function Pessoa() {
           ))}
         </dl>
 
-        {editando ? (
-          <EditarVitrine inicial={p} onFim={(salvou) => { setEditando(false); if (salvou) void perfilVitrine(id).then(setP); }} />
-        ) : (
-          <section aria-label="Sobre" style={{ marginTop: '14px' }}>
-            {p.bio ? <p style={{ margin: 0, fontSize: '15px', lineHeight: '22px', whiteSpace: 'pre-line', overflowWrap: 'anywhere' }}>{p.bio}</p> : null}
-            {p.gostos_viagem.length ? (
-              <>
-                <h2 style={{ margin: p.bio ? '12px 0 0' : 0, font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)' }}>Gosta numa viagem</h2>
-                <ul aria-label="Gosta numa viagem" className="perfil-gostos">
-                  {p.gostos_viagem.map((g) => <li key={g}>{GOSTOS_VIAGEM[g]}</li>)}
-                </ul>
-              </>
+        {/* Conexões: rostos de verdade. No meu, meus amigos; no de outra pessoa, os amigos em comum. */}
+        {conexoes && (conexoes.total || p.eu) ? (
+          <button type="button" className="r-btn perfil-conexoes" onClick={() => (p.eu ? navegar('/perfil/amigos') : undefined)} disabled={!p.eu} aria-label={p.eu ? 'Ver meus amigos' : undefined}>
+            {conexoes.pessoas.length ? (
+              <span className="perfil-rostos" aria-hidden="true">
+                {conexoes.pessoas.slice(0, 5).map((a) => <span key={a.user_id}><Avatar userId={a.user_id} nome={a.display_name} tamanho={32} /></span>)}
+              </span>
             ) : null}
-            {p.eu ? (
-              semBio ? (
-                <div style={{ padding: '14px', borderRadius: '14px', border: '1px dashed var(--linha)' }}>
-                  <b style={{ display: 'block', fontSize: '15px' }}>O que você gosta numa viagem?</b>
-                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>Amigos te conhecem melhor e combinam viagens.</span>
-                  <div style={{ marginTop: '10px' }}><BotaoPrincipal onClick={() => setEditando(true)}>Escrever minha bio</BotaoPrincipal></div>
-                </div>
-              ) : (
-                <button type="button" className="r-btn" onClick={() => setEditando(true)} style={{ marginTop: '10px', width: '100%', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px', border: '1px solid var(--linha)', fontWeight: 600, fontSize: '15px' }}>Editar bio</button>
-              )
-            ) : !p.amigos ? (
-              <div style={{ marginTop: '12px' }}>
-                {pedido === 'enviado' ? <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>Pedido de amizade enviado.</p>
-                  : <BotaoPrincipal onClick={() => void pedir()}>{pedido === 'recebido' ? 'Aceitar amizade' : 'Pedir amizade'}</BotaoPrincipal>}
-              </div>
-            ) : null}
-          </section>
-        )}
+            <span style={{ flex: 1, minWidth: 0, fontSize: '14px', lineHeight: '19px' }}>
+              {p.eu
+                ? conexoes.total ? <><b>{conexoes.total} {conexoes.total === 1 ? 'amigo' : 'amigos'}</b>{conexoes.pessoas[0] ? ` · ${conexoes.pessoas.slice(0, 2).map((a) => a.display_name.split(' ')[0]).join(', ')}` : ''}</> : <b>Chame amigos para viajar junto</b>
+                : <>{conexoes.pessoas.length ? <><b>{conexoes.pessoas.length} em comum</b>{` · ${conexoes.pessoas.slice(0, 2).map((a) => a.display_name.split(' ')[0]).join(', ')}`}</> : null}{conexoes.pessoas.length ? <br /> : null}<span style={{ color: 'var(--texto-sec)' }}>{conexoes.total} {conexoes.total === 1 ? 'amigo' : 'amigos'} no Bo Vair</span></>}
+            </span>
+            {p.eu ? <span aria-hidden="true" className="perfil-seta">›</span> : null}
+          </button>
+        ) : null}
 
         {carimbos.length ? (
           <section aria-label="Carimbos" style={{ marginTop: '22px' }}>
-            <h2 style={{ margin: 0, font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)' }}>Carimbos</h2>
+            <h2 className="perfil-h2">Onde {p.eu ? 'já estive' : 'já esteve'}</h2>
             <ul className="perfil-carimbos" aria-label="Cidades visitadas">
-              {carimbos.map((c, i) => (
-                <li key={c.cidade} className={`carimbo carimbo-${i % 3}`} style={{ transform: `rotate(${[-4, 3, -2, 4, -3][i % 5]}deg)` }}>
-                  <b>{c.cidade}</b><span>{c.quando}</span>
-                </li>
-              ))}
+              {carimbos.map((c, i) => {
+                const n = notas.get(c.v.id);
+                return (
+                  <li key={c.cidade}>
+                    <button type="button" className={`r-btn carimbo carimbo-${i % 3}`} onClick={() => setCarimbo(c.v.id)} aria-label={`${c.cidade}, ${c.quando}: abrir`}
+                      style={{ transform: `rotate(${[-4, 3, -2, 4, -3][i % 5]}deg)` }}>
+                      <b>{c.cidade}</b><span>{c.quando}</span>
+                      {n ? <span className="carimbo-nota">{n.nota} de 5</span> : null}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         ) : null}
 
-        <div role="tablist" aria-label="Ver" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '20px' }}>
-          {(['viagens', 'fotos'] as const).map((a) => (
-            <button key={a} type="button" role="tab" aria-selected={aba === a} className="r-btn" onClick={() => setAba(a)}
-              style={{ minHeight: '44px', borderRadius: '999px', textAlign: 'center', fontWeight: 600, fontSize: '15px', background: aba === a ? 'var(--fundo-escuro)' : 'var(--cartao-2)', color: aba === a ? '#fff' : 'var(--texto)' }}>
-              {a === 'viagens' ? 'Viagens' : 'Fotos'}
+        <div role="tablist" aria-label="Ver" className="perfil-abas">
+          {(['viagens', 'lugares', 'fotos'] as const).map((a) => (
+            <button key={a} type="button" role="tab" aria-selected={aba === a} className="r-btn" onClick={() => setAba(a)}>
+              {a === 'viagens' ? 'Viagens' : a === 'lugares' ? 'Lugares' : 'Fotos'}
             </button>
           ))}
         </div>
 
         {aba === 'fotos' ? (
-          <div role="tabpanel" aria-label="Fotos" style={{ marginTop: '4px' }}>
+          <div role="tabpanel" aria-label="Fotos" style={{ marginTop: '12px' }}>
             <GradeDeFotos userId={id} max={30} vazio={p.eu ? 'Suas fotos de viagem aparecem aqui.' : 'Nenhuma foto que você possa ver.'} />
           </div>
+        ) : aba === 'lugares' ? (
+          <div role="tabpanel" aria-label={rotuloLugares} style={{ marginTop: '14px' }}>
+            {amados === null ? <p aria-busy="true">Carregando…</p> : amados.length ? (
+              <ul className="perfil-amados" aria-label={rotuloLugares}>
+                {amados.map((l) => (
+                  <li key={l.id}>
+                    <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${l.id}`)} aria-label={`${l.nome}: nota ${l.nota} de 5`}>
+                      {l.foto ? <img src={l.foto} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} /> : <FotoLugar id={l.nome} proporcao="1" credito={false} compacto />}
+                      <span className="perfil-amado-nome">{l.nome}</span>
+                      <span className="perfil-amado-nota"><Pontos nota={l.nota} /></span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>
+                {p.eu ? 'Dê nota aos lugares que visitou. Os que amou aparecem aqui.' : `${primeiro} ainda não deu nota a lugares.`}
+              </p>
+            )}
+          </div>
         ) : (
-          <div role="tabpanel" aria-label="Viagens" style={{ display: 'grid', gap: '18px', marginTop: '14px' }}>
+          <div role="tabpanel" aria-label="Viagens" style={{ display: 'grid', gap: '20px', marginTop: '14px' }}>
             {viagens === null ? <p aria-busy="true">Carregando…</p> : null}
+            {p.eu && viagens && !vividas.length ? (
+              <div className="perfil-primeira">
+                <FotoLugar id={capaDestino ?? 'Salvador'} proporcao="16 / 9" credito={false} compacto />
+                <div style={{ padding: '14px' }}>
+                  <b style={{ display: 'block', font: "600 18px/23px 'Lexend Exa'" }}>Mostre por onde você já passou.</b>
+                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 12px' }}>Fotos e roteiro inspiram seus amigos.</span>
+                  <BotaoPrincipal onClick={() => navegar('/viagens/ja-fiz')}>Registrar uma viagem que fiz</BotaoPrincipal>
+                </div>
+              </div>
+            ) : null}
             {vividas.map((v) => {
               const f = fase(v, hoje);
               const fotos = capas.get(v.id) ?? [];
               const capa = fotos[0];
               const r = roteiros.get(v.id);
               const resto = r ? r.total - r.nomes.length : 0;
+              const n = notas.get(v.id);
               return (
-                <button key={v.id} type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)} aria-label={`Ver a viagem para ${v.destino}`}
-                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: 0 }}>
-                  <span style={{ position: 'relative', display: 'block', borderRadius: '16px', overflow: 'hidden', background: 'var(--cartao-2)' }}>
-                    {capa ? <img src={capa.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16 / 10', objectFit: 'cover', display: 'block' }} />
-                      : <FotoLugar id={v.destino} proporcao="16 / 10" credito={false} compacto />}
-                    {f === 'agora' ? <span style={{ position: 'absolute', left: '10px', top: '10px', padding: '4px 10px', borderRadius: '999px', background: 'var(--fundo)', color: 'var(--verde)', fontSize: '12px', fontWeight: 700 }}>{NOME_FASE[f]}</span> : null}
-                  </span>
-                  {fotos.length > 1 ? (
-                    <span aria-hidden="true" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginTop: '4px' }}>
-                      {fotos.slice(1, 4).map((ft) => <img key={ft.id} src={ft.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />)}
+                <article key={v.id} className="perfil-viagem">
+                  <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)} aria-label={`Ver a viagem para ${v.destino}`}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: 0 }}>
+                    <span style={{ position: 'relative', display: 'block' }}>
+                      {capa ? <img src={capa.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16 / 10', objectFit: 'cover', display: 'block' }} />
+                        : <FotoLugar id={v.destino} proporcao="16 / 10" credito={false} compacto />}
+                      {f === 'agora' ? <span className="perfil-selo" style={{ left: '10px', color: 'var(--verde)' }}>{NOME_FASE[f]}</span> : null}
+                      {r?.total ? <span className="perfil-selo" style={{ right: '10px' }}>{r.total} {r.total === 1 ? 'lugar' : 'lugares'}</span> : null}
                     </span>
-                  ) : null}
-                  <span style={{ display: 'block', font: "600 19px/24px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '8px' }}>{v.destino}</span>
-                  {r?.nomes.length ? (
-                    <span style={{ display: 'block', fontSize: '15px', lineHeight: '21px', marginTop: '2px' }}>
-                      {f === 'agora' ? 'No roteiro: ' : 'Passou por '}<b>{r.nomes.join(', ')}</b>{resto > 0 ? ` e mais ${resto}` : ''}
+                    {fotos.length > 1 ? (
+                      <span aria-hidden="true" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px', marginTop: '2px' }}>
+                        {fotos.slice(1, 4).map((ft) => <img key={ft.id} src={ft.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />)}
+                      </span>
+                    ) : null}
+                    <span style={{ display: 'block', padding: '12px 14px 4px' }}>
+                      <span style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'baseline' }}>
+                        <span style={{ font: "600 19px/24px 'Lexend Exa'", letterSpacing: '-0.02em', minWidth: 0, overflowWrap: 'anywhere' }}>{v.destino}</span>
+                        {n ? <span style={{ flex: 'none' }}><Pontos nota={n.nota} /></span> : null}
+                      </span>
+                      {n?.comentario ? <span style={{ display: 'block', fontSize: '15px', lineHeight: '21px', marginTop: '4px' }}>"{n.comentario}"</span> : null}
+                      {r?.nomes.length ? (
+                        <span style={{ display: 'block', fontSize: '15px', lineHeight: '21px', marginTop: '4px' }}>
+                          {f === 'agora' ? 'No roteiro: ' : p.eu ? 'Passei por ' : 'Passou por '}<b>{r.nomes.join(', ')}</b>{resto > 0 ? ` e mais ${resto}` : ''}
+                        </span>
+                      ) : null}
+                      <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', marginTop: '2px' }}>
+                        {[periodo(v.data_ida, v.noites), textoMotivo(v), v.juntos ? 'vocês foram juntos' : null, p.eu ? QUEM_VE[v.visibilidade] : null].filter(Boolean).join(' · ')}
+                      </span>
                     </span>
-                  ) : null}
-                  <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)', marginTop: '2px' }}>
-                    {[periodo(v.data_ida, v.noites), textoMotivo(v), v.juntos ? 'vocês foram juntos' : null, p.eu ? QUEM_VE[v.visibilidade] : null].filter(Boolean).join(' · ')}
-                  </span>
-                </button>
+                  </button>
+                  <div className="perfil-viagem-acoes">
+                    <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)}>Ver roteiro por dia</button>
+                    {!p.eu && v.destino_id ? <button type="button" className="r-btn forte" onClick={() => navegar(`/viagens/nova?d=${v.destino_id}`)}>Montar uma parecida</button> : null}
+                    {p.eu && !n ? <button type="button" className="r-btn forte" onClick={() => setCarimbo(v.id)}>Dar nota à cidade</button> : null}
+                  </div>
+                </article>
               );
             })}
-            {viagens?.length && !vividas.length ? (
-              <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>
-                {p.eu ? 'Suas viagens feitas aparecem aqui, com fotos e roteiro.' : `${primeiro} ainda não mostrou viagens feitas.`}
-              </p>
+            {!p.eu && viagens?.length && !vividas.length ? (
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>{primeiro} ainda não mostrou viagens feitas.</p>
             ) : null}
             {planos.length ? (
               <section aria-label="Próximos destinos">
-                <h2 style={{ margin: '4px 0 8px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)' }}>Próximos destinos</h2>
+                <h2 className="perfil-h2" style={{ marginBottom: '8px' }}>Próximos destinos</h2>
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {planos.map((v) => (
                     <li key={v.id}>
@@ -261,17 +338,10 @@ export function Pessoa() {
                 </ul>
               </section>
             ) : null}
-            {viagens && !viagens.length ? (
-              p.eu ? (
-                <div>
-                  <p style={{ margin: 0, fontSize: '15px' }}>Suas viagens aparecem aqui.</p>
-                  <button type="button" className="r-btn" onClick={() => navegar('/viagens/ja-fiz')} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Registrar uma viagem que fiz ›</button>
-                </div>
-              ) : (
-                <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>
-                  {p.amigos ? `${primeiro} ainda não mostrou viagens.` : 'Viagens para amigos aparecem quando vocês forem amigos.'}
-                </p>
-              )
+            {viagens && !viagens.length && !p.eu ? (
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--texto-sec)' }}>
+                {p.amigos ? `${primeiro} ainda não mostrou viagens.` : 'Viagens para amigos aparecem quando vocês forem amigos.'}
+              </p>
             ) : null}
           </div>
         )}
@@ -287,8 +357,92 @@ export function Pessoa() {
           <button type="button" className="r-btn" onClick={() => { if (window.confirm('Desfazer a amizade?')) void desfazerAmizade(id).then(() => navegar('/perfil/amigos')); }} style={{ marginTop: '20px', minHeight: '44px', color: 'var(--vermelho)', fontWeight: 600 }}>Desfazer amizade</button>
         ) : null}
       </div>
+      {aberto ? (
+        <CarimboAberto v={aberto} eu={p.eu} dona={id} fotos={capas.get(aberto.id) ?? []} roteiro={roteiros.get(aberto.id)} nota={notas.get(aberto.id) ?? null}
+          onFechar={() => setCarimbo(null)} onSalvou={() => void notasDaCidade(id, vividas.map((v) => v.id)).then(setNotas)} />
+      ) : null}
       <Abas ativa="passaporte" />
     </main>
+  );
+}
+
+/** Nota em 5 pontos desenhados (sem estrela-emoji), com o número para leitores de tela. */
+function Pontos({ nota }: { nota: number }) {
+  return (
+    <span className="perfil-pontos" role="img" aria-label={`${nota} de 5`}>
+      {[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= nota ? 'cheio' : ''} />)}
+    </span>
+  );
+}
+
+/** Carimbo aberto: a cidade vivida, com nota, fotos, lugares e o roteiro. Dona dá ou muda a nota. */
+function CarimboAberto({ v, eu: souEu, dona, fotos, roteiro, nota, onFechar, onSalvou }: {
+  v: ViagemPerfil; eu: boolean; dona: string; fotos: { id: string; url: string }[]; roteiro?: { nomes: string[]; total: number }; nota: NotaCidade | null;
+  onFechar: () => void; onSalvou: () => void;
+}) {
+  const navegar = useNavigate();
+  const [editar, setEditar] = useState(souEu && !nota);
+  const [valor, setValor] = useState(nota?.nota ?? 0);
+  const [texto, setTexto] = useState(nota?.comentario ?? '');
+  const [erro, setErro] = useState('');
+  const cidade = v.destino.split(',')[0];
+  const salvar = async () => {
+    if (!valor) { setErro('Escolha uma nota de 1 a 5.'); return; }
+    if (await salvarNotaCidade(dona, v.id, valor, texto)) { onSalvou(); setEditar(false); setErro(''); } else setErro('Não deu para salvar. Tente de novo.');
+  };
+  return (
+    <div className="perfil-folha-fundo" onClick={onFechar}>
+      <div role="dialog" aria-modal="true" aria-label={cidade} className="perfil-folha" onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+          <div>
+            <h2 style={{ margin: 0, font: "600 22px/27px 'Lexend Exa'" }}>{cidade}</h2>
+            <span style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{periodo(v.data_ida, v.noites)} · {v.noites} {v.noites === 1 ? 'noite' : 'noites'}</span>
+          </div>
+          <button type="button" className="r-btn perfil-icone claro" onClick={onFechar} aria-label="Fechar">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" d="M5 5l14 14M19 5L5 19" /></svg>
+          </button>
+        </div>
+
+        {editar ? (
+          <div style={{ marginTop: '14px' }}>
+            <b style={{ display: 'block', fontSize: '15px' }}>Que nota você dá para {cidade}?</b>
+            <div role="radiogroup" aria-label="Nota da cidade" style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              {[1, 2, 3, 4, 5].map((k) => (
+                <button key={k} type="button" role="radio" aria-checked={valor === k} className="r-btn" onClick={() => setValor(k)}
+                  style={{ flex: 1, minHeight: '44px', borderRadius: '12px', textAlign: 'center', fontWeight: 700, fontSize: '16px', background: k <= valor ? 'var(--amarelo)' : 'var(--cartao-2)', color: 'var(--marinho)' }}>{k}</button>
+              ))}
+            </div>
+            <label htmlFor="comentario-cidade" style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginTop: '12px' }}>Em uma frase (opcional)</label>
+            <input id="comentario-cidade" value={texto} maxLength={MAX_COMENTARIO_CIDADE} onChange={(e) => setTexto(e.target.value)} placeholder="O que mais marcou?"
+              style={{ width: '100%', minHeight: '44px', marginTop: '4px', padding: '0 12px', borderRadius: '12px', border: '1px solid var(--linha)', background: 'var(--fundo)', color: 'var(--texto)', fontSize: '15px' }} />
+            {erro ? <p role="alert" style={{ margin: '8px 0 0', color: 'var(--vermelho)', fontSize: '14px' }}>{erro}</p> : null}
+            <div style={{ marginTop: '12px' }}><BotaoPrincipal onClick={() => void salvar()}>Salvar nota</BotaoPrincipal></div>
+            <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'var(--texto-sec)' }}>Quem vê esta viagem vê sua nota.</p>
+          </div>
+        ) : nota ? (
+          <div style={{ marginTop: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Pontos nota={nota.nota} /><b style={{ fontSize: '15px' }}>{nota.nota} de 5 para a cidade</b></div>
+            {nota.comentario ? <p style={{ margin: '6px 0 0', fontSize: '15px', lineHeight: '21px' }}>"{nota.comentario}"</p> : null}
+            {souEu ? <button type="button" className="r-btn" onClick={() => setEditar(true)} style={{ minHeight: '40px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Mudar nota</button> : null}
+          </div>
+        ) : null}
+
+        {fotos.length ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginTop: '14px', borderRadius: '12px', overflow: 'hidden' }}>
+            {fotos.slice(0, 3).map((f) => <img key={f.id} src={f.url} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />)}
+          </div>
+        ) : null}
+        {roteiro?.nomes.length ? (
+          <p style={{ margin: '12px 0 0', fontSize: '15px', lineHeight: '21px' }}>
+            {souEu ? 'Passei por ' : 'Passou por '}<b>{roteiro.nomes.join(', ')}</b>{roteiro.total > roteiro.nomes.length ? ` e mais ${roteiro.total - roteiro.nomes.length}` : ''}.
+          </p>
+        ) : null}
+        <div style={{ display: 'grid', gap: '8px', marginTop: '14px' }}>
+          <button type="button" className="r-btn perfil-secundario" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)}>Ver roteiro por dia</button>
+          {!souEu && v.destino_id ? <BotaoPrincipal onClick={() => navegar(`/viagens/nova?d=${v.destino_id}`)}>Montar uma viagem parecida</BotaoPrincipal> : null}
+        </div>
+      </div>
+    </div>
   );
 }
 

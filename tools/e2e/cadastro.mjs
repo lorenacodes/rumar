@@ -32,7 +32,7 @@ console.log('    vai direto ao Início:', p.url().endsWith('#/inicio'), '|', awa
 console.log('— 4. Preencher dados');
 await p.getByRole('button', { name: /^Criar conta/ }).first().click(); await passo('formulario');
 await p.locator('#nome').fill('Teste E2E'); await p.locator('#senha').fill((process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA (senha das contas de teste)'); })()));
-await p.getByText(/Li e concordo/).click(); await p.getByText(/Li a Política/).click();
+await p.getByText(/Li e aceito os Termos/).click();
 await p.locator('#email').fill('e2e.teste@dominio-que-nao-existe-bovair.com.br');
 await p.getByRole('button', { name: /^Criar conta/ }).click(); await p.waitForTimeout(2500); await passo('email-inexistente');
 console.log('    mensagem:', (await texto(2000)).match(/Esse e-mail[^.]*\./)?.[0]);
