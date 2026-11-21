@@ -49,7 +49,7 @@ confere('cartão mostra a nota e a frase', (await cartao.getByRole('img', { name
 await pb.getByRole('tab', { name: 'Lugares' }).click(); await pb.waitForTimeout(2500);
 confere('aba Lugares abre (lista ou convite)', (await pb.locator('[role="tabpanel"]').innerText()).length > 10);
 
-// Ana (amiga, 320 px, modo escuro): vê a nota, sem editar, com "Montar uma parecida" só quando há destino.
+// Ana (amiga, 320 px, modo escuro): vê a nota, sem editar, sem editar.
 const pa = await sessao('e2e.ana@bovair.com.br', 320, true);
 await pa.goto(URL + `#/pessoa/${bia.user.id}`); await pa.waitForTimeout(5000);
 const cartaoA = pa.locator('article', { hasText: 'Olinda' }).first();

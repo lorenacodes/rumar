@@ -7,6 +7,7 @@ import { paisPorCodigo } from '../../lib/moedas';
 import { useDestinoAtual } from '../../state/destino';
 import { EscolherDestino } from '../../ui/escolherDestino';
 import { adicionarGasto, criarViagem, listarViagens } from '../../lib/viagens';
+import { seguirRoteiro } from '../../lib/seguirRoteiro';
 import { textoConflito, viagensNoMesmoPeriodo, type Periodo } from '../../lib/conflitoDatas';
 import { nivelDoOrcamento, NOME_NIVEL } from '../../lib/nivel';
 import { mesAno, preverPoupanca } from '../../lib/previsao';
@@ -50,6 +51,8 @@ export function NovaViagem() {
   const conflitos = viagensNoMesmoPeriodo({ data_ida: dataIda, noites }, minhas.filter((v) => !v.registrada));
   useEffect(() => {
     const d = params.get('d');
+    const n = Number(params.get('noites'));
+    if (params.get('roteiro') && n >= 1 && n <= 60) setNoites(n);
     if (d) void destinoPorId(d).then(setDestino);
     else if (ultimo) setDestino(ultimo);
   }, [params, ultimo]);
@@ -93,6 +96,9 @@ export function NovaViagem() {
       if (custoDia) await adicionarGasto(id, { categoria: 'alimentacao', descricao: `Comida, passeios e transporte (${noites + 1} dias)`, valor: custoDia });
     }
     if (!lugaresNaBase) void pedirCidade(destino.id);
+    // "Seguir este roteiro": troca o roteiro automático pelos lugares do roteiro que a pessoa viu.
+    const origem = params.get('roteiro');
+    if (origem && await seguirRoteiro(origem, id)) return navegar(`/viagem/${id}?aba=roteiro`, { replace: true });
     navegar(`/viagem/${id}`, { replace: true });
   };
 
@@ -110,6 +116,7 @@ export function NovaViagem() {
         <Voltar para="/viagens" />
         <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)' }}>Nova viagem</div>
         <h1 style={{ margin: '6px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Para onde e quando?</h1>
+        {params.get('roteiro') ? <p style={{ margin: '6px 0 0', fontSize: '15px', lineHeight: '21px' }}>Sua viagem já nasce com os mesmos lugares, dia a dia.</p> : null}
         <Rotulo>Destino</Rotulo>
         {destino ? (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

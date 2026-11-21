@@ -166,6 +166,13 @@ export function Viagem() {
             Sem internet. Você está vendo a versão salva {new Date(v.offline).toLocaleString('pt-BR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}. Mudanças só com conexão.
           </div>
         ) : null}
+        {soOlha && !v.offline && v.viagem.destino_id && itens.length ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '10px', padding: '12px 14px', borderRadius: '14px', background: 'var(--cartao-1)' }}>
+            <span style={{ flex: 1, fontSize: '14px', lineHeight: '19px' }}><b style={{ display: 'block', fontSize: '15px' }}>Gostou desse roteiro?</b>Faça a mesma viagem, nas suas datas.</span>
+            <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${v.viagem.destino_id}&roteiro=${v.viagem.id}&noites=${v.viagem.noites}`)}
+              style={{ flex: 'none', minHeight: '44px', padding: '0 16px', borderRadius: '999px', background: 'var(--amarelo)', color: 'var(--marinho)', fontWeight: 700, fontSize: '14px' }}>Seguir este roteiro</button>
+          </div>
+        ) : null}
         {orc && !registrada && v.papel ? (
           <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
             <span>

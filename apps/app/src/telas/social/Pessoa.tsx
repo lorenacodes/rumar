@@ -314,7 +314,7 @@ export function Pessoa() {
                   </button>
                   <div className="perfil-viagem-acoes">
                     <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)}>Ver roteiro por dia</button>
-                    {!p.eu && v.destino_id ? <button type="button" className="r-btn forte" onClick={() => navegar(`/viagens/nova?d=${v.destino_id}`)}>Montar uma parecida</button> : null}
+                    {!p.eu && v.destino_id && r?.total ? <button type="button" className="r-btn forte" onClick={() => navegar(`/viagens/nova?d=${v.destino_id}&roteiro=${v.id}&noites=${v.noites}`)}>Seguir este roteiro</button> : null}
                     {p.eu && !n ? <button type="button" className="r-btn forte" onClick={() => setCarimbo(v.id)}>Dar nota à cidade</button> : null}
                   </div>
                 </article>
@@ -433,7 +433,7 @@ function CarimboAberto({ v, eu: souEu, dona, fotos, roteiro, nota, onFechar, onS
         ) : null}
         <div style={{ display: 'grid', gap: '8px', marginTop: '14px' }}>
           <button type="button" className="r-btn perfil-secundario" onClick={() => navegar(`/viagem/${v.id}?aba=roteiro`)}>Ver roteiro por dia</button>
-          {!souEu && v.destino_id ? <BotaoPrincipal onClick={() => navegar(`/viagens/nova?d=${v.destino_id}`)}>Montar uma viagem parecida</BotaoPrincipal> : null}
+          {!souEu && v.destino_id && roteiro?.total ? <BotaoPrincipal onClick={() => navegar(`/viagens/nova?d=${v.destino_id}&roteiro=${v.id}&noites=${v.noites}`)}>Seguir este roteiro</BotaoPrincipal> : null}
         </div>
       </div>
     </div>
