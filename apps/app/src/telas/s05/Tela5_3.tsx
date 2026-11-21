@@ -12,7 +12,7 @@ import { Aviso, BotaoPrincipal, Caixa, Campo, Rodape, Voltar } from '../../ui/pe
 function CartaoPlano({ mensal, guardado }: { mensal: number; guardado: number }) {
   const reais = (c: number) => `R$ ${Math.round(c / 100).toLocaleString('pt-BR')}`;
   return (
-    <div style={{ background: 'var(--fundo-escuro)', borderTop: '6px solid transparent', color: '#fff', marginTop: '14px', padding: '12px 16px' }}>
+    <div style={{ background: 'var(--fundo-escuro)', borderTop: '6px solid var(--faixa-design)', color: '#fff', marginTop: '14px', padding: '12px 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
         <b style={{ font: "600 26px/34px 'Lexend Exa'" }}>{reais(mensal)}</b>
         <span style={{ fontSize: '14px', color: '#AEBBE0' }}>por mês</span>
@@ -28,7 +28,7 @@ function CartaoPlano({ mensal, guardado }: { mensal: number; guardado: number })
 /** Cartão da viagem do plano (aparece quando o plano já tem destino). */
 function CartaoViagem() {
   return (
-    <div style={{ background: 'var(--fundo-escuro)', borderTop: '6px solid transparent', color: '#fff', marginTop: '14px', padding: '12px 16px' }}>
+    <div style={{ background: 'var(--fundo-escuro)', borderTop: '6px solid var(--faixa-design)', color: '#fff', marginTop: '14px', padding: '12px 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <b style={{ font: "600 32px/34px 'Lexend Exa'" }}>AJU</b>
         <span style={{ color: 'var(--amarelo)' }}>→</span>

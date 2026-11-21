@@ -17,7 +17,7 @@ export function Tela15_1() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Rumo a Paris.
         </div>
-        <div style={{ background: "var(--fundo-escuro)", borderTop: "8px solid transparent", color: "#fff", marginTop: "12px", padding: "12px 18px 14px" }}>
+        <div style={{ background: "var(--fundo-escuro)", borderTop: "8px solid var(--amarelo)", color: "#fff", marginTop: "12px", padding: "12px 18px 14px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ font: "600 40px/42px 'Lexend Exa'", letterSpacing: "-0.03em" }}>
               AJU
@@ -121,7 +121,7 @@ export function Tela15_2() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Faltam R$ 150 para esta semana.
         </div>
-        <div style={{ background: "var(--fundo-escuro)", color: "#fff", marginTop: "14px", borderTop: "6px solid transparent", padding: "14px 16px" }}>
+        <div style={{ background: "var(--fundo-escuro)", color: "#fff", marginTop: "14px", borderTop: "6px solid var(--amarelo)", padding: "14px 16px" }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span style={{ font: "600 15px 'Open Sans'", color: "var(--amarelo)" }}>
               Paris · jul de 2027

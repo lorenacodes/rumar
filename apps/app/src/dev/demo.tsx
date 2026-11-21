@@ -7,7 +7,8 @@ import { createContext, useContext, type ReactNode } from 'react';
 const DemoContext = createContext(false);
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  return <DemoContext.Provider value>{children}</DemoContext.Provider>;
+  // A faixa amarela de alguns cartões existe só no design: no app ela fica transparente (pedido da fundadora).
+  return <DemoContext.Provider value><div className="modo-design" style={{ display: 'contents' }}>{children}</div></DemoContext.Provider>;
 }
 
 export function useDemo(): boolean {

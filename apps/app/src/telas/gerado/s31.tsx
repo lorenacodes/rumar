@@ -58,7 +58,7 @@ export function Tela31_2() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Rumo a Paris.
         </div>
-        <div style={{ background: "#1F4FD8", borderTop: "8px solid transparent", color: "#fff", marginTop: "12px", padding: "12px 18px 14px" }}>
+        <div style={{ background: "#1F4FD8", borderTop: "8px solid var(--amarelo)", color: "#fff", marginTop: "12px", padding: "12px 18px 14px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ font: "600 40px/42px 'Lexend Exa'", letterSpacing: "-0.03em" }}>
               AJU

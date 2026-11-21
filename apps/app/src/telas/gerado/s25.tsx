@@ -13,7 +13,7 @@ export function Tela25_1() {
       <AvisoExemplo />
       <div style={{ padding: "20px 20px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "30px", height: "30px", background: "var(--fundo-escuro)", borderTop: "5px solid transparent", boxSizing: "border-box", color: "#fff", font: "600 17px/22px 'Lexend Exa'", textAlign: "center" }}>
+          <div style={{ width: "30px", height: "30px", background: "var(--fundo-escuro)", borderTop: "5px solid var(--amarelo)", boxSizing: "border-box", color: "#fff", font: "600 17px/22px 'Lexend Exa'", textAlign: "center" }}>
             r
           </div>
           <span style={{ font: "600 22px 'Lexend Exa'", letterSpacing: "-0.04em" }}>
@@ -53,7 +53,7 @@ export function Tela25_1() {
           </div>
           <div style={{ position: "absolute", inset: "0", background: "linear-gradient(155deg,#1F4FD8,var(--amarelo))", opacity: ".3", mixBlendMode: "multiply" }} />
         </div>
-        <div style={{ background: "var(--fundo-escuro)", borderTop: "5px solid transparent", color: "#fff", padding: "8px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ background: "var(--fundo-escuro)", borderTop: "5px solid var(--amarelo)", color: "#fff", padding: "8px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <b style={{ font: "600 24px 'Lexend Exa'" }}>
             AJU
           </b>

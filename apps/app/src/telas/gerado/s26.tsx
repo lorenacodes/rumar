@@ -216,7 +216,7 @@ export function Tela26_3() {
             </div>
           </div>
           <div style={{ position: "absolute", left: "10px", top: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
-            <div style={{ width: "22px", height: "22px", background: "var(--fundo-escuro)", borderTop: "4px solid transparent", boxSizing: "border-box", color: "#fff", font: "600 14px/16px 'Lexend Exa'", textAlign: "center" }}>
+            <div style={{ width: "22px", height: "22px", background: "var(--fundo-escuro)", borderTop: "4px solid var(--amarelo)", boxSizing: "border-box", color: "#fff", font: "600 14px/16px 'Lexend Exa'", textAlign: "center" }}>
               r
             </div>
             <b style={{ font: "600 16px 'Lexend Exa'", letterSpacing: "-0.04em", color: "#fff" }}>
@@ -504,7 +504,7 @@ export function Tela26_7() {
         </div>
       </div>
       <div style={{ position: "absolute", inset: "0", background: "rgba(11,31,75,.55)" }} />
-      <div style={{ position: "absolute", left: "20px", right: "20px", top: "300px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent" }}>
+      <div style={{ position: "absolute", left: "20px", right: "20px", top: "300px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)" }}>
         <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
           Cookies neste roteiro
         </div>

@@ -97,7 +97,7 @@ export function Tela6_2() {
         </div>
       </div>
       <div style={{ position: "absolute", inset: "0", background: "rgba(11,31,75,.55)" }} />
-      <div style={{ position: "absolute", left: "20px", right: "20px", top: "190px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent" }}>
+      <div style={{ position: "absolute", left: "20px", right: "20px", top: "190px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)" }}>
         <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
           Usar suas necessidades no roteiro?
         </div>

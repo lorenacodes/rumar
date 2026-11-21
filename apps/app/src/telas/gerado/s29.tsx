@@ -329,7 +329,7 @@ export function Tela29_5() {
         </div>
       </div>
       <div style={{ position: "absolute", inset: "0", background: "rgba(11,31,75,.55)" }} />
-      <div style={{ position: "absolute", left: "20px", right: "20px", top: "230px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent" }}>
+      <div style={{ position: "absolute", left: "20px", right: "20px", top: "230px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)" }}>
         <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
           Está gostando do Bo Vair?
         </div>

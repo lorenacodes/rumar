@@ -56,3 +56,7 @@
 [data-tema='escuro'] {
   --sobre-escuro-sec: #e3eaff;
 }
+
+/* Faixa amarela do topo de alguns cartões: só no modo de comparação com o design (dev/demo.tsx). */
+:root { --faixa-design: transparent; }
+.modo-design { --faixa-design: var(--amarelo); }

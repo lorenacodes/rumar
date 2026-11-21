@@ -108,7 +108,7 @@ export function Tela20_2() {
           <p style={{ fontSize: "17px", lineHeight: "26px", margin: "12px 0 0" }}>
             Você chegou a R$ 3.839. Faltam 158 dias e R$ 3.839. Você está indo bem.
           </p>
-          <div style={{ background: "var(--fundo-escuro)", color: "#fff", marginTop: "24px", borderTop: "6px solid transparent", padding: "12px 16px" }}>
+          <div style={{ background: "var(--fundo-escuro)", color: "#fff", marginTop: "24px", borderTop: "6px solid #fff", padding: "12px 16px" }}>
             <div style={{ font: "600 14px 'Open Sans'", color: "var(--amarelo)" }}>
               Próximo marco
             </div>

@@ -53,7 +53,7 @@ export function Tela28_2() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Tudo o que você precisa está aqui.
         </div>
-        <div style={{ background: "var(--fundo-escuro)", borderTop: "8px solid transparent", color: "#fff", marginTop: "14px", padding: "12px 18px 14px" }}>
+        <div style={{ background: "var(--fundo-escuro)", borderTop: "8px solid var(--amarelo)", color: "#fff", marginTop: "14px", padding: "12px 18px 14px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <b style={{ font: "600 40px/42px 'Lexend Exa'" }}>
               AJU
@@ -346,7 +346,7 @@ export function Tela28_8() {
     <main className="tela" data-tela="28.8">
       <AvisoExemplo />
       <div style={{ padding: "22px 20px 0" }}>
-        <div style={{ marginTop: "150px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent", boxShadow: "0 0 0 1px var(--linha)" }}>
+        <div style={{ marginTop: "150px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)", boxShadow: "0 0 0 1px var(--linha)" }}>
           <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
             Uma versão nova está pronta.
           </div>
@@ -521,7 +521,7 @@ export function Tela28_13() {
         </div>
       </div>
       <div style={{ position: "absolute", inset: "0", background: "rgba(11,31,75,.55)" }} />
-      <div style={{ position: "absolute", left: "20px", right: "20px", top: "250px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent" }}>
+      <div style={{ position: "absolute", left: "20px", right: "20px", top: "250px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)" }}>
         <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
           Sair sem guardar?
         </div>

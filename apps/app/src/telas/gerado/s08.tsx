@@ -21,7 +21,7 @@ export function Tela8_1() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Este preço é bom?
         </div>
-        <div style={{ background: "var(--fundo-escuro)", borderTop: "6px solid transparent", color: "#fff", marginTop: "12px", padding: "12px 16px" }}>
+        <div style={{ background: "var(--fundo-escuro)", borderTop: "6px solid var(--amarelo)", color: "#fff", marginTop: "12px", padding: "12px 16px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <b style={{ font: "600 30px 'Lexend Exa'", letterSpacing: "-0.03em" }}>
               R$ 3.100

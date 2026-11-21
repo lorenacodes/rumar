@@ -19,7 +19,7 @@ export function Tela27_1() {
         </div>
       </div>
       <div style={{ position: "absolute", inset: "0", background: "rgba(11,31,75,.55)" }} />
-      <div className="rodape" style={{ background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent" }}>
+      <div className="rodape" style={{ background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)" }}>
         <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
           O que está acontecendo?
         </div>
