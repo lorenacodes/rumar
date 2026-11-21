@@ -14,4 +14,5 @@ supabase/.temp/
 tools/visual/out/
 apps/app/dist/
 apps/app/dist-dev-telas/
+apps/app/dist2/
 tools/design/out/
