@@ -17,14 +17,17 @@ export interface Experiencia {
   km?: number | null;
 }
 
-let cache: { todas: Experiencia[]; destinos: Map<string, { nome: string; lat: number; lon: number }> } | null = null;
-async function carregar() {
-  if (cache) return cache;
-  const { data } = await supabase.from('experiencias').select('*').limit(2000);
-  const todas = (data ?? []) as Experiencia[];
-  const ids = [...new Set(todas.map((e) => e.destino_id))];
-  const { data: d } = ids.length ? await supabase.from('destinos').select('id, nome, lat, lon').in('id', ids) : { data: [] };
-  cache = { todas, destinos: new Map((d ?? []).map((x) => [x.id as string, { nome: x.nome as string, lat: x.lat as number, lon: x.lon as number }])) };
+type Base = { todas: Experiencia[]; destinos: Map<string, { nome: string; lat: number; lon: number }> };
+/** Uma busca só, compartilhada: várias telas pedindo ao mesmo tempo esperam a mesma resposta. */
+let cache: Promise<Base> | null = null;
+function carregar(): Promise<Base> {
+  cache ??= (async () => {
+    const { data } = await supabase.from('experiencias').select('*').limit(2000);
+    const todas = (data ?? []) as Experiencia[];
+    const ids = [...new Set(todas.map((e) => e.destino_id))];
+    const { data: d } = ids.length ? await supabase.from('destinos').select('id, nome, lat, lon').in('id', ids) : { data: [] };
+    return { todas, destinos: new Map((d ?? []).map((x) => [x.id as string, { nome: x.nome as string, lat: x.lat as number, lon: x.lon as number }])) };
+  })().catch((e) => { cache = null; throw e; });
   return cache;
 }
 

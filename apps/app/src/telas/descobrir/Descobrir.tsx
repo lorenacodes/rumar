@@ -25,6 +25,7 @@ import { ConviteCuriosidades, FeedGeral, FeedLugares } from './Feed';
 import { Experiencias } from './Experiencias';
 import { ExplorarCidades } from './ExplorarCidades';
 import { faixaDoLugar, NOME_FAIXA } from '../../lib/nivel';
+import { CoracaoQueroIr } from '../../ui/CoracaoQueroIr';
 import { contarFiltros, FILTROS_VAZIOS, PainelFiltros, type EstadoFiltros } from './PainelFiltros';
 import { BlocoNetworking } from './Networking';
 
@@ -53,8 +54,7 @@ function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
           {it.detalhe ? <span style={{ display: 'block', fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{it.detalhe}</span> : null}
         </span>
       </button>
-      <button type="button" className="r-btn" aria-pressed={salvo} aria-label={salvo ? `Tirar ${it.nome} do Quero ir` : `Quero ir: ${it.nome}`} onClick={() => void alternarSalvo(it.id)}
-        style={{ minWidth: '44px', height: '44px', flex: 'none', color: salvo ? 'var(--carimbo)' : 'var(--texto-sec)', font: "700 13px 'Open Sans'", padding: '0 6px', whiteSpace: 'nowrap' }}>{salvo ? <><Check />Quero ir</> : '+ Quero ir'}</button>
+      <CoracaoQueroIr marcado={salvo} aoTocar={() => void alternarSalvo(it.id)} nome={it.nome} />
     </li>
   );
 }

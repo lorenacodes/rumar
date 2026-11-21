@@ -222,6 +222,13 @@ export async function buscarLugares(f: Filtros): Promise<{ lugares: LugarBase[];
 export type ItemFeed = LugarBase & { relevancia?: number };
 
 const FEED_POR_PAGINA = 12;
+/** Muda a cada abertura do app: o mural começa de um ponto diferente e as cidades vêm em outra ordem. */
+const GIRO = Math.floor(Math.random() * 1_000_000);
+function embaralhar<T>(lista: T[], semente: number): T[] {
+  const l = [...lista]; let x = semente || 1;
+  for (let i = l.length - 1; i > 0; i--) { x = (x * 1103515245 + 12345) % 2147483648; const j = x % (i + 1); [l[i], l[j]] = [l[j]!, l[i]!]; }
+  return l;
+}
 /**
  * Feed do Descobrir: primeiro os lugares com foto (Wikimedia Commons), dos mais conhecidos aos
  * menos; quando acabam, os sem foto mais relevantes (aparecem como cartão de texto, sem foto
@@ -242,8 +249,20 @@ export async function feedLugares(destino: string, pagina: number, categoria?: C
   const ate = de + FEED_POR_PAGINA - 1;
   let itens: ItemFeed[] = [];
   if (de < comFoto) {
-    const { data } = await base().not('foto', 'is', null).order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).order('id').range(de, ate);
-    itens = (data ?? []) as ItemFeed[];
+    // Os 12 mais conhecidos ficam no topo, misturados; o resto começa de um ponto que muda a cada abertura.
+    const fixo = Math.min(12, comFoto);
+    const resto = comFoto - fixo;
+    const ordem = () => base().not('foto', 'is', null).order('fama', { ascending: false, nullsFirst: false }).order('relevancia', { ascending: false }).order('id');
+    if (pagina === 0) {
+      itens = embaralhar(((await ordem().range(0, fixo - 1)).data ?? []) as ItemFeed[], GIRO);
+    } else if (resto > 0) {
+      const ini = fixo + ((de - fixo + (GIRO % resto)) % resto);
+      const fimFaixa = Math.min(ini + FEED_POR_PAGINA - 1, comFoto - 1);
+      itens = ((await ordem().range(ini, fimFaixa)).data ?? []) as ItemFeed[];
+      const falta = FEED_POR_PAGINA - itens.length;
+      if (falta > 0 && de + itens.length < comFoto) itens = [...itens, ...(((await ordem().range(fixo, fixo + falta - 1)).data ?? []) as ItemFeed[])];
+      itens = embaralhar(itens, GIRO + pagina);
+    }
   }
   if (itens.length < FEED_POR_PAGINA) {
     const inicio = Math.max(0, de - comFoto);
@@ -381,8 +400,8 @@ export async function cidadesEmDestaque(n = 16): Promise<{ destino_id: string; n
 
 /** Mural de várias cidades, intercaladas, só com foto, os mais reconhecidos primeiro. */
 export async function muralGeral(ids: string[], pagina: number, categoria?: CategoriaLugar | null): Promise<{ itens: ItemFeed[]; fim: boolean }> {
-  const { data } = await supabase.rpc('mural_geral', { ids: ids.slice(0, 40), cat: categoria ?? null, pagina, por_pagina: 12 });
-  const itens = (data ?? []) as ItemFeed[];
+  const { data } = await supabase.rpc('mural_geral', { ids: embaralhar(ids.slice(0, 40), GIRO), cat: categoria ?? null, pagina, por_pagina: 12 });
+  const itens = embaralhar((data ?? []) as ItemFeed[], GIRO + pagina);
   guardar(itens);
   return { itens, fim: itens.length < 12 };
 }

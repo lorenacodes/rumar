@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 import { experienciasPerto, ordenarExperiencias, type Experiencia } from '../../lib/experiencias';
 import type { Preferencias } from '../../lib/planejador';
@@ -13,6 +14,30 @@ export function Experiencias({ destino, cidade, preferencias, titulo = 'Experiê
   const [lista, setLista] = useState<Experiencia[] | null>(null);
   const [todas, setTodas] = useState(false);
   useEffect(() => { void experienciasPerto(destino).then((l) => setLista(ordenarExperiencias(l, preferencias))); }, [destino.id, preferencias]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Foto de cada experiência: a do lugar dela; sem lugar, uma foto diferente de outro lugar da mesma cidade.
+  const [fotos, setFotos] = useState<Map<string, string>>(new Map());
+  useEffect(() => {
+    if (!lista?.length) return;
+    void (async () => {
+      const ids = lista.map((e) => e.place_id).filter((x): x is string => Boolean(x));
+      const cidades = [...new Set(lista.map((e) => e.destino_id))];
+      const [doLugar, daCidade] = await Promise.all([
+        ids.length ? supabase.from('lugares').select('id, foto').in('id', ids).not('foto', 'is', null) : Promise.resolve({ data: [] }),
+        supabase.from('lugares').select('destino_id, foto').in('destino_id', cidades).eq('ativo', true).not('foto', 'is', null)
+          .in('categoria', ['praias', 'atracoes', 'historico', 'museus', 'parques', 'cultura', 'mercados']).order('fama', { ascending: false, nullsFirst: false }).limit(60),
+      ]);
+      const porLugar = new Map(((doLugar.data ?? []) as { id: string; foto: string }[]).map((l) => [l.id, l.foto]));
+      const reserva = new Map<string, string[]>();
+      for (const l of (daCidade.data ?? []) as { destino_id: string; foto: string }[]) reserva.set(l.destino_id, [...(reserva.get(l.destino_id) ?? []), l.foto]);
+      const usadas = new Set(porLugar.values());
+      const m = new Map<string, string>();
+      for (const e of lista) {
+        const f = (e.place_id && porLugar.get(e.place_id)) || (reserva.get(e.destino_id) ?? []).find((x) => !usadas.has(x));
+        if (f) { m.set(e.id, f); usadas.add(f); }
+      }
+      setFotos(m);
+    })();
+  }, [lista]);
   if (!lista?.length) return null;
   const vistas = todas ? lista : lista.slice(0, max);
   return (
@@ -21,7 +46,8 @@ export function Experiencias({ destino, cidade, preferencias, titulo = 'Experiê
       <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '2px 0 0' }}>{preferencias ? 'Pesquisadas por nós, na ordem do seu jeito.' : `O que viver em ${cidade}, pesquisado por nós.`}</p>
       <div style={{ display: 'grid', gap: '10px', marginTop: '10px' }}>
         {vistas.map((e) => (
-          <article key={e.id} aria-label={e.titulo} style={{ padding: '14px 16px', borderRadius: '16px', background: 'var(--cartao-2)' }}>
+          <article key={e.id} aria-label={e.titulo} style={{ padding: fotos.get(e.id) ? '0 16px 14px' : '14px 16px', borderRadius: '16px', background: 'var(--cartao-2)', overflow: 'hidden' }}>
+            {fotos.get(e.id) ? <img src={fotos.get(e.id)} alt="" loading="lazy" style={{ display: 'block', width: 'calc(100% + 32px)', margin: '0 -16px 12px', aspectRatio: '16 / 9', objectFit: 'cover' }} /> : null}
             <div style={{ font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--azul)' }}>
               {[NOME_TIPO[e.tipo] ?? 'Experiência', e.bateVolta ? `Bate-volta · ${e.bateVolta}, ${e.km} km` : null].filter(Boolean).join(' · ')}
             </div>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useSessao } from '../../conta/servico';
 import { aceitarConvite, listarViagens, sairDaViagem, type Viagem } from '../../lib/viagens';
+import { supabase } from '../../lib/supabase';
 import { Abas } from '../../ui/abas';
 import { FotoLugar } from '../../ui/foto';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
@@ -15,6 +16,25 @@ export function Viagens() {
   const sessao = useSessao();
   const [dados, setDados] = useState<Awaited<ReturnType<typeof listarViagens>> | null>(null);
   const carregar = () => void listarViagens().then(setDados);
+  // Andamento de cada viagem: paradas no roteiro, hospedagem escolhida e quanto do orçamento já foi guardado.
+  const [andamento, setAndamento] = useState<Map<string, { paradas: number; hosp: boolean; pct: number | null }>>(new Map());
+  useEffect(() => {
+    const ids = (dados?.minhas ?? []).filter((v) => v.status === 'ativo').map((v) => v.id);
+    if (!ids.length) return;
+    void Promise.all([
+      supabase.from('trip_items').select('trip_id').in('trip_id', ids),
+      supabase.from('trip_lodging').select('trip_id').in('trip_id', ids),
+      supabase.from('trips').select('id, orcamento_centavos, guardado_centavos').in('id', ids),
+    ]).then(([itens, hosp, trips]) => {
+      const m = new Map<string, { paradas: number; hosp: boolean; pct: number | null }>();
+      for (const t of (trips.data ?? []) as { id: string; orcamento_centavos: number | null; guardado_centavos: number | null }[]) {
+        m.set(t.id, { paradas: 0, hosp: false, pct: t.orcamento_centavos ? Math.min(100, Math.round(((t.guardado_centavos ?? 0) / t.orcamento_centavos) * 100)) : null });
+      }
+      for (const r of (itens.data ?? []) as { trip_id: string }[]) { const x = m.get(r.trip_id); if (x) x.paradas++; }
+      for (const r of (hosp.data ?? []) as { trip_id: string }[]) { const x = m.get(r.trip_id); if (x) x.hosp = true; }
+      setAndamento(m);
+    });
+  }, [dados]);
   useEffect(() => {
     if (sessao) carregar();
   }, [sessao]);
@@ -48,11 +68,12 @@ export function Viagens() {
   const ativas = dados?.minhas.filter((v) => v.status === 'ativo') ?? [];
   const Cartao = ({ v, extra }: { v: Viagem; extra?: string }) => (
     <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}`)} style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', textAlign: 'left', padding: '10px 0', borderBottom: '1px solid var(--linha)' }}>
-      <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={v.destino} proporcao="1 / 1" credito={false} compacto /></span>
-      <span>
+      <span style={{ width: '76px', flex: 'none', borderRadius: '14px', overflow: 'hidden' }}><FotoLugar id={v.destino} proporcao="1 / 1" credito={false} compacto /></span>
+      <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: 'block', font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
         <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{periodo(v.data_ida, v.noites)} · {v.viajantes} {v.viajantes === 1 ? 'pessoa' : 'pessoas'}</span>
         <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: situacao(v).cor }}>{extra ?? situacao(v).texto}</span>
+        <Andamento a={andamento.get(v.id)} feita={situacao(v).texto === 'Viagem feita'} />
       </span>
     </button>
   );
@@ -96,6 +117,21 @@ export function Viagens() {
       </div>
       <Abas ativa="viagem" />
     </main>
+  );
+}
+
+/** Selos do andamento: o que já está pronto (verde) e o que falta (âmbar). */
+function Andamento({ a, feita }: { a?: { paradas: number; hosp: boolean; pct: number | null }; feita: boolean }) {
+  if (!a || feita) return null;
+  const selo = (ok: boolean, texto: string) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, background: ok ? 'rgba(26,122,62,.12)' : 'rgba(138,90,0,.12)', color: ok ? 'var(--verde)' : 'var(--ambar)' }}>{texto}</span>
+  );
+  return (
+    <span style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' }}>
+      {selo(a.paradas > 0, a.paradas ? `Roteiro: ${a.paradas} ${a.paradas === 1 ? 'parada' : 'paradas'}` : 'Falta roteiro')}
+      {selo(a.hosp, a.hosp ? 'Hospedagem ok' : 'Falta hospedagem')}
+      {a.pct !== null ? selo(a.pct >= 100, `${a.pct}% guardado`) : selo(false, 'Sem orçamento')}
+    </span>
   );
 }
 

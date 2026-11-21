@@ -109,7 +109,17 @@ export function Pessoa() {
       {/* Capa: a foto mais recente das viagens (ou a cidade); sem foto, o azul-marinho da marca. */}
       <div className="perfil-capa">
         {capaUrl ? <img src={capaUrl} alt="" /> : capaDestino ? <FotoLugar id={capaDestino} proporcao="390 / 170" credito={false} compacto /> : null}
-        <div className="perfil-voltar"><Voltar para={p.eu ? '/perfil' : '/perfil/amigos'} /></div>
+        {p.eu ? null : <div className="perfil-voltar"><Voltar para="/perfil/amigos" /></div>}
+        {p.eu ? (
+          <div style={{ position: 'absolute', right: '16px', top: 'calc(16px + env(safe-area-inset-top))', display: 'flex', gap: '8px' }}>
+            <button type="button" className="r-btn" onClick={() => navegar('/perfil/amigos')} aria-label="Amigos"
+              style={{ height: '40px', padding: '0 14px', borderRadius: '20px', background: 'rgba(11,31,75,.55)', color: '#fff', fontWeight: 600, fontSize: '14px' }}>Amigos</button>
+            <button type="button" className="r-btn" onClick={() => navegar('/perfil')} aria-label="Configurações da conta"
+              style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: 'rgba(11,31,75,.55)', color: '#fff' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM19.4 13.5l1.6 1.2-1.8 3.1-1.9-.7a7.4 7.4 0 0 1-1.7 1l-.3 2H10.7l-.3-2a7.4 7.4 0 0 1-1.7-1l-1.9.7-1.8-3.1 1.6-1.2a7 7 0 0 1 0-2l-1.6-1.2 1.8-3.1 1.9.7a7.4 7.4 0 0 1 1.7-1l.3-2h3.6l.3 2a7.4 7.4 0 0 1 1.7 1l1.9-.7 1.8 3.1-1.6 1.2a7 7 0 0 1 0 2z" /></svg>
+            </button>
+          </div>
+        ) : null}
       </div>
       <div style={{ padding: '0 20px 24px' }}>
         <header className="perfil-topo">

@@ -1,3 +1,5 @@
+import { CoracaoQueroIr } from '../../ui/CoracaoQueroIr';
+import { experienciasPerto, type Experiencia } from '../../lib/experiencias';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -13,11 +15,12 @@ function Ficha({ c, n, primeira }: { c: Curiosidade; n: number; primeira: boolea
   const quero = salvos.includes(c.id);
   const [aviso, setAviso] = useState<string | null>(null);
   const [falhou, setFalhou] = useState(false);
-  if (falhou) return null;
+  // Foto que não carrega: some da lista, menos a ficha que a pessoa tocou (ela aparece sem foto).
+  if (falhou && !primeira) return null;
   return (
     <article className="ficha" aria-label={c.nome}>
       <div className="ficha-foto">
-        <img src={c.foto} alt={`Foto de ${c.nome}`} loading={primeira ? 'eager' : 'lazy'} onError={() => setFalhou(true)} />
+        {!falhou ? <img src={c.foto} alt={`Foto de ${c.nome}`} loading={primeira ? 'eager' : 'lazy'} onError={() => setFalhou(true)} /> : null}
         {c.foto_pagina ? <a href={c.foto_pagina} target="_blank" rel="noreferrer">Foto: Wikimedia Commons</a> : null}
       </div>
       <div className="ficha-etiqueta">
@@ -30,14 +33,34 @@ function Ficha({ c, n, primeira }: { c: Curiosidade; n: number; primeira: boolea
             {c.resumo_url ? <a href={c.resumo_url} target="_blank" rel="noreferrer" style={{ fontSize: '11px', color: 'var(--texto-sec)' }}>Wikipédia</a> : null}
           </p>
         ) : null}
+        <OQueFazerLa c={c} />
         <div className="ficha-acoes">
-          <button type="button" className="r-btn ficha-acao" aria-pressed={quero} onClick={() => void alternarSalvo(c.id)}>{quero ? <><Check />Quero ir</> : '+ Quero ir'}</button>
+          <CoracaoQueroIr marcado={quero} aoTocar={() => void alternarSalvo(c.id)} nome={c.nome} tamanho={40} />
           <button type="button" className="r-btn ficha-acao" onClick={() => void compartilharCuriosidade(c).then((r) => { if (r === 'copiado') { setAviso('Texto copiado'); setTimeout(() => setAviso(null), 2000); } })}>Compartilhar</button>
           <a className="ficha-acao" href={`https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lon}`} target="_blank" rel="noreferrer">Onde fica</a>
         </div>
         {aviso ? <div role="status" style={{ fontSize: '12px', color: 'var(--verde)', paddingBottom: '4px' }}>{aviso}</div> : null}
       </div>
     </article>
+  );
+}
+
+/** O que fazer lá: experiências pesquisadas a até 80 km e atalho para a região no Descobrir. */
+function OQueFazerLa({ c }: { c: Curiosidade }) {
+  const navegar = useNavigate();
+  const [lista, setLista] = useState<Experiencia[] | null>(null);
+  useEffect(() => { void experienciasPerto({ id: c.destino_id ?? '', lat: c.lat, lon: c.lon }).then(setLista); }, [c.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!lista?.length && !c.destino_id) return null;
+  return (
+    <div className="ficha-fazer" style={{ marginTop: '8px' }}>
+      <b style={{ display: 'block', font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--azul)' }}>O que fazer lá</b>
+      {lista?.length ? (
+        <ul style={{ listStyle: 'none', margin: '4px 0 0', padding: 0, fontSize: '14px', lineHeight: '20px' }}>
+          {lista.slice(0, 3).map((e) => <li key={e.id}>{e.titulo}{e.bateVolta ? ` (${e.bateVolta})` : ''}</li>)}
+        </ul>
+      ) : null}
+      {c.destino_id ? <button type="button" className="r-btn" onClick={() => navegar(`/descobrir?d=${c.destino_id}`)} style={{ minHeight: '36px', color: 'var(--azul)', fontWeight: 600, fontSize: '14px' }}>Ver passeios e lugares por perto ›</button> : null}
+    </div>
   );
 }
 
@@ -53,16 +76,18 @@ export function Curiosos() {
   const rolagem = useRef<HTMLDivElement>(null);
   const inicial = params.get('c');
 
+  // A ficha tocada vem numa busca separada: não depende da paginação (que pode avançar antes).
+  const [tocada, setTocada] = useState<Curiosidade | null>(null);
+  useEffect(() => { if (inicial) void curiosidade(inicial).then(setTocada); else setTocada(null); }, [inicial]);
   useEffect(() => {
     if (fim) return;
     let vivo = true;
     setCarregando(true);
     void (async () => {
       const lote = await curiosidades(pagina, 10);
-      const primeira = pagina === 0 && inicial ? await curiosidade(inicial) : null;
       if (!vivo) return;
       setItens((atual) => {
-        const juntos = [...(primeira ? [primeira] : []), ...atual, ...lote];
+        const juntos = [...atual, ...lote];
         return juntos.filter((c, i) => juntos.findIndex((x) => x.id === c.id) === i);
       });
       setFim(lote.length < 10);
@@ -86,7 +111,7 @@ export function Curiosos() {
         <b style={{ font: "600 16px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Curiosidades do mundo</b>
       </div>
       <div className="gabinete" ref={rolagem} aria-busy={carregando}>
-        {itens.map((c, i) => <Ficha key={c.id} c={c} n={i + 1} primeira={i === 0} />)}
+        {(tocada ? [tocada, ...itens.filter((x) => x.id !== tocada.id)] : itens).map((c, i) => <Ficha key={c.id} c={c} n={i + 1} primeira={i === 0} />)}
         {!itens.length && !carregando ? <p style={{ color: '#fff', padding: '80px 20px' }}>As curiosidades estão chegando. Volte daqui a pouco.</p> : null}
         <div ref={fundo} style={{ height: '1px' }} />
       </div>

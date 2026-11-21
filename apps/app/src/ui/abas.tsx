@@ -32,7 +32,7 @@ const ABAS_APP: { id: Aba; nome: string; rota: string }[] = [
   { id: 'inicio', nome: 'Início', rota: '/inicio' },
   { id: 'descobrir', nome: 'Descobrir', rota: '/descobrir' },
   { id: 'viagem', nome: 'Viagens', rota: '/viagens' },
-  { id: 'passaporte', nome: 'Perfil', rota: '/perfil' },
+  { id: 'passaporte', nome: 'Perfil', rota: '/pessoa/eu' },
 ];
 
 /** Barra de abas fixa, 64 px, quatro abas (igual em todas as telas do design). */

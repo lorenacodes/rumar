@@ -54,9 +54,11 @@ function Linha({ titulo, detalhe, onClick, minHeight = '42px' }: { titulo: strin
 }
 
 function Cabecalho({ children }: { children?: ReactNode }) {
+  const demo = useDemo();
   return (
     <>
-      <Voltar para="/inicio" />
+      {/* No app, as configurações abrem a partir do perfil (feed): voltar leva a ele. */}
+      <Voltar para={demo ? '/inicio' : '/pessoa/eu'} rotulo={demo ? undefined : 'Meu perfil'} />
       <div style={{ font: "600 15px 'Open Sans'", color: 'var(--azul)', marginTop: '2px' }}>Perfil</div>
       <Titulo marginTop="4px">Seu perfil.</Titulo>
       {children}

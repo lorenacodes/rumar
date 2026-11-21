@@ -223,3 +223,8 @@ html:not(.modo-design) nav[aria-label='Abas'] {
 
 /* Campo de busca com lupa à esquerda (D-084): espaço para o ícone. */
 html:not(.modo-design) .tela input.r-input.busca-com-icone:not([type='checkbox']):not([type='radio']):not([type='file']) { padding-left: 44px !important; border-radius: 26px !important; }
+
+/* Coração do "Quero ir": pulo curto ao marcar (sem animação para quem pediu menos movimento). */
+@keyframes coracao-pulo { 0% { transform: scale(1); } 35% { transform: scale(1.35); } 60% { transform: scale(0.92); } 100% { transform: scale(1); } }
+.coracao-pulo { animation: coracao-pulo 420ms cubic-bezier(.2,.8,.3,1.2); }
+@media (prefers-reduced-motion: reduce) { .coracao-pulo { animation: none; } }

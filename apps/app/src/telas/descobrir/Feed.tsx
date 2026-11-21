@@ -1,3 +1,4 @@
+import { CoracaoQueroIr } from '../../ui/CoracaoQueroIr';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { hojeLocal } from '../../lib/datas';
 import { Check } from '../../ui/check';
@@ -116,7 +117,7 @@ function Postal({ p, cidade, aoAbrir, viagemDoDestino }: { p: Post; cidade: stri
       </div>
 
       <div className="postal-acoes">
-        <button type="button" className="r-btn postal-acao" aria-pressed={quero} onClick={marcar}>{quero ? <><Check />Quero ir</> : '+ Quero ir'}</button>
+        <CoracaoQueroIr marcado={quero} aoTocar={marcar} nome={p.nome} />
         {p.lugar ? (
           <button type="button" className="r-btn postal-acao" onClick={() => navegar(`/lugar/${p.id}${viagemDoDestino ? `?viagem=${viagemDoDestino}` : ''}`)}>{viagemDoDestino ? 'No roteiro' : 'Na viagem'}</button>
         ) : null}

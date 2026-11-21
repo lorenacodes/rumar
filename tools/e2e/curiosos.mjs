@@ -31,12 +31,12 @@ for (const entrar of [false, true]) {
   for (let i = 0; i < 8; i++) { await p.locator('.gabinete').evaluate((g) => g.scrollBy(0, g.clientHeight)); await p.waitForTimeout(600); }
   confere(`deslizar carrega mais (${antes} → ${await fichas.count()})`, (await fichas.count()) > antes);
   const visivel = fichas.nth(3);
-  await visivel.getByRole('button', { name: '+ Quero ir' }).click(); await p.waitForTimeout(800);
-  confere('Quero ir marca a curiosidade', (await visivel.getByRole('button', { name: 'Quero ir', exact: true }).count()) === 1);
+  await visivel.getByRole('button', { name: /^Quero ir:/ }).click(); await p.waitForTimeout(800);
+  confere('Quero ir marca a curiosidade', (await visivel.getByRole('button', { name: /do Quero ir$/ }).count()) === 1);
   await visivel.getByRole('button', { name: 'Compartilhar' }).click(); await p.waitForTimeout(800);
   const copiado = await p.evaluate(() => navigator.clipboard.readText().catch(() => ''));
   confere('Compartilhar gera o texto com o nome e "Vi no Bo Vair"', copiado.length > 30 && /Vi no Bo Vair/.test(copiado));
-  await visivel.getByRole('button', { name: 'Quero ir', exact: true }).click(); await p.waitForTimeout(500);
+  await visivel.getByRole('button', { name: /do Quero ir$/ }).click(); await p.waitForTimeout(500);
   await p.goto(URL + '#/descobrir'); await p.waitForTimeout(4000);
   confere('Descobrir tem o convite para as curiosidades', (await p.getByRole('button', { name: /^Curiosidades do mundo:/ }).count()) === 1);
 }

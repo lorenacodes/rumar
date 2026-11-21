@@ -54,7 +54,7 @@ await p.waitForTimeout(2500); await passo('cadastro-concluido');
 console.log('   ', await texto(160));
 console.log('— 7. Perfil');
 await p.getByRole('button', { name: /Pular por agora|Continuar/ }).click(); await p.waitForTimeout(1500);
-await p.getByRole('button', { name: 'Perfil', exact: true }).click(); await p.waitForTimeout(3000); await passo('perfil');
+await p.goto(URL + '#/perfil'); await p.waitForTimeout(3000); await passo('perfil');
 console.log('   ', await texto(150));
 console.log('— 8. Atualizar a página');
 await p.reload(); await p.waitForTimeout(3500); await passo('perfil-apos-atualizar');

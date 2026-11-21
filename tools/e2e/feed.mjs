@@ -50,7 +50,7 @@ confere('primeiros posts têm foto com crédito', (await posts.first().locator('
 await p.screenshot({ path: `${OUT}/01-feed-sem-conta.png` });
 const nome = await posts.nth(1).getAttribute('aria-label');
 await posts.nth(1).locator('.postal-frente').dblclick(); await p.waitForTimeout(400);
-confere('dois toques carimbam "Quero ir"', (await posts.nth(1).locator('.postal-carimbo').count()) === 1 && (await posts.nth(1).getByRole('button', { name: 'Quero ir', exact: true }).count()) === 1);
+confere('dois toques carimbam "Quero ir"', (await posts.nth(1).locator('.postal-carimbo').count()) === 1 && (await posts.nth(1).getByRole('button', { name: /do Quero ir$/ }).count()) === 1);
 await p.screenshot({ path: `${OUT}/02-dois-toques.png` });
 await p.waitForTimeout(800);
 confere('dois toques não abriram o lugar', /descobrir/.test(p.url()));
