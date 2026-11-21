@@ -7,7 +7,7 @@ import { amigosDoPerfil, lugaresAmados, MAX_COMENTARIO_CIDADE, notasDaCidade, sa
 import { GOSTOS_VIAGEM, limparBio, MAX_BIO, MAX_GOSTOS, perfilVitrine, salvarVitrine, type GostoViagem, type Vitrine } from '../../lib/perfilVitrine';
 import { desfazerAmizade, minhasAmizades, pedirAmizade } from '../../lib/social';
 import { supabase } from '../../lib/supabase';
-import { atualizarViagem, eu, listarViagens, textoMotivo, viagensDoPerfil, type Viagem } from '../../lib/viagens';
+import { eu, listarViagens, textoMotivo, viagensDoPerfil, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
 import { Avatar } from '../../ui/avatar';
 import { FotoLugar } from '../../ui/foto';
@@ -39,7 +39,6 @@ export function Pessoa() {
   const [viagens, setViagens] = useState<ViagemPerfil[] | null>(null);
   const [capas, setCapas] = useState<Map<string, { id: string; url: string }[]>>(new Map());
   const [roteiros, setRoteiros] = useState<Map<string, { nomes: string[]; total: number }>>(new Map());
-  const [minhasPrivadas, setMinhasPrivadas] = useState<Viagem[]>([]);
   const [aba, setAba] = useState<'viagens' | 'lugares' | 'fotos'>('viagens');
   const [notas, setNotas] = useState<Map<string, NotaCidade>>(new Map());
   const [amados, setAmados] = useState<LugarAmado[] | null>(null);
@@ -66,7 +65,6 @@ export function Pessoa() {
         ? v.minhas.filter((x) => x.status === 'ativo')
         : await viagensDoPerfil(id);
       setViagens(lista);
-      setMinhasPrivadas(souEu ? [] : v.minhas.filter((x) => x.user_id === uid && x.visibilidade === 'privada'));
       if (lista.length) {
         const ids = lista.map((x) => x.id);
         void fotosDasViagens(ids, 4).then(setCapas);
@@ -114,10 +112,7 @@ export function Pessoa() {
   const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   const carimbos = [...new Map(ordenadas.filter((v) => fase(v, hoje) === 'foi').reverse().map((v) => [v.destino, v] as const)).values()].reverse()
     .map((v) => ({ v, cidade: v.destino.split(',')[0]!, quando: `${MES[Number(v.data_ida.slice(5, 7)) - 1]} ${v.data_ida.slice(0, 4)}` })).slice(0, 12);
-  const mostrarMinhas = () => {
-    if (!window.confirm(`Mostrar suas ${minhasPrivadas.length} viagens privadas para todos os seus amigos? Dá para esconder de novo em cada viagem.`)) return;
-    void Promise.all(minhasPrivadas.map((v) => atualizarViagem(v.id, { visibilidade: 'amigos' }))).then(carregar);
-  };
+
   const pedir = async () => { if (await pedirAmizade(id)) { if (pedido === 'recebido') carregar(); else setPedido('enviado'); } };
   const numeros: [number, string, string][] = [
     [p.viagens, 'viagem', 'viagens'], [p.cidades, 'cidade', 'cidades'], [p.fotos, 'foto', 'fotos'],
@@ -351,12 +346,6 @@ export function Pessoa() {
           </div>
         )}
 
-        {p.amigos && minhasPrivadas.length ? (
-          <div style={{ marginTop: '22px', padding: '12px', background: 'var(--cartao-2)', borderRadius: '12px' }}>
-            <div style={{ fontSize: '15px', fontWeight: 600 }}>Seus amigos não veem {minhasPrivadas.length === 1 ? '1 viagem sua' : `${minhasPrivadas.length} viagens suas`}.</div>
-            <button type="button" className="r-btn" onClick={mostrarMinhas} style={{ marginTop: '4px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600, fontSize: '15px' }}>Mostrar para amigos</button>
-          </div>
-        ) : null}
 
         {p.amigos && !p.eu ? (
           <button type="button" className="r-btn" onClick={() => { if (window.confirm('Desfazer a amizade?')) void desfazerAmizade(id).then(() => navegar('/perfil/amigos')); }} style={{ marginTop: '20px', minHeight: '44px', color: 'var(--vermelho)', fontWeight: 600 }}>Desfazer amizade</button>
