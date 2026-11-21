@@ -22,6 +22,10 @@
 - **Experiência de quem já tem conta (17/11/2026).** Toda mudança precisa pensar também em quem está logado: o que espera resposta (convites, pedidos), o que está acontecendo agora (viagem em andamento), o que falta para aproveitar o app. Testar os dois caminhos: sem conta e com conta.
 - **Pouco texto (18/11/2026).** Usuários não leem muito: cada bloco com uma frase curta (até ~12 palavras), ação primeiro, linguagem simples. Fonte, licença e "como calculamos" vão num `<Info>` (ⓘ, `ui/info.tsx`), não na tela. Não mostrar o que não temos (ex.: linha "Avaliações: sem fonte"). Medir com `node tools/e2e/palavras.mjs` (blocos de 14+ palavras devem ficar perto de zero).
 - **Sem emojis (18/11/2026).** Nenhum emoji nem símbolo que vire emoji (♥ ★ ✓ ✈ ☕ ⓘ…) em nenhuma tela. Marca de feito: `ui/check.tsx`. O teste `semEmoji.test.ts` reprova.
+- **Nunca deixar nada faltando (21/11/2026).** Antes de encerrar qualquer entrega: rodar a bateria completa
+  (vitest, todos os `tools/e2e/*.mjs`, `tools/seguranca/*.mjs`, `npm run visual`), corrigir o que falhar e só então
+  dizer que terminou. Se algo depender dela (chave, aprovação, decisão), registrar no `docs/CHECKLIST_FUNDADORA.md`
+  e dizer claramente o que ficou e por quê. Ajustar testes que ficaram desatualizados por mudança de tela.
 - Plano vigente: `docs/PLANO_DE_ACAO.md`.
 - **Pendências da fundadora (19/11/2026):** tudo o que só ela pode fazer fica em `docs/CHECKLIST_FUNDADORA.md`.
   Quando ela perguntar "o que falta pra mim?" (ou parecido), ler esse arquivo, conferir o que já foi feito
