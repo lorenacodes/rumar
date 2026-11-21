@@ -17,6 +17,7 @@ export function Viagens() {
   const [dados, setDados] = useState<Awaited<ReturnType<typeof listarViagens>> | null>(null);
   const carregar = () => void listarViagens().then(setDados);
   // Andamento de cada viagem: paradas no roteiro, hospedagem escolhida e quanto do orçamento já foi guardado.
+  const [verFeitas, setVerFeitas] = useState(false);
   const [andamento, setAndamento] = useState<Map<string, { paradas: number; hosp: boolean; pct: number | null }>>(new Map());
   useEffect(() => {
     const ids = (dados?.minhas ?? []).filter((v) => v.status === 'ativo').map((v) => v.id);
@@ -64,6 +65,10 @@ export function Viagens() {
     const d = Math.round((Date.parse(`${v.data_ida}T12:00:00Z`) - Date.parse(`${hoje}T12:00:00Z`)) / 86_400_000);
     return { texto: d === 1 ? 'Falta 1 dia' : `Faltam ${d} dias`, cor: 'var(--azul)' };
   };
+  const grupo = (v: Viagem): 'agora' | 'proximas' | 'feitas' => {
+    const t = situacao(v).texto;
+    return t === 'Viagem feita' ? 'feitas' : t === 'Acontecendo agora' ? 'agora' : 'proximas';
+  };
   const convites = dados?.minhas.filter((v) => v.status === 'convidado') ?? [];
   const ativas = dados?.minhas.filter((v) => v.status === 'ativo') ?? [];
   const Cartao = ({ v, extra }: { v: Viagem; extra?: string }) => (
@@ -103,9 +108,31 @@ export function Viagens() {
             ))}
           </>
         ) : null}
-        <Rotulo>Minhas viagens</Rotulo>
-        {ativas.length ? ativas.map((v) => <Cartao key={v.id} v={v} extra={v.papel === 'dono' ? undefined : v.papel === 'editor' ? 'Você planeja junto' : 'Você acompanha'} />) : (
-          <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: 0 }}>{dados ? 'Nenhuma ainda. Toque em "Nova viagem".' : 'Carregando…'}</p>
+        {/* Organizadas por momento: agora, próximas (da mais perto) e já feitas (recolhidas). */}
+        {ativas.length ? (['agora', 'proximas', 'feitas'] as const).map((g) => {
+          const lista = ativas.filter((v) => grupo(v) === g).sort((x, y) => (g === 'feitas' ? y.data_ida.localeCompare(x.data_ida) : x.data_ida.localeCompare(y.data_ida)));
+          if (!lista.length) return null;
+          const papel = (v: (typeof lista)[number]) => (v.papel === 'dono' ? undefined : v.papel === 'editor' ? 'Você planeja junto' : 'Você acompanha');
+          if (g === 'feitas') return (
+            <div key={g}>
+              <button type="button" className="r-btn" aria-expanded={verFeitas} onClick={() => setVerFeitas(!verFeitas)}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', minHeight: '48px', marginTop: '14px', fontWeight: 600, fontSize: '15px' }}>
+                <span>Já feitas ({lista.length})</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style={{ transform: verFeitas ? 'rotate(180deg)' : 'none', transition: 'transform 200ms', color: 'var(--texto-sec)' }}><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+              {verFeitas ? lista.map((v) => <Cartao key={v.id} v={v} extra={papel(v)} />) : null}
+            </div>
+          );
+          return (
+            <div key={g}>
+              <Rotulo>{g === 'agora' ? 'Acontecendo agora' : 'Próximas'}</Rotulo>
+              {lista.map((v) => <Cartao key={v.id} v={v} extra={papel(v)} />)}
+            </div>
+          );
+        }) : (
+          <>
+            <Rotulo>Minhas viagens</Rotulo>
+            <p style={{ fontSize: '15px', color: 'var(--texto-sec)', margin: 0 }}>{dados ? 'Nenhuma ainda. Toque em "Nova viagem".' : 'Carregando…'}</p>
+          </>
         )}
         {dados?.deAmigos.length ? (
           <>
@@ -120,17 +147,18 @@ export function Viagens() {
   );
 }
 
-/** Selos do andamento: o que já está pronto (verde) e o que falta (âmbar). */
+/** Andamento em uma linha: o próximo passo (ou "Tudo pronto") e uma barra fina com o quanto já está preparado. */
 function Andamento({ a, feita }: { a?: { paradas: number; hosp: boolean; pct: number | null }; feita: boolean }) {
   if (!a || feita) return null;
-  const selo = (ok: boolean, texto: string) => (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, background: ok ? 'rgba(26,122,62,.12)' : 'rgba(138,90,0,.12)', color: ok ? 'var(--verde)' : 'var(--ambar)' }}>{texto}</span>
-  );
+  const passos = [a.paradas > 0, a.hosp, a.pct !== null && a.pct >= 100];
+  const feitos = passos.filter(Boolean).length;
+  const proximo = !passos[0] ? 'Próximo: montar o roteiro' : !passos[1] ? 'Próximo: escolher hospedagem' : a.pct === null ? 'Próximo: definir o orçamento' : !passos[2] ? `Próximo: guardar (${a.pct}% até agora)` : null;
   return (
-    <span style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' }}>
-      {selo(a.paradas > 0, a.paradas ? `Roteiro: ${a.paradas} ${a.paradas === 1 ? 'parada' : 'paradas'}` : 'Falta roteiro')}
-      {selo(a.hosp, a.hosp ? 'Hospedagem ok' : 'Falta hospedagem')}
-      {a.pct !== null ? selo(a.pct >= 100, `${a.pct}% guardado`) : selo(false, 'Sem orçamento')}
+    <span style={{ display: 'block', marginTop: '6px' }}>
+      <span style={{ display: 'inline-block', padding: '3px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, background: proximo ? 'rgba(138,90,0,.12)' : 'rgba(26,122,62,.12)', color: proximo ? 'var(--ambar)' : 'var(--verde)' }}>{proximo ?? 'Tudo pronto'}</span>
+      <span aria-hidden="true" style={{ display: 'block', height: '4px', marginTop: '6px', borderRadius: '2px', background: 'var(--linha)', overflow: 'hidden' }}>
+        <span style={{ display: 'block', width: `${(feitos / 3) * 100}%`, height: '100%', background: feitos === 3 ? 'var(--verde)' : 'var(--azul)' }} />
+      </span>
     </span>
   );
 }
