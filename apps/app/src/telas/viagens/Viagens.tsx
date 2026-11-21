@@ -19,6 +19,8 @@ export function Viagens() {
   // Andamento de cada viagem: paradas no roteiro, hospedagem escolhida e quanto do orçamento já foi guardado.
   const [verFeitas, setVerFeitas] = useState(false);
   const [andamento, setAndamento] = useState<Map<string, { paradas: number; hosp: boolean; pct: number | null }>>(new Map());
+  // O que dá vontade: os lugares mais conhecidos do roteiro e quantas experiências únicas a cidade tem.
+  const [desejo, setDesejo] = useState<Map<string, { lugares: string[]; total: number; experiencias: number }>>(new Map());
   useEffect(() => {
     const ids = (dados?.minhas ?? []).filter((v) => v.status === 'ativo').map((v) => v.id);
     if (!ids.length) return;
@@ -35,6 +37,27 @@ export function Viagens() {
       for (const r of (hosp.data ?? []) as { trip_id: string }[]) { const x = m.get(r.trip_id); if (x) x.hosp = true; }
       setAndamento(m);
     });
+    void (async () => {
+      const ativas = (dados?.minhas ?? []).filter((v) => v.status === 'ativo');
+      const destinos = [...new Set(ativas.map((v) => v.destino_id).filter((d): d is string => Boolean(d)))];
+      const [itens, exps] = await Promise.all([
+        supabase.from('trip_items').select('trip_id, place_id').in('trip_id', ids).not('place_id', 'like', 'livre-%').limit(2000),
+        destinos.length ? supabase.from('experiencias').select('destino_id').eq('ativo', true).in('destino_id', destinos) : Promise.resolve({ data: [] }),
+      ]);
+      const linhas = (itens.data ?? []) as { trip_id: string; place_id: string }[];
+      const lugIds = [...new Set(linhas.map((l) => l.place_id))].slice(0, 400);
+      const { data: lug } = lugIds.length ? await supabase.from('lugares').select('id, nome, fama').in('id', lugIds) : { data: [] };
+      const info = new Map(((lug ?? []) as { id: string; nome: string; fama: number | null }[]).map((l) => [l.id, l]));
+      const porDestino = new Map<string, number>();
+      for (const e of (exps.data ?? []) as { destino_id: string }[]) porDestino.set(e.destino_id, (porDestino.get(e.destino_id) ?? 0) + 1);
+      const d = new Map<string, { lugares: string[]; total: number; experiencias: number }>();
+      for (const v of ativas) {
+        const doRoteiro = linhas.filter((l) => l.trip_id === v.id).map((l) => info.get(l.place_id)).filter((x): x is { id: string; nome: string; fama: number | null } => Boolean(x));
+        const top = [...new Map(doRoteiro.map((x) => [x.nome, x])).values()].sort((a, b) => (b.fama ?? 0) - (a.fama ?? 0)).slice(0, 2).map((x) => x.nome);
+        d.set(v.id, { lugares: top, total: doRoteiro.length, experiencias: v.destino_id ? porDestino.get(v.destino_id) ?? 0 : 0 });
+      }
+      setDesejo(d);
+    })();
   }, [dados]);
   useEffect(() => {
     if (sessao) carregar();
@@ -78,10 +101,37 @@ export function Viagens() {
         <span style={{ display: 'block', font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
         <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{periodo(v.data_ida, v.noites)} · {v.viajantes} {v.viajantes === 1 ? 'pessoa' : 'pessoas'}</span>
         <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: situacao(v).cor }}>{extra ?? situacao(v).texto}</span>
+        <Desejo d={desejo.get(v.id)} />
         <Andamento a={andamento.get(v.id)} feita={situacao(v).texto === 'Viagem feita'} />
       </span>
     </button>
   );
+
+  /** Na foto: "Dia 3 de 6" durante a viagem; antes, a contagem regressiva. */
+  const rotuloFoto = (v: Viagem) => {
+    if (situacao(v).texto !== 'Acontecendo agora') return situacao(v).texto;
+    const dia = Math.round((Date.parse(`${hojeLocal()}T12:00:00Z`) - Date.parse(`${v.data_ida}T12:00:00Z`)) / 86_400_000) + 1;
+    return `Dia ${dia} de ${v.noites + 1}`;
+  };
+  /** A viagem mais próxima em destaque: foto grande, contagem e o que tem no roteiro. */
+  const CartaoDestaque = ({ v }: { v: Viagem }) => {
+    const d = desejo.get(v.id);
+    return (
+      <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${v.id}`)} aria-label={`${v.destino}: ${situacao(v).texto}`}
+        style={{ display: 'block', width: '100%', textAlign: 'left', padding: '4px 0 14px', borderBottom: '1px solid var(--linha)' }}>
+        <span style={{ position: 'relative', display: 'block', borderRadius: '18px', overflow: 'hidden' }}>
+          <FotoLugar id={v.destino} proporcao="16 / 9" credito={false} compacto />
+          <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 14px 12px', background: 'linear-gradient(0deg, rgba(11,31,75,.94) 0%, rgba(11,31,75,.7) 55%, rgba(11,31,75,0) 100%)', color: '#fff' }}>
+            <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>{rotuloFoto(v)}</span>
+            <span style={{ display: 'block', font: "600 24px/28px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
+            <span style={{ display: 'block', fontSize: '13px', opacity: 0.9 }}>{periodo(v.data_ida, v.noites)} · {v.viajantes} {v.viajantes === 1 ? 'pessoa' : 'pessoas'}</span>
+          </span>
+        </span>
+        <Desejo d={d} grande />
+        <Andamento a={andamento.get(v.id)} feita={false} />
+      </button>
+    );
+  };
 
   return (
     <main className="tela" data-tela="viagens" data-real="viagens">
@@ -122,10 +172,12 @@ export function Viagens() {
               {verFeitas ? lista.map((v) => <Cartao key={v.id} v={v} extra={papel(v)} />) : null}
             </div>
           );
+          const [primeira, ...resto] = lista;
           return (
             <div key={g}>
               <Rotulo>{g === 'agora' ? 'Acontecendo agora' : 'Próximas'}</Rotulo>
-              {lista.map((v) => <Cartao key={v.id} v={v} extra={papel(v)} />)}
+              <CartaoDestaque v={primeira!} />
+              {resto.map((v) => <Cartao key={v.id} v={v} extra={papel(v)} />)}
             </div>
           );
         }) : (
@@ -144,6 +196,18 @@ export function Viagens() {
       </div>
       <Abas ativa="viagem" />
     </main>
+  );
+}
+
+/** O que dá vontade: lugares conhecidos do roteiro e experiências únicas da cidade. */
+function Desejo({ d, grande = false }: { d?: { lugares: string[]; total: number; experiencias: number }; grande?: boolean }) {
+  if (!d || (!d.lugares.length && !d.experiencias)) return null;
+  const mais = d.total - d.lugares.length;
+  return (
+    <span style={{ display: 'block', marginTop: grande ? '10px' : '4px', fontSize: grande ? '15px' : '13px', lineHeight: grande ? '21px' : '18px' }}>
+      {d.lugares.length ? <span style={{ display: 'block' }}>Inclui <b>{d.lugares.join(', ')}</b>{mais > 0 ? ` e mais ${mais}` : ''}</span> : null}
+      {d.experiencias ? <span style={{ display: 'block', color: 'var(--azul)', fontWeight: 600 }}>{d.experiencias} {d.experiencias === 1 ? 'experiência que só existe lá' : 'experiências que só existem lá'}</span> : null}
+    </span>
   );
 }
 
