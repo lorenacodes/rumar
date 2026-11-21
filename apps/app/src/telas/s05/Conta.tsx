@@ -6,7 +6,7 @@ import { baixarMeusDados, cancelarExclusao, CONTATO_PRIVACIDADE, estadoExclusao,
 import { Aviso, BotaoContorno, BotaoPrincipal, Voltar } from '../../ui/pecas';
 import { campo, Rotulo } from '../viagens/comum';
 
-const VERSAO_AVISO = '17/11/2026';
+const VERSAO_AVISO = '21/11/2026';
 // Contato de privacidade: a fundadora informa (checklist 7.4). Sem ele, não inventamos um canal.
 const contato = CONTATO_PRIVACIDADE ?? 'pelo e-mail de contato, que será publicado aqui antes do lançamento';
 
@@ -97,6 +97,11 @@ export function AvisoPrivacidade() {
     ['Nome, @ e cidade no Social; amizades e destinos favoritos', 'Encontrar amigos e planejar junto', 'Execução de contrato', 'Enquanto a conta existir'],
     ['Foto de perfil (opcional)', 'Mostrar a quem você permitir', 'Consentimento', 'Até você apagar'],
     ['Fotos de lugares e pratos que você envia (opcional), com o seu @', 'Mostrar o lugar a outros viajantes, depois de aprovadas', 'Consentimento', 'Até você apagar a foto ou excluir a conta'],
+    ['Bio e "gosto numa viagem" (opcionais)', 'Mostrar seu perfil a quem tem conta', 'Consentimento', 'Até você apagar'],
+    ['Fotos do álbum da viagem (opcional)', 'Mostrar a viagem a quem pode vê-la', 'Consentimento', 'Até você apagar a foto ou a viagem'],
+    ['Avaliações de lugares (nota, comentário, mídias), com o seu @', 'Ajudar outros viajantes', 'Consentimento', 'Até você apagar ou excluir a conta'],
+    ['Se entrar com o Google: nome e e-mail da conta Google', 'Criar e acessar sua conta', 'Execução de contrato', 'Enquanto a conta existir'],
+    ['Erros técnicos do app (tela, versão e mensagem; sem nome, e-mail ou conteúdo)', 'Corrigir falhas', 'Legítimo interesse', 'Pelo tempo necessário para corrigir falhas'],
     ['Registro dos seus consentimentos', 'Provar o que você aceitou e quando', 'Obrigação legal', 'Enquanto a conta existir'],
   ];
   return (
@@ -111,9 +116,9 @@ export function AvisoPrivacidade() {
         </div>
       ))}
       <Rotulo>Quem vê</Rotulo>
-      <p style={p}>Suas viagens só são vistas por quem você convidar (ou pelos amigos, se você escolher). Quem tem conta encontra você na busca pelo nome ou @.</p>
+      <p style={p}>Cada viagem tem o seu "Quem vê": só quem vai, amigos ou todos com conta. Valores e gastos nunca aparecem para quem só olha. Quem tem conta encontra você pelo nome ou @ e vê sua bio, se você escrever uma. Avaliações e fotos de lugares aparecem para todos, com o seu @.</p>
       <Rotulo>Onde ficam e com quem compartilhamos</Rotulo>
-      <p style={p}>Os dados ficam no Supabase, com servidores em São Paulo. Para buscar hotéis, enviamos à LiteAPI só o local, as datas e o número de pessoas (nada de nome ou e-mail). Mapas (OpenFreeMap), fotos (Wikimedia) e vídeos (YouTube) são carregados direto no seu aparelho; esses serviços recebem o endereço de internet do aparelho, como em qualquer site.</p>
+      <p style={p}>Os dados ficam no Supabase, com servidores em São Paulo. Para buscar hotéis, enviamos à LiteAPI só o local, as datas e o número de pessoas (nada de nome ou e-mail). Mapas (OpenFreeMap), fotos (Wikimedia e Google Maps), vídeos (YouTube) e a previsão do tempo (Open-Meteo, só com a cidade da viagem) são carregados direto no seu aparelho; esses serviços recebem o endereço de internet do aparelho, como em qualquer site. Se você entrar com o Google, o Google sabe que você usou o Bo Vair.</p>
       <p style={p}>Não vendemos dados, não mostramos anúncios e não usamos ferramentas de rastreamento ou de publicidade.</p>
       <Rotulo>Seus direitos</Rotulo>
       <ul style={{ fontSize: '15px', lineHeight: '22px', paddingLeft: '18px', margin: '6px 0 0' }}>
