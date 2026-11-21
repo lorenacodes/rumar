@@ -21,7 +21,7 @@
 - [ ] **1.2 Ajustes no Supabase (Authentication)**, 10 minutos:
   - [x] Ligar **"Leaked password protection"** (feito 21/11; conferido no painel de segurança) (proteção contra senhas vazadas; está no plano Pro que você paga).
   - [x] Senha mínima de 8 caracteres com letras e números (feito 21/11).
-  - [ ] Nos e-mails "Confirm signup" e "Change email address", usar o código `{{ .Token }}`.
+  - [x] Nos e-mails "Confirm signup" e "Change email address", usar o código `{{ .Token }}` (feito 21/11, texto sem o nome do app: "app de viagens"; trocar quando o nome for decidido).
   - [ ] Redirect URL: `com.bovair.app://auth`.
 - [ ] **1.3 Testar criar conta no APK** com o seu e-mail principal e me contar o resultado. Isso também libera a
       sua **Moderação** (Perfil → Moderação de fotos). As fotos aparecem na hora; lá chegam só as denunciadas
