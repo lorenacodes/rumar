@@ -183,27 +183,32 @@ export function Pessoa() {
           </section>
         )}
 
-        <dl aria-label="Números" className="perfil-numeros">
-          {numeros.map(([n, um, varios]) => (
+        {/* Só números que dizem algo: sem zeros e sem um número sozinho. */}
+        {numeros.filter(([n]) => n > 0).length >= 2 ? <dl aria-label="Números" className="perfil-numeros" style={{ gridTemplateColumns: `repeat(${numeros.filter(([n]) => n > 0).length}, 1fr)` }}>
+          {numeros.filter(([n]) => n > 0).map(([n, um, varios]) => (
             <div key={varios}>
               <dt>{n === 1 ? um : varios}</dt>
               <dd>{n}</dd>
             </div>
           ))}
-        </dl>
+        </dl> : null}
 
         {/* Conexões: rostos de verdade. No meu, meus amigos; no de outra pessoa, os amigos em comum. */}
-        {conexoes && (conexoes.total || p.eu) ? (
+        {conexoes && (p.eu || conexoes.pessoas.length) ? (
           <button type="button" className="r-btn perfil-conexoes" onClick={() => (p.eu ? navegar('/perfil/amigos') : undefined)} disabled={!p.eu} aria-label={p.eu ? 'Ver meus amigos' : undefined}>
             {conexoes.pessoas.length ? (
               <span className="perfil-rostos" aria-hidden="true">
                 {conexoes.pessoas.slice(0, 5).map((a) => <span key={a.user_id}><Avatar userId={a.user_id} nome={a.display_name} tamanho={32} /></span>)}
               </span>
-            ) : null}
+            ) : (
+              <span className="perfil-icone claro" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.8c1.9.7 3.2 2.6 3.5 5.2" /></svg>
+              </span>
+            )}
             <span style={{ flex: 1, minWidth: 0, fontSize: '14px', lineHeight: '19px' }}>
               {p.eu
                 ? conexoes.total ? <><b>{conexoes.total} {conexoes.total === 1 ? 'amigo' : 'amigos'}</b>{conexoes.pessoas[0] ? ` · ${conexoes.pessoas.slice(0, 2).map((a) => a.display_name.split(' ')[0]).join(', ')}` : ''}</> : <b>Chame amigos para viajar junto</b>
-                : <>{conexoes.pessoas.length ? <><b>{conexoes.pessoas.length} em comum</b>{` · ${conexoes.pessoas.slice(0, 2).map((a) => a.display_name.split(' ')[0]).join(', ')}`}</> : null}{conexoes.pessoas.length ? <br /> : null}<span style={{ color: 'var(--texto-sec)' }}>{conexoes.total} {conexoes.total === 1 ? 'amigo' : 'amigos'} no Bo Vair</span></>}
+                : <><b>{conexoes.pessoas.length} {conexoes.pessoas.length === 1 ? 'amigo' : 'amigos'} em comum</b>{` · ${conexoes.pessoas.slice(0, 2).map((x) => x.display_name.split(' ')[0]).join(', ')}`}</>}
             </span>
             {p.eu ? <span aria-hidden="true" className="perfil-seta">›</span> : null}
           </button>
