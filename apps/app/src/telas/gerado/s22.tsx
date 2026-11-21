@@ -223,7 +223,7 @@ export function Tela22_3() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Se precisar de ajuda.
         </div>
-        <div style={{ height: "72px", background: "var(--fundo-escuro)", color: "#fff", marginTop: "14px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 18px", borderTop: "6px solid var(--amarelo)" }}>
+        <div style={{ height: "72px", background: "var(--fundo-escuro)", color: "#fff", marginTop: "14px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 18px", borderTop: "6px solid transparent" }}>
           <div>
             <div style={{ font: "600 14px 'Open Sans'", color: "var(--amarelo)" }}>
               Emergência na Europa

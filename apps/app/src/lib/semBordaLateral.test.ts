@@ -2,8 +2,8 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-/** Pedido da fundadora (21/11/2026): nenhuma borda colorida lateral em cartões ou avisos. */
-const PROIBIDO = /borderLeft|borderRight\s*:\s*`?['"]?\d+px\s+solid|border-left|borderInlineStart|border-inline-start|inset\s+-?\d+px\s+0\s+0/;
+/** Pedido da fundadora (21/11/2026): nenhuma faixa colorida na lateral ou no topo de cartões e avisos. */
+const PROIBIDO = /borderLeft|borderRight\s*:\s*`?['"]?\d+px\s+solid|border-left|borderInlineStart|border-inline-start|inset\s+-?\d+px\s+0\s+0|borderTop:\s*['"`][3-9]px\s+solid\s+(?!transparent)|border-top:\s*[3-9]px\s+solid\s+(?!transparent)/;
 
 function arquivos(dir: string): string[] {
   return readdirSync(dir).flatMap((n) => {

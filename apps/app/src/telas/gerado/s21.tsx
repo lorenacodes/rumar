@@ -23,7 +23,7 @@ export function Tela21_1() {
             ● Funciona sem internet
           </span>
         </div>
-        <div style={{ background: "var(--fundo-escuro)", borderTop: "6px solid var(--amarelo)", color: "#fff", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ background: "var(--fundo-escuro)", borderTop: "6px solid transparent", color: "#fff", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontSize: "14px", color: "var(--amarelo)", fontWeight: "600" }}>
               Volta · 18 jul

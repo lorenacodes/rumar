@@ -174,7 +174,7 @@ export function Tela23_3() {
         <p style={{ fontSize: "16px", lineHeight: "24px", color: "var(--texto-sec)", margin: "8px 0 0" }}>
           Você está no caminho. Sem contagem regressiva, sem valores, sem avisos.
         </p>
-        <div style={{ background: "var(--fundo-escuro)", color: "#fff", borderTop: "8px solid var(--amarelo)", marginTop: "16px", padding: "20px 18px" }}>
+        <div style={{ background: "var(--fundo-escuro)", color: "#fff", borderTop: "8px solid transparent", marginTop: "16px", padding: "20px 18px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <b style={{ font: "600 38px 'Lexend Exa'" }}>
               AJU

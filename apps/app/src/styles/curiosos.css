@@ -61,7 +61,7 @@
   background: var(--papel);
   color: var(--texto);
   box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
-  border-top: 4px solid var(--carimbo);
+  border-top: 4px solid transparent;
 }
 .ficha-numero {
   display: flex;

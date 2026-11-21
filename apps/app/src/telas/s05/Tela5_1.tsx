@@ -12,7 +12,7 @@ import { Aviso, BotaoContorno, BotaoPrincipal, Campo, Voltar } from '../../ui/pe
 export function MarcaQuadrada() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <div style={{ width: '30px', height: '30px', background: 'var(--fundo-escuro)', borderTop: '5px solid var(--amarelo)', boxSizing: 'border-box', color: '#fff', font: "600 17px/22px 'Lexend Exa'", textAlign: 'center' }} aria-hidden>
+      <div style={{ width: '30px', height: '30px', background: 'var(--fundo-escuro)', borderTop: '5px solid transparent', boxSizing: 'border-box', color: '#fff', font: "600 17px/22px 'Lexend Exa'", textAlign: 'center' }} aria-hidden>
         b
       </div>
       <span style={{ font: "600 22px 'Lexend Exa'", letterSpacing: '-0.04em' }}>bo vair</span>

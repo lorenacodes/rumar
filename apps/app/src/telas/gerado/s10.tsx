@@ -346,7 +346,7 @@ export function Tela10_4() {
         <div style={{ font: "600 28px/33px 'Lexend Exa'", letterSpacing: "-0.02em", marginTop: "6px" }}>
           Seu cofrinho para Paris.
         </div>
-        <div style={{ background: "var(--fundo-escuro)", borderTop: "8px solid var(--amarelo)", color: "#fff", marginTop: "12px", padding: "14px 18px" }}>
+        <div style={{ background: "var(--fundo-escuro)", borderTop: "8px solid transparent", color: "#fff", marginTop: "12px", padding: "14px 18px" }}>
           <div style={{ font: "600 14px 'Open Sans'", color: "var(--amarelo)" }}>
             Meta com folga de 10%
           </div>
@@ -771,7 +771,7 @@ export function Tela10_10() {
         <div style={{ marginTop: "14px", border: "2px solid var(--texto)", height: "120px" }} />
       </div>
       <div style={{ position: "absolute", inset: "0", background: "rgba(11,31,75,.55)" }} />
-      <div style={{ position: "absolute", left: "20px", right: "20px", top: "300px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid var(--amarelo)" }}>
+      <div style={{ position: "absolute", left: "20px", right: "20px", top: "300px", background: "var(--fundo)", padding: "20px", borderTop: "6px solid transparent" }}>
         <div style={{ font: "600 22px/27px 'Lexend Exa'", letterSpacing: "-0.02em" }}>
           O cofrinho só soma o que você anotou.
         </div>
