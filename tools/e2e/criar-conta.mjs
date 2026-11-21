@@ -33,5 +33,17 @@ for (const largura of [390, 320]) {
   await p.getByRole('button', { name: /Criar conta/ }).click(); await p.waitForTimeout(1200);
   confere('menor de 18 não cria conta', /#\/menor-de-18/.test(p.url()));
 }
+// Senha que já vazou na internet: o Supabase recusa (nenhuma conta é criada) e o app diz o motivo em português.
+{
+  const bv = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+  const p = await (await bv.newContext({ viewport: { width: 390, height: 844 } })).newPage();
+  await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1000);
+  await p.goto(URL + '#/conta/criar'); await p.waitForTimeout(1500);
+  await p.locator('#nome').fill('Teste Senha'); await p.locator('#email').fill(`teste.vazada.${Date.now()}@exemplo-inexistente-bovair.com.br`);
+  await p.locator('#senha').fill('password123'); await p.getByText(/Li e aceito os Termos/).click();
+  await p.getByRole('button', { name: /^Criar conta/ }).click(); await p.waitForTimeout(4000);
+  confere('senha vazada: diz que vazou e pede outra', await p.getByText('Essa senha já vazou na internet. Escolha outra.').isVisible());
+  await bv.close();
+}
 console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
 await b.close(); process.exit(erros.length ? 1 : 0);

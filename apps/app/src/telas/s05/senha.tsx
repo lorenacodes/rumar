@@ -89,7 +89,7 @@ export function Tela5_10() {
     if (senha !== repetir) return setErro('As duas senhas precisam ser iguais.');
     const r = await salvarSenhaNova(senha);
     if (r.ok) return navegar('/conta/senha-trocada', { replace: true });
-    setErro(r.motivo === 'igual' ? 'Essa é a senha anterior. Escolha outra.' : 'Não conseguimos salvar agora. Se o link venceu, peça outro.');
+    setErro(r.motivo === 'igual' ? 'Essa é a senha anterior. Escolha outra.' : r.motivo === 'vazada' ? 'Essa senha já vazou na internet. Escolha outra.' : 'Não conseguimos salvar agora. Se o link venceu, peça outro.');
   };
   return (
     <main className="tela" data-tela="5.10">
@@ -168,7 +168,7 @@ export function Tela5_16() {
     if (!(await conferirSenhaAtual(atual))) return setErro('A senha atual não confere.');
     const r = await salvarSenhaNova(senha);
     if (r.ok) return navegar('/conta/senha-trocada', { replace: true });
-    setErro(r.motivo === 'igual' ? 'Essa é a senha atual. Escolha outra.' : 'Não conseguimos salvar agora. Tente de novo.');
+    setErro(r.motivo === 'igual' ? 'Essa é a senha atual. Escolha outra.' : r.motivo === 'vazada' ? 'Essa senha já vazou na internet. Escolha outra.' : 'Não conseguimos salvar agora. Tente de novo.');
   };
   return (
     <main className="tela" data-tela="5.16">

@@ -101,6 +101,7 @@ export function Tela5_3() {
       limite_email: 'Enviamos muitos e-mails em pouco tempo. Espere alguns minutos e tente de novo.',
       email_nao_autorizado: 'Ainda não conseguimos enviar e-mail para esse endereço. Tente com outro e-mail.',
       invalido: 'Confira o e-mail e a senha.',
+      vazada: 'Essa senha já vazou na internet. Escolha outra.',
     };
     setErro(mensagens[r.motivo] ?? 'Não conseguimos criar a conta agora. Confira a internet e tente de novo.');
   };

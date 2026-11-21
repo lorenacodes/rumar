@@ -90,7 +90,7 @@ export async function criarConta(dados: {
   email: string;
   senha: string;
   novidades: boolean;
-}): Promise<Resultado<'existe' | 'rede' | 'invalido' | 'email_invalido' | 'limite_email' | 'email_nao_autorizado'>> {
+}): Promise<Resultado<'existe' | 'rede' | 'invalido' | 'vazada' | 'email_invalido' | 'limite_email' | 'email_nao_autorizado'>> {
   const { data, error } = await supabase.auth.signUp({
     email: dados.email.trim(),
     password: dados.senha,
@@ -101,6 +101,8 @@ export async function criarConta(dados: {
   });
   if (error) {
     // Códigos do Supabase Auth: https://supabase.com/docs/guides/auth/debugging/error-codes
+    // Senha recusada pelo Supabase (curta, sem número ou já vazada na internet).
+    if (error.code === 'weak_password') return { ok: false, motivo: 'vazada' };
     if (error.code === 'email_address_invalid') return { ok: false, motivo: 'email_invalido' };
     if (error.code === 'over_email_send_rate_limit' || error.status === 429) return { ok: false, motivo: 'limite_email' };
     if (error.code === 'email_address_not_authorized') return { ok: false, motivo: 'email_nao_autorizado' };
@@ -298,10 +300,10 @@ export async function pedirLinkDeSenha(email: string): Promise<void> {
 }
 
 /** Salva a senha nova e sai da conta nos outros aparelhos (5.10, 5.16). */
-export async function salvarSenhaNova(senha: string): Promise<Resultado<'igual' | 'fraca' | 'rede'>> {
+export async function salvarSenhaNova(senha: string): Promise<Resultado<'igual' | 'fraca' | 'vazada' | 'rede'>> {
   if (!senhaValida(senha)) return { ok: false, motivo: 'fraca' };
   const { error } = await supabase.auth.updateUser({ password: senha });
-  if (error) return { ok: false, motivo: /different|same/i.test(error.message) ? 'igual' : 'rede' };
+  if (error) return { ok: false, motivo: error.code === 'weak_password' ? 'vazada' : /different|same/i.test(error.message) ? 'igual' : 'rede' };
   await supabase.auth.signOut({ scope: 'others' });
   return { ok: true };
 }
