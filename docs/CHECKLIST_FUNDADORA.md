@@ -31,7 +31,7 @@
       real (a LGPD exige um canal para pedidos sobre dados). Pode ser o próprio Gmail do item 1.1. Me passe o
       endereço (não é segredo) e eu coloco no app. **O app citava um Instagram "@bovair.app": ele é seu?** Se não
       for, foi bom ter tirado; se for, me avise que eu volto a mostrar.
-- [ ] **1.6 Entrar com o Google (grátis, ~10 min) — o que mais aumenta cadastros.** O botão "Continuar com Google"
+- [ ] **1.6 Entrar com o Google (grátis, ~10 min) — o que mais aumenta cadastros.** **Andamento 21/11:** projeto `app-viagens` e tela de permissão criados no Google Cloud (nome "App de viagens", Externo, em "Testando"). **Falta:** publicar (exige link da política de privacidade e página inicial, que dependem do GitHub Pages, item 2.1), depois partes B (criar cliente) e C (colar no Supabase). **Não ligar no Supabase antes de publicar:** em "Testando" só entra quem está na lista de usuários de teste. O botão "Continuar com Google"
       já está pronto no app e aparece sozinho quando isto estiver ligado:
       1. console.cloud.google.com → projeto "Bo Vair" → APIs e serviços → **Tela de consentimento OAuth** → Externo →
          nome "Bo Vair", e-mail de suporte → salvar e **Publicar**.
