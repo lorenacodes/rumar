@@ -48,7 +48,7 @@ export function Experiencias({ destino, cidade, preferencias, titulo = 'Experiê
         {vistas.map((e) => (
           <article key={e.id} aria-label={e.titulo} style={{ padding: fotos.get(e.id) ? '0 16px 14px' : '14px 16px', borderRadius: '16px', background: 'var(--cartao-2)', overflow: 'hidden' }}>
             {fotos.get(e.id) ? <img src={fotos.get(e.id)} alt="" loading="lazy" style={{ display: 'block', width: 'calc(100% + 32px)', margin: '0 -16px 12px', aspectRatio: '16 / 9', objectFit: 'cover' }} /> : null}
-            <div style={{ font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--azul)' }}>
+            <div style={{ font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>
               {[NOME_TIPO[e.tipo] ?? 'Experiência', e.bateVolta ? `Bate-volta · ${e.bateVolta}, ${e.km} km` : null].filter(Boolean).join(' · ')}
             </div>
             <b style={{ display: 'block', font: "600 17px/22px 'Lexend Exa'", marginTop: '4px' }}>{e.titulo}</b>

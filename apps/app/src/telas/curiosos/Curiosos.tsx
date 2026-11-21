@@ -53,7 +53,7 @@ function OQueFazerLa({ c }: { c: Curiosidade }) {
   if (!lista?.length && !c.destino_id) return null;
   return (
     <div className="ficha-fazer" style={{ marginTop: '8px' }}>
-      <b style={{ display: 'block', font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--azul)' }}>O que fazer lá</b>
+      <b style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>O que fazer lá</b>
       {lista?.length ? (
         <ul style={{ listStyle: 'none', margin: '4px 0 0', padding: 0, fontSize: '14px', lineHeight: '20px' }}>
           {lista.slice(0, 3).map((e) => <li key={e.id}>{e.titulo}{e.bateVolta ? ` (${e.bateVolta})` : ''}</li>)}

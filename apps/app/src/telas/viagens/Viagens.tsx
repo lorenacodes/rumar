@@ -122,7 +122,7 @@ export function Viagens() {
         <span style={{ position: 'relative', display: 'block', borderRadius: '18px', overflow: 'hidden' }}>
           <FotoLugar id={v.destino} proporcao="16 / 9" credito={false} compacto />
           <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 14px 12px', background: 'linear-gradient(0deg, rgba(11,31,75,.94) 0%, rgba(11,31,75,.7) 55%, rgba(11,31,75,0) 100%)', color: '#fff' }}>
-            <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>{rotuloFoto(v)}</span>
+            <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--amarelo)' }}>{rotuloFoto(v)}</span>
             <span style={{ display: 'block', font: "600 24px/28px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{v.destino}</span>
             <span style={{ display: 'block', fontSize: '13px', opacity: 0.9 }}>{periodo(v.data_ida, v.noites)} · {v.viajantes} {v.viajantes === 1 ? 'pessoa' : 'pessoas'}</span>
           </span>

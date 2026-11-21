@@ -50,7 +50,7 @@ function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
       <button type="button" className="r-btn" onClick={aoAbrir} style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, minWidth: 0, textAlign: 'left' }}>
         <span style={{ width: '72px', flex: 'none' }}><FotoLugar id={it.id} proporcao="1 / 1" credito={false} compacto /></span>
         <span style={{ minWidth: 0 }}>
-          <span style={{ display: 'block', font: "700 11px/15px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{it.rotulo}</span>
+          <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>{it.rotulo}</span>
           <span style={{ display: 'block', font: "600 16px/21px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{it.nome}</span>
           {it.detalhe ? <span style={{ display: 'block', fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{it.detalhe}</span> : null}
         </span>
@@ -71,7 +71,7 @@ function ConviteRoteiro({ destinoId, cidade, lugares }: { destinoId: string; cid
   const dados = [lugares ? `${lugares.toLocaleString('pt-BR')} lugares` : null, unicas ? `${unicas} ${unicas === 1 ? 'experiência que só existe aqui' : 'experiências que só existem aqui'}` : null].filter(Boolean);
   return (
     <div style={{ marginTop: '12px', padding: '14px 16px', borderRadius: '18px', background: 'var(--fundo-escuro)', color: '#fff' }}>
-      <b style={{ display: 'block', font: "600 18px/23px 'Lexend Exa'", letterSpacing: '-0.01em' }}>Dá para ir. Seu roteiro sai em 1 minuto.</b>
+      <b style={{ display: 'block', font: "600 18px/23px 'Lexend Exa'", letterSpacing: '-0.01em' }}>Seu roteiro fica pronto em 1 minuto.</b>
       {dados.length ? <span style={{ display: 'block', marginTop: '4px', fontSize: '14px', color: 'var(--sobre-escuro-sec)' }}>{dados.join(' · ')}</span> : null}
       <button type="button" className="r-btn" onClick={() => navegar(`/viagens/nova?d=${destinoId}`)}
         style={{ width: '100%', minHeight: '48px', marginTop: '12px', borderRadius: '24px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 16px 'Open Sans'" }}>Montar meu roteiro para {cidade}</button>

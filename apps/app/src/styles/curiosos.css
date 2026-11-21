@@ -66,9 +66,7 @@
 .ficha-numero {
   display: flex;
   justify-content: space-between;
-  font: 700 11px/14px 'Open Sans';
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font: 600 13px/17px 'Open Sans';
   color: var(--carimbo);
 }
 .ficha-nome {
@@ -92,9 +90,7 @@
 }
 .ficha-porque span {
   display: block;
-  font: 700 10px/14px 'Open Sans';
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font: 600 13px/17px 'Open Sans';
   color: var(--carimbo);
 }
 .ficha-sabia {
@@ -130,9 +126,7 @@
   right: 0;
   bottom: 4px;
   text-align: center;
-  font: 600 11px 'Open Sans';
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font: 600 13px 'Open Sans';
   color: var(--texto-sec);
   pointer-events: none;
 }

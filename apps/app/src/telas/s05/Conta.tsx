@@ -8,7 +8,7 @@ import { campo, Rotulo } from '../viagens/comum';
 
 const VERSAO_AVISO = '21/11/2026';
 // Contato de privacidade: a fundadora informa (checklist 7.4). Sem ele, não inventamos um canal.
-const contato = CONTATO_PRIVACIDADE ?? 'pelo e-mail de contato, que será publicado aqui antes do lançamento';
+const contato = CONTATO_PRIVACIDADE ?? 'pelo e-mail de contato (em breve aqui)';
 
 function Pagina({ titulo, sobre, voltar = '/perfil', children }: { titulo: string; sobre: string; voltar?: string; children: ReactNode }) {
   return (
@@ -61,7 +61,7 @@ export function Privacidade() {
         </div>
       ) : (
         <>
-          <p style={p}>Apaga a conta e as viagens que você criou (também para quem participa). Dá para desistir em {PRAZO_EXCLUSAO_DIAS} dias.</p>
+          <p style={p}>Apaga sua conta e as viagens que você criou, para todos. Você tem {PRAZO_EXCLUSAO_DIAS} dias para desistir.</p>
           {!abrir ? (
             <button type="button" className="r-btn" onClick={() => setAbrir(true)} style={{ marginTop: '10px', minHeight: '48px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--vermelho)', color: 'var(--vermelho)', font: "600 15px 'Open Sans'" }}>Excluir minha conta</button>
           ) : (

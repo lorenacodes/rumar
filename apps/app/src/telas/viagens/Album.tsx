@@ -109,7 +109,7 @@ export function AlbumDaViagem({ v, lugares, pode, recarregar }: { v: ViagemCompl
             </button>
           ))}
         </div>
-      ) : participa && !aberto ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Guarde aqui as fotos da viagem.</p> : null}
+      ) : participa && !aberto ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Poste a primeira foto da viagem.</p> : null}
 
       {vendo ? (
         <div role="dialog" aria-label="Foto" onClick={() => setVendo(null)} style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,.92)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'env(safe-area-inset-top) 0 env(safe-area-inset-bottom)' }}>

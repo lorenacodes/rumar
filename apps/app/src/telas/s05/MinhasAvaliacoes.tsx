@@ -20,7 +20,7 @@ export function MinhasAvaliacoes() {
         {lista && !lista.length ? <p style={{ fontSize: '15px', color: 'var(--texto-sec)' }}>Nenhuma ainda. Em uma viagem, use "Onde você foi?".</p> : null}
         {cidades.map((c) => (
           <section key={c} aria-label={c}>
-            <h2 style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '18px 0 4px' }}>{c}</h2>
+            <h2 style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', margin: '18px 0 4px' }}>{c}</h2>
             {(lista ?? []).filter((a) => (a.cidade ?? 'Outros lugares') === c).map((a) => (
               <button key={a.id} type="button" className="r-btn" onClick={() => navegar(`/lugar/${a.place_id}`)} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 0', borderBottom: '1px solid var(--linha)' }}>
                 <b style={{ fontSize: '16px' }}>{a.nome}</b>

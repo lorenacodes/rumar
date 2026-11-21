@@ -29,7 +29,7 @@ function BolsoDaViagem({ v, j, pode, recarregar, irPara }: { v: ViagemCompleta; 
     return (
       <div style={caixa}>
         <b style={{ display: 'block', font: "600 17px/23px 'Lexend Exa'" }}>Quanto custa essa viagem?</b>
-        <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '2px' }}>Anote passagem e hospedagem. O app calcula quando você consegue ir.</div>
+        <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginTop: '2px' }}>Anote passagem e hospedagem para ver quando você vai.</div>
         {pode ? <button type="button" className="r-btn" onClick={() => irPara('dinheiro')} style={{ marginTop: '10px', minHeight: '44px', padding: '0 18px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>Anotar custos</button> : null}
       </div>
     );

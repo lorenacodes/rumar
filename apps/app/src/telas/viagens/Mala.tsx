@@ -28,7 +28,7 @@ export function Mala({ tripId, noites, internacional, praia, clima, trabalho }: 
       </button>
       {aberta ? ORDEM_GRUPOS.filter((g) => itens.some((i) => i.grupo === g)).map((g) => (
         <div key={g} style={{ marginTop: '10px' }}>
-          <div style={{ font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--texto-sec)' }}>{g}</div>
+          <div style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)' }}>{g}</div>
           {itens.filter((i) => i.grupo === g).map((i) => {
             const ok = feitos.includes(i.id);
             return (

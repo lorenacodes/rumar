@@ -16,9 +16,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  font: 700 10px/13px 'Open Sans';
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font: 600 13px/17px 'Open Sans';
   color: var(--texto-sec);
   text-align: center;
 }
@@ -98,9 +96,7 @@
 }
 .postal-legenda small {
   display: block;
-  font: 700 11px/14px 'Open Sans';
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font: 600 13px/17px 'Open Sans';
   opacity: 0.92;
 }
 .postal-legenda b {
@@ -238,9 +234,7 @@
   border: 1px solid var(--linha);
 }
 .postal-sem-foto small {
-  font: 700 11px/14px 'Open Sans';
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font: 600 13px/17px 'Open Sans';
   color: var(--azul);
 }
 .postal-sem-foto b {

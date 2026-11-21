@@ -102,7 +102,7 @@ export function Usuario({ primeiraVez = false }: { primeiraVez?: boolean }) {
           <li>3 a 24 caracteres: letras sem acento, números, ponto (.) e sublinhado (_).</li>
           <li>Pelo menos uma letra; sem ponto no começo, no fim ou dois pontos seguidos.</li>
           <li>Maiúsculas viram minúsculas: @Ana e @ana são o mesmo nome.</li>
-          <li>Dá para trocar depois, uma vez a cada 14 dias.</li>
+          <li>Você pode trocar a cada 14 dias.</li>
         </ul>
         {erro ? <Aviso>{erro}</Aviso> : null}
         <div style={{ height: '16px' }} />

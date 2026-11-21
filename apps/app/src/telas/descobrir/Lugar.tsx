@@ -122,7 +122,7 @@ export function Lugar() {
         </div>
       </div>
       <div style={{ padding: '14px 20px 24px' }}>
-        <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS[l.categoria]}</div>
+        <div style={{ font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>{CATEGORIAS[l.categoria]}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{l.nome}</h1>
         <p style={{ margin: '8px 0 0', fontSize: '16px', lineHeight: '24px' }}>{l.descricao}</p>
         {motivos.length ? <p style={{ margin: '8px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--verde)', fontWeight: 600 }}>Combina com você: {motivos.join(', ')}.</p> : null}
@@ -175,7 +175,7 @@ function LugarDaBase() {
         </div>
       ) : <><div style={{ padding: 'calc(20px + env(safe-area-inset-top)) 20px 0' }}><Voltar /></div><CapaAlternativa placeId={id} nome={b.nome} /></>}
       <div style={{ padding: '14px 20px 24px' }}>
-        <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{CATEGORIAS_LUGAR[b.categoria].nome} · {nomeTipo(b.tipo)}</div>
+        <div style={{ font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>{CATEGORIAS_LUGAR[b.categoria].nome} · {nomeTipo(b.tipo)}</div>
         <h1 style={{ margin: '4px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{b.nome}</h1>
         {b.popularidade && SELO_POPULARIDADE[b.popularidade] ? (
           <span style={{ display: 'inline-block', marginTop: '8px', padding: '4px 10px', borderRadius: '999px', background: 'var(--fundo-escuro)', color: '#fff', font: "700 12px 'Open Sans'", letterSpacing: '0.02em' }}>{SELO_POPULARIDADE[b.popularidade]}</span>

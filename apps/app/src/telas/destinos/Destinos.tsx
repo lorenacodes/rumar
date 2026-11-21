@@ -37,7 +37,7 @@ export function Destinos({ primeiraVez = false }: { primeiraVez?: boolean }) {
         <h1 style={{ margin: '6px 0 0', font: "600 26px/31px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Que lugares você quer conhecer?</h1>
         <p style={{ fontSize: '15px', lineHeight: '22px', color: 'var(--texto-sec)', margin: '6px 0 0' }}>Marque quantos quiser, no Brasil ou fora. Não precisa ter data: é só para sugerirmos o que combina com você.</p>
         <div style={{ marginTop: '12px' }}>
-          <EscolherDestino rotulo="Buscar cidade para favoritar" placeholder="Qualquer cidade: Bonito, Ouro Preto, Lisboa…" aoEscolher={(d) => {
+          <EscolherDestino rotulo="Buscar cidade para favoritar" placeholder="Busque uma cidade" aoEscolher={(d) => {
             const f: Favorito = { chave: chave(d.nome, NOME_PAIS[d.pais] ?? d.pais), nome: d.nome, regiao: d.regiao, pais: NOME_PAIS[d.pais] ?? d.pais, destino_id: d.id };
             if (!tem(f.chave)) void alternar(f);
           }} />

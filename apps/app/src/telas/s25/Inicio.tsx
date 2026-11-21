@@ -22,6 +22,7 @@ import { lugaresCuriosos, nomesDestinos } from '../../lib/lugares';
 import { Avatar } from '../../ui/avatar';
 import { Estrelas } from '../../ui/estrelas';
 import { DESTINOS_COM_FOTO, FotoDestino } from '../../ui/foto';
+import { Info } from '../../ui/info';
 import { FotosQuePassam } from '../../ui/FotosQuePassam';
 import { BotaoContorno, BotaoPrincipal } from '../../ui/pecas';
 
@@ -64,7 +65,7 @@ function CartaoGrande({ d, favorito, i = 0, total = 0 }: { d: DestinoCartao; fav
       <FotoDestino nome={d.foto ?? d.nome} credito={false} />
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(0,0,0,.82) 100%)' }} />
       <span style={{ position: 'absolute', left: 16, right: 16, bottom: 16, zIndex: 2, color: '#fff' }}>
-        {favorito ? <span style={{ display: 'inline-block', font: "700 11px 'Open Sans'", letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', padding: '2px 6px', marginBottom: '6px' }}>Seu favorito</span> : null}
+        {favorito ? <span style={{ display: 'inline-block', font: "600 13px/17px 'Open Sans'", background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', padding: '2px 6px', marginBottom: '6px' }}>Seu favorito</span> : null}
         <span style={{ display: 'block', font: "600 26px/30px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{d.nome}</span>
         <span style={{ display: 'block', fontSize: '14px', opacity: 0.92 }}>{d.pais} · {chamada(d)}</span>
       </span>
@@ -240,7 +241,7 @@ function OQueFaz() {
   ];
   return (
     <section aria-label="O que o Bo Vair faz" style={{ marginTop: '14px', padding: '18px 16px', background: 'var(--fundo-escuro)', color: '#fff' }}>
-      <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Como uma agência, no seu bolso</div>
+      <div style={{ font: "600 13px/17px 'Open Sans'", color: 'var(--amarelo)' }}>Como uma agência, no seu bolso</div>
       <div style={{ font: "600 24px/29px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '6px' }}>Sua viagem inteira num lugar só.</div>
       <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 12px' }}>
         {itens.map(([t, d]) => (
@@ -365,13 +366,13 @@ export function Inicio() {
         {sessao && viagem && hoje ? (
           <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}?aba=roteiro`)} aria-label={`Hoje em ${viagem.destino}: ver o roteiro do dia`}
             style={{ display: 'block', width: '100%', marginTop: '14px', padding: '14px 16px', background: 'var(--fundo-escuro)', color: '#fff', textAlign: 'left' }}>
-            <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Você está viajando</span>
+            <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--amarelo)' }}>Você está viajando</span>
             <span style={{ display: 'block', font: "600 24px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>Hoje em {viagem.destino}</span>
             <span style={{ display: 'block', fontSize: '14px', color: 'var(--sobre-escuro-sec)' }}>Dia {Math.min(hoje.dia, hoje.total)} de {hoje.total}{hoje.clima ? ` · ${hoje.clima}` : ''}</span>
             {hoje.paradas.length ? (
               <span style={{ display: 'block', marginTop: '8px', fontSize: '15px', lineHeight: '22px' }}>{hoje.paradas.slice(0, 4).map((n, i) => <span key={n} style={{ display: 'block' }}>{i + 1}. {n}</span>)}</span>
-            ) : <span style={{ display: 'block', marginTop: '8px', fontSize: '14px' }}>Dia livre no roteiro. Toque para adicionar lugares.</span>}
-            <span style={{ display: 'block', fontSize: '13px', marginTop: '8px', color: 'var(--sobre-escuro-sec)' }}>Ver o roteiro, marcar o que fez e anotar gastos ›</span>
+            ) : <span style={{ display: 'block', marginTop: '8px', fontSize: '14px' }}>Dia livre. Escolha um passeio para hoje.</span>}
+            <span style={{ display: 'block', fontSize: '13px', marginTop: '8px', color: 'var(--sobre-escuro-sec)' }}>Abrir o dia ›</span>
           </button>
         ) : sessao && viagem ? (
           <button type="button" className="r-btn" onClick={() => navegar(`/viagem/${viagem.id}`)} aria-label={`Próxima viagem: ${viagem.destino}`}
@@ -379,7 +380,7 @@ export function Inicio() {
             <FotosQuePassam destinoId={viagem.destino_id ?? null} nome={viagem.destino} />
             <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(90deg, rgba(11,31,75,.88) 0%, rgba(11,31,75,.35) 75%)' }} />
             <span style={{ position: 'absolute', left: 16, top: 14, right: 16, zIndex: 2, color: '#fff' }}>
-              <span style={{ display: 'block', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Sua próxima viagem</span>
+              <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--amarelo)' }}>Sua próxima viagem</span>
               <span style={{ display: 'block', font: "600 26px 'Lexend Exa'", letterSpacing: '-0.02em', marginTop: '4px' }}>{viagem.destino}</span>
               <span style={{ display: 'block', font: "600 16px 'Open Sans'", marginTop: '2px' }}>{dias === 0 ? 'É hoje!' : dias === 1 ? 'Falta 1 dia' : `Faltam ${dias} dias`}</span>
               <span style={{ display: 'block', fontSize: '13px', opacity: 0.85, marginTop: '6px' }}>{lembrarGuardar ? 'Guardou algo este mês? Toque para anotar ›' : 'Etapas, roteiro e dinheiro ›'}</span>
@@ -399,7 +400,7 @@ export function Inicio() {
         <div key={destaques.slice(0, 10).map((d) => d.nome).join('|')} role="list" aria-label="Destinos em destaque" style={{ ...fileira, marginTop: '14px' }}>
           {destaques.slice(0, 10).map((d, i, l) => <div role="listitem" key={d.nome} style={{ display: 'contents' }}><CartaoGrande d={d} favorito={favs.some((f) => f.nome === d.nome)} i={i} total={l.length} /></div>)}
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--texto-sec)', margin: '4px 0 0' }}>Fotos: Wikimedia Commons.</p>
+        <Info rotulo="Fonte das fotos" style={{ marginTop: '4px' }}>Fotos: Wikimedia Commons, com autor e licença em cada foto.</Info>
 
         {sessao && viagem === null ? (
           <div style={{ marginTop: '14px' }}><BotaoPrincipal onClick={() => navegar('/viagens/nova')}>Planejar uma viagem</BotaoPrincipal></div>

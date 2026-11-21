@@ -123,7 +123,7 @@ export function NovaViagem() {
             <div style={{ font: "600 22px 'Lexend Exa'" }}>{rotuloDestino(destino)}</div>
             <button type="button" className="r-btn" onClick={() => setDestino(null)} style={{ minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Trocar</button>
           </div>
-        ) : <EscolherDestino aoEscolher={setDestino} placeholder="Qualquer cidade: Aracaju, Gramado, Lisboa…" />}
+        ) : <EscolherDestino aoEscolher={setDestino} placeholder="Busque uma cidade" />}
         {destino && lugaresNaBase !== null ? (
           <div style={{ fontSize: '14px', lineHeight: '20px', color: lugaresNaBase ? 'var(--texto-sec)' : 'var(--ambar)' }}>
             {lugaresNaBase ? `${lugaresNaBase} lugares para o seu roteiro.` : 'Ainda sem lugares aqui: o roteiro começa vazio e pedimos a coleta.'}
@@ -139,7 +139,7 @@ export function NovaViagem() {
         {conflitos.length ? (
           <div role="status" style={{ marginTop: '10px', padding: '10px 12px', borderRadius: '12px', background: 'var(--cartao-2)' }}>
             <b style={{ display: 'block', fontSize: '14px' }}>Você já tem {conflitos.map(textoConflito).join(' e ')} nesses dias.</b>
-            <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Tudo bem se estiver comparando destinos.</span>
+            <span style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Se estiver comparando, pode criar.</span>
           </div>
         ) : null}
         <Rotulo>Quantas pessoas viajam</Rotulo>
@@ -147,7 +147,7 @@ export function NovaViagem() {
 
         {/* ---------------- Quanto custa (D-077) */}
         <h2 style={secao}>Quanto custa?</h2>
-        <p style={ajuda}>Pesquise e anote. O app soma para você.</p>
+        <p style={ajuda}>Anote o que já pesquisou. A gente soma.</p>
         {!sabeTotal ? (
           <>
             <Parte id="passagem" rotulo="Passagem ida e volta, por pessoa" valor={passagem} aoMudar={setPassagem} link={buscaVoo} textoLink="Pesquisar voos" moeda={moedaReferencia} />

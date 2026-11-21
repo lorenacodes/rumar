@@ -20,7 +20,7 @@ export function Selo({ tipo }: { tipo: string }) {
 }
 
 export const Rotulo = ({ children, style }: { children: ReactNode; style?: CSSProperties }) => (
-  <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '18px 0 6px', ...style }}>{children}</div>
+  <div style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', margin: '18px 0 6px', ...style }}>{children}</div>
 );
 
 export function Segmentos<T extends string>({ opcoes, valor, aoMudar, rotulo }: { opcoes: { id: T; nome: string }[]; valor: T; aoMudar: (v: T) => void; rotulo: string }) {

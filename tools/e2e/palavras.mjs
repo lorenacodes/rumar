@@ -1,6 +1,6 @@
 /** Conta palavras visíveis por tela (sem as abas), com conta e sem conta. Uso: node tools/e2e/palavras.mjs */
 import { chromium } from 'playwright';
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const VIAGEM = process.env.VIAGEM ?? '757a544d-0c1c-4b41-ba3e-1da1715af18b';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const res = [];

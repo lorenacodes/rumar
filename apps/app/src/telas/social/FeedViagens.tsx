@@ -138,7 +138,7 @@ function Inspiracao() {
                   style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', width: '100%', height: p.foto ? undefined : '100%', minHeight: '180px', aspectRatio: p.foto ? '4 / 5' : undefined, boxSizing: 'border-box', borderRadius: '18px', overflow: 'hidden', textAlign: 'left', background: FUNDO_TIPO[p.tipo] ?? 'var(--marinho)', color: '#fff' }}>
                   {p.foto ? <img src={p.foto} alt="" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
                   <span style={{ position: p.foto ? 'absolute' : 'relative', left: 0, right: 0, bottom: 0, padding: '14px', background: p.foto ? 'rgba(11,31,75,.82)' : 'transparent' }}>
-                    <span style={{ display: 'block', font: "700 11px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>{[NOME_TIPO[p.tipo] ?? 'Passeio', p.cidade, p.gratis ? 'Grátis' : null].filter(Boolean).join(' · ')}</span>
+                    <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--amarelo)' }}>{[NOME_TIPO[p.tipo] ?? 'Passeio', p.cidade, p.gratis ? 'Grátis' : null].filter(Boolean).join(' · ')}</span>
                     <span style={{ display: 'block', marginTop: '4px', font: "600 18px/22px 'Lexend Exa'", letterSpacing: '-0.01em' }}>{p.titulo}</span>
                     <span style={{ display: 'block', marginTop: '4px', fontSize: '13px', lineHeight: '18px' }}>{p.resumo}</span>
                   </span>
@@ -155,7 +155,7 @@ function Inspiracao() {
               <span style={{ display: 'block', aspectRatio: '4 / 5', borderRadius: '16px', overflow: 'hidden', background: 'var(--cartao-2)' }}>
                 <img src={l.foto!} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </span>
-              <span style={{ display: 'block', marginTop: '8px', font: "700 12px 'Open Sans'", letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--azul)' }}>{[l.cidade, l.bairro].filter(Boolean).join(' · ')}</span>
+              <span style={{ display: 'block', marginTop: '8px', font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>{[l.cidade, l.bairro].filter(Boolean).join(' · ')}</span>
               <b style={{ display: 'block', font: "600 20px/25px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{l.nome}</b>
               {l.destaque ? <span style={{ display: 'block', fontSize: '14px', color: 'var(--texto-sec)' }}>{l.destaque}</span> : null}
             </button>

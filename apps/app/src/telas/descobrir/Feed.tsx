@@ -320,7 +320,7 @@ export function ConviteCuriosidades() {
       style={{ position: 'relative', display: 'block', width: '100%', height: '150px', marginTop: '12px', overflow: 'hidden', background: 'var(--fundo-escuro)', textAlign: 'left' }}>
       <img src={c.foto} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(1.1) contrast(1.05) brightness(0.8)' }} onError={() => setC(null)} />
       <span style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '30px 14px 12px', background: 'linear-gradient(transparent, rgba(6,14,36,.85))', color: '#fff' }}>
-        <span style={{ display: 'block', font: "700 11px 'Open Sans'", letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--amarelo)' }}>Curiosidades do mundo</span>
+        <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--amarelo)' }}>Curiosidades do mundo</span>
         <span style={{ display: 'block', font: "600 19px/23px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{c.nome}</span>
         <span style={{ display: 'block', fontSize: '13px', opacity: 0.9 }}>Lugares estranhos e incríveis. Ver ›</span>
       </span>

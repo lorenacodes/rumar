@@ -593,7 +593,7 @@ function MapaOndeEstive({ v, itens }: { v: ViagemCompleta; itens: { it: Item; l:
     ...(v.hospedagem?.lat && v.hospedagem.lon ? [{ id: 'hotel', lat: v.hospedagem.lat, lon: v.hospedagem.lon, rotulo: 'H', titulo: v.hospedagem.nome, tipo: 'hotel' as const }] : []),
   ];
   const escolhido = sel && sel !== 'hotel' ? lugares.find((x) => x.l.id === sel)?.l : null;
-  if (!pontos.length) return <p style={{ marginTop: '14px', fontSize: '15px', color: 'var(--texto-sec)' }}>Marque em Lugares onde você foi. Eles aparecem aqui.</p>;
+  if (!pontos.length) return <p style={{ marginTop: '14px', fontSize: '15px', color: 'var(--texto-sec)' }}>Marque os lugares que você visitou.</p>;
   return (
     <section style={{ marginTop: '12px' }}>
       <div style={{ fontSize: '14px', color: 'var(--texto-sec)', marginBottom: '8px' }}>{lugares.length} {lugares.length === 1 ? 'lugar' : 'lugares'} onde você esteve em {v.viagem.destino}</div>
@@ -636,7 +636,7 @@ function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { i
         <div style={{ display: 'flex', gap: '10px', marginTop: '10px', padding: '10px', border: '1px solid var(--linha)' }}>
           <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={escolhido.id} proporcao="1 / 1" credito={false} /></span>
           <span style={{ flex: 1 }}>
-            <span style={{ display: 'block', font: "700 11px 'Open Sans'", textTransform: 'uppercase', color: 'var(--azul)' }}>{NOME_CATEGORIA[escolhido.categoria]}</span>
+            <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>{NOME_CATEGORIA[escolhido.categoria]}</span>
             <b style={{ font: "600 16px 'Lexend Exa'" }}>{escolhido.nome}</b>
             <span style={{ display: 'block', fontSize: '13px', color: 'var(--texto-sec)' }}>{precoTexto(escolhido).texto}{naViagem ? ' · já está na viagem' : ''}</span>
             <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${escolhido.id}?viagem=${v.viagem.id}&dia=${dia}`)} style={botaoTexto}>{naViagem ? 'Ver detalhes' : 'Ver e adicionar à viagem'}</button>
@@ -712,7 +712,7 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
     <section style={{ marginTop: '14px' }}>
       {v.hospedagem ? (
         <div style={{ border: '2px solid var(--texto)', padding: '10px 12px' }}>
-          <div style={{ font: "700 11px 'Open Sans'", textTransform: 'uppercase', color: 'var(--verde)' }}>Hospedagem escolhida</div>
+          <div style={{ font: "600 13px/17px 'Open Sans'", color: 'var(--verde)' }}>Hospedagem escolhida</div>
           <b style={{ font: "600 17px 'Lexend Exa'" }}>{v.hospedagem.nome}</b>
           {v.hospedagem.fonte === 'informado por você'
             ? <div style={{ fontSize: '14px' }}>{v.hospedagem.endereco ?? ''}</div>
@@ -734,7 +734,7 @@ function AbaHospedagem({ v, itens, pode, recarregar, destino }: { v: ViagemCompl
       {pode && v.viagem.destino_id ? <JaSeiOnde v={v} recarregar={recarregar} /> : null}
       {ligada === false ? (
         <div style={{ marginTop: '10px', padding: '12px 14px', background: 'var(--cartao-2)', fontSize: '14px', lineHeight: '20px' }}>
-          Já reservou? Anote o valor em <b>Dinheiro</b>. Para ver opções, abra Hospedagem no <b>Descobrir</b>.
+          Já reservou? Anote em <b>Dinheiro</b>. Opções: Hospedagem, no <b>Descobrir</b>.
         </div>
       ) : null}
       {pode && ligada !== false ? (
@@ -849,7 +849,7 @@ function AbaOrcamento({ v, orc, itens, pode, recarregar, moeda }: { v: ViagemCom
                 <li key={s.texto}>{s.texto}: economiza ≈ {reais(s.economiaBRL)}.{pode && s.troca ? <> <button type="button" className="r-btn" onClick={() => void aplicar(s.troca!.de, s.troca!.para, s.troca!.dia)} style={{ color: 'var(--azul)', fontWeight: 600 }}>Aplicar</button></> : null}</li>
               ))}
             </ul>
-          ) : o.provavelBRL > limiteC ? <div style={{ fontSize: '14px', marginTop: '4px' }}>Dá para reduzir noites, trocar a hospedagem ou tirar atrações pagas.</div> : null}
+          ) : o.provavelBRL > limiteC ? <div style={{ fontSize: '14px', marginTop: '4px' }}>Para caber: menos noites, outra hospedagem ou menos atrações pagas.</div> : null}
         </div>
       ) : null}
       {pode ? (

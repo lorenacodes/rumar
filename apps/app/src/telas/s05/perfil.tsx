@@ -91,7 +91,7 @@ function SecaoViajante() {
   const RITMO = { calm: 'tranquilo', balanced: 'equilibrado', intense: 'intenso' } as const;
   return (
     <div style={{ marginTop: '10px' }}>
-      <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '8px 0 2px' }}>Viagens</div>
+      <div style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', margin: '8px 0 2px' }}>Viagens</div>
       <Linha minHeight="44px" titulo={pedidos ? `Amigos · ${pedidos} ${pedidos === 1 ? 'pedido' : 'pedidos'} esperando` : 'Amigos'}
         detalhe={amizades === null ? '…' : nAmigos ? `${nAmigos} ${nAmigos === 1 ? 'amigo' : 'amigos'} · encontrar mais pelo nome ou @` : 'Encontrar amigos pelo nome ou @ e viajar junto'} onClick={() => navegar('/perfil/amigos')} />
       {moderadora ? <Linha minHeight="44px" titulo="Moderação de fotos" detalhe="Aprovar fotos enviadas" onClick={() => navegar('/perfil/moderar')} /> : null}
@@ -143,7 +143,7 @@ export function Tela5_13() {
         {/* Viagem e preferências da pessoa (no app; a comparação com o design mostra só a 5.13 original). */}
         {!demo ? <SecaoViajante /> : null}
         <div style={{ marginTop: '6px' }}>
-          {!demo ? <div style={{ font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', margin: '14px 0 2px' }}>Conta</div> : null}
+          {!demo ? <div style={{ font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', margin: '14px 0 2px' }}>Conta</div> : null}
           <Linha titulo="Nome e foto" onClick={() => navegar('/perfil/nome')} />
           <Linha minHeight="44px" titulo="Cidade de onde saio" detalhe={p.origin_city ?? 'Escolher'} onClick={() => navegar('/perfil/nome')} />
           <Linha titulo="E-mail" onClick={() => navegar('/perfil/email')} />

@@ -59,7 +59,7 @@ function TabelaMoedas({ j, orc, gastos, limite }: { j: Jornada; orc: Orcamento; 
   return (
     <div style={{ marginTop: '12px' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-        <caption style={{ textAlign: 'left', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', paddingBottom: '6px' }}>Custo provável em duas moedas</caption>
+        <caption style={{ textAlign: 'left', font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', paddingBottom: '6px' }}>Custo provável em duas moedas</caption>
         <thead>
           <tr style={{ textAlign: 'left', color: 'var(--texto-sec)', fontSize: '12px' }}>
             <th scope="col" style={{ padding: '4px 0' }}>Categoria</th>
@@ -421,7 +421,7 @@ export function PlanejadoReal({ v, j, orc, comCompartilhar }: { v: ViagemComplet
   return (
     <div style={{ marginTop: '6px' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-        <caption style={{ textAlign: 'left', font: "700 12px 'Open Sans'", letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--texto-sec)', paddingBottom: '6px' }}>Planejado × real ({j.moedaPlano})</caption>
+        <caption style={{ textAlign: 'left', font: "700 15px/20px 'Open Sans'", color: 'var(--texto)', paddingBottom: '6px' }}>Planejado × real ({j.moedaPlano})</caption>
         <thead><tr style={{ fontSize: '12px', color: 'var(--texto-sec)' }}><th scope="col" style={{ textAlign: 'left' }}>Categoria</th><th scope="col" style={{ textAlign: 'right' }}>Planejado</th><th scope="col" style={{ textAlign: 'right' }}>Real</th></tr></thead>
         <tbody>
           {r.linhas.map((l) => (

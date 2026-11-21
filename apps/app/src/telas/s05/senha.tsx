@@ -54,7 +54,7 @@ export function Tela5_9() {
         <Marca />
         <Titulo marginTop="30px">Confira seu e-mail.</Titulo>
         <Paragrafo>Se {email} tiver uma conta, enviamos um link para criar a senha nova. Ele vale por 1 hora.</Paragrafo>
-        <CartaoApoio titulo="Não chegou?">Olhe o spam. Dá para pedir outro link em 60 segundos. Se digitou o e-mail errado, volte e corrija.</CartaoApoio>
+        <CartaoApoio titulo="Não chegou?">Veja o spam ou peça outro link em 60 segundos. E-mail errado? Volte e corrija.</CartaoApoio>
         <Nota marginTop="12px">Por segurança, a mensagem é a mesma exista ou não uma conta com esse e-mail.</Nota>
       </div>
       <Rodape padding="10px 20px 14px">
