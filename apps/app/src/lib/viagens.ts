@@ -81,6 +81,13 @@ export async function viagensVisiveis(dono?: string): Promise<Viagem[]> {
     .map(({ registrada, ...v }) => ({ ...v, orcamento_centavos: null, diagnostico: registrada ? ({ registrada: true } as Diagnostico) : {} }));
 }
 
+/** Viagens no perfil de outra pessoa: dona ou convidada, as que posso ver (mesma regra do número no perfil). */
+export async function viagensDoPerfil(alvo: string): Promise<(Viagem & { juntos: boolean })[]> {
+  const { data } = await supabase.rpc('viagens_do_perfil', { alvo });
+  return ((data ?? []) as (Omit<Viagem, 'orcamento_centavos' | 'diagnostico'> & { registrada: boolean; juntos: boolean })[])
+    .map(({ registrada, ...v }) => ({ ...v, orcamento_centavos: null, diagnostico: registrada ? ({ registrada: true } as Diagnostico) : {} }));
+}
+
 /** Sem internet: as viagens guardadas neste aparelho (D-067). */
 function listaOffline(): { minhas: (Viagem & { papel: string; status: string })[]; deAmigos: Viagem[] } {
   const minhas = copiasOffline<ViagemCompleta>().map((c) => ({ ...c.dados.viagem, papel: c.dados.papel ?? 'leitor', status: 'ativo' }))

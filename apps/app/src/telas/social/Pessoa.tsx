@@ -7,7 +7,7 @@ import { amigosDoPerfil, lugaresAmados, MAX_COMENTARIO_CIDADE, notasDaCidade, sa
 import { GOSTOS_VIAGEM, limparBio, MAX_BIO, MAX_GOSTOS, perfilVitrine, salvarVitrine, type GostoViagem, type Vitrine } from '../../lib/perfilVitrine';
 import { desfazerAmizade, minhasAmizades, pedirAmizade } from '../../lib/social';
 import { supabase } from '../../lib/supabase';
-import { atualizarViagem, eu, listarViagens, textoMotivo, viagensVisiveis, type Viagem } from '../../lib/viagens';
+import { atualizarViagem, eu, listarViagens, textoMotivo, viagensDoPerfil, type Viagem } from '../../lib/viagens';
 import { Abas } from '../../ui/abas';
 import { Avatar } from '../../ui/avatar';
 import { FotoLugar } from '../../ui/foto';
@@ -61,10 +61,10 @@ export function Pessoa() {
     });
     void Promise.all([listarViagens(), eu()]).then(async ([v, uid]) => {
       const souEu = uid === id;
-      // Eu: todas as viagens em que estou. Outra pessoa: as que fazemos juntos + as dela que posso ver (sem dinheiro).
+      // Eu: todas as viagens em que estou. Outra pessoa: todas em que ela participa e que posso ver (sem dinheiro).
       const lista: ViagemPerfil[] = souEu
         ? v.minhas.filter((x) => x.status === 'ativo')
-        : [...v.minhas.filter((x) => x.user_id === id && x.status === 'ativo').map((x) => ({ ...x, juntos: true })), ...(await viagensVisiveis(id))];
+        : await viagensDoPerfil(id);
       setViagens(lista);
       setMinhasPrivadas(souEu ? [] : v.minhas.filter((x) => x.user_id === uid && x.visibilidade === 'privada'));
       if (lista.length) {
