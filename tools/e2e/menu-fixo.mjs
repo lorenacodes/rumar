@@ -1,6 +1,6 @@
 /** Menu de baixo fixo: no fim da rolagem continua colado no rodapé (em telas de 390 e 320 px). */
 import { chromium } from 'playwright';
-const URL='http://localhost:8793/'; const b = await chromium.launch();
+const URL = process.env.URL ?? 'http://localhost:8793/'; const b = await chromium.launch();
 const erros = [];
 for (const [w, h] of [[390, 844], [320, 568]]) {
 const p = await (await b.newContext({ viewport:{width:w,height:h} })).newPage();

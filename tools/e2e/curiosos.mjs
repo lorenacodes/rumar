@@ -2,13 +2,13 @@
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 const OUT = 'tools/e2e/out/curiosos'; mkdirSync(OUT, { recursive: true });
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const erros = [];
 const confere = (r, ok) => { console.log(`   ${ok ? 'ok ' : 'X  '} ${r}`); if (!ok) erros.push(r); };
 async function pagina(entrar) {
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
-  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'http://localhost:8793' });
+  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new globalThis.URL(URL).origin });
   const p = await ctx.newPage();
   p.on('pageerror', (e) => erros.push(`JS: ${e.message.slice(0, 160)}`));
   await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(1500);

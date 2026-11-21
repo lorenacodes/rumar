@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 const require = createRequire(import.meta.url);
 const AXE = readFileSync(require.resolve('axe-core/axe.min.js', { paths: ['apps/app'] }), 'utf8');
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const ctx = await b.newContext({ viewport: { width: 360, height: 780 } });
 const p = await ctx.newPage();

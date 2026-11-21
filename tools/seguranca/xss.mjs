@@ -4,7 +4,7 @@
  */
 import { chromium } from 'playwright';
 const URL = 'https://iunrivtuhwaytmwclmui.supabase.co', KEY = 'sb_publishable_d6lqjjWeuf81otJOT2xKFA_eWPaY0oG';
-const APP = process.env.APP ?? 'http://localhost:8793/';
+const APP = process.env.APP ?? process.env.URL ?? 'http://localhost:8793/';
 const senha = process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA'); })();
 const LUGAR = 'osm-n2557802355';
 const PAYLOAD = `<img src=x onerror="window.__xss=1"><script>window.__xss=1</script>"><svg onload=window.__xss=1>`;

@@ -13,7 +13,7 @@ import { chromium } from 'playwright';
 const OUT = process.env.E2E_OUT ?? 'tools/e2e/out';
 import { mkdirSync } from 'node:fs';
 mkdirSync(OUT, { recursive: true });
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const ctx = await b.newContext({ viewport: { width: 360, height: 780 } });
 const p = await ctx.newPage();

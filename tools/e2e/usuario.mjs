@@ -4,7 +4,7 @@
  * Pré-requisito: e2e.tempo@ e e2e.ana@bovair.com.br (senha na variável E2E_SENHA), sem @ ainda.
  */
 import { chromium } from 'playwright';
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const erros = [];
 const confere = (rotulo, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${rotulo}`); if (!ok) erros.push(`FALHOU: ${rotulo}`); };

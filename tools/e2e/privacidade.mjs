@@ -3,7 +3,7 @@
  * ver o aviso no Início, desistir. Pré-requisito: e2e.tempo@bovair.com.br (senha na variável E2E_SENHA).
  */
 import { chromium } from 'playwright';
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
 const ctx = await b.newContext({ viewport: { width: 360, height: 780 }, acceptDownloads: true });
 const p = await ctx.newPage();

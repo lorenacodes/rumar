@@ -7,7 +7,7 @@
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 const OUT = 'tools/e2e/out/fotos'; mkdirSync(OUT, { recursive: true });
-const URL = 'http://localhost:8793/';
+const URL = process.env.URL ?? 'http://localhost:8793/';
 const LUGAR = 'osm-n3832775913';
 const ETAPA = process.env.ETAPA ?? '1';
 const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } });
@@ -23,7 +23,7 @@ async function pagina(entrar) {
 if (ETAPA === '1') {
   const t = await pagina(true);
   await t.goto(URL + `#/lugar/${LUGAR}`); await t.waitForTimeout(3500);
-  confere('página do restaurante convida a mostrar o prato', (await t.getByText('Mostre o prato que você comeu.').count()) === 1);
+  confere('página do restaurante convida a mostrar o prato', await t.getByText('Mostre o prato que você comeu.').first().waitFor({ timeout: 10000 }).then(() => true, () => false));
   await t.getByRole('button', { name: /Mandar foto/ }).click();
   await t.locator('input[type=file]').setInputFiles('apps/app/public/fotos/destaque-sao-paulo.jpg'); await t.waitForTimeout(800);
   confere('enviar fica desligado sem a declaração', await t.getByRole('button', { name: 'Publicar foto' }).isDisabled());
