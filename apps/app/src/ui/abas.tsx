@@ -71,7 +71,7 @@ export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRo
             onClick={(e) => (ativo ? (e.currentTarget.closest('.tela') as HTMLElement | null)?.scrollTo({ top: 0, behavior: 'smooth' }) : navegar(a.rota))}
             style={
               ativo
-                ? { display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--texto)', fontWeight: '600', boxShadow: 'inset 0 3px 0 var(--amarelo)', textAlign: 'center', whiteSpace: 'nowrap', minWidth: 0, padding: '0 2px' }
+                ? { display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--texto)', fontWeight: '600', boxShadow: demo ? 'inset 0 3px 0 var(--amarelo)' : 'none', textAlign: 'center', whiteSpace: 'nowrap', minWidth: 0, padding: '0 2px' }
                 : { display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', whiteSpace: 'nowrap', minWidth: 0, padding: '0 2px' }
             }>
             {demo ? a.nome : (

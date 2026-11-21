@@ -182,10 +182,10 @@ export function Pessoa() {
           </section>
         ) : null}
 
-        <div role="tablist" aria-label="Ver" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', marginTop: '20px', borderBottom: '1px solid var(--linha)' }}>
+        <div role="tablist" aria-label="Ver" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '20px' }}>
           {(['viagens', 'fotos'] as const).map((a) => (
             <button key={a} type="button" role="tab" aria-selected={aba === a} className="r-btn" onClick={() => setAba(a)}
-              style={{ minHeight: '44px', fontWeight: 600, fontSize: '15px', color: aba === a ? 'var(--texto)' : 'var(--texto-sec)', boxShadow: aba === a ? 'inset 0 -3px 0 var(--azul)' : 'none' }}>
+              style={{ minHeight: '44px', borderRadius: '999px', fontWeight: 600, fontSize: '15px', background: aba === a ? 'var(--fundo-escuro)' : 'var(--cartao-2)', color: aba === a ? '#fff' : 'var(--texto)' }}>
               {a === 'viagens' ? 'Viagens' : 'Fotos'}
             </button>
           ))}
