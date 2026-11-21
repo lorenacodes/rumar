@@ -40,7 +40,7 @@ console.log('— 5. Código (usuário de teste com código conhecido no banco; n
 await p.evaluate(() => localStorage.setItem('bovair.cadastro', JSON.stringify({ state: { email: 'e2e.teste@bovair.com.br', tipoCodigo: 'signup', enviadoEm: Date.now(), erros: 0 }, version: 1 })));
 await p.goto(URL + '#/conta/codigo'); await p.reload(); await passo('tela-codigo');
 console.log('    ', (await texto(400)).match(/Enviamos[^.]*\./)?.[0]);
-await p.locator('#codigo').fill('123456'); await p.getByRole('button', { name: /Confirmar/ }).click(); await passo('codigo-curto');
+await p.locator('#codigo').fill('123'); await p.getByRole('button', { name: /Confirmar/ }).click(); await passo('codigo-curto');
 console.log('    mensagem:', (await texto(2000)).match(/Digite os \d+ números do código\./)?.[0]);
 await p.locator('#codigo').fill('11112222'); await p.getByRole('button', { name: /Confirmar/ }).click(); await p.waitForTimeout(2500); await passo('codigo-errado');
 console.log('    mensagem:', (await texto(2000)).match(/Código incorreto[^.]*\./)?.[0]);
