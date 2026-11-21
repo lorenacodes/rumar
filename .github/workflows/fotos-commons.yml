@@ -20,7 +20,7 @@ on:
         required: false
         default: ''
   schedule:
-    - cron: '41 6,14,22 * * *' # 3 rodadas por dia (meta de 1.000 fotos/dia)
+    - cron: '41 6 * * *' # 1 por dia: a busca no Commons esgotou (cada lugar é revisto a cada 90 dias)
   push:
     branches: [main]
     paths:
