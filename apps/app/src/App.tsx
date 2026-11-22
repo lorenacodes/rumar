@@ -80,6 +80,8 @@ const MinhasAvaliacoes = sob(() => import('./telas/s05/MinhasAvaliacoes'), 'Minh
 const Viagem = sob(() => import('./telas/viagens/Viagem'), 'Viagem');
 const Montar = sob(() => import('./telas/viagem/Montar'), 'Montar');
 const Idioma = sob(() => import('./telas/viagens/Idioma'), 'Idioma');
+const Idiomas = sob(() => import('./telas/idiomas/Idiomas'), 'Idiomas');
+const IdiomasInicio = sob(() => import('./telas/idiomas/Idiomas'), 'IdiomasInicio');
 const DevIndice = sob(() => import('./dev/DevTelas'), 'DevIndice');
 const DevTela = sob(() => import('./dev/DevTelas'), 'DevTela');
 /** Telas geradas do design, pelo id (/tela/2.1): o registro (grande) também vem sob demanda. */
@@ -156,6 +158,10 @@ const filhos: RouteObject[] = [
   { path: '/perfil-viajante', element: <Montar soPerfil /> },
   { path: '/perfil-moeda', element: <Moeda /> },
   { path: '/viagem/:id/idioma', element: <Idioma /> },
+  { path: '/idiomas', element: <IdiomasInicio /> },
+  { path: '/idiomas/:idioma', element: <Idiomas /> },
+  { path: '/idiomas/:idioma/m/:modulo', element: <Idiomas /> },
+  { path: '/idiomas/:idioma/aula/:aula', element: <Idiomas /> },
   { path: '/descobrir', element: <Descobrir /> },
   { path: '/curiosos', element: <Curiosos /> },
   { path: '/lugar/:id', element: <Lugar /> },

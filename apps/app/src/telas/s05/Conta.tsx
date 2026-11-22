@@ -98,6 +98,7 @@ export function AvisoPrivacidade() {
     ['Foto de perfil (opcional)', 'Mostrar a quem você permitir', 'Consentimento', 'Até você apagar'],
     ['Fotos de lugares e pratos que você envia (opcional), com o seu @', 'Mostrar o lugar a outros viajantes, depois de aprovadas', 'Consentimento', 'Até você apagar a foto ou excluir a conta'],
     ['Bio e "gosto numa viagem" (opcionais)', 'Mostrar seu perfil a quem tem conta', 'Consentimento', 'Até você apagar'],
+    ['Aulas de idioma que você marcou como vistas', 'Mostrar o seu progresso', 'Execução do serviço', 'Até você apagar a conta'],
     ['Nota e frase sobre a cidade (opcional)', 'Mostrar a viagem a quem pode vê-la', 'Consentimento', 'Até você apagar a nota ou a viagem'],
     ['Fotos do álbum da viagem (opcional)', 'Mostrar a viagem a quem pode vê-la', 'Consentimento', 'Até você apagar a foto ou a viagem'],
     ['Avaliações de lugares (nota, comentário, mídias), com o seu @', 'Ajudar outros viajantes', 'Consentimento', 'Até você apagar ou excluir a conta'],

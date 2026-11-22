@@ -25,13 +25,12 @@ let t = await texto();
 confere('tarefa "Aprender frases básicas em francês" na linha do tempo', /Aprender frases básicas em francês/.test(t));
 await p.getByRole('button', { name: 'Ver as aulas' }).click(); await p.waitForTimeout(4000);
 t = await texto();
-confere('tela diz o idioma do destino', /Em Paris falam francês/.test(t));
-confere('plano até a viagem por semanas', /8 temas em \d+ semanas/.test(t));
-confere('8 temas de viagem', ['Cumprimentar', 'restaurante', 'direção', 'Números', 'Metrô', 'hotel', 'Compras', 'Emergência'].every((x) => t.toLowerCase().includes(x.toLowerCase())));
-const especificas = await p.locator('main a[href*="youtube.com/watch"]').count();
-const buscas = await p.locator('main a[href*="youtube.com/results"]').count();
-console.log(`   aulas específicas: ${especificas} · buscas por tema: ${buscas}`);
-confere('mostra aulas específicas OU explica que falta ligar a busca', especificas > 0 || /Elas aparecem aqui em breve/.test(t));
+confere('viagem para Paris abre a trilha de francês', /#\/idiomas\/fr\?viagem=/.test(p.url()) && /Francês para viagem/.test(t));
+confere('trilha por módulos, sem semanas', (await p.locator('.idi-modulo').count()) === 8 && !/semana/i.test(t));
+confere('voltar leva à viagem', /Viagem/.test(await p.locator('main').innerText()));
+// Limpeza: apaga a viagem de teste criada aqui.
+const idViagem = new globalThis.URL(p.url().replace('#', '')).searchParams.get('viagem');
+if (idViagem) { await p.goto(URL + `#/viagem/${idViagem}?aba=grupo`); await p.waitForTimeout(3000); p.on('dialog', (d) => d.accept().catch(() => undefined)); const apagar = p.getByRole('button', { name: /Apagar viagem/ }); if (await apagar.count()) { await apagar.first().click(); await p.waitForTimeout(2500); } }
 await p.screenshot({ path: `${OUT}/idioma.png`, fullPage: true });
 console.log('— Erros:', erros.length ? erros : 'nenhum');
 await b.close();

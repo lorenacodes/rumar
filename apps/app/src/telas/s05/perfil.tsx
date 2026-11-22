@@ -98,6 +98,7 @@ function SecaoViajante() {
       {moderadora ? <Linha minHeight="44px" titulo="Moderação de fotos" detalhe="Aprovar fotos enviadas" onClick={() => navegar('/perfil/moderar')} /> : null}
       <Linha minHeight="44px" titulo="Nome de usuário" detalhe={usuario ? `@${usuario}` : usuario === null ? 'Escolher (para amigos te encontrarem)' : '…'} onClick={() => navegar('/perfil/usuario')} />
       <Linha minHeight="44px" titulo="Meu jeito de viajar" detalhe={preferencias ? `Estilo ${NOME_ESTILO[preferencias.estilo]} · ritmo ${RITMO[preferencias.ritmo]}` : 'Responder em 1 minuto'} onClick={() => navegar('/perfil-viajante')} />
+      {!demo ? <Linha minHeight="44px" titulo="Idiomas para viagem" detalhe="Frases prontas para o exterior" onClick={() => navegar('/idiomas')} /> : null}
       <Linha minHeight="44px" titulo="Minhas viagens" detalhe="Roteiros, hospedagem e orçamento" onClick={() => navegar('/viagens')} />
       <Linha minHeight="44px" titulo="Minhas avaliações" detalhe="Restaurantes, passeios e hotéis onde fui" onClick={() => navegar('/perfil/avaliacoes')} />
       <Linha minHeight="44px" titulo="Minhas fotos" detalhe="De viagens e de lugares" onClick={() => navegar('/perfil/fotos')} />

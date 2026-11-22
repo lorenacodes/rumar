@@ -7,6 +7,7 @@
 // - Escolha: vídeos de 3 a 25 minutos, em português (aula para quem fala português),
 //   com o idioma no título, busca segura, e os mais vistos entre os mais relevantes.
 // - Sem chave: devolve o que houver no cache e configurado=false (o app explica).
+// - Trilha curada (aulas_video.curada): escolhida a dedo por idioma; quando existe, substitui a busca.
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
 const cors = {
@@ -76,6 +77,9 @@ Deno.serve(async (req) => {
   // Tira espaços, quebras de linha e aspas que às vezes vêm junto ao colar no painel.
   const chave = Deno.env.get('YOUTUBE_API_KEY')?.trim().replace(/^["']+|["']+$/g, '') || undefined;
   const { data: cache } = await db.from('aulas_video').select('*').eq('idioma', idioma);
+  // Trilha escolhida a dedo: quando o idioma tem aulas curadas, é só ela (a busca automática não entra).
+  const curadas = (cache ?? []).filter((c) => c.curada).sort((x, y) => String(x.tema).localeCompare(String(y.tema)));
+  if (curadas.length) return json({ configurado: true, curada: true, erro: null, aulas: curadas });
   const limite = Date.now() - CACHE_DIAS * 86_400_000;
   const vencidos = Object.keys(TEMAS).filter((t) => !(cache ?? []).some((c) => c.tema === t && new Date(c.buscado_em).getTime() > limite));
   let erro: string | null = null;

@@ -1,0 +1,86 @@
+/* Trilha de idiomas: módulos, aulas e progresso. Sem faixas coloridas e sem caixa alta. */
+.idi { padding: calc(16px + env(safe-area-inset-top)) 20px 32px; }
+.idi-h1 { margin: 8px 0 0; font: 600 26px/31px 'Lexend Exa'; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.idi-h2 { margin: 24px 0 8px; font: 600 18px/23px 'Lexend Exa'; letter-spacing: -0.01em; }
+.idi-sobre { margin-top: 10px; font: 600 14px 'Open Sans'; color: var(--azul); }
+.idi-sec { font-size: 14px; color: var(--texto-sec); margin-top: 2px; }
+.idi-contexto { margin: 8px 0 0; font-size: 15px; line-height: 22px; color: var(--texto-sec); }
+.idi-nota { margin: 22px 0 0; font-size: 13px; line-height: 18px; color: var(--texto-sec); }
+
+.idi-idiomas { display: flex; gap: 6px; margin: 14px -20px 0; padding: 4px 20px; overflow-x: auto; scrollbar-width: none; }
+.idi-idiomas button { flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--cartao-2); font-weight: 600; font-size: 14px; color: var(--texto); }
+.idi-idiomas button[aria-selected="true"] { background: var(--fundo-escuro); color: #fff; }
+
+.idi-emergencia { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 16px; padding: 12px 14px; border-radius: 16px; background: var(--cartao-2); text-align: left; color: var(--texto); }
+.idi-emergencia b { display: block; font: 600 16px/21px 'Lexend Exa'; color: var(--vermelho); }
+.idi-emergencia span { font-size: 14px; line-height: 19px; }
+.idi-sos { flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--vermelho); color: #fff; font: 700 13px 'Open Sans'; }
+.idi-seta { margin-left: auto; font-size: 22px; color: var(--texto-sec); }
+
+.idi-progresso { margin-top: 18px; }
+.idi-resumo { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 14px; font-size: 14px; color: var(--texto-sec); }
+.idi-resumo b { font: 600 18px 'Lexend Exa'; color: var(--texto); }
+.idi-barra { display: block; height: 6px; margin-top: 6px; border-radius: 999px; background: var(--linha); overflow: hidden; }
+.idi-barra > span { display: block; height: 100%; border-radius: 999px; background: var(--amarelo); transition: width 300ms ease; }
+.idi-semconta { margin: 8px 0 0; font-size: 14px; color: var(--texto-sec); }
+.idi-semconta button { color: var(--azul); font-weight: 600; font-size: 14px; padding: 0; }
+
+.idi-modulos { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
+.idi-modulo { display: block; width: 100%; padding: 14px; border-radius: 16px; background: var(--cartao-1); text-align: left; color: var(--texto); }
+.idi-modulo-topo { display: flex; justify-content: space-between; gap: 10px; }
+.idi-modulo-topo b { font: 600 17px/22px 'Lexend Exa'; letter-spacing: -0.01em; }
+.idi-modulo-topo span { flex: none; font-weight: 700; font-size: 14px; color: var(--texto-sec); }
+.idi-modulo-desc { display: block; margin-top: 4px; font-size: 14px; line-height: 19px; color: var(--texto-sec); }
+.idi-modulo-meta { display: block; margin-top: 8px; font-size: 13px; font-weight: 600; }
+
+.idi-aulas { list-style: none; margin: 16px 0 0; padding: 0; }
+.idi-aulas > li { border-bottom: 1px solid var(--linha); padding-bottom: 6px; }
+.idi-linha { display: flex; align-items: center; gap: 10px; }
+.idi-ver-previa { min-height: 36px; margin-left: 42px; padding: 0; font-size: 14px; font-weight: 600; color: var(--azul); }
+.idi-previa { margin: 2px 0 10px 42px; padding: 12px 14px; border-radius: 14px; background: var(--cartao-1); }
+.idi-previa p { margin: 0 0 8px; font-size: 14px; line-height: 20px; color: var(--texto-sec); }
+.idi-previa ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.idi-previa li { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.idi-previa li span { font-size: 14px; line-height: 19px; }
+.idi-previa li b { display: block; font-size: 15px; }
+.idi-previa .idi-ouvir { width: 36px; height: 36px; }
+.idi-previa-mais { display: block; margin-top: 8px; font-size: 13px; color: var(--texto-sec); }
+.idi-exemplo { display: block; margin-top: 8px; font-size: 14px; line-height: 19px; color: var(--texto-sec); font-style: italic; }
+.idi-exemplo b { font-style: normal; color: var(--texto); margin-right: 4px; }
+.idi-aula { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 64px; text-align: left; color: var(--texto); }
+.idi-num { flex: none; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--cartao-2); font-weight: 700; font-size: 14px; }
+.idi-aula-txt { min-width: 0; }
+.idi-aula-txt b { display: block; font-size: 15px; line-height: 20px; overflow-wrap: anywhere; }
+.idi-aula-txt span { display: block; font-size: 13px; color: var(--texto-sec); }
+.idi-marca { flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--linha); background: transparent; }
+.idi-marca.feita { background: var(--verde); box-shadow: none; }
+.idi-marca:disabled { opacity: 0.45; }
+
+.idi-frases { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.idi-frases li { padding: 12px 14px; border-radius: 14px; background: var(--cartao-1); }
+.idi-frase-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.idi-orig { font: 600 17px/23px 'Open Sans'; overflow-wrap: anywhere; }
+.idi-pron { display: block; margin-top: 4px; font-size: 13px; color: var(--texto-sec); font-style: italic; }
+.idi-pt { display: block; margin-top: 2px; font-size: 14px; line-height: 19px; }
+.idi-ouvir { flex: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--cartao-2); color: var(--texto); }
+.idi-ouvir.pequeno { width: auto; height: 32px; margin-top: 6px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+
+.idi-dialogo { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.idi-dialogo li { max-width: 88%; padding: 10px 12px; border-radius: 14px; background: var(--cartao-2); }
+.idi-dialogo li.voce { margin-left: auto; background: var(--cartao-1); }
+.idi-dialogo b { display: block; font-size: 12px; color: var(--texto-sec); }
+.idi-orig-p { display: block; font-weight: 600; font-size: 15px; line-height: 21px; overflow-wrap: anywhere; }
+
+.idi-dica { margin-top: 20px; padding: 12px 14px; border-radius: 14px; background: var(--cartao-2); font-size: 15px; line-height: 21px; }
+.idi-dica b { display: block; font: 600 15px 'Lexend Exa'; margin-bottom: 2px; }
+
+.idi-video { display: flex; gap: 12px; align-items: center; margin-top: 16px; color: var(--texto); text-decoration: none; }
+.idi-video img { width: 120px; height: 68px; flex: none; object-fit: cover; border-radius: 10px; background: var(--fundo-escuro); }
+.idi-video span { font-size: 13px; color: var(--texto-sec); }
+.idi-video b { display: block; font-size: 15px; color: var(--texto); }
+
+.idi-status-grande { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 999px; background: var(--cartao-2); }
+.idi-status-grande button { min-height: 44px; border-radius: 999px; font-weight: 600; font-size: 15px; text-align: center; color: var(--texto-sec); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.idi-status-grande button[aria-checked="true"] { background: var(--fundo-escuro); color: #fff; }
+.idi-status-grande button:disabled { opacity: 0.55; }
+.idi-proxima { display: block; margin-top: 18px; min-height: 44px; color: var(--azul); font-weight: 600; font-size: 15px; text-align: left; }
