@@ -41,15 +41,21 @@ async function rest(caminho) {
   return r.json();
 }
 let pausa = 1200;
+let bloqueios = 0;
 async function openverse(q) {
   const url = `https://api.openverse.org/v1/images/?${new URLSearchParams({ q, license: 'by,by-sa,cc0,pdm', page_size: '20', mature: 'false' })}`;
   for (let t = 0; t < 4; t++) {
     try {
       const r = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(30_000) });
-      if (r.ok) return (await r.json()).results ?? [];
-      if (r.status === 429) { pausa = Math.min(pausa * 2, 20_000); await espera(60_000); continue; }
+      if (r.ok) { bloqueios = 0; return (await r.json()).results ?? []; }
+      console.log(`  Openverse respondeu ${r.status}: ${(await r.text()).slice(0, 160)}`);
+      if (r.status === 429) {
+        // Limite de pedidos: espera e, se continuar bloqueado, para o dia (sem insistir à toa).
+        if (++bloqueios >= 3) { console.log('Openverse: limite de pedidos atingido. Parando por hoje.'); process.exit(0); }
+        pausa = Math.min(pausa * 2, 20_000); await espera(60_000); continue;
+      }
       await espera(5000);
-    } catch { await espera(5000); }
+    } catch (e) { console.log(`  Openverse falhou: ${e.message}`); await espera(5000); }
   }
   return [];
 }
@@ -83,6 +89,7 @@ const credito = (f) => `${(f.creator || 'autor desconhecido').slice(0, 80)} · $
 if (amostra) {
   // Só mostra o que escolheria, sem gravar (para conferir a qualidade antes).
   const itens = await pendentes(REGIOES[regiao], amostra);
+  console.log(`Amostra: ${itens.length} lugares`);
   let n = 0;
   for (const l of itens) {
     const f = await escolher(l);
