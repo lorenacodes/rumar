@@ -18,6 +18,7 @@ import { useViajante } from '../../state/viajante';
 import { FotoLugar } from '../../ui/foto';
 import { Voltar } from '../../ui/pecas';
 import { Info } from '../../ui/info';
+import { gastosDosLugares, type GastoLugar } from '../../lib/avaliacoes';
 import { Avaliacoes } from './Avaliacoes';
 import { CapaAlternativa, FotosDeQuemFoi } from './FotosDoLugar';
 import { useSessao } from '../../conta/servico';
@@ -96,12 +97,50 @@ function AdicionarAViagem({ placeId, slots, destinoId, cidade: cidadeDada }: { p
   );
 }
 
+const COMIDA = ['restaurantes', 'cafes', 'bares', 'vida-noturna'];
+
+/** Gasto por pessoa informado por quem foi (dado nosso, de avaliações reais). Sem dado, convida a informar. */
+function GastoDeQuemFoi({ placeId, comida }: { placeId: string; comida: boolean }) {
+  const [g, setG] = useState<GastoLugar | null | undefined>(undefined);
+  useEffect(() => {
+    let vivo = true;
+    setG(undefined);
+    void gastosDosLugares([placeId]).then((m) => { if (vivo) setG(m.get(placeId) ?? null); }, () => { if (vivo) setG(null); });
+    return () => { vivo = false; };
+  }, [placeId]);
+  if (g === undefined || (!g && !comida)) return null;
+  if (!g) {
+    return (
+      <p style={{ margin: '12px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)' }}>
+        Ninguém informou o gasto ainda.{' '}
+        <a href={`#/lugar/${placeId}#avaliar=1`} onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event('bovair:abrir-avaliacao')); }} style={{ color: 'var(--azul)', fontWeight: 600 }}>Já foi? Conte quanto gastou</a>
+      </p>
+    );
+  }
+  return (
+    <div style={{ marginTop: '12px', padding: '12px 14px', borderRadius: '14px', background: 'var(--cartao-2)' }}>
+      <div style={{ fontSize: '13px', color: 'var(--texto-sec)' }}>Gasto de quem foi</div>
+      <div style={{ font: "600 20px/26px 'Lexend Exa'", letterSpacing: '-0.01em' }}>cerca de {dinheiro(g.mediana_centavos, g.moeda)} <span style={{ font: "400 14px 'Open Sans'", color: 'var(--texto-sec)' }}>por pessoa</span></div>
+      <div style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '2px' }}>
+        {g.quantidade} {g.quantidade === 1 ? 'pessoa informou' : 'pessoas informaram'}{' '}
+        <Info rotulo="Como calculamos">É o valor do meio entre os gastos por pessoa que quem foi informou ao avaliar (mediana). Uma conta muito alta ou muito baixa não distorce. Não vem de cardápio nem de outro site.</Info>
+      </div>
+    </div>
+  );
+}
+
 export function Lugar() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
-  const [carregado, setCarregado] = useState(!/^(osm|pesq|cnpj)-/.test(id) || Boolean(basePorId(id)));
+  // Guarda QUAL lugar já foi buscado: ao ir de um lugar para outro sem recarregar, busca o novo (antes ia para o Descobrir).
+  const [buscado, setBuscado] = useState<string | null>(null);
+  const carregado = !/^(osm|pesq|cnpj)-/.test(id) || Boolean(basePorId(id)) || buscado === id;
   useEffect(() => {
-    if (!carregado) void lugaresPorIds([id]).then(() => setCarregado(true));
+    if (carregado) return;
+    let vivo = true;
+    const fim = () => { if (vivo) setBuscado(id); };
+    void lugaresPorIds([id]).then(fim, fim);
+    return () => { vivo = false; };
   }, [id, carregado]);
   const l = lugarPorId(id);
   const base = basePorId(id);
@@ -182,6 +221,7 @@ function LugarDaBase() {
         ) : null}
         {b.destaque ? <p style={{ margin: '8px 0 0', fontSize: '16px', lineHeight: '23px' }}>{b.destaque}</p> : null}
         {b.historia ? <p style={{ margin: '6px 0 0', fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)' }}>{b.historia}</p> : null}
+        <GastoDeQuemFoi placeId={id} comida={COMIDA.includes(b.categoria)} />
         <dl style={{ margin: '14px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: '12px', rowGap: '8px', fontSize: '15px', lineHeight: '21px' }}>
           {b.endereco ?? b.bairro ? linha('Onde', [b.endereco, b.endereco && b.bairro && !b.endereco.includes(b.bairro) ? b.bairro : null].filter(Boolean).join(' · ') || b.bairro) : null}
           {b.melhor_horario ? linha('Melhor hora', b.melhor_horario) : null}
@@ -197,7 +237,7 @@ function LugarDaBase() {
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? <><Check />Salvo</> : '+ Salvar'}</button>
         </div>
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Reserve pela aba Hospedagem da sua viagem.' : 'Não entra no roteiro.'}</p>}
-        <Avaliacoes placeId={id} nome={b.nome} moeda={paisPorCodigo(b.destino_id.slice(0, 2).toUpperCase())?.moeda ?? 'BRL'} />
+        <Avaliacoes placeId={id} nome={b.nome} comida={COMIDA.includes(b.categoria)} moeda={paisPorCodigo(b.destino_id.slice(0, 2).toUpperCase())?.moeda ?? 'BRL'} />
         <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
         {linkSeguro(b.site) ? <a href={linkSeguro(b.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
         <Info style={{ marginTop: '14px' }}>

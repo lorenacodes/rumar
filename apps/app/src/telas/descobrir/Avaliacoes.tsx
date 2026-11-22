@@ -32,7 +32,7 @@ function Miniatura({ url, video, tamanho = 84 }: { url: string; video: boolean; 
 }
 
 /** Avaliações do lugar (D-047/D-072): resumo, lista e o formulário de quem foi (com Wi-Fi e até 3 mídias). */
-export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: string; moeda: string }) {
+export function Avaliacoes({ placeId, nome, moeda, comida = false }: { placeId: string; nome: string; moeda: string; comida?: boolean }) {
   const sessao = useSessao();
   const navegar = useNavigate();
   const [lista, setLista] = useState<Avaliacao[] | null>(null);
@@ -62,6 +62,12 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
   const minha = lista?.find((a) => a.minha);
   const jaTem = minha ? midias.get(minha.id)?.length ?? 0 : 0;
   const cabem = MAX_MIDIAS - jaTem;
+  // "Já foi? Conte quanto gastou" (ficha do lugar) abre a avaliação aqui.
+  useEffect(() => {
+    const f = () => { abrir(); window.setTimeout(() => document.getElementById('avaliar')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120); };
+    window.addEventListener('bovair:abrir-avaliacao', f);
+    return () => window.removeEventListener('bovair:abrir-avaliacao', f);
+  });
   const abrir = () => {
     if (!sessao) return navegar('/entrar');
     if (minha) {
@@ -95,6 +101,13 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
     r.gastoTipico != null && r.moeda ? `Gasto típico ${dinheiro(r.gastoTipico, r.moeda)} por pessoa` : null,
   ].filter(Boolean) as string[] : [];
 
+  // Gasto por pessoa: em restaurante, café e bar vem logo depois da nota (é o que mais ajuda quem vai depois).
+  const blocoGasto = (
+    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginTop: '14px' }}>Quanto gastou por pessoa? <span style={{ fontWeight: 400, color: 'var(--texto-sec)' }}>({moeda}, opcional)</span>
+      <input className="r-input" inputMode="decimal" value={gasto} onChange={(e) => setGasto(e.target.value.replace(/[^\d.,]/g, ''))} placeholder="0,00" style={campo} />
+      {comida ? <span style={{ display: 'block', fontWeight: 400, fontSize: '13px', color: 'var(--texto-sec)', marginTop: '4px' }}>Ajuda quem vai depois a saber quanto levar.</span> : null}
+    </label>
+  );
   return (
     <section aria-label="Avaliações" style={{ marginTop: '24px' }}>
       <h2 style={{ margin: 0, font: "600 18px 'Lexend Exa'", letterSpacing: '-0.02em' }}>Avaliações</h2>
@@ -128,6 +141,7 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
         <div id="avaliar" style={{ marginTop: '10px', padding: '16px', borderRadius: '14px', background: 'var(--cartao-2)' }}>
           <div style={{ font: "600 16px 'Lexend Exa'" }}>Como foi em {nome}?</div>
           <div style={{ marginTop: '6px' }}><EscolherEstrelas valor={nota} aoMudar={setNota} /></div>
+          {comida ? blocoGasto : null}
 
           <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginTop: '14px' }}>Comentário <span style={{ fontWeight: 400, color: 'var(--texto-sec)' }}>(opcional)</span>
             <textarea ref={texto} className="r-input" maxLength={600} rows={2} value={comentario} onChange={(e) => setComentario(e.target.value)}
@@ -163,9 +177,7 @@ export function Avaliacoes({ placeId, nome, moeda }: { placeId: string; nome: st
           <Opcoes rotulo="Tem Wi-Fi livre?" valor={wifi} aoMudar={setWifi} opcoes={[['sim', 'Sim'], ['nao', 'Não']]} />
           <Opcoes rotulo="Acessível para cadeira de rodas?" valor={acessivel} aoMudar={setAcessivel} opcoes={[['sim', 'Sim'], ['em_parte', 'Em parte'], ['nao', 'Não']]} />
 
-          <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginTop: '14px' }}>Quanto gastou por pessoa? <span style={{ fontWeight: 400, color: 'var(--texto-sec)' }}>(opcional, {moeda})</span>
-            <input className="r-input" inputMode="decimal" value={gasto} onChange={(e) => setGasto(e.target.value.replace(/[^\d.,]/g, ''))} placeholder="0,00" style={campo} />
-          </label>
+          {!comida ? blocoGasto : null}
 
           <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
             <button type="button" className="r-btn" onClick={() => (setAberto(false), setArquivos([]))} style={{ flex: 1, height: '48px', borderRadius: '12px', border: '1px solid var(--linha)', font: "600 15px 'Open Sans'" }}>Cancelar</button>

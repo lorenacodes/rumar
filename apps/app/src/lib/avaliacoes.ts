@@ -108,3 +108,11 @@ export async function minhasAvaliacoes(): Promise<{ id: string; place_id: string
   const porId = new Map((lugares ?? []).map((l) => [l.id as string, l]));
   return lista.map((a) => { const l = porId.get(a.place_id); return { ...a, nome: (l?.nome as string) ?? 'Lugar', cidade: l ? nomeDestino.get(l.destino_id as string) ?? null : null, categoria: (l?.categoria as string) ?? null }; });
 }
+
+export interface GastoLugar { mediana_centavos: number; moeda: string; quantidade: number }
+/** Gasto por pessoa informado por quem foi (mediana na moeda mais informada), para vários lugares de uma vez. */
+export async function gastosDosLugares(ids: string[]): Promise<Map<string, GastoLugar>> {
+  if (!ids.length) return new Map();
+  const { data } = await supabase.rpc('gastos_dos_lugares', { ids: ids.slice(0, 300) });
+  return new Map(((data ?? []) as (GastoLugar & { place_id: string })[]).map((g) => [g.place_id, g]));
+}

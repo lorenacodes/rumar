@@ -27,6 +27,7 @@ import { ExplorarCidades } from './ExplorarCidades';
 import { faixaDoLugar, NOME_FAIXA } from '../../lib/nivel';
 import { CoracaoQueroIr } from '../../ui/CoracaoQueroIr';
 import { experienciasPerto } from '../../lib/experiencias';
+import { gastosDosLugares, type GastoLugar } from '../../lib/avaliacoes';
 import { contarFiltros, FILTROS_VAZIOS, PainelFiltros, type EstadoFiltros } from './PainelFiltros';
 import { BlocoNetworking } from './Networking';
 
@@ -44,7 +45,7 @@ const deBase = (b: LugarBase): Item => ({
   lat: b.lat, lon: b.lon, verificado: b.verificado,
 });
 
-function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
+function LinhaItem({ it, aoAbrir, gasto }: { it: Item; aoAbrir: () => void; gasto?: GastoLugar }) {
   const { salvos, alternarSalvo } = useViajante();
   const salvo = salvos.includes(it.id);
   return (
@@ -55,6 +56,7 @@ function LinhaItem({ it, aoAbrir }: { it: Item; aoAbrir: () => void }) {
           <span style={{ display: 'block', font: "600 13px/17px 'Open Sans'", color: 'var(--azul)' }}>{it.rotulo}</span>
           <span style={{ display: 'block', font: "600 16px/21px 'Lexend Exa'", letterSpacing: '-0.02em' }}>{it.nome}</span>
           {it.detalhe ? <span style={{ display: 'block', fontSize: '13px', lineHeight: '18px', color: 'var(--texto-sec)' }}>{it.detalhe}</span> : null}
+          {gasto ? <span style={{ display: 'block', fontSize: '13px', lineHeight: '18px', fontWeight: 600 }}>Cerca de {dinheiro(gasto.mediana_centavos, gasto.moeda)} por pessoa ({gasto.quantidade} {gasto.quantidade === 1 ? 'pessoa informou' : 'informaram'})</span> : null}
         </span>
       </button>
       <CoracaoQueroIr marcado={salvo} aoTocar={() => void alternarSalvo(it.id)} nome={it.nome} />
@@ -103,6 +105,9 @@ export function Descobrir() {
   const [verPreco, setVerPreco] = useState(false);
   const [pagina, setPagina] = useState(0);
   const [itens, setItens] = useState<Item[]>([]);
+  // Gasto por pessoa de quem foi (avaliações reais), para mostrar nos itens que têm.
+  const [gastos, setGastos] = useState<Map<string, GastoLugar>>(new Map());
+  useEffect(() => { void gastosDosLugares(itens.map((x) => x.id)).then(setGastos); }, [itens]);
   const [total, setTotal] = useState(0);
   const [carregando, setCarregando] = useState(false);
   const [cob, setCob] = useState<Cobertura[] | null>(null);
@@ -318,7 +323,7 @@ export function Descobrir() {
               </div>
             ) : null}
             <ul style={{ listStyle: 'none', margin: '6px 0 0', padding: 0 }} aria-busy={carregando}>
-              {!mapa && !feed ? itens.filter((i, n, todos) => todos.findIndex((x) => x.nome.toLowerCase() === i.nome.toLowerCase()) === n).map((i) => <LinhaItem key={i.id} it={i} aoAbrir={() => abrir(i.id)} />) : null}
+              {!mapa && !feed ? itens.filter((i, n, todos) => todos.findIndex((x) => x.nome.toLowerCase() === i.nome.toLowerCase()) === n).map((i) => <LinhaItem key={i.id} it={i} gasto={gastos.get(i.id)} aoAbrir={() => abrir(i.id)} />) : null}
             </ul>
             {carregando && !feed ? <p style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>Carregando…</p> : null}
             {!carregando && !mapa && itens.length < total && filtro !== 'para-voce' && filtro !== 'salvos' ? (
