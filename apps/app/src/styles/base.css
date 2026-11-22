@@ -99,3 +99,18 @@ input {
   height: max(100%, 44px);
   transform: translateY(-50%);
 }
+
+/* No computador (site): o app aparece numa coluna do tamanho de um celular, centralizada (22/11).
+   O transform faz as camadas "fixas" (abas, avisos, janelas) ficarem presas à coluna, não à janela. */
+@media (min-width: 700px) {
+  html:not(.modo-site) { background: var(--fundo-escuro); }
+  html:not(.modo-site) body { background: transparent; }
+  html:not(.modo-site) #root {
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--fundo);
+    transform: translateZ(0);
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+}

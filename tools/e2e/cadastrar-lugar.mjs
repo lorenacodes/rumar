@@ -27,6 +27,8 @@ const p = await (await nav.newContext({ viewport: { width: 390, height: 900 } })
 p.on('pageerror', (e) => erros.push(e.message));
 await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(800);
 await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.ana@bovair.com.br'); await p.locator('#senha').fill(SENHA); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.goto(URL); await p.waitForTimeout(3000);
+confere('com conta, o endereço do site abre direto o Início (não a apresentação)', /#\/inicio/.test(p.url()));
 await p.goto(URL + `#/descobrir?d=${RECIFE}&ver=restaurantes`); await p.waitForTimeout(5000);
 const link = p.getByRole('link', { name: 'Cadastre aqui' });
 confere('Descobrir (restaurantes): "Não achou onde comeu? Cadastre aqui"', await link.waitFor({ timeout: 10000 }).then(() => true, () => false));

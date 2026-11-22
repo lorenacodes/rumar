@@ -115,7 +115,8 @@
   position: sticky;
   bottom: 0;
   margin-top: auto;
-  z-index: 1;
+  /* Acima das legendas das fotos (zIndex 1 e 2), para nada aparecer por cima do rodapé. */
+  z-index: 5;
   padding: 10px var(--margem) calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--linha);
   background: var(--fundo);

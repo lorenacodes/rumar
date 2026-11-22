@@ -27,6 +27,9 @@ import { AvisoAtualizar } from './ui/atualizar';
 import { SemInternet } from './ui/semInternet';
 import { Viagens } from './telas/viagens/Viagens';
 import { Inicio } from './telas/s25/Inicio';
+import { Capacitor } from '@capacitor/core';
+import { useSessao } from './conta/servico';
+import { Site } from './telas/site/Site';
 import { Moeda } from './telas/s05/Moeda';
 import { Usuario } from './telas/s05/Usuario';
 import { Ajuda, AvisoPrivacidade, Privacidade, Sobre, Termos } from './telas/s05/Conta';
@@ -100,14 +103,18 @@ function TelaPorId({ id: fixo }: { id?: string }) {
 
 /** Primeira tela: conferência de idade, ou o início se ela já foi feita. */
 function Comeco() {
-  // Lido só na abertura: ao confirmar a idade, a própria 1.1 segue para a 1.3.
   // A idade agora é pedida só ao criar a conta (a pessoa navega antes). A 1.1 continua em /idade.
-  return <Navigate to="/inicio" replace />;
+  // No navegador, quem não tem conta aberta vê primeiro a página de apresentação do site (22/11).
+  const sessao = useSessao();
+  if (Capacitor.isNativePlatform()) return <Navigate to="/inicio" replace />;
+  if (sessao === undefined) return null;
+  return sessao ? <Navigate to="/inicio" replace /> : <Navigate to="/site" replace />;
 }
 
 const filhos: RouteObject[] = [
   { path: '/', element: <Comeco /> },
   { path: '/idade', element: <Tela1_1 /> },
+  { path: '/site', element: <Site /> },
   { path: '/menor-de-18', element: <Tela1_2 /> },
   { path: '/boas-vindas', element: <Tela1_3 /> },
   { path: '/seu-plano', element: <Tela1_4 /> },

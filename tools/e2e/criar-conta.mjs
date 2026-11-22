@@ -24,7 +24,11 @@ for (const largura of [390, 320]) {
 {
   const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage();
   await p.goto(URL); await p.waitForTimeout(2500);
-  confere('abre direto no Início, sem pedir idade', /#\/inicio/.test(p.url()) && (await p.locator('#nascimento').count()) === 0);
+  // No navegador, sem conta: abre a página de apresentação (Entrar e Criar conta no topo), sem pedir idade.
+  confere('site: abre a apresentação com Entrar e Criar conta, sem pedir idade', /#\/site/.test(p.url()) && (await p.locator('#nascimento').count()) === 0
+    && await p.getByRole('button', { name: 'Entrar' }).isVisible() && await p.getByRole('button', { name: 'Criar conta' }).isVisible());
+  await p.getByRole('button', { name: 'Explorar sem conta ›' }).click(); await p.waitForTimeout(1500);
+  confere('"Explorar sem conta" abre o Início', /#\/inicio/.test(p.url()));
   await p.goto(URL + '#/conta/criar'); await p.waitForTimeout(1500);
   confere('cadastro pede a data de nascimento', (await p.locator('#nascimento').count()) === 1);
   await p.locator('#nome').fill('Teste'); await p.locator('#email').fill('teste@exemplo.com'); await p.locator('#senha').fill('abc12345');

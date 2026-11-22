@@ -47,7 +47,8 @@ export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRo
         position: 'sticky',
         bottom: '0',
         marginTop: logoAbaixoDoRodape ? '0' : 'auto',
-        zIndex: 1,
+        // Acima das legendas das fotos (que usam zIndex 1 e 2), para nada aparecer por cima das abas.
+        zIndex: 5,
         height: 'calc(64px + env(safe-area-inset-bottom))',
         paddingBottom: 'env(safe-area-inset-bottom)',
         background: 'var(--fundo)',
