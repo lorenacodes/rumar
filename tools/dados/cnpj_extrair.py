@@ -6,8 +6,11 @@ import duckdb
 REPO = os.environ.get('HF_REPO', 'cnpjaberto/cnpj-dados-receita-brasil-2026-09')
 nomes_uf = json.loads(sys.argv[1])  # [["RECIFE","PE"], ...]
 con = duckdb.connect()
-con.sql(f"CREATE SECRET (TYPE huggingface, TOKEN '{os.environ['HF_TOKEN']}')")
-base = f'hf://datasets/{REPO}'
+# Os arquivos do Hugging Face estão no armazenamento "xet": baixa com a biblioteca oficial e lê do disco.
+from huggingface_hub import snapshot_download
+pasta = snapshot_download(repo_id=REPO, repo_type='dataset', token=os.environ['HF_TOKEN'],
+                          allow_patterns=['estabelecimentos/*.parquet', 'simples/*.parquet', 'municipios/*.parquet'])
+base = pasta
 cols = [c[0] for c in con.sql(f"DESCRIBE SELECT * FROM '{base}/estabelecimentos/estabelecimentos0.parquet'").fetchall()]
 mcols = [c[0] for c in con.sql(f"DESCRIBE SELECT * FROM '{base}/municipios/municipios.parquet'").fetchall()]
 scols = [c[0] for c in con.sql(f"DESCRIBE SELECT * FROM '{base}/simples/simples.parquet'").fetchall()]
