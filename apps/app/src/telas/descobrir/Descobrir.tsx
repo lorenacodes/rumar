@@ -34,6 +34,8 @@ const P = PRECOS as unknown as Precos;
 const dataBR = (iso?: string | null) => (iso ? iso.slice(0, 10).split('-').reverse().join('/') : '');
 
 /** Um item da lista: curadoria (Lugar) ou base (LugarBase), no mesmo formato de tela. */
+// Nenhum lugar tem preço no banco hoje (conferido em 22/11/2026): sem filtro de preço nem 'Grátis' até haver dado real.
+const TEM_PRECO = false;
 interface Item { id: string; nome: string; rotulo: string; detalhe: string; lat?: number; lon?: number; verificado: boolean }
 const deCuradoria = (l: Lugar): Item => ({ id: l.id, nome: l.nome, rotulo: NOME_CATEGORIA[l.categoria], detalhe: [l.area, l.custo === 0 ? 'grátis' : null, 'curadoria Bo Vair'].filter(Boolean).join(' · '), lat: l.lat, lon: l.lon, verificado: true });
 const deBase = (b: LugarBase): Item => ({
@@ -253,7 +255,7 @@ export function Descobrir() {
                 );
               })}
             </div>
-            {verFiltros ? <PainelFiltros f={fil} mudar={setFil} comida={['todos', 'para-voce', 'restaurantes', 'cafes', 'bares'].includes(filtro)} moeda={moeda} total={feed ? null : itens.length} aoFechar={() => setVerFiltros(false)} /> : null}
+            {verFiltros ? <PainelFiltros f={fil} mudar={setFil} comida={['todos', 'para-voce', 'restaurantes', 'cafes', 'bares'].includes(filtro)} moeda={moeda} total={feed ? null : itens.length} temPreco={TEM_PRECO} aoFechar={() => setVerFiltros(false)} /> : null}
             <div role="group" aria-label="Outras formas de ver" style={{ display: 'flex', gap: '16px', marginTop: '6px', fontSize: '14px', fontWeight: 600 }}>
               {!feed && filtro === 'para-voce' ? <button type="button" className="r-btn alvo-toque" onClick={() => { setFil(FILTROS_VAZIOS); setTermo(''); setMapa(false); setParams((p) => { const n = new URLSearchParams(p); n.delete('modo'); return n; }, { replace: true }); }} style={{ color: 'var(--azul)' }}>Ver feed</button> : null}
               <button type="button" className="r-btn alvo-toque" onClick={() => setMapa(!mapa)} style={{ color: 'var(--azul)' }}>{mapa ? 'Fechar mapa' : 'Ver no mapa'}</button>

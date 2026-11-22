@@ -57,14 +57,12 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.locator('#busca-lugar').fill(palavra); await p.waitForTimeout(2000);
   confere(`${cidade}: busca por nome "${palavra}"`, (await p.locator('main ul li').count()) > 0);
   await p.locator('#busca-lugar').fill('');
-  // Preço
+  // Preço: nenhum lugar tem preço no banco, então o painel não oferece filtro de preço nem 'Grátis'.
   await p.getByRole('tab', { name: /^Tudo/ }).click(); await p.waitForTimeout(1500);
-  const filtroGratis = async () => { await p.getByRole('button', { name: /^Filtros/ }).click(); const d = p.getByRole('dialog', { name: 'Filtros' }); await d.getByRole('button', { name: 'Grátis', exact: true }).click(); await p.waitForTimeout(2000); await d.getByRole('button', { name: /^Ver / }).click(); await p.waitForTimeout(500); };
-  await filtroGratis();
-  t = await texto();
-  const gratis = await p.locator('main ul li').count();
-  confere(`${cidade}: filtro de preço explica quem fica de fora (${gratis} grátis)`, /continuam no app/.test(t));
-  await filtroGratis();
+  await p.getByRole('button', { name: /^Filtros/ }).click(); await p.waitForTimeout(500);
+  { const d = p.getByRole('dialog', { name: 'Filtros' });
+    confere(`${cidade}: sem filtro de preço sem dado real`, (await d.getByRole('button', { name: 'Grátis', exact: true }).count()) === 0 && !(await d.innerText()).includes('Preço por pessoa'));
+    await p.keyboard.press('Escape'); await p.mouse.click(5, 5); await p.waitForTimeout(400); }
   // Mapa
   await p.getByRole('button', { name: 'Ver no mapa', exact: true }).click(); await p.waitForTimeout(4500);
   const marcadores = await p.locator('.maplibregl-marker').count();
@@ -82,7 +80,7 @@ for (const [cidade, uf] of CIDADES.filter(([c]) => !SO || SO.includes(c))) {
   await p.getByRole('button', { name: '+ Salvar' }).first().click(); await p.waitForTimeout(1500);
   confere(`${cidade}: salvar lugar`, (await p.getByRole('button', { name: 'Salvo', exact: true }).count()) > 0);
   await foto(`${cidade}-lugar`);
-  resumo.push(`${cidade}: ${total} lugares, ${rest} restaurantes na 1ª página, ${gratis} grátis, ${marcadores} no mapa, foto no lugar: ${fotos ? 'sim' : 'não'}`);
+  resumo.push(`${cidade}: ${total} lugares, ${rest} restaurantes na 1ª página, ${marcadores} no mapa, foto no lugar: ${fotos ? 'sim' : 'não'}`);
 }
 
 console.log('— Favoritar destinos (nacional e internacional)');

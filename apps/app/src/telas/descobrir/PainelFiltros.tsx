@@ -17,7 +17,7 @@ const Titulo = ({ t }: { t: string }) => <div style={{ font: "600 14px 'Open San
 const linha = { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' } as const;
 
 /** Painel de filtros do Descobrir (D-084): faixa, cozinha, dieta, nota e preço. */
-export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total }: { f: EstadoFiltros; mudar: (f: EstadoFiltros) => void; comida: boolean; moeda: string; aoFechar: () => void; total: number | null }) {
+export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total, temPreco = false }: { f: EstadoFiltros; mudar: (f: EstadoFiltros) => void; comida: boolean; moeda: string; aoFechar: () => void; total: number | null; temPreco?: boolean }) {
   const alterna = <T,>(lista: T[], x: T) => (lista.includes(x) ? lista.filter((y) => y !== x) : [...lista, x]);
   const campo = { display: 'block', width: '100%', boxSizing: 'border-box' as const, marginTop: '4px', font: "500 16px 'Open Sans'" };
   return (
@@ -29,7 +29,8 @@ export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total }: { f:
       <Titulo t="Faixa" />
       <div style={linha}>
         {(['especial', 'em-conta'] as Faixa[]).map((x) => <Chip key={x} ativo={f.faixa === x} aoTocar={() => mudar({ ...f, faixa: f.faixa === x ? null : x })}>{NOME_FAIXA[x]}</Chip>)}
-        <Chip ativo={f.gratis} aoTocar={() => mudar({ ...f, gratis: !f.gratis })}>Grátis</Chip>
+        {/* Preço e 'Grátis' só quando há preço de verdade nos lugares (hoje nenhum lugar tem): nada de filtro que esconde tudo. */}
+        {temPreco ? <Chip ativo={f.gratis} aoTocar={() => mudar({ ...f, gratis: !f.gratis })}>Grátis</Chip> : null}
         <Chip ativo={f.bemAvaliados} aoTocar={() => mudar({ ...f, bemAvaliados: !f.bemAvaliados })}>Nota 4 ou mais</Chip>
         <Chip ativo={!!f.escondidos} aoTocar={() => mudar({ ...f, escondidos: !f.escondidos })}>Pouco conhecidos</Chip>
       </div>
@@ -41,11 +42,13 @@ export function PainelFiltros({ f, mudar, comida, moeda, aoFechar, total }: { f:
           <div style={linha}>{(Object.keys(NOME_DIETA) as Dieta[]).map((d) => <Chip key={d} ativo={f.dieta.includes(d)} aoTocar={() => mudar({ ...f, dieta: alterna(f.dieta, d) })}>{NOME_DIETA[d]}</Chip>)}</div>
         </>
       ) : null}
+      {temPreco ? (<>
       <Titulo t={`Preço por pessoa (${moeda})`} />
       <div style={{ display: 'flex', gap: '10px' }}>
         <label style={{ flex: 1, fontSize: '12px', color: 'var(--texto-sec)' }}>Mínimo<input inputMode="decimal" className="r-input" value={f.min} onChange={(e) => mudar({ ...f, min: e.target.value.replace(/[^\d,]/g, '') })} style={campo} /></label>
         <label style={{ flex: 1, fontSize: '12px', color: 'var(--texto-sec)' }}>Máximo<input inputMode="decimal" className="r-input" value={f.max} onChange={(e) => mudar({ ...f, max: e.target.value.replace(/[^\d,]/g, '') })} style={campo} /></label>
       </div>
+      </>) : null}
       <p style={{ fontSize: '12px', lineHeight: '17px', color: 'var(--texto-sec)', margin: '8px 0 0' }}>Especial: reconhecido ou com nota alta. Em conta: simples e barato.</p>
       <div style={{ display: 'flex', gap: '8px', marginTop: '12px', position: 'sticky', bottom: '-16px', paddingBottom: '4px', background: 'var(--cartao-2)' }}>
         <button type="button" className="r-btn" onClick={() => mudar(FILTROS_VAZIOS)} style={{ flex: 1, minHeight: '48px', borderRadius: '24px', background: 'var(--fundo)', font: "600 15px 'Open Sans'" }}>Limpar</button>
