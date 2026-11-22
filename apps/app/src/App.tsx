@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, type ComponentType } from 'react';
-import { createHashRouter, Navigate, Outlet, RouterProvider, useNavigate, useParams, type RouteObject } from 'react-router-dom';
+import { createHashRouter, Navigate, Outlet, RouterProvider, useLocation, useNavigate, useParams, type RouteObject } from 'react-router-dom';
 import { TelaDeErro } from './ui/TelaDeErro';
 
 
@@ -29,7 +29,7 @@ import { Viagens } from './telas/viagens/Viagens';
 import { Inicio } from './telas/s25/Inicio';
 import { Capacitor } from '@capacitor/core';
 import { useSessao } from './conta/servico';
-import { Site } from './telas/site/Site';
+import { PainelConta, Site } from './telas/site/Site';
 import { Moeda } from './telas/s05/Moeda';
 import { Usuario } from './telas/s05/Usuario';
 import { Ajuda, AvisoPrivacidade, Privacidade, Sobre, Termos } from './telas/s05/Conta';
@@ -37,6 +37,12 @@ import { Ajuda, AvisoPrivacidade, Privacidade, Sobre, Termos } from './telas/s05
 /** Raiz: links dos e-mails e sessão que terminou sozinha (28.7). */
 function Raiz() {
   const navegar = useNavigate();
+  // Telas de conta (entrar, criar, código, senha): no computador ganham um painel com foto ao lado (22/11).
+  const { pathname } = useLocation();
+  const telaDeConta = pathname === '/entrar' || pathname.startsWith('/conta/');
+  useEffect(() => {
+    document.documentElement.classList.toggle('modo-conta', telaDeConta);
+  }, [telaDeConta]);
   useEffect(() => ouvirLinks(navegar), [navegar]);
   // Regra 16.6: o voltar do Android faz o mesmo que a seta ← e nunca fecha o app sem querer.
   useEffect(() => {
@@ -56,6 +62,7 @@ function Raiz() {
   }, [navegar]);
   return (
     <>
+      {telaDeConta ? <PainelConta /> : null}
       <Suspense fallback={<main className="tela" aria-busy="true" />}>
         <Outlet />
       </Suspense>

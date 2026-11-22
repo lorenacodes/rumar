@@ -41,3 +41,16 @@
   .site-conta .site-entrar { padding: 0 10px; }
   .site-conta .site-criar { padding: 0 14px; }
 }
+
+/* Telas de conta no computador: painel com foto à esquerda e o formulário à direita. */
+.painel-conta { display: none; }
+@media (min-width: 900px) {
+  html.modo-conta #root { max-width: none; margin: 0; display: flex; box-shadow: none; }
+  html.modo-conta #root > .tela, html.modo-conta #root > main { flex: none; width: min(480px, 42vw); box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15); }
+  .painel-conta { display: block; position: relative; flex: 1; overflow: hidden; background: var(--fundo-escuro); }
+  .painel-conta::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(6, 14, 36, 0.2), rgba(6, 14, 36, 0.85)); }
+  .painel-conta-txt { position: absolute; left: clamp(32px, 5vw, 72px); right: clamp(32px, 5vw, 72px); bottom: clamp(40px, 8vh, 80px); z-index: 2; color: #fff; }
+  .painel-conta-txt .site-logo { display: block; margin-bottom: 18px; font-size: 26px; }
+  .painel-conta-txt b { display: block; font: 600 clamp(32px, 3.6vw, 52px)/1.1 'Lexend Exa'; letter-spacing: -0.03em; }
+  .painel-conta-txt ul { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 8px; font-size: 17px; opacity: 0.92; }
+}

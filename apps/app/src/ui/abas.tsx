@@ -43,6 +43,7 @@ export function Abas({ ativa, logoAbaixoDoRodape }: { ativa: Aba; logoAbaixoDoRo
   return (
     <nav
       aria-label="Abas"
+      className="abas"
       style={{
         position: 'sticky',
         bottom: '0',

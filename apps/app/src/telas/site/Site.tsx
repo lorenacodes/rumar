@@ -85,3 +85,19 @@ export function Site() {
     </div>
   );
 }
+
+/** Painel ao lado das telas de conta no computador (some no celular, pelo CSS). */
+export function PainelConta() {
+  return (
+    <aside className="painel-conta" aria-hidden="true">
+      <FotoDestino nome="Recife" credito={false} />
+      <div className="painel-conta-txt">
+        <span className="site-logo">bo vair</span>
+        <b>Sua viagem inteira num lugar só.</b>
+        <ul>
+          {RECURSOS.slice(0, 4).map((r) => <li key={r.t}>{r.t}</li>)}
+        </ul>
+      </div>
+    </aside>
+  );
+}

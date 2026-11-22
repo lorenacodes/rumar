@@ -1023,3 +1023,8 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Botão "Abrir a rota no Google Maps" com as paradas do dia (até 10), para navegar de verdade. Sem custo.
 - Lugares curiosos: eventos trágicos (atentados, desastres, massacres, batalhas) saem; memoriais ficam. A coleta
   aplica a mesma regra. O texto da ficha rola e os botões ficam sempre à vista. Vídeo da aula de idioma no topo.
+
+## D-091 — Site e telas grandes
+- Navegador sem conta: página de apresentação (#/site) com Entrar e Criar conta no topo; quem tem conta vai ao app.
+- Computador (1100 px ou mais): abas viram menu lateral e o conteúdo fica numa coluna de até 820 px.
+  Entre 700 e 1099 px (tablet): coluna de celular centralizada. Telas de conta ganham painel com foto ao lado.
