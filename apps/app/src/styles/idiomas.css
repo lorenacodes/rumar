@@ -84,3 +84,18 @@
 .idi-status-grande button[aria-checked="true"] { background: var(--fundo-escuro); color: #fff; }
 .idi-status-grande button:disabled { opacity: 0.55; }
 .idi-proxima { display: block; margin-top: 18px; min-height: 44px; color: var(--azul); font-weight: 600; font-size: 15px; text-align: left; }
+
+.idi-frase-acoes { display: flex; gap: 6px; flex: none; }
+.idi-ouvir.ativo { background: var(--fundo-escuro); color: #fff; }
+.idi-pratica { margin-top: 10px; padding: 12px; border-radius: 12px; background: var(--fundo); }
+.idi-pratica-dica { margin: 0 0 10px; font-size: 14px; line-height: 19px; }
+.idi-pratica-botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.idi-pbtn { flex: 1 1 140px; min-height: 44px; padding: 0 14px; border-radius: 999px; background: var(--cartao-2); color: var(--texto); font-weight: 600; font-size: 14px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.idi-pbtn.principal { background: var(--amarelo); color: var(--marinho); }
+.idi-pbtn.gravando { background: var(--vermelho); color: #fff; }
+.idi-pbtn:disabled { opacity: 0.55; }
+.idi-ponto { width: 10px; height: 10px; border-radius: 50%; background: #fff; animation: idi-pisca 1s infinite; }
+@keyframes idi-pisca { 50% { opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) { .idi-ponto { animation: none; } }
+.idi-pratica-rodape { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--texto-sec); }
+.idi-pratica-rodape button { min-height: 36px; font-weight: 600; font-size: 14px; color: var(--azul); }

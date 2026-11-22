@@ -82,6 +82,40 @@ confere('sem conta: progresso fechado', anonVe.status >= 400 || (await anonVe.js
 await p.goto(URL + '#/perfil'); await p.waitForTimeout(2500);
 confere('Ajustes tem "Idiomas para viagem"', await p.getByText('Idiomas para viagem').isVisible());
 
+// --- Pratique a frase (microfone simulado) ---
+const bm = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'], proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const cm = await bm.newContext({ viewport: { width: 390, height: 900 }, permissions: ['microphone'] });
+const pm = await cm.newPage(); pm.on('pageerror', (e) => erros.push(`pratica: ${e.message}`));
+await pm.goto(URL + '#/idade'); await pm.locator('#nascimento').fill('15/03/1990'); await pm.getByRole('button', { name: /Continuar/ }).click(); await pm.waitForTimeout(1000);
+await pm.goto(URL + '#/idiomas/fr/m/restaurante'); await pm.waitForTimeout(3000);
+await pm.locator('.idi-aula').first().click(); await pm.waitForTimeout(1200);
+await pm.locator('button[aria-label^="Praticar:"]').first().click(); await pm.waitForTimeout(400);
+confere('prática abre na frase', (await pm.locator('.idi-pratica').count()) === 1 && await pm.getByText('Ouça, depois grave você falando a frase.').isVisible());
+await pm.getByRole('button', { name: 'Gravar minha voz' }).click(); await pm.waitForTimeout(1800);
+confere('grava com contador', /Gravando… \d+s de 10s/.test(await pm.locator('.idi-pratica-dica').innerText()));
+await pm.getByRole('button', { name: 'Parar' }).click(); await pm.waitForTimeout(1200);
+confere('depois de parar: ouvir a minha e ouvir as duas', await pm.getByRole('button', { name: 'Ouvir a minha' }).isVisible() && await pm.getByRole('button', { name: 'Ouvir as duas' }).isVisible());
+const tocou = await pm.evaluate(async () => { const b = [...document.querySelectorAll('button')].find((x) => x.textContent === 'Ouvir a minha'); b.click(); await new Promise((r) => setTimeout(r, 300)); return document.body.innerText.includes('Tocando…'); });
+confere('toca a própria gravação', tocou);
+await pm.waitForTimeout(2500);
+confere('pode gravar de novo', await pm.getByRole('button', { name: 'Gravar de novo' }).isVisible());
+await pm.getByRole('button', { name: 'Fechar', exact: true }).click(); await pm.waitForTimeout(300);
+confere('fechar apaga a prática', (await pm.locator('.idi-pratica').count()) === 0);
+const nadaEnviado = await pm.evaluate(() => performance.getEntriesByType('resource').every((r) => !/storage\/v1|upload/.test(r.name)));
+confere('gravação não é enviada para servidor', nadaEnviado);
+await bm.close();
+// Sem microfone (navegador sem dispositivo): explica e não trava.
+const bs = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const ps = await (await bs.newContext({ viewport: { width: 390, height: 900 } })).newPage();
+await ps.goto(URL + '#/idade'); await ps.locator('#nascimento').fill('15/03/1990'); await ps.getByRole('button', { name: /Continuar/ }).click(); await ps.waitForTimeout(1000);
+await ps.goto(URL + '#/idiomas/fr/m/restaurante'); await ps.waitForTimeout(3000);
+await ps.locator('.idi-aula').first().click(); await ps.waitForTimeout(1200);
+await ps.locator('button[aria-label^="Praticar:"]').first().click(); await ps.waitForTimeout(300);
+const bt = ps.getByRole('button', { name: 'Gravar minha voz' });
+if (await bt.count()) { await bt.click(); await ps.waitForTimeout(2000); }
+confere('sem microfone: mensagem clara', /bloqueado|não deixa gravar|Não deu para gravar/.test(await ps.locator('.idi-pratica-dica').innerText()));
+await bs.close();
+
 await limpar();
 console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
 await b.close(); process.exit(erros.length ? 1 : 0);

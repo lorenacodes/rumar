@@ -10,6 +10,7 @@ import { Abas } from '../../ui/abas';
 import { Check } from '../../ui/check';
 import { Info } from '../../ui/info';
 import { Voltar } from '../../ui/pecas';
+import { Praticar } from './Praticar';
 import '../../styles/idiomas.css';
 
 const CHAVE = 'bovair.idioma';
@@ -84,6 +85,8 @@ export function Idiomas() {
   const idioma: CodigoIdioma = ehIdioma(cod) ? cod : 'en';
   const { dados, feitas, logada, alternar } = useTrilha(idioma);
   const [previa, setPrevia] = useState<string | null>(null);
+  const [praticando, setPraticando] = useState<string | null>(null);
+  useEffect(() => setPraticando(null), [aulaId]);
   useEffect(() => { if (ehIdioma(cod)) lembrar(cod); }, [cod]);
   if (!ehIdioma(cod)) return <Navigate to="/idiomas" replace />;
 
@@ -128,14 +131,21 @@ export function Idiomas() {
             <li key={f.orig}>
               <div className="idi-frase-topo">
                 <span lang={idioma} className="idi-orig">{f.orig}</span>
-                {voz ? (
-                  <button type="button" className="r-btn idi-ouvir" aria-label={`Ouvir: ${f.orig}`} onClick={() => falar(f.orig, idioma)}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" /></svg>
+                <span className="idi-frase-acoes">
+                  {voz ? (
+                    <button type="button" className="r-btn idi-ouvir" aria-label={`Ouvir: ${f.orig}`} onClick={() => void falar(f.orig, idioma)}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" /></svg>
+                    </button>
+                  ) : null}
+                  <button type="button" className={`r-btn idi-ouvir${praticando === f.orig ? ' ativo' : ''}`} aria-label={`Praticar: ${f.orig}`} aria-expanded={praticando === f.orig}
+                    onClick={() => setPraticando(praticando === f.orig ? null : f.orig)}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></svg>
                   </button>
-                ) : null}
+                </span>
               </div>
               <span className="idi-pron">Pronúncia: {f.pron}</span>
               <span className="idi-pt">{f.pt}</span>
+              {praticando === f.orig ? <Praticar texto={f.orig} idioma={idioma} aoFechar={() => setPraticando(null)} /> : null}
             </li>
           ))}
         </ul>
@@ -147,7 +157,7 @@ export function Idiomas() {
               <b>{d.quem}</b>
               <span lang={idioma} className="idi-orig-p">{d.orig}</span>
               <span className="idi-pt">{d.pt}</span>
-              {voz ? <button type="button" className="r-btn idi-ouvir pequeno" aria-label={`Ouvir: ${d.orig}`} onClick={() => falar(d.orig, idioma)}>Ouvir</button> : null}
+              {voz ? <button type="button" className="r-btn idi-ouvir pequeno" aria-label={`Ouvir: ${d.orig}`} onClick={() => void falar(d.orig, idioma)}>Ouvir</button> : null}
             </li>
           ))}
         </ol>
@@ -167,7 +177,7 @@ export function Idiomas() {
         {proxima ? (
           <button type="button" className="r-btn idi-proxima" onClick={() => navegar(`/idiomas/${idioma}/aula/${proxima.id}${sufixo}`)}>Próxima aula: {proxima.titulo} ›</button>
         ) : null}
-        <p className="idi-nota">A pronúncia escrita é aproximada.{voz ? ' Toque em ouvir para escutar com a voz do aparelho.' : ''}</p>
+        <p className="idi-nota">A pronúncia escrita é aproximada. Toque no microfone para gravar você falando e comparar.</p>
       </article>,
       { para: `/idiomas/${idioma}/m/${mod.id}${sufixo}`, rotulo: mod.nome },
     );
@@ -207,7 +217,7 @@ export function Idiomas() {
                     {a.frases.slice(0, 3).map((f) => (
                       <li key={f.orig}>
                         <span><b lang={idioma}>{f.orig}</b>{f.pt}</span>
-                        {temVoz() ? <button type="button" className="r-btn idi-ouvir" aria-label={`Ouvir: ${f.orig}`} onClick={() => falar(f.orig, idioma)}>
+                        {temVoz() ? <button type="button" className="r-btn idi-ouvir" aria-label={`Ouvir: ${f.orig}`} onClick={() => void falar(f.orig, idioma)}>
                           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M16 9.5a3.5 3.5 0 0 1 0 5" /></svg>
                         </button> : null}
                       </li>

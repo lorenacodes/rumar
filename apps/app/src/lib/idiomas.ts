@@ -3,6 +3,9 @@
  * O conteúdo vem do banco (idioma_modulos, idioma_aulas; leitura pública). O progresso fica em
  * idioma_progresso, por pessoa (RLS: cada um só vê e muda o próprio).
  */
+import { Capacitor } from '@capacitor/core';
+import { QueueStrategy, TextToSpeech } from '@capacitor-community/text-to-speech';
+
 import { supabase } from './supabase';
 import { eu } from './viagens';
 
@@ -62,16 +65,37 @@ export async function marcarAula(aulaId: string, assistida: boolean): Promise<bo
 /** Percentual inteiro (0–100). */
 export const percentual = (feitas: number, total: number) => (total ? Math.round((feitas / total) * 100) : 0);
 
-/** Ouvir a frase com a voz do aparelho (quando o aparelho tem). */
-export const temVoz = () => typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
-export function falar(texto: string, idioma: CodigoIdioma): boolean {
+/** Ouvir a frase: no app Android/iOS, voz do sistema (plugin nativo); no navegador, a voz do navegador. */
+export const temVoz = () =>
+  Capacitor.isNativePlatform() || (typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined');
+
+/** Fala o texto e resolve quando termina (true) ou se não deu para falar (false). */
+export async function falar(texto: string, idioma: CodigoIdioma): Promise<boolean> {
+  const limpo = texto.replace(/\.\.\./g, ', ');
+  const voz = IDIOMAS.find((i) => i.codigo === idioma)!.voz;
+  if (Capacitor.isNativePlatform()) {
+    try {
+      await TextToSpeech.stop().catch(() => undefined);
+      await TextToSpeech.speak({ text: limpo, lang: voz, rate: 0.85, pitch: 1, volume: 1, category: 'playback', queueStrategy: QueueStrategy.Flush });
+      return true;
+    } catch { return false; }
+  }
   if (!temVoz()) return false;
-  const u = new SpeechSynthesisUtterance(texto.replace(/\.\.\./g, ', '));
-  u.lang = IDIOMAS.find((i) => i.codigo === idioma)!.voz;
-  u.rate = 0.85;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
-  return true;
+  return new Promise((resolve) => {
+    const u = new SpeechSynthesisUtterance(limpo);
+    u.lang = voz;
+    u.rate = 0.85;
+    u.onend = () => resolve(true);
+    u.onerror = () => resolve(false);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  });
+}
+
+/** Para qualquer fala em andamento (ao sair da aula ou começar a gravar). */
+export function pararFala() {
+  if (Capacitor.isNativePlatform()) void TextToSpeech.stop().catch(() => undefined);
+  else if (temVoz()) window.speechSynthesis.cancel();
 }
 
 export const linkVideoAula = (id: string) => `https://www.youtube.com/watch?v=${id}`;
