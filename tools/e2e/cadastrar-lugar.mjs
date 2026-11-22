@@ -1,0 +1,51 @@
+/** Cadastrar restaurante que não está no app (D-089): banco (regras) e tela (Descobrir → cadastro → avaliação). */
+import { chromium } from 'playwright';
+const URL = process.env.URL ?? 'http://localhost:8793/';
+const SENHA = process.env.E2E_SENHA ?? (() => { throw new Error('Defina E2E_SENHA'); })();
+const SB = 'https://iunrivtuhwaytmwclmui.supabase.co'; const PK = 'sb_publishable_d6lqjjWeuf81otJOT2xKFA_eWPaY0oG';
+const RECIFE = 'br-2611606';
+const erros = []; const confere = (r, ok) => { console.log(`   ${ok ? '✓' : '✗'} ${r}`); if (!ok) erros.push(r); };
+const ana = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: PK, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'e2e.ana@bovair.com.br', password: SENHA }) })).json();
+const rpc = async (nome, corpo, tok = ana.access_token) => { const r = await fetch(`${SB}/rest/v1/rpc/${nome}`, { method: 'POST', headers: { apikey: PK, Authorization: `Bearer ${tok ?? PK}`, 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) }); return { ok: r.ok, corpo: await r.json().catch(() => null) }; };
+const [d] = await (await fetch(`${SB}/rest/v1/destinos?select=lat,lon&id=eq.${RECIFE}`, { headers: { apikey: PK } })).json();
+const nome = `Teste E2E Tasca ${Date.now() % 100000}`;
+const base = { p_destino: RECIFE, p_nome: nome, p_categoria: 'restaurantes', p_lat: d.lat, p_lon: d.lon, p_endereco: 'Rua de Teste, 1' };
+
+const a = await rpc('cadastrar_lugar', base);
+confere('banco: cadastra e devolve o id', a.ok && /^usr-/.test(a.corpo));
+const b = await rpc('cadastrar_lugar', { ...base, p_nome: nome.toUpperCase(), p_lat: d.lat + 0.0003 });
+confere('banco: mesmo nome ali perto devolve o mesmo lugar (sem duplicar)', b.ok && b.corpo === a.corpo);
+confere('banco: sem conta é recusado', !(await rpc('cadastrar_lugar', base, null)).ok);
+confere('banco: ponto fora da cidade é recusado', !(await rpc('cadastrar_lugar', { ...base, p_nome: `${nome} 2`, p_lat: -23.55, p_lon: -46.63 })).ok);
+confere('banco: tipo que não é comida é recusado', !(await rpc('cadastrar_lugar', { ...base, p_nome: `${nome} 3`, p_categoria: 'museus' })).ok);
+const [l] = await (await fetch(`${SB}/rest/v1/lugares?select=*&id=eq.${a.corpo}`, { headers: { apikey: PK } })).json();
+confere('banco: quem cadastrou não aparece na tabela pública (LGPD)', l && !JSON.stringify(l).includes(ana.user.id) && l.confiabilidade === 'a_confirmar');
+confere('banco: desfazer o próprio cadastro', (await rpc('desfazer_cadastro_lugar', { p_lugar: a.corpo })).corpo === true);
+
+const nav = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+const p = await (await nav.newContext({ viewport: { width: 390, height: 900 } })).newPage();
+p.on('pageerror', (e) => erros.push(e.message));
+await p.goto(URL + '#/idade'); await p.locator('#nascimento').fill('15/03/1990'); await p.getByRole('button', { name: /Continuar/ }).click(); await p.waitForTimeout(800);
+await p.goto(URL + '#/entrar'); await p.locator('#email').fill('e2e.ana@bovair.com.br'); await p.locator('#senha').fill(SENHA); await p.getByRole('button', { name: /^Entrar/ }).click(); await p.waitForTimeout(4000);
+await p.goto(URL + `#/descobrir?d=${RECIFE}&ver=restaurantes`); await p.waitForTimeout(5000);
+const link = p.getByRole('link', { name: 'Cadastre aqui' });
+confere('Descobrir (restaurantes): "Não achou onde comeu? Cadastre aqui"', await link.waitFor({ timeout: 10000 }).then(() => true, () => false));
+await link.click(); await p.waitForTimeout(3000);
+confere('abre o cadastro', /cadastrar-lugar/.test(p.url()) && await p.getByRole('heading', { name: 'Cadastre onde você comeu.' }).isVisible());
+const botao = p.getByRole('button', { name: 'Cadastrar e avaliar' });
+confere('sem nome e sem ponto o botão fica desligado', await botao.isDisabled());
+await p.locator('#cad-nome').fill(`${nome} tela`);
+await p.getByRole('radio', { name: 'Bar' }).click();
+const mapa = p.getByRole('application', { name: /Mapa/ });
+await mapa.waitFor(); await p.waitForTimeout(2500);
+const caixa = await mapa.boundingBox();
+await p.mouse.click(caixa.x + caixa.width / 2, caixa.y + caixa.height / 2); await p.waitForTimeout(600);
+confere('tocar no mapa marca o ponto', await p.getByText('Marcado. Arraste o marcador para ajustar.').isVisible());
+await botao.click(); await p.waitForTimeout(5000);
+const id = (p.url().match(/lugar\/(usr-[a-z0-9]+)/) ?? [])[1];
+confere('depois de cadastrar abre a ficha do lugar', Boolean(id) && await p.getByText(`${nome} tela`).first().isVisible());
+confere('a avaliação já vem aberta', await p.locator('#avaliar').waitFor({ timeout: 8000 }).then(() => true, () => false));
+if (id) confere('limpeza: desfaz o cadastro de teste', (await rpc('desfazer_cadastro_lugar', { p_lugar: id })).corpo === true);
+
+console.log(erros.length ? `ERROS: ${erros.join(' | ')}` : 'Tudo certo.');
+await nav.close(); process.exit(erros.length ? 1 : 0);

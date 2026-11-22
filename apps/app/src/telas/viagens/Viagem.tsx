@@ -17,6 +17,7 @@ import { DESTINO_CURADORIA, enderecoCurto, lugarPorId, lugaresDoDestino } from '
 import { candidatosRoteiro, destinoPorId, type Destino } from '../../lib/lugares';
 import { mesclar, paraQuem } from '../../lib/grupo';
 import { calcular, faltaNoCusto, sugerirAjustes, textoFalta, type Precos } from '../../lib/orcamento';
+import { linkGoogleMaps, modoDaRota, type Rota } from '../../lib/rotas';
 import { afinidade, distanciaKm, NOME_CATEGORIA, rotaMapa, textoDistancia, type Gosto, type Lugar, type Periodo } from '../../lib/planejador';
 import { minhasAmizades, type Amizade } from '../../lib/social';
 import {
@@ -639,14 +640,20 @@ function AbaMapa({ v, dia, itens }: { v: ViagemCompleta; dia: number; itens: { i
   const naViagem = escolhido ? itens.some((x) => x.l.id === escolhido.id) : false;
   let somaKm = 0;
   for (let i = 0; i < doDia.length - 1; i++) if (temCoord(doDia[i]!.l) && temCoord(doDia[i + 1]!.l)) somaKm += distanciaKm(doDia[i]!.l as never, doDia[i + 1]!.l as never);
+  const [rota, setRota] = useState<Rota | null>(null);
+  const comCoord = doDia.filter((x) => temCoord(x.l)).map((x) => ({ lat: x.l.lat!, lon: x.l.lon! }));
+  const google = !todos ? linkGoogleMaps(comCoord, rota?.modo ?? modoDaRota(comCoord.map((c) => [c.lon, c.lat]))) : null;
   return (
     <section style={{ marginTop: '12px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{todos ? 'Todos os lugares conferidos da cidade' : `Dia ${dia}: ${doDia.length} paradas · ${textoDistancia(somaKm)} no total`}</span>
+        <span style={{ fontSize: '14px', color: 'var(--texto-sec)' }}>{todos ? 'Todos os lugares conferidos da cidade' : rota ? `Dia ${dia}: ${doDia.length} paradas · ${textoDistancia(rota.km)} ${rota.modo === 'a-pe' ? 'a pé' : 'de carro'}, cerca de ${rota.minutos < 60 ? `${rota.minutos} min` : `${Math.floor(rota.minutos / 60)} h ${rota.minutos % 60} min`}` : `Dia ${dia}: ${doDia.length} paradas · ${textoDistancia(somaKm)} no total`}</span>
         <button type="button" className="r-btn" onClick={() => (setTodos(!todos), setSel(null))} style={botaoTexto}>{todos ? 'Só o dia' : 'Explorar a cidade'}</button>
       </div>
-      <Mapa pontos={pontos} linha={!todos} altura="min(56vh, 420px)" aoEscolher={setSel} selecionado={sel} />
+      <Mapa pontos={pontos} linha={!todos} altura="min(56vh, 420px)" aoEscolher={setSel} selecionado={sel} aoRota={setRota} />
       <div style={{ fontSize: '12px', color: 'var(--texto-sec)', marginTop: '4px' }}>Mapa © OpenStreetMap · OpenFreeMap. Números = ordem da visita; H = hospedagem.</div>
+      {google ? (
+        <a href={google} target="_blank" rel="noreferrer" className="r-btn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '48px', marginTop: '10px', border: '2px solid var(--texto)', color: 'var(--texto)', font: "600 15px 'Open Sans'", textDecoration: 'none' }}>Abrir a rota no Google Maps</a>
+      ) : null}
       {escolhido ? (
         <div style={{ display: 'flex', gap: '10px', marginTop: '10px', padding: '10px', border: '1px solid var(--linha)' }}>
           <span style={{ width: '64px', flex: 'none' }}><FotoLugar id={escolhido.id} proporcao="1 / 1" credito={false} /></span>

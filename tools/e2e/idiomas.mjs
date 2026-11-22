@@ -59,6 +59,18 @@ confere('atalho de emergência abre o módulo', /Emergências/.test(await p.loca
 await p.locator('.idi-aula').first().click(); await p.waitForTimeout(1200);
 confere('aula tem botão de ouvir (voz do aparelho)', (await p.locator('.idi-ouvir').count()) > 0);
 confere('aula tem dica', await p.locator('.idi-dica').isVisible());
+{ // Vídeo do YouTube no topo da aula, antes das frases (pedido de 22/11), quando a aula tem vídeo.
+  const [comVideo] = await (await fetch(`${SB}/rest/v1/idioma_aulas?select=id,idioma&video_id=not.is.null&limit=1`, { headers: { apikey: PK } })).json();
+  const pv = await p.context().newPage();
+  await pv.goto(URL + `#/idiomas/${comVideo.idioma}/aula/${comVideo.id}`); await pv.waitForTimeout(3000);
+  const v = pv.locator('.idi-video-topo');
+  confere('aula com vídeo mostra a miniatura do YouTube', (await v.count()) === 1);
+  if (await v.count()) {
+    const yv = (await v.boundingBox()).y; const yf = (await pv.locator('.idi-frases').boundingBox()).y;
+    confere('vídeo do YouTube no topo da aula, antes das frases', yv < yf && /youtube\.com|youtu\.be/.test(await v.getAttribute('href')));
+  }
+  await pv.close();
+}
 await p.getByRole('radio', { name: /^Assistida/ }).click(); await p.waitForTimeout(1500);
 confere('marcou como assistida', (await p.getByRole('radio', { name: /^Assistida/ }).getAttribute('aria-checked')) === 'true');
 await p.reload(); await p.waitForTimeout(4000);

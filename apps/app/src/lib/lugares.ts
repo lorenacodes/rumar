@@ -64,6 +64,8 @@ export interface LugarBase {
   gratuito: boolean | null;
   foto: string | null;
   foto_pagina: string | null;
+  /** Autor e licença (fotos do Flickr via Openverse, D-088). */
+  foto_credito?: string | null;
   verificado: boolean;
   dados_de: string | null;
 }
@@ -157,7 +159,7 @@ export const NOME_PAIS: Record<string, string> = { BR: 'Brasil', FR: 'França', 
 export const NOME_TIPO_DESTINO: Record<string, string> = { praia: 'Praia', historica: 'Histórica', natureza: 'Natureza', gastronomia: 'Gastronomia', cultural: 'Cultural', rural: 'Rural', aventura: 'Aventura', entretenimento: 'Diversão' };
 
 // ---------------------------------------------------------------- lugares
-const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, verificado, dados_de, fama, curioso, dieta_opcoes, popularidade, destaque, historia, melhor_horario, local_preciso';
+const COLS = 'id, destino_id, fonte, fonte_id, nome, categoria, tipo, relevancia, lat, lon, endereco, bairro, telefone, site, horario, cozinha, estrelas, preco_min_centavos, preco_max_centavos, preco_moeda, preco_fonte, gratuito, foto, foto_pagina, foto_credito, verificado, dados_de, fama, curioso, dieta_opcoes, popularidade, destaque, historia, melhor_horario, local_preciso';
 const bases = new Map<string, LugarBase>();
 export const basePorId = (id: string) => bases.get(id) ?? null;
 
@@ -298,7 +300,7 @@ export async function pedirCidade(destino: string): Promise<boolean> {
 export function reporLugares(lista: LugarBase[]) { guardar(lista); }
 
 export async function lugaresPorIds(ids: string[]): Promise<LugarBase[]> {
-  const faltam = [...new Set(ids)].filter((id) => /^(osm|pesq|cnpj)-/.test(id) && !bases.has(id));
+  const faltam = [...new Set(ids)].filter((id) => /^(osm|pesq|cnpj|usr)-/.test(id) && !bases.has(id));
   for (let i = 0; i < faltam.length; i += 100) {
     // Inclui inativos: um lugar que saiu da fonte continua aparecendo na viagem de quem o escolheu.
     const { data } = await supabase.from('lugares').select(COLS).in('id', faltam.slice(i, i + 100));

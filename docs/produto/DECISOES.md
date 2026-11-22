@@ -1001,3 +1001,25 @@ contexto e o que muda. Decisões técnicas detalhadas vão para ADRs
 - Botão "Compartilhar" no roteiro: manda o roteiro inteiro em texto (dias, horários e lugares) pelo WhatsApp ou
   outro app; no navegador, copia. Sem hotel nem gastos. Nos concorrentes, exportar costuma ser pago (PDF no
   Wanderlog Pro).
+
+## D-088 — Fotos pelo nome (a busca por localização esgotou)
+- A busca por localização no Commons já tentou todos os turísticos (19 a 21/11) e parou de achar fotos novas.
+- Nova busca "Fotos livres": primeiro pelo nome do lugar na Commons (arquivo a até 3 km e que cite o lugar); depois
+  no Openverse (inclui Flickr), exigindo o lugar no título e a cidade no título ou nas etiquetas. Só licença livre;
+  autor e licença aparecem na foto (`foto_credito`).
+- Pracinhas e parquinhos de bairro (tipo "park" sem fama) saem da conta: eram 7.760 dos 13.875 "turísticos".
+- O Openverse é instável (erros 500/504): ao falhar muito, a rodada segue só com a Commons.
+
+## D-089 — Quem foi pode cadastrar o restaurante
+- No Descobrir (restaurantes, bares, cafés ou busca): "Não achou onde comeu? Cadastre aqui". Nome, tipo e ponto no
+  mapa; depois abre a ficha com a avaliação. Só restaurante, bar e café; o ponto precisa estar na cidade.
+- Mesmo nome a até ~150 m devolve o lugar existente. Limite de 10 por pessoa por dia. Desfazer em 24 h se ninguém
+  avaliou nem pôs no roteiro. Quem cadastrou fica numa tabela privada (não aparece para outros).
+- Base de todos os restaurantes: dados abertos do CNPJ (sem MEI, LGPD), já programado; falta o HF_TOKEN (5.4).
+
+## D-090 — Rota pelas ruas no mapa do dia
+- O mapa do dia desenha a rota pelas ruas (serviço gratuito de rotas do OpenStreetMap, sem chave): a pé até ~4 km
+  em linha reta, de carro acima disso; mostra km e tempo. Se o serviço falhar, volta à linha tracejada.
+- Botão "Abrir a rota no Google Maps" com as paradas do dia (até 10), para navegar de verdade. Sem custo.
+- Lugares curiosos: eventos trágicos (atentados, desastres, massacres, batalhas) saem; memoriais ficam. A coleta
+  aplica a mesma regra. O texto da ficha rola e os botões ficam sempre à vista. Vídeo da aula de idioma no topo.

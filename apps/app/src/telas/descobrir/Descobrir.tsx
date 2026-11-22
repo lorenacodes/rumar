@@ -337,6 +337,13 @@ export function Descobrir() {
                 ) : null}
               </div>
             ) : null}
+            {/* D-089: quem não achou o restaurante, bar ou café pode cadastrar e avaliar. */}
+            {!feed && !mapa && !carregando && destino && filtro !== 'salvos' && (termo || filtro === 'restaurantes' || filtro === 'bares' || filtro === 'cafes') ? (
+              <p style={{ margin: '16px 0 0', fontSize: '15px', color: 'var(--texto-sec)' }}>
+                Não achou onde comeu?{' '}
+                <a href={`#/cadastrar-lugar?d=${destino.id}${termo ? `&nome=${encodeURIComponent(termo)}` : ''}${filtro === 'bares' || filtro === 'cafes' ? `&tipo=${filtro}` : ''}`} style={{ color: 'var(--azul)', fontWeight: 600 }}>Cadastre aqui</a>
+              </p>
+            ) : null}
             <div style={{ height: '24px' }} />
           </>
         ) : null}

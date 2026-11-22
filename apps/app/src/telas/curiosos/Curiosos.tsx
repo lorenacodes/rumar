@@ -24,6 +24,7 @@ function Ficha({ c, n, primeira }: { c: Curiosidade; n: number; primeira: boolea
         {c.foto_pagina ? <a href={c.foto_pagina} target="_blank" rel="noreferrer">Foto: Wikimedia Commons</a> : null}
       </div>
       <div className="ficha-etiqueta">
+        <div className="ficha-texto">
         <div className="ficha-numero"><span>Nº {String(n).padStart(4, '0')}</span><span>{c.pais ?? ''}</span></div>
         <h2 className="ficha-nome">{c.nome}</h2>
         {c.descricao ? <div className="ficha-desc">{c.descricao}</div> : null}
@@ -34,6 +35,7 @@ function Ficha({ c, n, primeira }: { c: Curiosidade; n: number; primeira: boolea
           </p>
         ) : null}
         <OQueFazerLa c={c} />
+        </div>
         <div className="ficha-acoes">
           <CoracaoQueroIr marcado={quero} aoTocar={() => void alternarSalvo(c.id)} nome={c.nome} tamanho={40} />
           <button type="button" className="r-btn ficha-acao" onClick={() => void compartilharCuriosidade(c).then((r) => { if (r === 'copiado') { setAviso('Texto copiado'); setTimeout(() => setAviso(null), 2000); } })}>Compartilhar</button>

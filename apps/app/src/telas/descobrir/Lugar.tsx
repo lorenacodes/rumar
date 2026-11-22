@@ -134,7 +134,7 @@ export function Lugar() {
   const navegar = useNavigate();
   // Guarda QUAL lugar já foi buscado: ao ir de um lugar para outro sem recarregar, busca o novo (antes ia para o Descobrir).
   const [buscado, setBuscado] = useState<string | null>(null);
-  const carregado = !/^(osm|pesq|cnpj)-/.test(id) || Boolean(basePorId(id)) || buscado === id;
+  const carregado = !/^(osm|pesq|cnpj|usr)-/.test(id) || Boolean(basePorId(id)) || buscado === id;
   useEffect(() => {
     if (carregado) return;
     let vivo = true;

@@ -106,10 +106,14 @@ for (let k = 0; k < qEstados.length; k += 50) {
   for (const q of qEstados.slice(k, k + 50)) estados.set(q, d.entities?.[q]?.labels?.en?.value ?? '');
   await espera(400);
 }
+const EVENTO_TRAGICO = /^(acidente|atentado|ataques?|batalha d|desastre|explosão|incêndio d|inundação|massacre|naufrágio|terremoto|tsunami|bombardeio|cerco d|queda d)|(disaster|bombing|attack|massacre|explosion|riot|shooting|crash|tragedy|sinking|battle of)/i;
 for (const c of itens) {
   if ((c._estados ?? []).some((q) => /closed|destroyed|abandoned|disused|demolished|out of service|decommissioned|not open/i.test(estados.get(q) ?? ''))) c.visitavel = false;
   delete c._estados;
   if (c.visitavel === undefined) c.visitavel = true;
+  // Tragédias como espetáculo não entram (pedido da fundadora, 22/11): o evento sai, o memorial fica.
+  if (EVENTO_TRAGICO.test(c.nome) && !/memorial|monument|museu|museum/i.test(c.nome)) c.visitavel = false;
+  if (/disaster|attack|explosion|bombing|aftermath|burning|corpse|massacre/i.test(decodeURIComponent(c.foto ?? ''))) c.visitavel = false;
 }
 console.log(`${itens.filter((c) => !c.visitavel).length} fora por não estarem abertos à visitação; ${itens.filter((c) => c.visitantes_ano).length} com visitantes por ano; ${itens.filter((c) => c.guia).length} com página no Wikivoyage`);
 console.log(`${itens.length} curiosidades com foto; ${itens.filter((i) => i.titulo).length} com artigo em português`);

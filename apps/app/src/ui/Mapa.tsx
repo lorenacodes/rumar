@@ -6,6 +6,8 @@ import urlDoWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import type { Map as MapaLibre, Marker } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
 
+import { rotaPelasRuas, type Rota } from '../lib/rotas';
+
 /**
  * Mapa interativo de verdade: MapLibre (código aberto) com o mapa do OpenFreeMap
  * (OpenStreetMap, gratuito e sem chave). Marcadores numerados na ordem da visita, linha do
@@ -23,10 +25,11 @@ export interface Ponto {
 const ESTILO = 'https://tiles.openfreemap.org/styles/positron';
 const COR = { parada: '#0B1F4B', hotel: '#1F4FD8', lugar: '#4A5575', sugerido: '#8A5A00' } as const;
 
-export function Mapa({ pontos, linha = false, altura = '320px', aoEscolher, selecionado }: { pontos: Ponto[]; linha?: boolean; altura?: string; aoEscolher?: (id: string) => void; selecionado?: string | null }) {
+export function Mapa({ pontos, linha = false, altura = '320px', aoEscolher, selecionado, aoRota }: { pontos: Ponto[]; linha?: boolean; altura?: string; aoEscolher?: (id: string) => void; selecionado?: string | null; aoRota?: (r: Rota | null) => void }) {
   const caixa = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaLibre | null>(null);
   const marcadores = useRef<Marker[]>([]);
+  const pedidoRota = useRef(0);
   const [erro, setErro] = useState(false);
   const [pronto, setPronto] = useState(false);
   const chave = JSON.stringify(pontos.map((p) => [p.id, p.lat, p.lon, p.rotulo, p.tipo])) + linha;
@@ -75,13 +78,26 @@ export function Mapa({ pontos, linha = false, altura = '320px', aoEscolher, sele
         return new maplibregl.Marker({ element: el }).setLngLat([p.lon, p.lat]).addTo(m);
       });
       const coords = pontos.filter((p) => p.tipo !== 'hotel').map((p) => [p.lon, p.lat] as [number, number]);
-      const fonte = m.getSource('percurso') as { setData?: (d: unknown) => void } | undefined;
-      const dados = { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: linha ? coords : [] } };
-      if (fonte?.setData) fonte.setData(dados);
-      else {
-        m.addSource('percurso', { type: 'geojson', data: dados as never });
-        m.addLayer({ id: 'percurso', type: 'line', source: 'percurso', paint: { 'line-color': '#1F4FD8', 'line-width': 3, 'line-dasharray': [2, 1.5] } });
-      }
+      // Primeiro a linha tracejada entre as paradas; quando a rota pelas ruas chega, troca por ela (linha cheia).
+      const desenhar = (c: [number, number][], ruas: boolean) => {
+        const fonte = m.getSource('percurso') as { setData?: (d: unknown) => void } | undefined;
+        const dados = { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: c } };
+        if (fonte?.setData) fonte.setData(dados);
+        else {
+          m.addSource('percurso', { type: 'geojson', data: dados as never });
+          m.addLayer({ id: 'percurso', type: 'line', source: 'percurso', layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': '#1F4FD8', 'line-width': 4, 'line-opacity': 0.85 } });
+        }
+        m.setPaintProperty('percurso', 'line-dasharray', ruas ? [1, 0] : [2, 1.5]);
+      };
+      desenhar(linha ? coords : [], false);
+      const pedido = ++pedidoRota.current;
+      if (linha && coords.length >= 2) {
+        void rotaPelasRuas(coords).then((r) => {
+          if (pedido !== pedidoRota.current || !mapa.current) return;
+          if (r) desenhar(r.coords, true);
+          aoRota?.(r);
+        });
+      } else aoRota?.(null);
       if (pontos.length) {
         const b = new maplibregl.LngLatBounds();
         for (const p of pontos) b.extend([p.lon, p.lat]);

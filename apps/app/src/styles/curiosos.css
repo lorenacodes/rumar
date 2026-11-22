@@ -62,7 +62,14 @@
   color: var(--texto);
   box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
   border-top: 4px solid transparent;
+  /* O texto rola dentro da etiqueta; os botões (salvar, compartilhar) ficam sempre à vista. */
+  flex: none;
+  max-height: 64%;
+  display: flex;
+  flex-direction: column;
 }
+.ficha-foto { min-height: 30%; }
+.ficha-texto { overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
 .ficha-numero {
   display: flex;
   justify-content: space-between;
@@ -74,7 +81,7 @@
   font: 600 22px/27px 'Lexend Exa';
   letter-spacing: -0.03em;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -98,13 +105,10 @@
   line-height: 20px;
   margin-top: 6px;
   color: var(--texto-sec);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 .ficha-sabia b { color: var(--carimbo); }
 .ficha-acoes {
+  flex: none;
   display: flex;
   gap: 2px;
   margin: 6px -6px 0;

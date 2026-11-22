@@ -17,6 +17,7 @@
 //   { acao: 'dieta_gravar', itens: [{ id, dieta_opcoes }] }    → opções de dieta informadas no mapa (D-042)
 //   { acao: 'fotos_pendentes', destinos?, prefixo?, ufs?: [de, ate], turisticos?, visitados?, limite } → lugares sem foto ainda não procurados (D-057)
 //   { acao: 'fotos_gravar', itens: [{ id, foto?, foto_pagina? }] } → foto do Commons achada por perto (ou só "procurado")
+//   { acao: 'fotos_gravar_livres', itens: [{ id, foto?, foto_pagina?, foto_credito? }] } → foto livre achada pelo nome (Commons ou Flickr via Openverse, D-088)
 //   { acao: 'fotos_revisar', depois?, limite }                 → fotos achadas pela busca (para revisar com a regra atual)
 //   { acao: 'fotos_limpar', ids }                              → tira fotos achadas que não passam na regra (volta para a busca)
 //   { acao: 'sem_bairro', destino_id, limite }                 → lugares sem bairro (id, lat, lon)
@@ -204,9 +205,26 @@ Deno.serve(async (req) => {
     }
     return json({ ok, procurados: itens.length });
   }
+  if (p.acao === 'fotos_gravar_livres') {
+    // D-088: fotos livres do Openverse (Flickr ou Commons) achadas pelo nome, com crédito de autor e licença.
+    const FOTO = /^https:\/\/((live|farm\d+)\.staticflickr\.com|(upload|commons)\.wikimedia\.org)\//;
+    const PAGINA = /^https:\/\/((www\.)?flickr\.com|commons\.wikimedia\.org)\//;
+    const itens = ((p.itens ?? []) as { id: string; foto?: string; foto_pagina?: string; foto_credito?: string }[]).slice(0, 500);
+    const agora = new Date().toISOString();
+    const valida = (i: { foto?: string; foto_pagina?: string; foto_credito?: string }) => typeof i.foto === 'string' && FOTO.test(i.foto) && typeof i.foto_pagina === 'string' && PAGINA.test(i.foto_pagina) && typeof i.foto_credito === 'string' && i.foto_credito.length > 0;
+    const sem = itens.filter((i) => !valida(i)).map((i) => String(i.id));
+    for (let k = 0; k < sem.length; k += 200) await db.from('lugares').update({ foto_ov_tentada_em: agora }).in('id', sem.slice(k, k + 200));
+    let ok = 0;
+    for (const i of itens.filter(valida)) {
+      const { data } = await db.from('lugares').update({ foto: i.foto!.slice(0, 400), foto_pagina: i.foto_pagina!.slice(0, 400), foto_credito: i.foto_credito!.slice(0, 160), foto_busca: true, foto_ov_tentada_em: agora }).eq('id', String(i.id)).is('foto', null).select('id');
+      if (data?.length) ok++;
+    }
+    return json({ ok, procurados: itens.length });
+  }
   if (p.acao === 'fotos_revisar') {
     const limite = Math.min(Math.max(Number(p.limite) || 1000, 1), 1000);
-    let q = db.from('lugares').select('id, nome, foto').eq('foto_busca', true).order('id').limit(limite);
+    // Só as do Commons (a revisão confere o nome do arquivo); as do Openverse são conferidas na busca.
+    let q = db.from('lugares').select('id, nome, foto').eq('foto_busca', true).like('foto', 'https://commons.wikimedia.org/%').order('id').limit(limite);
     if (typeof p.depois === 'string') q = q.gt('id', p.depois);
     const { data, error } = await q;
     if (error) return json({ erro: error.message }, 500);
@@ -216,7 +234,7 @@ Deno.serve(async (req) => {
     const ids = ((p.ids ?? []) as unknown[]).filter((i): i is string => typeof i === 'string').slice(0, 1000);
     let ok = 0;
     for (let k = 0; k < ids.length; k += 200) {
-      const { data } = await db.from('lugares').update({ foto: null, foto_pagina: null, foto_busca: false, foto_tentada_em: null }).eq('foto_busca', true).in('id', ids.slice(k, k + 200)).select('id');
+      const { data } = await db.from('lugares').update({ foto: null, foto_pagina: null, foto_credito: null, foto_busca: false, foto_tentada_em: null }).eq('foto_busca', true).in('id', ids.slice(k, k + 200)).select('id');
       ok += data?.length ?? 0;
     }
     return json({ ok });

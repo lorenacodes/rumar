@@ -67,6 +67,7 @@ const sob = <T extends Record<string, unknown>>(carregar: () => Promise<T>, nome
   lazy(async () => ({ default: (await carregar())[nome] as ComponentType<Record<string, unknown>> }));
 const Descobrir = sob(() => import('./telas/descobrir/Descobrir'), 'Descobrir');
 const Lugar = sob(() => import('./telas/descobrir/Lugar'), 'Lugar');
+const CadastrarLugar = sob(() => import('./telas/descobrir/CadastrarLugar'), 'CadastrarLugar');
 const Destinos = sob(() => import('./telas/destinos/Destinos'), 'Destinos');
 const Pessoa = sob(() => import('./telas/social/Pessoa'), 'Pessoa');
 const Social = sob(() => import('./telas/social/Social'), 'Social');
@@ -165,6 +166,7 @@ const filhos: RouteObject[] = [
   { path: '/descobrir', element: <Descobrir /> },
   { path: '/curiosos', element: <Curiosos /> },
   { path: '/lugar/:id', element: <Lugar /> },
+  { path: '/cadastrar-lugar', element: <CadastrarLugar /> },
   { path: '/roteiro', element: <Navigate to="/viagens" replace /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];

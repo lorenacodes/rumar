@@ -84,7 +84,7 @@
       Google Cloud; com o teto de 900/mês já configurado o custo esperado é R$ 0. Passos: Faturamento → ativar
       **Places API (New)** → criar chave restrita → alerta de US$ 5 → Secrets → `GOOGLE_PLACES_KEY`.
 
-- [ ] **5.4 Hugging Face (grátis, 5 min) — PRIORIDADE desta seção: milhares de restaurantes e bares do CNPJ.** A Receita não responde ao
+- [ ] **5.4 Hugging Face (grátis, 5 min) — PRIORIDADE MÁXIMA (22/11): é o que põe todos os restaurantes, bares e padarias com CNPJ no app.** A Receita não responde ao
       GitHub; a cópia dos dados no Hugging Face exige conta. huggingface.co → criar conta → abrir
       huggingface.co/datasets/cnpjaberto/cnpj-dados-receita-brasil-2026-09 → aceitar os termos (se pedir) →
       Settings → Access Tokens → New token (tipo **Read**) → GitHub do repositório → Settings → Secrets and

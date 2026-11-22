@@ -104,7 +104,7 @@ export function temFoto(nome: string): boolean {
 export function FotoLugar({ id, proporcao = '16 / 9', credito = true, compacto = false }: { id: string; proporcao?: string; credito?: boolean; compacto?: boolean }) {
   const tem = temFoto(id);
   const base = !tem ? basePorId(id) : null;
-  if (base?.foto) return <FotoDaBase url={base.foto} pagina={base.foto_pagina} nome={base.nome} proporcao={proporcao} credito={credito} />;
+  if (base?.foto) return <FotoDaBase url={base.foto} pagina={base.foto_pagina} creditoTexto={base.foto_credito ?? null} nome={base.nome} proporcao={proporcao} credito={credito} />;
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: proporcao, overflow: 'hidden', background: tem ? 'linear-gradient(155deg,#1F4FD8,#8FB0F5 55%,var(--amarelo))' : 'var(--cartao-2)' }}>
       {tem ? (
@@ -125,14 +125,14 @@ export function FotoLugar({ id, proporcao = '16 / 9', credito = true, compacto =
   );
 }
 
-/** Foto de um lugar da base (Wikimedia Commons), com link para autor e licença. */
-function FotoDaBase({ url, pagina, nome, proporcao, credito }: { url: string; pagina: string | null; nome: string; proporcao: string; credito: boolean }) {
+/** Foto de um lugar da base (Wikimedia Commons ou Flickr), com link para autor e licença. */
+function FotoDaBase({ url, pagina, creditoTexto, nome, proporcao, credito }: { url: string; pagina: string | null; creditoTexto: string | null; nome: string; proporcao: string; credito: boolean }) {
   const [falhou, setFalhou] = useState(false);
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: proporcao, overflow: 'hidden', background: 'var(--cartao-2)' }}>
       {!falhou ? <img src={url} alt={`Foto de ${nome}`} loading="lazy" onError={() => setFalhou(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(1.12) contrast(1.04)' }} /> : null}
       {credito && pagina && !falhou ? (
-        <a href={pagina} target="_blank" rel="noreferrer" style={{ position: 'absolute', right: 0, bottom: 0, padding: '2px 6px', background: 'rgba(0,0,0,.55)', color: '#fff', fontSize: '11px' }}>Foto: Wikimedia Commons (autor e licença)</a>
+        <a href={pagina} target="_blank" rel="noreferrer" style={{ position: 'absolute', right: 0, bottom: 0, padding: '2px 6px', background: 'rgba(0,0,0,.55)', color: '#fff', fontSize: '11px' }}>{creditoTexto ? `Foto: ${creditoTexto}` : 'Foto: Wikimedia Commons (autor e licença)'}</a>
       ) : null}
     </div>
   );

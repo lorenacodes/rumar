@@ -78,6 +78,27 @@ function Status({ aula, feita, logada, aoMudar, grande }: { aula: AulaIdioma; fe
 }
 
 /** /idiomas/:idioma (lista de módulos), /idiomas/:idioma/m/:modulo e /idiomas/:idioma/aula/:aula. */
+/** Prévia de uma aula: a situação, 3 frases com áudio e o atalho para a aula completa. */
+function Previa({ aula: a, idioma, abrir }: { aula: AulaIdioma; idioma: CodigoIdioma; abrir: () => void }) {
+  return (
+    <div id={`previa-${a.id}`} className="idi-previa" aria-label={`Prévia: ${a.titulo}`}>
+      <p>{a.contexto}</p>
+      <ul>
+        {a.frases.slice(0, 3).map((f) => (
+          <li key={f.orig}>
+            <span><b lang={idioma}>{f.orig}</b>{f.pt}</span>
+            {temVoz() ? <button type="button" className="r-btn idi-ouvir" aria-label={`Ouvir: ${f.orig}`} onClick={() => void falar(f.orig, idioma)}>
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M16 9.5a3.5 3.5 0 0 1 0 5" /></svg>
+            </button> : null}
+          </li>
+        ))}
+      </ul>
+      <span className="idi-previa-mais">+ {a.frases.length - 3 > 0 ? `${a.frases.length - 3} ${a.frases.length - 3 === 1 ? 'frase' : 'frases'}, ` : ''}diálogo e dica na aula completa</span>
+      <button type="button" className="r-btn idi-proxima" onClick={abrir}>Abrir a aula completa ›</button>
+    </div>
+  );
+}
+
 export function Idiomas() {
   const { idioma: cod = '', modulo: moduloId, aula: aulaId } = useParams();
   const [params] = useSearchParams();
@@ -124,6 +145,16 @@ export function Idiomas() {
         <h1 className="idi-h1">{aula.titulo}</h1>
         <div className="idi-sec">{aula.duracao_min} min</div>
         <p className="idi-contexto">{aula.contexto}</p>
+        {aula.video_id ? (
+          // Vídeo no topo da aula (pedido de 22/11: lá embaixo a pessoa nem via).
+          <a className="idi-video-topo" href={linkVideoAula(aula.video_id)} target="_blank" rel="noreferrer" aria-label={`Ver o vídeo da aula no YouTube: ${aula.titulo}`}>
+            <span className="idi-video-img">
+              <img src={miniaturaAula(aula.video_id)} alt="" loading="lazy" />
+              <span className="idi-play" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z" /></svg></span>
+            </span>
+            <span className="idi-video-txt"><b>Vídeo da aula</b> Escolhido a dedo. Abre no YouTube.</span>
+          </a>
+        ) : null}
 
         <h2 className="idi-h2">Frases essenciais</h2>
         <ul className="idi-frases">
@@ -164,12 +195,6 @@ export function Idiomas() {
 
         <div className="idi-dica"><b>Dica</b>{aula.dica}</div>
 
-        {aula.video_id ? (
-          <a className="idi-video" href={linkVideoAula(aula.video_id)} target="_blank" rel="noreferrer">
-            <img src={miniaturaAula(aula.video_id)} alt="" loading="lazy" />
-            <span><b>Vídeo para praticar</b>Escolhido a dedo. Abre no YouTube.</span>
-          </a>
-        ) : null}
 
         <h2 className="idi-h2">Você já viu esta aula?</h2>
         <Status aula={aula} feita={feitas.has(aula.id)} logada={logada} aoMudar={(id, v) => void alternar(id, v)} grande />
@@ -210,23 +235,7 @@ export function Idiomas() {
               <button type="button" className="r-btn idi-ver-previa" aria-expanded={previa === a.id} aria-controls={`previa-${a.id}`} onClick={() => setPrevia(previa === a.id ? null : a.id)}>
                 {previa === a.id ? 'Fechar prévia' : 'Prévia'}
               </button>
-              {previa === a.id ? (
-                <div id={`previa-${a.id}`} className="idi-previa" aria-label={`Prévia: ${a.titulo}`}>
-                  <p>{a.contexto}</p>
-                  <ul>
-                    {a.frases.slice(0, 3).map((f) => (
-                      <li key={f.orig}>
-                        <span><b lang={idioma}>{f.orig}</b>{f.pt}</span>
-                        {temVoz() ? <button type="button" className="r-btn idi-ouvir" aria-label={`Ouvir: ${f.orig}`} onClick={() => void falar(f.orig, idioma)}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z" /><path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M16 9.5a3.5 3.5 0 0 1 0 5" /></svg>
-                        </button> : null}
-                      </li>
-                    ))}
-                  </ul>
-                  <span className="idi-previa-mais">+ {a.frases.length - 3 > 0 ? `${a.frases.length - 3} ${a.frases.length - 3 === 1 ? 'frase' : 'frases'}, ` : ''}diálogo e dica na aula completa</span>
-                  <button type="button" className="r-btn idi-proxima" onClick={() => navegar(`/idiomas/${idioma}/aula/${a.id}${sufixo}`)}>Abrir a aula completa ›</button>
-                </div>
-              ) : null}
+              {previa === a.id ? <Previa aula={a} idioma={idioma} abrir={() => navegar(`/idiomas/${idioma}/aula/${a.id}${sufixo}`)} /> : null}
             </li>
           ))}
         </ul>
@@ -247,6 +256,7 @@ export function Idiomas() {
           <button key={i.codigo} type="button" role="tab" aria-selected={i.codigo === idioma} className="r-btn" onClick={() => navegar(`/idiomas/${i.codigo}${sufixo}`, { replace: true })}>{i.nome}</button>
         ))}
       </div>
+
 
       {emergencia ? (
         <button type="button" className="r-btn idi-emergencia" onClick={() => navegar(`/idiomas/${idioma}/m/${emergencia.id}${sufixo}`)}>

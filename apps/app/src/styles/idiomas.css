@@ -99,3 +99,9 @@
 @media (prefers-reduced-motion: reduce) { .idi-ponto { animation: none; } }
 .idi-pratica-rodape { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--texto-sec); }
 .idi-pratica-rodape button { min-height: 36px; font-weight: 600; font-size: 14px; color: var(--azul); }
+.idi-video-topo { display: block; margin-top: 14px; color: var(--texto); text-decoration: none; }
+.idi-video-img { position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--fundo-escuro); }
+.idi-video-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idi-play { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: rgba(0,0,0,.65); color: #fff; display: flex; align-items: center; justify-content: center; }
+.idi-video-txt { display: block; margin-top: 6px; font-size: 13px; color: var(--texto-sec); }
+.idi-video-txt b { color: var(--texto); font-size: 14px; }
