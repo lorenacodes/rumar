@@ -8,7 +8,7 @@ on:
       amostra:
         description: 'Só mostrar N escolhas, sem gravar (0 = gravar de verdade)'
         required: false
-        default: '15'
+        default: '30'
       regiao:
         description: 'nordeste | sudeste | sul | centro-oeste | norte'
         required: false
