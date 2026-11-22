@@ -74,10 +74,6 @@
 
 ## 5. Chaves que ligam o que já está pronto
 
-- [ ] **5.1 YouTube (grátis, 5 min)** — liga as aulas de idioma específicas por tema (hoje a tela mostra "Elas
-      aparecem aqui em breve"). console.cloud.google.com → projeto "Bo Vair" → APIs e serviços → Biblioteca →
-      **YouTube Data API v3** → Ativar → Credenciais → Criar chave de API → Restringir a essa API.
-      Supabase → Edge Functions → Secrets → `YOUTUBE_API_KEY`. Me avise e eu confiro os vídeos escolhidos.
 - [ ] **5.2 LiteAPI (hotéis)** — Secrets → `LITEAPI_KEY` (a de teste primeiro; depois uma de produção nova,
       porque a de teste apareceu num print). Liga a busca de hotéis com preço.
 - [ ] **5.3 (Opcional) Google Places** — fotos de restaurantes, que a Wikimedia quase não tem. Precisa de cartão no
@@ -145,6 +141,8 @@
 - **Senha das contas de teste:** fica fora do repositório. Numa conversa nova, eu gero outra se precisar rodar os testes.
 
 ## Já feito
+
+- [x] 5.1 Chave do YouTube salva no Supabase (22/11); aulas com vídeos escolhidos a dedo.
 - [x] Nome "Bo Vair" livre no INPI (15/11).
 - [x] Supabase Pro pago (16/11).
 - [x] Mudanças no banco aprovadas e aplicadas (praia, café, roteiro público, álbum, segurança) — 19/11.
