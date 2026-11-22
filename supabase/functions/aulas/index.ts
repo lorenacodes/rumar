@@ -45,7 +45,7 @@ async function buscar(chave: string, idioma: string, tema: string) {
   const { nome, palavras } = IDIOMAS[idioma]!;
   const q = `${nome} para viajantes ${TEMAS[tema]}`;
   const s = await fetch(`${API}/search?${new URLSearchParams({ part: 'snippet', type: 'video', maxResults: '20', q, relevanceLanguage: 'pt', regionCode: 'BR', safeSearch: 'strict', videoEmbeddable: 'true', key: chave })}`);
-  if (!s.ok) throw new Error(`busca ${s.status}`);
+  if (!s.ok) throw new Error(`busca ${s.status}: ${String((await s.json().catch(() => ({})))?.error?.message ?? '').slice(0, 160)}`);
   const ids = ((await s.json()).items ?? []).map((i: { id: { videoId: string } }) => i.id.videoId).filter(Boolean);
   if (!ids.length) return [];
   const v = await fetch(`${API}/videos?${new URLSearchParams({ part: 'snippet,contentDetails,statistics', id: ids.join(','), key: chave })}`);
@@ -73,7 +73,8 @@ Deno.serve(async (req) => {
   const { idioma } = await req.json().catch(() => ({ idioma: '' }));
   if (!IDIOMAS[idioma]) return json({ erro: 'idioma' }, 400);
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
-  const chave = Deno.env.get('YOUTUBE_API_KEY');
+  // Tira espaços, quebras de linha e aspas que às vezes vêm junto ao colar no painel.
+  const chave = Deno.env.get('YOUTUBE_API_KEY')?.trim().replace(/^["']+|["']+$/g, '') || undefined;
   const { data: cache } = await db.from('aulas_video').select('*').eq('idioma', idioma);
   const limite = Date.now() - CACHE_DIAS * 86_400_000;
   const vencidos = Object.keys(TEMAS).filter((t) => !(cache ?? []).some((c) => c.tema === t && new Date(c.buscado_em).getTime() > limite));
