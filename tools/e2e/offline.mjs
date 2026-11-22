@@ -23,6 +23,8 @@ const nomeLugar = (await p.locator('ol[aria-label^="Paradas"] b, ol[aria-label^=
 confere('guardou a viagem no aparelho', await p.evaluate(() => Object.keys(localStorage).some((k) => k.startsWith('bovair.offline.'))));
 await ctx.setOffline(true);
 await p.goto(URL + '#/viagens'); await p.waitForTimeout(2500);
+// A viagem de teste pode já ter passado: abre "Já feitas" se ela não estiver à vista.
+if (!(await p.getByRole('button', { name: nomeDestino }).count())) await p.getByText(/^Já feitas/).first().click().catch(() => {}), await p.waitForTimeout(800);
 confere('sem internet: a lista mostra a viagem guardada', (await p.getByRole('button', { name: nomeDestino }).count()) > 0);
 await p.getByRole('button', { name: nomeDestino }).first().click(); await p.waitForTimeout(3000);
 const t = await p.locator('main').innerText(); await p.getByRole('radio', { name: 'Roteiro' }).click().catch(() => p.getByText('Roteiro', { exact: true }).first().click()); await p.waitForTimeout(1500);
