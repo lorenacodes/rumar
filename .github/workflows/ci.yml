@@ -73,3 +73,9 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "APK de teste Bo Vair · ${GITHUB_REF_NAME}" \
             --notes "Versão de teste gerada automaticamente a partir de ${GITHUB_SHA::7}. Baixe bovair-teste.apk no celular Android e instale (permita instalar de fontes desconhecidas)."
+          # Às vezes o GitHub deixa a versão como rascunho (aí o link de download dá 404): garante publicada e confere.
+          for i in 1 2 3; do
+            gh release edit "$TAG" --draft=false --prerelease && break
+            sleep 5
+          done
+          test "$(gh release view "$TAG" --json isDraft --jq .isDraft)" = "false"
