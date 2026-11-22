@@ -46,7 +46,7 @@ export function Tela1_5() {
         </div>
       </div>
       <Rodape padding="10px 20px 14px">
-        <BotaoPrincipal onClick={() => seguir(true)}>Ativar avisos ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => seguir(true)}>Ativar avisos</BotaoPrincipal>
         <BotaoTexto onClick={() => seguir(false)}>Agora não</BotaoTexto>
       </Rodape>
     </main>

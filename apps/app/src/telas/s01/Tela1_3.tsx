@@ -108,7 +108,7 @@ export function Tela1_3() {
       </div>
       <Rodape>
         <BotaoPrincipal onClick={continuar} disabled={!cidadeOk}>
-          Continuar ↗
+          Continuar
         </BotaoPrincipal>
         <BotaoTexto marginTop="4px" onClick={() => navegar('/entrar')}>
           Já tenho conta · Entrar

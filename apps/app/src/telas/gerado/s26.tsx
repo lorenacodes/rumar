@@ -181,7 +181,7 @@ export function Tela26_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.1")}>
-          Publicar ↗
+          Publicar
         </div>
       </div>
     </main>
@@ -271,7 +271,7 @@ export function Tela26_3() {
             </span>
           </div>
           <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-            Compartilhar ↗
+            Compartilhar
           </div>
         </div>
       </div>
@@ -419,7 +419,7 @@ export function Tela26_5() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque('voltar')}>
-          Enviar convite ↗
+          Enviar convite
         </div>
       </div>
       <Abas ativa="passaporte" />
@@ -480,7 +480,7 @@ export function Tela26_6() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/")}>
-          Abrir no Bo Vair ↗
+          Abrir no Bo Vair
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Continuar no navegador

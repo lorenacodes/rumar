@@ -90,7 +90,7 @@ export function Tela21_1() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("17.3")}>
-          Abrir cartão de embarque ↗
+          Abrir cartão de embarque
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -196,7 +196,7 @@ export function Tela21_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.2")}>
-          Publicar ↗
+          Publicar
         </div>
       </div>
     </main>

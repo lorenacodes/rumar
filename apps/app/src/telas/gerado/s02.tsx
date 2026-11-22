@@ -169,7 +169,7 @@ export function Tela2_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.3")}>
-          Escolher julho de 2027 ↗
+          Escolher julho de 2027
         </div>
       </div>
     </main>
@@ -315,7 +315,7 @@ export function Tela2_3() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
-          Seguir com julho ↗
+          Seguir com julho
         </div>
       </div>
     </main>
@@ -487,7 +487,7 @@ export function Tela2_5() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.3")}>
-          Comparar 2 destinos ↗
+          Comparar 2 destinos
         </div>
       </div>
       <Abas ativa="descobrir" />

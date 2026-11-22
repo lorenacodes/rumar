@@ -36,7 +36,7 @@ export function Tela5_8() {
           <div style={{ fontSize: '14px', lineHeight: '20px', color: 'var(--texto-sec)', marginTop: '10px' }}>O link vale por 1 hora. Se não chegar, olhe o spam ou peça outro.</div>
         </div>
         <Rodape padding="10px 20px 14px">
-          <BotaoPrincipal type="submit">Enviar link ↗</BotaoPrincipal>
+          <BotaoPrincipal type="submit">Enviar link</BotaoPrincipal>
           <BotaoTexto onClick={() => navegar('/entrar')}>Voltar para entrar</BotaoTexto>
         </Rodape>
       </form>
@@ -59,7 +59,7 @@ export function Tela5_9() {
       </div>
       <Rodape padding="10px 20px 14px">
         {/* Abre o app de e-mail do aparelho. */}
-        <BotaoPrincipal onClick={() => window.open('mailto:', '_system')}>Abrir meu e-mail ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => window.open('mailto:', '_system')}>Abrir meu e-mail</BotaoPrincipal>
         <BotaoTexto onClick={() => navegar('/entrar')}>Voltar para entrar</BotaoTexto>
       </Rodape>
     </main>
@@ -131,7 +131,7 @@ export function Tela5_11() {
         <Nota>Não foi você? Fale com a gente pela Ajuda e a conta fica protegida.</Nota>
       </div>
       <Rodape padding="10px 20px 14px">
-        <BotaoPrincipal onClick={() => navegar('/perfil', { replace: true })}>Entrar ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => navegar('/perfil', { replace: true })}>Entrar</BotaoPrincipal>
       </Rodape>
     </main>
   );
@@ -148,7 +148,7 @@ export function Tela5_12() {
         <Paragrafo>Links de senha valem por 1 hora e só funcionam uma vez. Peça outro, é rápido.</Paragrafo>
       </div>
       <Rodape padding="10px 20px 14px">
-        <BotaoPrincipal onClick={() => navegar('/conta/esqueci', { replace: true })}>Pedir outro link ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => navegar('/conta/esqueci', { replace: true })}>Pedir outro link</BotaoPrincipal>
         <BotaoTexto onClick={() => navegar('/entrar', { replace: true })}>Voltar para entrar</BotaoTexto>
       </Rodape>
     </main>

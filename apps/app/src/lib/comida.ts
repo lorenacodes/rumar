@@ -60,7 +60,7 @@ export function regrasDaDieta(d: Dieta | undefined): { tira: Cozinha[]; favorece
 
 export const NOME_DIETA: Record<Dieta, string> = { tudo: 'Como de tudo', vegetariana: 'Vegetariana', vegana: 'Vegana', pescetariana: 'Pescetariana' };
 
-/** Preferências ↔ banco (colunas com "_"). */
+/** Preferências e banco (colunas com "_"). */
 export function prefsParaBanco<T extends { cozinhasAmo?: string[]; cozinhasEvito?: string[] }>(p: T): Record<string, unknown> {
   const { cozinhasAmo, cozinhasEvito, ...resto } = p;
   return { ...resto, cozinhas_amo: cozinhasAmo ?? [], cozinhas_evito: cozinhasEvito ?? [] };

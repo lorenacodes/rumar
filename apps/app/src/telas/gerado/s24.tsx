@@ -25,7 +25,7 @@ export function Tela24_1() {
             Risco agora? Ligue 112 na Europa ou 190 no Brasil.
           </div>
           <b style={{ font: "600 15px 'Open Sans'" }}>
-            Ligar ↗
+            Ligar
           </b>
         </div>
         <div style={{ marginTop: "8px" }}>
@@ -227,7 +227,7 @@ export function Tela24_2() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-          Ver endereço e horário ↗
+          Ver endereço e horário
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -312,7 +312,7 @@ export function Tela24_3() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("https://www.consumidor.gov.br")}>
-          Abrir canais oficiais ↗
+          Abrir canais oficiais
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Avisar o grupo

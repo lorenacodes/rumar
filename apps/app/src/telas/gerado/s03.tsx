@@ -231,7 +231,7 @@ export function Tela3_3() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
-          Planejar essa viagem ↗
+          Planejar essa viagem
         </div>
       </div>
     </main>
@@ -368,7 +368,7 @@ export function Tela3_4() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("3.3")}>
-          Ver 27 de maio ↗
+          Ver 27 de maio
         </div>
       </div>
     </main>
@@ -494,7 +494,7 @@ export function Tela3_5() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("3.3")}>
-          Usar o carro ↗
+          Usar o carro
         </div>
       </div>
     </main>

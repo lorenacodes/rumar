@@ -77,7 +77,7 @@ export function Tela5_1() {
           Esqueci a senha
         </button>
         <BotaoPrincipal type="submit" disabled={enviando || !email || !senha}>
-          Entrar ↗
+          Entrar
         </BotaoPrincipal>
         {/* Google e celular ainda não estão ligados: só aparecem na comparação com o design (D-028). */}
         {demo ? (
@@ -142,7 +142,7 @@ export function Tela5_2(props: {
         </div>
         <div style={{ position: 'sticky', bottom: '0px', marginTop: 'auto', zIndex: 1, padding: '10px 20px 14px', borderTop: '1px solid var(--linha)', background: 'var(--fundo)' }}>
           <BotaoPrincipal type="submit" disabled={props.enviando || props.erro === 'pausa'}>
-            Entrar ↗
+            Entrar
           </BotaoPrincipal>
           <button type="button" className="r-btn alvo-toque" onClick={() => navegar('/conta/esqueci')} style={{ width: '100%', height: '40px', font: "600 15px 'Open Sans'", color: 'var(--texto-sec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             Esqueci a senha

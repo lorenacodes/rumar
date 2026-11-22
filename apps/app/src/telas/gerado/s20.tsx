@@ -29,7 +29,7 @@ export function Tela20_1() {
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
             <span style={{ font: "600 14px 'Open Sans'", color: "var(--azul)" }}>
-              Ver o voo ↗
+              Ver o voo
             </span>
             <span style={{ font: "600 14px 'Open Sans'", border: "1px solid var(--texto)", padding: "1px 6px", whiteSpace: "nowrap" }}>
               △ Simulado
@@ -48,7 +48,7 @@ export function Tela20_1() {
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
             <span style={{ font: "600 14px 'Open Sans'", color: "var(--azul)" }}>
-              Ver o hotel ↗
+              Ver o hotel
             </span>
             <span style={{ font: "600 14px 'Open Sans'", border: "1px solid var(--texto)", padding: "1px 6px", whiteSpace: "nowrap" }}>
               △ Simulado
@@ -67,7 +67,7 @@ export function Tela20_1() {
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
             <span style={{ font: "600 14px 'Open Sans'", color: "var(--azul)" }}>
-              Reservar ↗
+              Reservar
             </span>
             <span style={{ font: "600 14px 'Open Sans'", border: "1px solid var(--texto)", padding: "1px 6px", whiteSpace: "nowrap" }}>
               △ Simulado
@@ -122,7 +122,7 @@ export function Tela20_2() {
         </div>
         <div style={{ position: "absolute", left: "0", right: "0", bottom: "0", padding: "12px 20px 26px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <div style={{ height: "56px", background: "var(--fundo-escuro)", color: "#fff", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("26.3")}>
-            Compartilhar o marco ↗
+            Compartilhar o marco
           </div>
           <div style={{ height: "48px", display: "flex", alignItems: "center", justifyContent: "center", font: "600 15px 'Open Sans'" }} {...toque("/minha-viagem")}>
             Continuar

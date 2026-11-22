@@ -150,7 +150,7 @@ export function Tela28_3() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque('voltar')}>
-          Continuar com este valor ↗
+          Continuar com este valor
         </div>
       </div>
     </main>
@@ -221,7 +221,7 @@ export function Tela28_4() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("11.1")}>
-          Reservar 13 de julho ↗
+          Reservar 13 de julho
         </div>
       </div>
     </main>
@@ -255,7 +255,7 @@ export function Tela28_5() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/montar")}>
-          Ver o que cabe hoje ↗
+          Ver o que cabe hoje
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -285,7 +285,7 @@ export function Tela28_6() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("30.1")}>
-          Ajustar avisos ↗
+          Ajustar avisos
         </div>
       </div>
       <Abas ativa="inicio" />
@@ -330,7 +330,7 @@ export function Tela28_7() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-          Entrar ↗
+          Entrar
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Esqueci a senha
@@ -423,7 +423,7 @@ export function Tela28_10() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("7.1")}>
-          Ver roteiros de quem foi ↗
+          Ver roteiros de quem foi
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Conhecer o Bo Vair
@@ -455,7 +455,7 @@ export function Tela28_11() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque('voltar')}>
-          Li e concordo ↗
+          Li e concordo
         </div>
         <div style={{ height: "48px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "8px", font: "600 16px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("30.12")}>
           Ler o que mudou
@@ -493,7 +493,7 @@ export function Tela28_12() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-          Abrir Ajustes do aparelho ↗
+          Abrir Ajustes do aparelho
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Continuar sem foto
@@ -627,7 +627,7 @@ export function Tela28_14() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/perfil/senha")}>
-          Trocar minha senha ↗
+          Trocar minha senha
         </div>
         <div style={{ height: "40px", font: "600 15px 'Open Sans'", color: "var(--texto-sec)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           Falar com o encarregado

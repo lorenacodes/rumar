@@ -64,7 +64,7 @@ export function Tela3_1() {
       </div>
       <Rodape>
         <BotaoPrincipal onClick={continuar} disabled={!sonho}>
-          Ver as viagens ↗
+          Ver as viagens
         </BotaoPrincipal>
       </Rodape>
     </main>

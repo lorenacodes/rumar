@@ -42,7 +42,7 @@ export function AvisoAtualizar() {
         Depois
       </button>
       <button type="button" className="r-btn" onClick={() => (window.location.href = nova.apk)} style={{ height: '48px', padding: '0 16px', background: 'var(--amarelo)', color: 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>
-        Atualizar ↗
+        Atualizar
       </button>
     </div>
   );

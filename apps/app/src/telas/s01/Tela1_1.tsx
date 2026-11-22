@@ -72,7 +72,7 @@ export function Tela1_1() {
       </div>
       <div className="rodape">
         <button type="button" className="botao-principal" onClick={continuar}>
-          Continuar ↗
+          Continuar
         </button>
       </div>
     </main>

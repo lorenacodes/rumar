@@ -33,11 +33,11 @@ export function InicioProvisorio() {
       </div>
       <Rodape style={{ bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
         {sessao ? (
-          <BotaoPrincipal onClick={() => navegar('/perfil')}>Ver meu perfil ↗</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => navegar('/perfil')}>Ver meu perfil</BotaoPrincipal>
         ) : plano.mensal > 0 ? (
-          <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Guardar o plano ↗</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => navegar('/conta/criar')}>Guardar o plano</BotaoPrincipal>
         ) : (
-          <BotaoPrincipal onClick={() => navegar('/seu-plano')}>Montar meu plano ↗</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => navegar('/seu-plano')}>Montar meu plano</BotaoPrincipal>
         )}
       </Rodape>
       <Abas ativa="inicio" logoAbaixoDoRodape />

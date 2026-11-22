@@ -105,7 +105,7 @@ export function Tela10_1() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.4")}>
-          Guardar R$ 653 por mês ↗
+          Guardar R$ 653 por mês
         </div>
       </div>
     </main>
@@ -205,7 +205,7 @@ export function Tela10_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.4")}>
-          Usar R$ 600 por mês ↗
+          Usar R$ 600 por mês
         </div>
       </div>
     </main>
@@ -321,7 +321,7 @@ export function Tela10_3() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.4")}>
-          Escolher R$ 700 ↗
+          Escolher R$ 700
         </div>
       </div>
     </main>
@@ -534,7 +534,7 @@ export function Tela10_5() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
-          Ver julho ↗
+          Ver julho
         </div>
       </div>
     </main>
@@ -662,7 +662,7 @@ export function Tela10_8() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.7")}>
-          Registrar quanto guardei ↗
+          Registrar quanto guardei
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -745,7 +745,7 @@ export function Tela10_9() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.8")}>
-          Atualizar o cofrinho ↗
+          Atualizar o cofrinho
         </div>
       </div>
     </main>

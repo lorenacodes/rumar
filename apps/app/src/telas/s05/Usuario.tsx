@@ -108,7 +108,7 @@ export function Usuario({ primeiraVez = false }: { primeiraVez?: boolean }) {
         <div style={{ height: '16px' }} />
       </div>
       <Rodape>
-        <BotaoPrincipal onClick={() => void salvar()} disabled={!podeSalvar}>{salvando ? 'Salvando…' : primeiraVez ? 'Continuar ↗' : 'Salvar'}</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => void salvar()} disabled={!podeSalvar}>{salvando ? 'Salvando…' : primeiraVez ? 'Continuar' : 'Salvar'}</BotaoPrincipal>
         {primeiraVez ? <button type="button" className="r-btn" onClick={seguir} style={{ display: 'block', margin: '6px auto 0', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Agora não</button> : null}
       </Rodape>
     </main>

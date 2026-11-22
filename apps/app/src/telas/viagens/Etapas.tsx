@@ -188,7 +188,7 @@ function LinhaTarefa({ t, pode, hoje, aoMarcar, aoAbrir, compacta }: { t: Tarefa
   return (
     <div style={{ display: 'flex', gap: '10px', padding: '8px 0', borderTop: '1px dashed var(--linha)' }}>
       {t.informativa ? (
-        <span aria-hidden="true" style={{ width: '28px', flex: 'none', textAlign: 'center', fontSize: '18px', color: 'var(--azul)' }}>ℹ</span>
+        <span aria-hidden="true" style={{ width: '28px', flex: 'none', textAlign: 'center', fontSize: '18px', color: 'var(--azul)' }}><svg width="18" height="18" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg></span>
       ) : (
         <input type="checkbox" checked={t.feita} disabled={!marcavel} onChange={(e) => aoMarcar(t, e.target.checked)} aria-label={`${t.feita ? 'Desmarcar' : 'Marcar como feita'}: ${t.titulo}`} style={{ width: '24px', height: '24px', margin: '2px', flex: 'none', accentColor: 'var(--verde)' }} />
       )}

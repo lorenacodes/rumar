@@ -88,7 +88,7 @@ export function Tela17_1() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("17.2")}>
-          Adicionar documento ↗
+          Adicionar documento
         </div>
       </div>
       <Abas ativa="viagem" />

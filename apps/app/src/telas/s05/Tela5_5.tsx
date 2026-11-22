@@ -52,7 +52,7 @@ export function Tela5_5() {
           <p style={{ fontSize: '16px', lineHeight: '24px' }}>Não encontramos um cadastro em andamento neste aparelho.</p>
         </div>
         <Rodape>
-          <BotaoPrincipal onClick={() => navegar('/conta/criar', { replace: true })}>Criar conta ↗</BotaoPrincipal>
+          <BotaoPrincipal onClick={() => navegar('/conta/criar', { replace: true })}>Criar conta</BotaoPrincipal>
           <BotaoTexto onClick={() => navegar('/entrar', { replace: true })}>Já tenho conta · Entrar</BotaoTexto>
         </Rodape>
       </main>

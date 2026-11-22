@@ -174,13 +174,13 @@ export function Lugar() {
           <dd style={{ margin: 0 }}>{preco ? (preco.min === 0 ? 'Grátis' : `${(preco.min / 100).toLocaleString('pt-BR')}${preco.max !== preco.min ? ` a ${(preco.max / 100).toLocaleString('pt-BR')}` : ''} € por pessoa`) : l.custo === 0 ? 'Grátis' : 'Não confirmado'}{preco ? <span style={{ display: 'block', fontSize: '12px', color: 'var(--texto-sec)' }}>{preco.selo === 'referencia' ? '▤ Referência' : '≈ Estimativa'} · <a href={preco.url} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{preco.fonte}</a>{preco.reserva ? ' · compre o ingresso antes' : ''}</span> : null}</dd>
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <a href={mapa} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Como chegar ↗</a>
+          <a href={mapa} target="_blank" rel="noreferrer" style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Como chegar</a>
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(l.id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>
             {salvo ? <><Check />Salvo</> : '+ Salvar'}
           </button>
         </div>
         <AdicionarAViagem placeId={l.id} slots={l.slots} destinoId={DESTINO_CURADORIA} cidade="Paris" />
-        {linkSeguro(l.site) ? <a href={linkSeguro(l.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site oficial ↗</a> : null}
+        {linkSeguro(l.site) ? <a href={linkSeguro(l.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site oficial</a> : null}
         <p style={{ fontSize: '13px', lineHeight: '19px', color: 'var(--texto-sec)', marginTop: '16px' }}>
           {l.osm ? <>Endereço e horário: <a href={l.osm} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>OpenStreetMap</a>{OSM_ATUALIZADO_EM ? `, ${OSM_ATUALIZADO_EM.split('-').reverse().join('/')}` : ''}. </> : null}
           Lugar escolhido pela curadoria do Bo Vair.
@@ -233,13 +233,13 @@ function LugarDaBase() {
           {b.telefone ? linha('Telefone', <>{b.telefone.split(/[;,]/).map((t) => t.trim()).filter(Boolean).slice(0, 2).map((t, i) => <React.Fragment key={t}>{i ? ' · ' : ''}<a href={`tel:${t.replace(/[^\d+]/g, '')}`} style={{ color: 'var(--azul)' }}>{t}</a>{linkWhatsApp(t, b.destino_id.startsWith('br')) ? <BotaoWhatsApp href={linkWhatsApp(t, b.destino_id.startsWith('br'))!} nome={b.nome} /> : null}</React.Fragment>)}</>) : null}
         </dl>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <a href={`https://www.google.com/maps/dir/?api=1&destination=${b.local_preciso === false && b.endereco ? encodeURIComponent([b.endereco, b.bairro].filter(Boolean).join(', ')) : `${b.lat},${b.lon}`}`} target="_blank" rel="noreferrer" aria-label={`Como chegar a ${b.nome} (abre o Google Maps)`} style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Como chegar ↗</a>
+          <a href={`https://www.google.com/maps/dir/?api=1&destination=${b.local_preciso === false && b.endereco ? encodeURIComponent([b.endereco, b.bairro].filter(Boolean).join(', ')) : `${b.lat},${b.lon}`}`} target="_blank" rel="noreferrer" aria-label={`Como chegar a ${b.nome} (abre o Google Maps)`} style={{ flex: 1, height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--texto)', font: "600 15px 'Open Sans'", color: 'var(--texto)', textDecoration: 'none' }}>Como chegar</a>
           <button type="button" className="r-btn" aria-pressed={salvo} onClick={() => void alternarSalvo(id)} style={{ flex: 1, height: '48px', background: salvo ? 'var(--fundo-escuro)' : 'var(--amarelo)', color: salvo ? '#fff' : 'var(--botao-principal-texto)', font: "600 15px 'Open Sans'" }}>{salvo ? <><Check />Salvo</> : '+ Salvar'}</button>
         </div>
         {CATEGORIAS_LUGAR[b.categoria].roteiro ? <AdicionarAViagem placeId={id} slots={l.slots} destinoId={b.destino_id} cidade={null} /> : <p style={{ fontSize: '13px', color: 'var(--texto-sec)', marginTop: '12px' }}>{b.categoria === 'hospedagem' ? 'Reserve pela aba Hospedagem da sua viagem.' : 'Não entra no roteiro.'}</p>}
         <Avaliacoes placeId={id} nome={b.nome} comida={COMIDA.includes(b.categoria)} moeda={paisPorCodigo(b.destino_id.slice(0, 2).toUpperCase())?.moeda ?? 'BRL'} />
         <FotosDeQuemFoi placeId={id} nome={b.nome} comida={['restaurantes', 'bares', 'cafes', 'mercados', 'vida-noturna'].includes(b.categoria)} />
-        {linkSeguro(b.site) ? <a href={linkSeguro(b.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site ↗</a> : null}
+        {linkSeguro(b.site) ? <a href={linkSeguro(b.site)!} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: '12px', minHeight: '44px', color: 'var(--azul)', fontWeight: 600 }}>Site</a> : null}
         <Info style={{ marginTop: '14px' }}>
           {fontes.length ? <>Pesquisa: {fontes.map((f, i) => <React.Fragment key={f.url}>{i ? ' · ' : ''}<a href={f.url} target="_blank" rel="noreferrer" style={{ color: 'var(--texto-sec)' }}>{f.titulo ?? new URL(f.url).hostname.replace(/^www\./, '')}</a></React.Fragment>)}. </> : null}
           {b.fonte === 'cnpj' ? `Cadastro de empresas da Receita Federal (CNPJ ativo${b.dados_de ? `, ${b.dados_de.slice(5, 7)}/${b.dados_de.slice(0, 4)}` : ''}). ${b.local_preciso ? 'Local pelo endereço.' : 'Local aproximado, pela rua.'} Pode ter fechado: confira antes de ir.`

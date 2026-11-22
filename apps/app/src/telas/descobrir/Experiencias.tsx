@@ -65,7 +65,7 @@ export function Experiencias({ destino, cidade, preferencias, titulo = 'Experiê
             ) : null}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
               {e.place_id ? <button type="button" className="r-btn" onClick={() => navegar(`/lugar/${e.place_id}`)} style={botao(true)}>Ver o lugar</button> : null}
-              {e.site_oficial ? <a href={e.site_oficial} target="_blank" rel="noopener noreferrer" style={{ ...botao(!e.place_id), textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>Site oficial ↗</a> : null}
+              {e.site_oficial ? <a href={e.site_oficial} target="_blank" rel="noopener noreferrer" style={{ ...botao(!e.place_id), textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>Site oficial</a> : null}
             </div>
           </article>
         ))}

@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 /**
  * Pedido da fundadora (18/11/2026, D-037): nenhum emoji em nenhuma parte do app — nem pictogramas
  * (😀 🍽 📷…) nem símbolos que parecem emoji (♥ ★ ✓ ✈ ♡ ☕ ⓘ…). Marca de "feito" é desenhada em CSS
- * (ui/check.tsx). Setas (→ ↗ ‹ ›), pontos (· ● ○) e ▾ ▴ são tipografia e continuam permitidos.
+ * (ui/check.tsx). Setas simples (→ ‹ ›), pontos (· ● ○) e ▾ ▴ são tipografia e continuam permitidos.
  */
-const PROIBIDO = /[\u{1F000}-\u{1FAFF}☀-➿⬀-⯿Ⓜ-⓿⌀-⏿️︎]/u;
+const PROIBIDO = /[↔-↙↩↪ℹ\u{1F000}-\u{1FAFF}☀-➿⬀-⯿Ⓜ-⓿⌀-⏿️︎]/u;
 
 function arquivos(dir: string): string[] {
   return readdirSync(dir).flatMap((n) => {

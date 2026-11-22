@@ -233,7 +233,7 @@ export function Tela22_3() {
             </b>
           </div>
           <span style={{ font: "600 16px 'Open Sans'" }}>
-            Ligar ↗
+            Ligar
           </span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", marginTop: "8px" }}>

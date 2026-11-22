@@ -36,7 +36,7 @@ export function Tela28_7() {
           <Nota marginTop="14px">O que já está salvo neste aparelho continua disponível sem internet.</Nota>
         </div>
         <Rodape padding="10px 20px 14px">
-          <BotaoPrincipal type="submit">Entrar ↗</BotaoPrincipal>
+          <BotaoPrincipal type="submit">Entrar</BotaoPrincipal>
           <BotaoTexto onClick={() => navegar('/conta/esqueci')}>Esqueci a senha</BotaoTexto>
         </Rodape>
       </form>

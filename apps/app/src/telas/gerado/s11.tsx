@@ -44,7 +44,7 @@ export function Tela11_1() {
           </div>
         </div>
         <div style={{ height: "48px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "8px", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          Ver no site da companhia ↗
+          Ver no site da companhia
         </div>
         <div style={{ height: "48px", font: "600 15px 'Open Sans'", color: "var(--azul)", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("11.2")}>
           Já reservei
@@ -70,7 +70,7 @@ export function Tela11_1() {
           </div>
         </div>
         <div style={{ height: "48px", border: "2px solid var(--texto)", boxSizing: "border-box", marginTop: "8px", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          Ver no site do hotel ↗
+          Ver no site do hotel
         </div>
         <div style={{ fontSize: "14px", lineHeight: "20px", color: "var(--texto-sec)", marginTop: "12px" }}>
           Os valores podem ser diferentes no site. Confira antes de pagar e depois nos conte o valor real.

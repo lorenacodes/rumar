@@ -30,7 +30,7 @@ export function BlocoNetworking({ destinoId, cidade, area }: { destinoId: string
       <div style={{ font: "600 14px 'Open Sans'", marginTop: '12px' }}>Eventos de {NOME_AREA[area ?? 'tecnologia'].toLowerCase()} em {cidade}</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px' }}>
         {eventos.map((e) => (
-          <a key={e.nome} href={e.url} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', minHeight: '44px', padding: '0 14px', background: 'var(--fundo)', borderRadius: '10px', color: 'var(--azul)', font: "600 14px 'Open Sans'", textDecoration: 'none' }}>{e.nome} ↗</a>
+          <a key={e.nome} href={e.url} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', minHeight: '44px', padding: '0 14px', background: 'var(--fundo)', borderRadius: '10px', color: 'var(--azul)', font: "600 14px 'Open Sans'", textDecoration: 'none' }}>{e.nome}</a>
         ))}
       </div>
       <Info rotulo="Sobre os eventos" style={{ marginTop: '6px' }}>Abrimos a busca já filtrada nos sites de eventos. Os lugares vêm do mapa colaborativo: confira horários e se aceitam visitantes por dia.</Info>

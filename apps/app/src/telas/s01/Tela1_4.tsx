@@ -88,7 +88,7 @@ export function Tela1_4() {
       </div>
       <Rodape>
         <BotaoPrincipal onClick={continuar} disabled={mensal <= 0}>
-          Ver as viagens ↗
+          Ver as viagens
         </BotaoPrincipal>
       </Rodape>
     </main>

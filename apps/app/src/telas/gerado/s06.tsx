@@ -72,7 +72,7 @@ export function Tela6_1() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("6.3")}>
-          Montar meu roteiro ↗
+          Montar meu roteiro
         </div>
       </div>
     </main>
@@ -238,7 +238,7 @@ export function Tela6_3() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("11.1")}>
-          Reservar a viagem ↗
+          Reservar a viagem
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -359,7 +359,7 @@ export function Tela6_4() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
-          Recalcular o plano ↗
+          Recalcular o plano
         </div>
       </div>
     </main>
@@ -470,7 +470,7 @@ export function Tela6_5() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("2.4")}>
-          Adicionar um lugar ↗
+          Adicionar um lugar
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -551,7 +551,7 @@ export function Tela6_6() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("/minha-viagem")}>
-          Adicionar ao calendário ↗
+          Adicionar ao calendário
         </div>
       </div>
       <Abas ativa="viagem" />

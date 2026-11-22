@@ -78,7 +78,7 @@ export function Tela25_1() {
             128
           </div>
           <div style={{ height: "48px", flex: "2.2", background: "var(--amarelo)", font: "600 15px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center" }} {...toque("7.2")}>
-            Quero ir também ↗
+            Quero ir também
           </div>
         </div>
       </div>
@@ -124,8 +124,8 @@ export function Tela25_2() {
             <div style={{ fontSize: "14px", color: "var(--texto-sec)" }}>
               jul de 2027 · 6 noites
             </div>
-            <div style={{ font: "600 14px 'Open Sans'", color: "var(--azul)", marginTop: "2px" }}>
-              Compartilhar com a marca Bo Vair ↗
+            <div style={{ font: "600 14px 'Open Sans'", color: "var(--azul)", marginTop: "2px", minHeight: "38px" }}>
+              Compartilhar com a marca Bo Vair
             </div>
           </div>
         </div>

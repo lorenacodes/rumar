@@ -180,7 +180,7 @@ export function Tela5_3() {
             </div>
           ) : null}
           <BotaoPrincipal type="submit" disabled={enviando}>
-            {enviando ? 'Criando sua conta…' : demo ? 'Criar conta e guardar ↗' : 'Criar conta ↗'}
+            {enviando ? 'Criando sua conta…' : demo ? 'Criar conta e guardar' : 'Criar conta'}
           </BotaoPrincipal>
           {google && !demo ? (
             <button type="button" className="r-btn" onClick={() => void comGoogle()}

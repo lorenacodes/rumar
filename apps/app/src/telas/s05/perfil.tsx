@@ -286,7 +286,7 @@ export function Tela5_15() {
           <Nota marginTop="14px">Enviamos um código para o e-mail novo. Até você confirmar, o atual continua valendo.</Nota>
         </div>
         <Rodape padding="10px 20px 14px">
-          <BotaoPrincipal type="submit">Enviar código ↗</BotaoPrincipal>
+          <BotaoPrincipal type="submit">Enviar código</BotaoPrincipal>
         </Rodape>
       </form>
     </main>
@@ -357,7 +357,7 @@ export function Tela5_18() {
         <Nota>Se removeu os documentos deste aparelho, é só adicioná-los de novo depois.</Nota>
       </div>
       <Rodape padding="10px 20px 14px">
-        <BotaoPrincipal onClick={() => navegar('/entrar', { replace: true })}>Entrar de novo ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => navegar('/entrar', { replace: true })}>Entrar de novo</BotaoPrincipal>
         <button type="button" className="r-btn" onClick={() => navegar('/inicio', { replace: true })} style={{ width: '100%', height: '48px', border: '2px solid var(--texto)', marginTop: '8px', font: "600 16px 'Open Sans'", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           Ver o que cabe hoje
         </button>

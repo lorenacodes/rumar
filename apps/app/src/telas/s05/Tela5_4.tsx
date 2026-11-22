@@ -22,7 +22,7 @@ export function Tela5_4() {
         {demo ? <Nota marginTop="14px">Criou com o Google? Toque em “Continuar com Google” na tela de entrar.</Nota> : null}
       </div>
       <Rodape padding="10px 20px 14px">
-        <BotaoPrincipal onClick={() => navegar('/entrar')}>Entrar nessa conta ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => navegar('/entrar')}>Entrar nessa conta</BotaoPrincipal>
         <button type="button" className="r-btn" onClick={() => navegar('/conta/criar', { replace: true })} style={{ width: '100%', height: '48px', border: '2px solid var(--texto)', marginTop: '8px', font: "600 16px 'Open Sans'", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           Usar outro e-mail
         </button>

@@ -314,7 +314,7 @@ export function Tela31_4() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 14px", borderTop: "1px solid #2A3A66", background: "#0A1633" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", color: "var(--botao-principal-texto)" }} {...toque("17.2")}>
-          Adicionar documento ↗
+          Adicionar documento
         </div>
       </div>
       <Abas ativa="viagem" />

@@ -198,7 +198,7 @@ export function Tela7_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("7.3")}>
-          Copiar para minha viagem ↗
+          Copiar para minha viagem
         </div>
       </div>
     </main>
@@ -346,7 +346,7 @@ export function Tela7_4() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("26.3")}>
-          Publicar roteiro ↗
+          Publicar roteiro
         </div>
       </div>
     </main>

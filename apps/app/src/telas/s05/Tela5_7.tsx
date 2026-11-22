@@ -46,7 +46,7 @@ export function Tela5_7() {
         <Nota marginTop="12px">Se a conta já tiver um plano, mostramos os dois e você escolhe. Nada é apagado sem você confirmar.</Nota>
       </div>
       <Rodape padding="10px 20px 14px">
-        <BotaoPrincipal onClick={() => void guardar()}>Guardar na conta ↗</BotaoPrincipal>
+        <BotaoPrincipal onClick={() => void guardar()}>Guardar na conta</BotaoPrincipal>
         <button type="button" className="r-btn" onClick={() => (plano.limpar(), navegar('/perfil', { replace: true }))} style={{ width: '100%', height: '48px', border: '2px solid var(--texto)', marginTop: '8px', font: "600 16px 'Open Sans'", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           Começar do zero
         </button>

@@ -199,7 +199,7 @@ export function Tela4_2() {
       </div>
       <div className="rodape" style={{ padding: "10px 20px 22px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
-          Planejar essa viagem ↗
+          Planejar essa viagem
         </div>
       </div>
     </main>
@@ -311,7 +311,7 @@ export function Tela4_3() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("4.1")}>
-          Ver minhas opções de hoje ↗
+          Ver minhas opções de hoje
         </div>
       </div>
       <Abas ativa="viagem" />
@@ -391,7 +391,7 @@ export function Tela4_4() {
       </div>
       <div style={{ position: "absolute", left: "0", right: "0", bottom: "64px", padding: "10px 20px 10px", borderTop: "1px solid var(--linha)", background: "var(--fundo)" }}>
         <div style={{ height: "56px", background: "var(--amarelo)", color: "var(--botao-principal-texto)", font: "600 17px 'Open Sans'", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }} {...toque("10.1")}>
-          Criar meu cofrinho ↗
+          Criar meu cofrinho
         </div>
       </div>
       <Abas ativa="descobrir" />
