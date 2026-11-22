@@ -1,0 +1,43 @@
+name: Fotos livres (Openverse)
+
+# D-088: a busca por localização no Commons esgotou. Esta procura pelo nome do lugar + cidade no Openverse
+# (fotos com licença livre, inclui o Flickr), com crédito de autor e licença.
+on:
+  workflow_dispatch:
+    inputs:
+      amostra:
+        description: 'Só mostrar N escolhas, sem gravar (0 = gravar de verdade)'
+        required: false
+        default: '40'
+      regiao:
+        description: 'nordeste | sudeste | sul | centro-oeste | norte'
+        required: false
+        default: 'nordeste'
+      meta:
+        description: 'Fotos novas a buscar'
+        required: false
+        default: '1000'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: fotos-livres
+  cancel-in-progress: false
+
+jobs:
+  fotos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 175
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Buscar fotos
+        env:
+          AMOSTRA: ${{ inputs.amostra || '0' }}
+          REGIAO: ${{ inputs.regiao || 'nordeste' }}
+          META: ${{ inputs.meta || '1000' }}
+        run: node tools/dados/fotos-openverse.mjs --amostra "$AMOSTRA" --regiao "$REGIAO" --meta "$META" --minutos 150

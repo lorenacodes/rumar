@@ -33,3 +33,15 @@ test('hospedagem: recusa foto de coisa vizinha (rodada de 20/11)', () => {
   assert.ok(cita('File:Hotel Copacabana Palace 2019.jpg', 'Copacabana Palace', 'hospedagem'));
   assert.ok(cita('File:Pousada Maravilha Noronha.jpg', 'Pousada Maravilha', 'hospedagem'));
 });
+
+test('Openverse: aceita só foto livre que cite o lugar e a cidade', async () => {
+  const { aceitaOpenverse } = await import('./fotos-regras.mjs');
+  const f = (o) => ({ url: 'https://live.staticflickr.com/1/2.jpg', foreign_landing_url: 'https://www.flickr.com/photos/x/2', license: 'by', width: 1024, title: '', tags: [], ...o });
+  assert.ok(aceitaOpenverse(f({ title: 'Lagoa do Paraíso, Jericoacoara' }), 'Lagoa do Paraíso', 'praias', 'Jijoca de Jericoacoara'));
+  assert.ok(aceitaOpenverse(f({ title: 'Forte de Santo Antônio da Barra', tags: [{ name: 'salvador' }] }), 'Forte de Santo Antônio da Barra', 'historico', 'Salvador'));
+  assert.ok(!aceitaOpenverse(f({ title: 'Lagoa do Paraíso' }), 'Lagoa do Paraíso', 'praias', 'Jijoca de Jericoacoara'), 'sem a cidade');
+  assert.ok(!aceitaOpenverse(f({ title: 'Lagoa do Paraíso Jericoacoara', license: 'by-nc' }), 'Lagoa do Paraíso', 'praias', 'Jericoacoara'), 'licença NC');
+  assert.ok(!aceitaOpenverse(f({ title: 'Lagoa do Paraíso Jericoacoara', width: 320 }), 'Lagoa do Paraíso', 'praias', 'Jericoacoara'), 'pequena');
+  assert.ok(!aceitaOpenverse(f({ title: 'Lagoa do Paraíso Jericoacoara', url: 'https://exemplo.com/a.jpg' }), 'Lagoa do Paraíso', 'praias', 'Jericoacoara'), 'outro site');
+  assert.ok(!aceitaOpenverse(f({ title: 'IMG_2231 Jericoacoara' }), 'Lagoa do Paraíso', 'praias', 'Jericoacoara'), 'título não cita o lugar');
+});

@@ -38,3 +38,17 @@ export function cita(titulo, nome, categoria) {
   if (tiposArq.length && !tiposArq.some((x) => tiposNome.includes(x)) && (tiposNome.length || tiposArq.some((x) => x !== 'praia'))) return false;
   return true;
 }
+
+// Openverse (Flickr e outros acervos): fotos com licença livre e sem coordenada. Exige o lugar no título e a cidade
+// no título ou nas etiquetas (D-088).
+const FOTO_LIVRE = /^https:\/\/(live|farm\d+)\.staticflickr\.com\/|^https:\/\/(upload|commons)\.wikimedia\.org\//;
+const RUIM_OV = /\b(map|mapa|logo|flag|bandeira|sign|placa|menu|card[aá]pio|screenshot|selfie|ticket)\b/i;
+export function aceitaOpenverse(f, nome, categoria, cidade) {
+  if (!f || !FOTO_LIVRE.test(f.url ?? '') || !/^https:\/\//.test(f.foreign_landing_url ?? '')) return false;
+  if (!['by', 'by-sa', 'cc0', 'pdm'].includes(f.license)) return false;
+  if ((f.width && f.width < 640) || RUIM_OV.test(f.title ?? '')) return false;
+  if (!cita(f.title ?? '', nome, categoria)) return false;
+  const c = palavras(cidade).concat(norm(cidade).split(/[^a-z0-9]+/).filter((w) => w.length >= 4));
+  const texto = norm(`${f.title ?? ''} ${(f.tags ?? []).map((t) => t.name).join(' ')}`);
+  return c.length > 0 && c.some((w) => texto.includes(w));
+}
