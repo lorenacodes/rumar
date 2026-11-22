@@ -115,7 +115,7 @@ async function pendentes([a, b], limite) {
   // Lido direto da tabela pública: turísticos sem foto, os mais famosos primeiro.
   // Pracinhas e parquinhos de bairro ("park" no mapa, sem fama) ficam de fora: não são programa de viagem.
   return rest(`lugares?select=id,nome,categoria,tipo,destino_id,lat,lon&ativo=eq.true&foto=is.null&foto_ov_tentada_em=is.null`
-    + `&categoria=in.(praias,atracoes,historico,museus,parques,cultura,mercados)&or=(tipo.neq.park,fama.not.is.null)&destino_id=gte.br-${a}&destino_id=lt.br-${b + 1}`
+    + `&categoria=in.(praias,atracoes,historico,museus,parques,cultura,mercados)&tipo=neq.bairro&or=(tipo.neq.park,fama.not.is.null)&destino_id=gte.br-${a}&destino_id=lt.br-${b + 1}`
     + `&order=fama.desc.nullslast,relevancia.desc.nullslast&limit=${limite}`);
 }
 
@@ -128,7 +128,8 @@ async function escolher(l) {
   if (!nomes.length || openverseFora) return null;
   const res = await openverse(`${l.nome} ${nomes.at(-1)}`);
   await espera(pausa);
-  return res.find((f) => nomes.some((n) => aceitaOpenverse(f, l.nome, l.categoria, n))) ?? null;
+  // Do Openverse, só Flickr: as da Wikimedia já passam pela busca acima, que confere a distância.
+  return res.find((f) => f.source === 'flickr' && nomes.some((n) => aceitaOpenverse(f, l.nome, l.categoria, n))) ?? null;
 }
 
 if (amostra) {

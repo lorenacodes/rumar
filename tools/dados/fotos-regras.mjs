@@ -41,7 +41,7 @@ export function cita(titulo, nome, categoria) {
 
 // Openverse (Flickr e outros acervos): fotos com licença livre e sem coordenada. Exige o lugar no título e a cidade
 // no título ou nas etiquetas (D-088).
-const FOTO_LIVRE = /^https:\/\/(live|farm\d+)\.staticflickr\.com\/|^https:\/\/(upload|commons)\.wikimedia\.org\//;
+const FOTO_LIVRE = /^https:\/\/(live|farm\d+)\.staticflickr\.com\//;
 const RUIM_OV = /\b(map|mapa|logo|flag|bandeira|sign|placa|menu|card[aá]pio|screenshot|selfie|ticket)\b/i;
 export function aceitaOpenverse(f, nome, categoria, cidade) {
   if (!f || !FOTO_LIVRE.test(f.url ?? '') || !/^https:\/\//.test(f.foreign_landing_url ?? '')) return false;

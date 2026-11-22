@@ -8,7 +8,7 @@ on:
       amostra:
         description: 'Só mostrar N escolhas, sem gravar (0 = gravar de verdade)'
         required: false
-        default: '30'
+        default: '0'
       regiao:
         description: 'nordeste | sudeste | sul | centro-oeste | norte'
         required: false
@@ -17,6 +17,8 @@ on:
         description: 'Fotos novas a buscar'
         required: false
         default: '1000'
+  schedule:
+    - cron: '23 9 * * *' # todo dia, depois da busca por localização
 
 permissions:
   contents: read
