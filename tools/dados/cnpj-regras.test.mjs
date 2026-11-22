@@ -26,7 +26,7 @@ test('candidato: ativo, município, CNAE de comida e com nome fantasia', () => {
 });
 test('nome sem sufixo societário', () => {
   assert.equal(nomeBonito('RESTAURANTE SABOR DA TERRA LTDA'), 'Restaurante Sabor da Terra');
-  assert.equal(nomeBonito('PADARIA SAO JOSE EIRELI - ME'), 'Padaria Sao Jose');
+  assert.equal(nomeBonito('PADARIA SAO JOSE EIRELI - ME'), 'Padaria São José');
 });
 test('endereço: rua precisa bater; número certo = preciso', () => {
   const c = { rua: 'Rua da Aurora', numero: '72' };
@@ -39,4 +39,11 @@ test('duplicado: mesmo nome a menos de 250 m', () => {
   assert.ok(duplicado({ nome: 'Bar do Ze Madalena' }, pos, [{ nome: 'Ze Madalena', lat: -8.0505, lon: -34.8802 }]));
   assert.equal(duplicado({ nome: 'Bar do Ze Madalena' }, pos, [{ nome: 'Ze Madalena', lat: -8.06, lon: -34.88 }]), false);
   assert.equal(duplicado({ nome: 'Bar do Ze Madalena' }, pos, [{ nome: 'Tom Marrom', lat: -8.05, lon: -34.88 }]), false);
+});
+
+test('nome: devolve acentos das palavras comuns', async () => {
+  const { nomeBonito } = await import('./cnpj-regras.mjs');
+  assert.equal(nomeBonito('CAFE DO JOAO LTDA'), 'Café do João');
+  assert.equal(nomeBonito('GARD COZINHA CONTEMPORNEA'), 'Gard Cozinha Contemporânea');
+  assert.equal(nomeBonito('ACAI DA PRACA'), 'Açaí da Praca');
 });

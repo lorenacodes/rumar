@@ -32,9 +32,19 @@ export function campos(linha) {
 
 const PEQUENAS = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'na', 'no', 'em', 'com']);
 /** "BAR DO ZE LTDA" → "Bar do Ze" (tira sufixos societários). */
+// A Receita guarda nomes sem acento (e a cópia perde letras acentuadas): devolve o acento das palavras comuns (22/11).
+const ACENTOS = { cafe: 'café', cafes: 'cafés', acai: 'açaí', sao: 'são', pao: 'pão', paes: 'pães', joao: 'joão', jose: 'josé', gracas: 'graças',
+  contempornea: 'contemporânea', contemporanea: 'contemporânea', acougue: 'açougue', comercio: 'comércio', bistro: 'bistrô', feijao: 'feijão',
+  camarao: 'camarão', familia: 'família', agua: 'água', varzea: 'várzea', saude: 'saúde', cha: 'chá', espetinho: 'espetinho', sertao: 'sertão',
+  tradicao: 'tradição', estacao: 'estação', esquina: 'esquina', petisco: 'petisco', cozinha: 'cozinha', culinaria: 'culinária', gastronomica: 'gastronômica',
+  gastronomico: 'gastronômico', japones: 'japonês', japonesa: 'japonesa', arabe: 'árabe', mexico: 'méxico', grao: 'grão', limao: 'limão', mae: 'mãe',
+  armazem: 'armazém', sabores: 'sabores', lanchonete: 'lanchonete', rotisseria: 'rotisseria', delicias: 'delícias', sitio: 'sítio', alem: 'além', tambem: 'também' };
 export function nomeBonito(s) {
   const limpo = String(s).replace(/\b(LTDA|EIRELI|ME|EPP|S\/?A|S\.A\.?|MEI)\b\.?/gi, '').replace(/[-–\s]+$/, '').replace(/\s{2,}/g, ' ').trim();
-  return limpo.toLowerCase().split(' ').map((w, i) => (i > 0 && PEQUENAS.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(' ');
+  return limpo.toLowerCase().split(' ').map((w0, i) => {
+    const w = ACENTOS[w0] ?? w0;
+    return i > 0 && PEQUENAS.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(' ');
 }
 
 /** Estabelecimento que vira lugar: ativo, do município pedido, CNAE de comida/bebida e com nome fantasia. */
